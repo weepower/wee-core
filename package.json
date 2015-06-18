@@ -1,0 +1,25 @@
+{
+	"name": "wee-core",
+	"version": "3.0.0",
+	"description": "Blueprint for modern web development",
+	"homepage": "https://www.weepower.com",
+	"license": "Apache-2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/weepower/wee-core.git"
+	},
+	"bugs": {
+		"url": "https://github.com/weepower/wee-core/issues"
+	},
+	"keywords": [
+		"bootstrap",
+		"css",
+		"framework",
+		"javascript",
+		"less",
+		"responsive"
+	],
+	"devDependencies": {
+
+	}
+}
