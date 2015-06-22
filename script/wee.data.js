@@ -106,7 +106,13 @@
 			var send = null;
 
 			// Post or get endpoint based on specification
-			if (conf.method == 'post') {
+			if (conf.method == 'get') {
+				if (Object.keys(conf.data).length > 0) {
+					conf.url += '?' + W.$serialize(conf.data);
+				}
+
+				x.open(conf.method.toUpperCase(), conf.url, true);
+			} else {
 				x.open('POST', conf.url, true);
 				x.setRequestHeader(
 					'Content-Type',
@@ -116,12 +122,6 @@
 				send = W.$isObject(conf.data) ?
 					W.$serialize(conf.data) :
 					conf.data;
-			} else {
-				if (Object.keys(conf.data).length > 0) {
-					conf.url += '?' + W.$serialize(conf.data);
-				}
-
-				x.open(conf.method.toUpperCase(), conf.url, true);
 			}
 
 			// Add X-Requested-With header for same domain requests
