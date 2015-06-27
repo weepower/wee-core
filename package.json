@@ -4,6 +4,12 @@
 	"description": "Blueprint for modern web development",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
+	"keywords": [
+		"css",
+		"framework",
+		"javascript",
+		"responsive"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/weepower/wee-core.git"
@@ -11,14 +17,6 @@
 	"bugs": {
 		"url": "https://github.com/weepower/wee-core/issues"
 	},
-	"keywords": [
-		"bootstrap",
-		"css",
-		"framework",
-		"javascript",
-		"less",
-		"responsive"
-	],
 	"devDependencies": {
 
 	}
