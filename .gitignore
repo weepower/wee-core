@@ -1,0 +1,50 @@
+#------------------------------------
+	# Wee
+#------------------------------------
+
+temp/
+
+
+#------------------------------------
+	# Tools
+#------------------------------------
+
+.bundle
+.idea/
+.settings/
+.tern-project
+*.sublime-*
+browserstack.json
+BrowserStackLocal
+codekit-config.json
+mixture.json
+prepros.json
+
+
+#------------------------------------
+	# System
+#------------------------------------
+
+.cache
+.DS_Store
+.tmp
+*.diff
+*.err
+*.gem
+*.lock
+*.log
+*.orig
+*.out
+*.pid
+*.swp
+*.tmproj
+*.vi
+error_log
+Thumbs.db
+
+
+#------------------------------------
+	# Gitkeep
+#------------------------------------
+
+!.gitkeep
