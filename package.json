@@ -19,6 +19,7 @@
 	},
 	"devDependencies": {
 		"browser-sync": "~2.7.13",
+		"fs-extra": "~0.21.0",
 		"html-minifier": "~0.7.2",
 		"intern": "^2.2.2",
 		"js-yaml": "~3.3.1",
