@@ -18,8 +18,16 @@ module.exports = function(grunt) {
 				reloadPaths.push(path + '/**/*.' + reloadExtensions);
 			});
 
+			// Add root to watchlist
+			if (reloadWatch.root === true) {
+				reloadPaths.unshift(project.paths.root + '/**/*.' + reloadExtensions);
+			}
+
 			// Bind BrowserSync watchlist
-			reloadPaths.unshift(config.paths.assets + '**/*.{min.css,min.js,gif,jpg,png,svg,webp,woff}');
+			reloadPaths.unshift(
+				config.paths.assets +
+					'**/*.{min.css,min.js,gif,jpg,png,svg,webp,woff}'
+			);
 
 			server.files = reloadPaths;
 		}
