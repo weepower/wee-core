@@ -11,7 +11,11 @@ QUnit.test('create', 1, function(assert) {
 		}
 	});
 
-	assert.strictEqual(Wee.controller.test(), 'response', 'Controller function response correctly returned.');
+	assert.strictEqual(
+		Wee.controller.test(),
+		'response',
+		'Controller function response correctly returned.'
+	);
 });
 
 // Method: fn.extend(a, b, c)
@@ -25,7 +29,11 @@ QUnit.test('extend', 1, function(assert) {
 		}
 	});
 
-	assert.strictEqual(Wee.controller.test2(), 'response', 'Controller extended successfully.');
+	assert.strictEqual(
+		Wee.controller.test2(),
+		'response',
+		'Controller extended successfully.'
+	);
 });
 
 // Method: $env(obj, def)
@@ -33,7 +41,11 @@ QUnit.test('extend', 1, function(assert) {
 QUnit.module('$env');
 
 QUnit.test('default', 1, function(assert) {
-	assert.strictEqual(Wee.$env(), 'local', 'Default environment is correctly set to "local".');
+	assert.strictEqual(
+		Wee.$env(),
+		'local',
+		'Default environment is correctly set to "local".'
+	);
 });
 
 QUnit.test('settings', 1, function(assert) {
@@ -42,7 +54,10 @@ QUnit.test('settings', 1, function(assert) {
 		stage: 'www.weepower.stage'
 	}, 'here');
 
-	assert.strictEqual(Wee.$env(), 'here', 'Default environment is correctly set to "here".');
+	assert.strictEqual(Wee.$env(),
+		'here',
+		'Default environment is correctly set to "here".'
+	);
 });
 
 // Method: $envSecure(url)
@@ -50,7 +65,10 @@ QUnit.test('settings', 1, function(assert) {
 QUnit.module('$envSecure');
 
 QUnit.test('override', 1, function(assert) {
-	assert.ok(Wee.$envSecure('https://www.weepower.com'), 'The environment is correctly identified as secure.');
+	assert.ok(
+		Wee.$envSecure('https://www.weepower.com'),
+		'The environment is correctly identified as secure.'
+	);
 });
 
 // Method: $get(key, def, set, opt)
@@ -60,27 +78,66 @@ QUnit.test('override', 1, function(assert) {
 QUnit.module('$get, $set, $push');
 
 QUnit.test('get empty', 2, function(assert) {
-	assert.strictEqual(Wee.$get('var-123'), null, 'Variable "var-123" is currently null.');
-	assert.strictEqual(Wee.$get('123 var'), null, 'Variable "123 var" is currently null.');
+	assert.strictEqual(
+		Wee.$get('var-123'),
+		null,
+		'Variable "var-123" is currently null.'
+	);
+	assert.strictEqual(
+		Wee.$get('123 var'),
+		null,
+		'Variable "123 var" is currently null.'
+	);
 });
 
 QUnit.test('get with default string', 4, function(assert) {
-	assert.strictEqual(Wee.$get('var-123', 'string'), 'string', 'Variable "var-123" is returned as the default "string".');
-	assert.strictEqual(Wee.$get('var-123'), null, 'Variable "var-123" is still correctly set to null.');
-	assert.strictEqual(Wee.$get('cont:var-123', 'string'), 'string', 'Variable "var-123" is returned as the default "string" in the "cont" namespace.');
-	assert.strictEqual(Wee.$get('123 var', 'Testing 123'), 'Testing 123', 'Variable "123 var" is returned as the default "Testing 123".');
+	assert.strictEqual(
+		Wee.$get('var-123', 'string'),
+		'string',
+		'Variable "var-123" is returned as the default "string".'
+	);
+	assert.strictEqual(
+		Wee.$get('var-123'),
+		null,
+		'Variable "var-123" is still correctly set to null.'
+	);
+	assert.strictEqual(
+		Wee.$get('cont:var-123', 'string'),
+		'string',
+		'Variable "var-123" is returned as the default "string" in the "cont" namespace.'
+	);
+	assert.strictEqual(
+		Wee.$get('123 var', 'Testing 123'),
+		'Testing 123',
+		'Variable "123 var" is returned as the default "Testing 123".'
+	);
 });
 
 QUnit.test('get with default string returned by callback', 1, function(assert) {
 	assert.strictEqual(Wee.$get('var-123', function() {
-		return 'string';
-	}), 'string', 'Variable "var-123" is returned as the default "string".');
+			return 'string';
+		}),
+		'string',
+		'Variable "var-123" is returned as the default "string".'
+	);
 });
 
 QUnit.test('set string', 3, function(assert) {
-	assert.strictEqual(Wee.$set('var-123', 'string'), 'string', 'Variable "var-123" was set to "string".');
-	assert.strictEqual(Wee.$set('cont:var-123', 'string'), 'string', 'Variable "var-123" was set to "string" in the "cont" namespace.');
-	assert.strictEqual(Wee.$set('123 var', 'Testing 123'), 'Testing 123', 'Variable "var-123" was set to "Testing 123".');
+	assert.strictEqual(
+		Wee.$set('var-123', 'string'),
+		'string',
+		'Variable "var-123" was set to "string".'
+	);
+	assert.strictEqual(
+		Wee.$set('cont:var-123', 'string'),
+		'string',
+		'Variable "var-123" was set to "string" in the "cont" namespace.'
+	);
+	assert.strictEqual(
+		Wee.$set('123 var', 'Testing 123'),
+		'Testing 123',
+		'Variable "var-123" was set to "Testing 123".'
+	);
 });
 
 QUnit.test('get string', 3, function(assert) {
@@ -202,28 +259,18 @@ QUnit.test('check different types against object', 4, function(assert) {
 	}), 'Object "string" is an object.');
 });
 
-// Method: $getKeys(obj)
-
-QUnit.module('$getKeys');
-
-QUnit.test('check for properly set keys', 1, function(assert) {
-	assert.deepEqual(Wee.$getKeys({
-		key1: 'val1',
-		key2: 'val2',
-		key3: 'val3'
-	}), ['key1', 'key2', 'key3'], 'Object keys properly returned.');
-});
-
 // Method: $serialize(obj)
 
 QUnit.module('$serialize');
 
 QUnit.test('check for properly serialized object', 1, function(assert) {
 	assert.strictEqual(Wee.$serialize({
-		key1: 'val1',
-		key2: 'val2',
-		key3: 'val3'
-	}), 'key1=val1&key2=val2&key3=val3', 'Object serialization properly returned.');
+			key1: 'val1',
+			key2: 'val2',
+			key3: 'val3'
+		}), 'key1=val1&key2=val2&key3=val3',
+		'Object serialization properly returned.'
+	);
 });
 
 // Method: $extend(obj, src, deep)

@@ -28,14 +28,20 @@ module.exports = function(grunt) {
 					vars.responsive = false;
 
 					// Template variables
-					var inject = '@import "' + config.paths.modulesSource + name + '/module/style/screen.less";\n',
+					var inject = '@import (optional) "' +
+							config.paths.modulesSource + name +
+							'/module/style/screen.less";\n',
 						responsive = '';
 
 					if (module.style) {
 						// Build additional style
 						if (module.style.build) {
-							module.style.build.forEach(function(filepath) {
-								inject += '@import "' + config.paths.modulesSource + name + '/' + filepath + '";\n';
+							var sources = Wee.$toArray(module.style.build);
+
+							sources.forEach(function(filepath) {
+								inject += '@import "' +
+									config.paths.modulesSource + name +
+									'/' + filepath + '";\n';
 							});
 						}
 
@@ -87,7 +93,7 @@ module.exports = function(grunt) {
 						// Set global data variables
 						if (
 							(module.data && Object.keys(module.data).length) ||
-							(module.script.data && Object.keys(module.script.data).length)
+							(module.script && module.script.data && Object.keys(module.script.data).length)
 						) {
 							var weeScriptGlobal = config.paths.temp + name + '.data.js',
 								configVars = Wee.$extend(module.data || {}, module.script.data || {}),
@@ -100,7 +106,9 @@ module.exports = function(grunt) {
 
 						// Build additional script
 						if (module.script.build) {
-							module.script.build.forEach(function(filepath) {
+							var sources = Wee.$toArray(module.script.build);
+
+							sources.forEach(function(filepath) {
 								moduleScript.push(path.join(modulePath, filepath));
 							});
 						}
@@ -207,7 +215,7 @@ module.exports = function(grunt) {
 					// Set global data variables
 					if (
 						(module.data && Object.keys(module.data).length) ||
-						(module.style.data && Object.keys(module.style.data).length)
+						(module.style && module.style.data && Object.keys(module.style.data).length)
 					) {
 						var configVars = Wee.$extend(module.data || {}, module.style.data || {});
 

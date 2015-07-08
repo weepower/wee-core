@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 
 		if (config.style.vars.printEnabled) {
 			config.style.print = '@media print {\n';
-			config.style.print += '@import (inline) "../style/wee.print.less";\n';
+			config.style.print += '@import "../style/wee.print.less";\n';
 			config.style.print += '@import (optional) "@{sourcePath}/custom/print.less";\n';
 			config.style.print += '}';
 		}
