@@ -48,18 +48,30 @@ module.exports = function(grunt) {
 			keys.forEach(function(key) {
 				var block = context[key],
 					root = block.contentRoot || '',
-					template = grunt.file.read(Wee.buildPath(staticRoot, siteConfig.paths.templates + '/' + block.template + '.html')),
-					content = block.content ? grunt.file.expand({
-						cwd: path.join(staticRoot, root)
-					}, block.content) : [],
+					content = block.content ?
+						grunt.file.expand({
+							cwd: path.join(staticRoot, root)
+						}, block.content) :
+						[],
 					data = {
 						content: [],
 						site: site
 					},
 					single = false;
 
+				if (block.template.indexOf('.') === -1) {
+					block.template += '.html';
+				}
+
+				var template = grunt.file.read(
+					Wee.buildPath(
+						staticRoot,
+						siteConfig.paths.templates + '/' + block.template
+					)
+				);
+
 				Wee.$toArray(block.target).forEach(function(target) {
-					target = path.join(staticRoot, siteConfig.paths.target || '', target);
+					target = path.join(staticRoot, target);
 
 					// Target writing function
 					var writeTarget = function(target, data) {
@@ -84,7 +96,10 @@ module.exports = function(grunt) {
 						var output = Wee.view.render(template, data);
 
 						// Minify rendered output
-						if (siteConfig.minify === true) {
+						if (
+							siteConfig.minify === true &&
+							target.split('.').pop() === 'html'
+						) {
 							try {
 								var minify = require('html-minifier').minify;
 
@@ -398,9 +413,9 @@ module.exports = function(grunt) {
 							var filename = '/remote-' + remoteIndex + '.html',
 								absolutePath = tempPath + filename,
 								relativePath = './' + path.relative(
-									configPath,
-									tempPath
-								) + filename;
+										configPath,
+										tempPath
+									) + filename;
 
 							remoteUrls.push([
 								value,
