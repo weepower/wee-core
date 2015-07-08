@@ -6,4 +6,4 @@ This package is part of the [Wee framework](https://github.com/weepower/wee).
 
 ## License
 
-Copyright 2015 [Caddis Interactive, LLC](https://www.caddis.co). Licensed under the [Apache License, Version 2.0](https://github.com/weepower/wee-core/LICENSE).
+Copyright 2015 [Caddis Interactive, LLC](https://www.caddis.co). Licensed under the [Apache License, Version 2.0](https://github.com/weepower/wee-core/blob/master/LICENSE).
