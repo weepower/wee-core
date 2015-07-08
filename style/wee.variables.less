@@ -15,6 +15,19 @@
 
 
 /*------------------------------------*\
+	# Colors
+\*------------------------------------*/
+
+@primary: #167da3;
+@secondary: #16ada3;
+@tertiary: #9c7b27;
+
+@info: blue;
+@warning: red;
+@success: green;
+
+
+/*------------------------------------*\
 	# Grayscale
 \*------------------------------------*/
 
@@ -51,7 +64,7 @@
 	# Links
 \*------------------------------------*/
 
-@linkColor: #167da3;
+@linkColor: @primary;
 @linkColorHover: darken(@linkColor, 10%);
 @linkColorActive: darken(@linkColor, 20%);
 
@@ -465,3 +478,11 @@
 
 @tableStripedBackground: @lightestGray;
 @tableStripedPosition: odd; // even, odd
+
+
+/*------------------------------------*\
+	# Print
+\*------------------------------------*/
+
+
+@printPageMargin: 2cm .5cm;
