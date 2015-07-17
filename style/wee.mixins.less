@@ -1696,7 +1696,7 @@
 .rounded (@value; ...) when not (@value = false) {
 	background-clip: border-box;
 }
-.rounded (@value: 3px) when not (@value = false)
+.rounded (@value: @defaultRadius) when not (@value = false)
 		and not (@value = top)
 		and not (@value = right)
 		and not (@value = bottom)
@@ -1710,7 +1710,7 @@
 	.check();
 	border-radius: @temp;
 }
-.rounded (top; @value: 3px) when not (@value = false)
+.rounded (top; @value: @defaultRadius) when not (@value = false)
  		and not (@value = right)
 		and not (@value = left) {
 	.check () when not (isnumber(@value)), (@value = 0) {
@@ -1733,7 +1733,7 @@
 	}
 	.check();
 }
-.rounded (top; right; @value: 3px) when not (@value = false) {
+.rounded (top; right; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-top-right-radius: @value;
 	}
@@ -1751,7 +1751,7 @@
 	}
 	.check();
 }
-.rounded (top; left; @value: 3px) when not (@value = false) {
+.rounded (top; left; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-top-left-radius: @value;
 	}
@@ -1769,7 +1769,7 @@
 	}
 	.check();
 }
-.rounded (right; @value: 3px) when not (@value = false) {
+.rounded (right; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-top-right-radius: @value;
 		border-bottom-right-radius: @value;
@@ -1790,7 +1790,7 @@
 	}
 	.check();
 }
-.rounded (bottom; @value: 3px) when not (@value = false)
+.rounded (bottom; @value: @defaultRadius) when not (@value = false)
 		and not (@value = right)
 		and not (@value = left) {
 	.check () when not (isnumber(@value)), (@value = 0) {
@@ -1813,7 +1813,7 @@
 	}
 	.check();
 }
-.rounded (bottom; right; @value: 3px) when not (@value = false) {
+.rounded (bottom; right; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-bottom-right-radius: @value;
 	}
@@ -1831,7 +1831,7 @@
 	}
 	.check();
 }
-.rounded (bottom; left; @value: 3px) when not (@value = false) {
+.rounded (bottom; left; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-bottom-left-radius: @value;
 	}
@@ -1849,7 +1849,7 @@
 	}
 	.check();
 }
-.rounded (left; @value: 3px) when not (@value = false) {
+.rounded (left; @value: @defaultRadius) when not (@value = false) {
 	.check () when not (isnumber(@value)), (@value = 0) {
 		border-top-left-radius: @value;
 		border-bottom-left-radius: @value;

@@ -250,6 +250,7 @@
 @markColor: @baseColor;
 @markBackground: yellow;
 
+@defaultRadius: 3px;
 @defaultOpacity: .2;
 @defaultDuration: .2s;
 @defaultTiming: ease-in-out;
@@ -269,7 +270,7 @@
 @codeBackground: @lighterGray;
 
 @codeBorderColor: false;
-@codeRounded: 3px;
+@codeRounded: @defaultRadius;
 
 @codePaddingHorizontal: .5em;
 @codePaddingVertical: .2em;
@@ -310,7 +311,7 @@
 @inputBorderColorHover: darken(@inputBorderColor, 10%);
 @inputBorderColorFocus: darken(@inputBorderColor, 20%);
 @inputBorderWidth: 1px; // false to disable
-@inputRounded: 3px; // false to disable
+@inputRounded: @defaultRadius; // false to disable
 
 @inputMinWidth: 20; // false to disable
 @inputMinHeight: 3; // false to disable
@@ -408,7 +409,7 @@
 @buttonBevelColor: light; // dark, light
 @buttonBevelOpacity: 30%;
 
-@buttonRounded: 3px; // false to disable
+@buttonRounded: @defaultRadius; // false to disable
 
 @buttonTransitionEnabled: true;
 
