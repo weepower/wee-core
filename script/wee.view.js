@@ -114,16 +114,21 @@
 			while (temp.indexOf('{{> ') > -1) {
 				temp = temp.replace(this.partial, function(match, tag) {
 					var partial = scope.partials[tag];
-					return partial ? (W.$isFunction(partial) ? partial() : partial) : '';
+					return partial ? (
+						W.$isFunction(partial) ?
+							partial() :
+							partial
+						) : '';
 				});
 			}
 
 			// Pre-process tags to allow for reliable tag matching
 			temp = temp.replace(this.tags, function(m, pre, tag, filter) {
-				var resp = '{{' + pre;
+				var resp = '{{' + pre,
+					exists = tags.hasOwnProperty(tag);
 
 				if (pre == '#') {
-					if (tags[tag]) {
+					if (exists) {
 						tags[tag].i++;
 						tags[tag].o.push(tags[tag].i);
 					} else {
@@ -134,7 +139,7 @@
 					}
 
 					resp += tag + '%' + tags[tag].i + (filter || '');
-				} else if (tags[tag]) {
+				} else if (exists) {
 					resp += tag + '%' + tags[tag].o.pop();
 				}
 
@@ -146,7 +151,9 @@
 
 			// Reconstitute replacements
 			return this.esc ?
-				temp.replace(/{~/g, '{{').replace(/~}/g, '}}').replace(/%\d+/g, '') :
+				temp.replace(/{~/g, '{{')
+					.replace(/~}/g, '}}')
+					.replace(/%\d+/g, '') :
 				temp;
 		},
 
@@ -176,9 +183,15 @@
 					empty = val === false || val == null || val.length === 0,
 					resp = '';
 
-				if (filter) {
+				if (filter || empty) {
+					var filters = filter ? filter.split('|') : [];
+
+					if (empty) {
+						filters.unshift(tag + '()');
+					}
+
 					// Loop through tag filters
-					var cont = filter.split('|').every(function(el) {
+					var cont = filters.every(function(el) {
 						var arr = el.match(scope.ext),
 							args = arr[2] !== U ? arr[2].split(',') : [];
 						el = arr[1];
@@ -228,7 +241,9 @@
 										'.': el,
 										'#': i,
 										'##': i + 1
-									}, W.$isObject(el) ? el : (isObj ? val : {}));
+									}, W.$isObject(el) ?
+										el :
+										(isObj ? val : {}));
 
 								resp += scope.parse(inner, item, data, init, i);
 
@@ -352,8 +367,23 @@
 				}
 			}
 
-			// Return fallback
-			return fb ? fb.trim() : fb;
+			// Process fallback value
+			if (fb && fb !== '') {
+				fb = fb.trim();
+				var pre = /^\\?("|')/,
+					match = fb.match(pre);
+
+				if (match) {
+					var post = new RegExp(match[0] + '$');
+
+					return fb.replace(pre, '')
+						.replace(post, '');
+				}
+
+				return this.get(orig, prev, fb, '', init, x);
+			}
+
+			return fb;
 		}
 	});
 })(Wee, undefined);
