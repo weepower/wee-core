@@ -56,23 +56,29 @@ html {
 		@temp: @mobileLandscapeWidth;
 		.wee-mobile-landscape();
 	}
+
 	.check () when (@ieBreakpoint > 2) {
 		@temp: @tabletPortraitWidth;
 		.wee-tablet-portrait();
 	}
+
 	.check () when (@ieBreakpoint > 3) {
 		@temp: @desktopSmallWidth;
 		.wee-desktop-small();
 	}
+
 	.check () when (@ieBreakpoint > 4) {
 		@temp: @desktopMediumWidth;
 		.wee-desktop-medium();
 	}
+
 	.check () when (@ieBreakpoint > 5) {
 		@temp: @desktopLargeWidth;
 		.wee-desktop-large();
 	}
+
 	.check();
+
 	body {
 		min-width: @temp;
 	}

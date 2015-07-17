@@ -3,17 +3,18 @@
 module.exports = function(grunt) {
 	grunt.registerTask('buildStyle', function() {
 		var less = grunt.file.read(config.paths.wee + 'style/wee.less'),
-			imports = [],
-			inject = '',
 			buildFiles = grunt.file.expand({
 				cwd: config.paths.cssSource + 'build'
 			}, [
 				'**/*.css',
 				'**/*.less'
-			]);
+			]),
+			imports = [],
+			inject = '';
 
 		buildFiles.forEach(function(name) {
-			name = '@{sourcePath}/build/' + name.replace(path.normalize(config.paths.assets), '');
+			name = '@{sourcePath}/build/' +
+				name.replace(path.normalize(config.paths.assets), '');
 
 			if (name.indexOf('/vendor/') !== -1) {
 				imports.unshift(name);
@@ -32,7 +33,8 @@ module.exports = function(grunt) {
 
 			buildArray.push(name);
 
-			name = '@{sourcePath}/' + name.replace(path.normalize(config.paths.assets), '');
+			name = '@{sourcePath}/' +
+				name.replace(path.normalize(config.paths.assets), '');
 
 			imports.push(name);
 		});
