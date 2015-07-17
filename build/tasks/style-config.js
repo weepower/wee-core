@@ -41,27 +41,38 @@ module.exports = function(grunt) {
 		// Responsive
 		if (features.responsive && features.responsive.enable === true) {
 			config.style.vars.responsiveEnabled = true;
-			config.style.vars.responsiveOffset = (features.responsive.offset || 0) + 'px';
 			config.style.vars.ieBreakpoint = project.style.legacy.breakpoint || 4;
 
 			// Breakpoints
-			var breakpoints = features.responsive.breakpoints;
+			var offset = features.responsive.offset || 0,
+				breakpoints = features.responsive.breakpoints,
+				defaults = [
+					'mobileLandscape',
+					'tabletPortrait',
+					'desktopSmall',
+					'desktopMedium',
+					'desktopLarge'
+				];
 
-			config.style.vars.mobileLandscapeWidth = breakpoints.mobileLandscape !== false ?
-				breakpoints.mobileLandscape + 'px' :
-				false;
-			config.style.vars.tabletPortraitWidth = breakpoints.tabletPortrait !== false ?
-				breakpoints.tabletPortrait + 'px' :
-				false;
-			config.style.vars.desktopSmallWidth = breakpoints.desktopSmall !== false ?
-				breakpoints.desktopSmall + 'px' :
-				false;
-			config.style.vars.desktopMediumWidth = breakpoints.desktopMedium !== false ?
-				breakpoints.desktopMedium + 'px' :
-				false;
-			config.style.vars.desktopLargeWidth = breakpoints.desktopLarge !== false ?
-				breakpoints.desktopLarge + 'px' :
-				false;
+			defaults.forEach(function(key) {
+				var breakpoint = breakpoints[key];
+
+				config.style.vars[key + 'Width'] = breakpoint !== false ?
+					(breakpoint - offset) + 'px' :
+					false;
+
+				delete breakpoints[key];
+			});
+
+			// Custom breakpoints
+			Object.keys(breakpoints).forEach(function(key) {
+				// TODO: Complete custom breakpoint feature
+				if (breakpoints[key] !== false) {
+					config.style.vars[key + 'Width'] = (
+						breakpoints[key] - offset
+					) + 'px';
+				}
+			});
 
 			config.style.responsive = '@import "../style/wee.responsive.less";';
 		} else {

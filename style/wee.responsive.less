@@ -1,20 +1,24 @@
 .wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {
 	@import (optional) '@{sourcePath}@{responsivePath}/mobile-landscape.less';
 }
+
 .wee-tablet-portrait () when not (@tabletPortraitWidth = false) {
 	@import (optional) '@{sourcePath}@{responsivePath}/tablet-portrait.less';
 }
+
 .wee-desktop-small () when not (@desktopSmallWidth = false) {
 	@import (optional) '@{sourcePath}@{responsivePath}/desktop-small.less';
 }
+
 .wee-desktop-medium () when not (@desktopMediumWidth = false) {
 	@import (optional) '@{sourcePath}@{responsivePath}/desktop-medium.less';
 }
+
 .wee-desktop-large () when not (@desktopLargeWidth = false) {
 	@import (optional) '@{sourcePath}@{responsivePath}/desktop-large.less';
 }
 
-.responsive () when (@responsiveEnabled = true) and not (@legacyMode = true) {
+.responsive () when not (@legacyMode = true) {
 	// IE Metro Compatibility
 	@-ms-viewport {
 		width: device-width;
@@ -22,45 +26,54 @@
 
 	// Breakpoints
 	.check () when not (@mobileLandscapeWidth = false) {
-		@media (min-width: (@mobileLandscapeWidth - @responsiveOffset)) {
+		@media (min-width: @mobileLandscapeWidth) {
 			html {
 				font-family: '"2"';
 			}
+
 			.wee-mobile-landscape();
 		}
 	}
+
 	.check () when not (@tabletPortraitWidth = false) {
-		@media (min-width: (@tabletPortraitWidth - @responsiveOffset)) {
+		@media (min-width: @tabletPortraitWidth) {
 			html {
 				font-family: '"3"';
 			}
+
 			.wee-tablet-portrait();
 		}
 	}
+
 	.check () when not (@desktopSmallWidth = false) {
-		@media (min-width: (@desktopSmallWidth - @responsiveOffset)) {
+		@media (min-width: @desktopSmallWidth) {
 			html {
 				font-family: '"4"';
 			}
+
 			.wee-desktop-small();
 		}
 	}
+
 	.check () when not (@desktopMediumWidth = false) {
-		@media (min-width: (@desktopMediumWidth - @responsiveOffset)) {
+		@media (min-width: @desktopMediumWidth) {
 			html {
 				font-family: '"5"';
 			}
 			.wee-desktop-medium();
 		}
 	}
+
 	.check () when not (@desktopLargeWidth = false) {
-		@media (min-width: (@desktopLargeWidth - @responsiveOffset)) {
+		@media (min-width: @desktopLargeWidth) {
 			html {
 				font-family: '"6"';
 			}
+
 			.wee-desktop-large();
 		}
 	}
+
 	.check();
 }
 
