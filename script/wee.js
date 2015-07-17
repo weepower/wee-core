@@ -10,6 +10,7 @@
 	var web = typeof window != 'undefined',
 		W = (function() {
 			var store = {},
+				observe = {},
 				D = web ? document : {},
 
 				/**
@@ -32,6 +33,19 @@
 					}
 
 					return [store[key], segs[1]];
+				},
+
+				/**
+				 * Execute any matching observed callbacks
+				 */
+				fire = function(key) {
+					var val = observe[key];
+
+					if (val) {
+						W.$exec(val, {
+							args: W.$get(key)
+						});
+					}
 				},
 
 				/**
@@ -305,6 +319,8 @@
 
 					split[0][split[1]] = set;
 
+					fire(key);
+
 					return set;
 				},
 
@@ -345,6 +361,27 @@
 					}
 
 					return this !== W ? this : store;
+				},
+
+				/**
+				 * Attach callback to data storage change
+				 *
+				 * @param {string} key
+				 * @param {function} fn
+				 */
+				$observe: function(key, fn) {
+					observe[key] = observe[key] || [];
+
+					observe[key].push(fn);
+				},
+
+				/**
+				 * Remove callback from data storage change
+				 *
+				 * @param {string} key
+				 */
+				$unobserve: function(key) {
+					delete observe[key];
 				},
 
 				/**
@@ -622,6 +659,8 @@
 							root[key] = root[key].concat(a) :
 							root[key].push(a);
 					}
+
+					fire(key);
 
 					return root[key];
 				},
