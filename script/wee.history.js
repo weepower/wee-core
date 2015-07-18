@@ -11,16 +11,22 @@
 		 * @param {($|HTMLElement|string)} [opt.bind]
 		 */
 		init: function(opt) {
-			if (! this.conf && H && H.pushState) {
+			if (! this.data && H && H.pushState) {
 				var loc = W._win.location,
 					path = loc.pathname,
 					settings = W.$extend({
 						data: {},
+						partials: 'title,main',
 						push: true,
 						run: true
 					}, opt);
 
 				this.settings = settings;
+				this.data = settings.data;
+
+				delete settings.data;
+
+				this.root = this.data.root;
 
 				// Set current state
 				H.replaceState(0, 0, path);
@@ -28,7 +34,9 @@
 				// Listen for browser navigation
 				W.events.on(W._win, 'popstate', function(e) {
 					var path = loc.pathname,
-						conf = this.$get('entries')[path.replace(/^\//g, '')];
+						conf = this.$get('entries')[
+							path.replace(/^\//g, '')
+						];
 
 					this.go(Wee.$extend(
 						conf || {},
@@ -42,9 +50,7 @@
 				});
 
 				// Bind PJAX actions
-				if (settings.bind) {
-					this.bind(settings.bind);
-				}
+				this.bind(settings.bind);
 			}
 		},
 
@@ -103,14 +109,21 @@
 		 * @param {($|HTMLElement|string)} [scrollTop]
 		 */
 		go: function(opt) {
-			var scope = this,
-				global = scope.settings,
+			var scope = this;
+
+			if (! scope.data) {
+				scope.init();
+			}
+
+			var global = scope.settings,
+				globalData = scope.data,
 				conf = W.$extend(
 					global,
 					opt
 				),
-				data = conf.data,
-				globalData = global.data;
+				data = conf.data || {};
+
+			data.root = data.root || scope.root;
 
 			data.url = data.url !== U ?
 				data.url :
@@ -123,9 +136,7 @@
 					errorEvents = [],
 					completeEvents = [],
 					partials = conf.partials,
-					targets = partials ?
-						W.$(partials) :
-						W._body;
+					targets = W.$(partials);
 
 				// Set Pjax header
 				data.headers = data.headers || {};
@@ -145,10 +156,16 @@
 				// Compile success events
 				successEvents.push(function(html) {
 					if (partials) {
-						html = W.$parseHTML('<div>' + html + '</div>');
+						html = W.$parseHTML(
+							'<i>' + html + '</i>'
+						);
 
 						// Make partial replacements from response
 						W.$each(partials.split(','), function(sel) {
+							if (sel == 'body') {
+								sel = '.wbody';
+							}
+
 							W.$each(sel, function(el) {
 								var target = $(sel)[0];
 
@@ -176,8 +193,6 @@
 				}
 
 				successEvents.push(function() {
-					scope.$private.process(conf);
-
 					// Scroll vertically to target
 					if (conf.scrollTop !== U) {
 						W._body.scrollTop = typeof conf.scrollTop == 'number' ?
@@ -208,6 +223,12 @@
 				if (globalData.complete) {
 					completeEvents.push(globalData.complete);
 				}
+
+				completeEvents.push(function(xhr) {
+					if (xhr.status == 200) {
+						scope.$private.process(conf);
+					}
+				});
 
 				data.complete = completeEvents;
 
