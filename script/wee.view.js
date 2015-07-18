@@ -46,38 +46,36 @@
 		}
 	}, {
 		/**
-		 * Set default regex and filters
-		 *
-		 * @constructor
-		 * @private
+		 * Set matching patterns
 		 */
-		_construct: function() {
-			// Set tag regex
-			this.tags = /{{([#\/])([^#{\|\n]+)(\|[^{\n]+)?}}/g;
-			this.partial = /{{> (.+?)}}/g;
-			this.pair = /{{#(.+?)(?:|\|([^}]*))}}([\s\S]*?){{\/\1}}/g;
-			this.single = /{{(.+?)}}/g;
-			this.ext = /(.[^\(]+)(?:\((.*)\))?/;
+		tags: /{{([#\/])([^#{\|\n]+)(\|[^{\n]+)?}}/g,
+		partial: /{{> (.+?)}}/g,
+		pair: /{{#(.+?)(?:|\|([^}]*))}}([\s\S]*?){{\/\1}}/g,
+		single: /{{(.+?)}}/g,
+		ext: /(.[^\(]+)(?:\((.*)\))?/,
 
-			// Create extension objects
-			this.helpers = {};
-			this.partials = {};
+		/**
+		 * Create extension objects
+		 */
+		helpers: {},
+		partials: {},
 
-			// Add default filters
-			this.filters = {
-				is: function(val) {
-					return this.val == val;
-				},
-				not: function(val) {
-					return this.val != val;
-				},
-				isEmpty: function() {
-					return this.empty;
-				},
-				notEmpty: function() {
-					return ! this.empty;
-				}
-			};
+		/**
+		 * Add default filters
+		 */
+		filters: {
+			is: function(val) {
+				return this.val == val;
+			},
+			not: function(val) {
+				return this.val != val;
+			},
+			isEmpty: function() {
+				return this.empty;
+			},
+			notEmpty: function() {
+				return ! this.empty;
+			}
 		},
 
 		/**
