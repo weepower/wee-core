@@ -1,20 +1,30 @@
-/* global config, fs, module, project, require */
+/* global config, fs, module, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('cleanup', function() {
+		var remFiles = function(dir) {
+			fs.readdirSync(dir).forEach(function(file) {
+				var loc = dir + file;
+
+				if (file.charAt(0) !== '.' && fs.lstatSync(loc).isFile()) {
+					fs.unlinkSync(loc);
+				}
+			});
+		}
+
 		// Remove temporary files
-		fs.emptyDirSync(config.paths.temp);
+		remFiles(config.paths.temp);
 
 		// Remove compiled assets
-		fs.emptyDirSync(config.paths.css);
-		fs.emptyDirSync(config.paths.js);
+		remFiles(config.paths.css);
+		remFiles(config.paths.js);
 
 		if (project.script.sourceMaps === true) {
 			// Create source map directory if needed
-			fs.ensureDirSync(config.paths.maps);
+			fs.ensureDir(config.paths.maps);
 
 			// Remove source maps
-			fs.emptyDirSync(config.paths.maps);
+			remFiles(config.paths.maps);
 		}
 	});
 };
