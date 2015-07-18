@@ -1,6 +1,6 @@
 /* jshint maxdepth: 5 */
 
-(function(W, U, L) {
+(function(W, U) {
 	'use strict';
 
 	W.fn.make('routes', {
@@ -39,13 +39,13 @@
 					return this.$set('uri', {
 						path: (path.charAt(0) == '/' ? '' : '/') + path,
 						query: query,
-						hash: a.hash.substring(1),
+						hash: a.hash.slice(1),
 						history: false
 					});
 				}
 			} else {
 				return this.$get('uri', function() {
-					return W.routes.uri(L.href);
+					return W.routes.uri(W._win.location.href);
 				}, true);
 			}
 		},
@@ -107,6 +107,16 @@
 		},
 
 		/**
+		 * Add conditional route handler
+		 *
+		 * @param {string} name
+		 * @param {function} fn
+		 */
+		addFilter: function(name, fn) {
+			this.$private.extend(name, fn);
+		},
+
+		/**
 		 * Process stored routes
 		 *
 		 * @param {object} [conf]
@@ -138,6 +148,51 @@
 		}
 	}, {
 		/**
+		 * Add default filters
+		 */
+		filters: {
+			any: function(seg, child) {
+				if (W.$isObject(child)) {
+					return true;
+				} else {
+					W.routes.$push('any', child);
+				}
+			},
+			'any:fire': function() {
+				return true;
+			},
+			root: function(seg, child, depth) {
+				if (! seg) {
+					W.$exec(child, {
+						args: W.routes.segments(depth - 2)
+					});
+				}
+			},
+			num: function(seg) {
+				if (! isNaN(seg) && seg.trim() !== '') {
+					return true;
+				}
+			}
+		},
+
+		/**
+		 * Extend routing engine
+		 *
+		 * @param {(object|string)} a
+		 * @param {function} b
+		 */
+		extend: function(a, b) {
+			var obj = a;
+
+			if (typeof a == 'string') {
+				obj = [];
+				obj[a] = b;
+			}
+
+			W.$extend(this.filters, obj);
+		},
+
+		/**
 		 * Recursively process routes
 		 *
 		 * @private
@@ -164,38 +219,21 @@
 
 					if (opt == seg) {
 						match = true;
-					} else if (opt.substring(0, 1) == '$') {
+					} else if (opt.charAt(0) == '$') {
+						opt = opt.slice(1);
+
 						// If the second character is / then test regex
-						if (opt.substring(1, 2) == '/') {
-							if (new RegExp(opt.substring(2).slice(0, -1)).test(seg)) {
-								match = 1;
+						if (opt.charAt(0) == '/') {
+							if (new RegExp(opt).test(seg)) {
+								match = true;
 							}
 						} else {
-							switch (opt) {
-								case '$any':
-									W.$isObject(child) ?
-										match = true :
-										this.$push('any', child);
-									break;
-								case '$any:fire':
-									match = true;
-									break;
-								case '$root':
-									if (! seg) {
-										W.$exec(child, {
-											args: this.$public.segments(i - 2)
-										});
-									}
-									break;
-								case '$num':
-									if (! isNaN(seg) && seg.trim() !== '') {
-										match = true;
-									}
-									break;
-								default:
-									if (seg && seg.trim() !== '') {
-										match = true;
-									}
+							var filter = this.filters[opt];
+
+							if (filter) {
+								match = filter(seg, child, i);
+							} else if (seg && seg.trim() !== '') {
+								match = true;
 							}
 						}
 					}
@@ -214,4 +252,4 @@
 			}
 		}
 	});
-})(Wee, undefined, Wee._win.location);
+})(Wee, undefined);
