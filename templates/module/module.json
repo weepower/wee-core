@@ -1,0 +1,24 @@
+{
+	"name": "{{name}}",
+	"version": "1.0.0",
+	"description": "{{description}}",
+	"homepage": "{{website}}",
+	"author": "{{author}}",
+	"autoload": {{autoload}},
+	"data": {
+
+	},
+	"style": {
+		"build": [
+
+		]
+	},
+	"script": {
+		"build": [
+
+		]
+	},
+	"dependencies": {
+		"wee": "^2.3.0"
+	}
+}

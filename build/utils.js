@@ -94,7 +94,7 @@ Wee.fn.extend({
 	},
 	notify: function(data, type) {
 		var notifier = require('node-notifier'),
-			iconPath = '../build/img/';
+			iconPath = 'node_modules/wee-core/build/img/';
 		type = type || 'notice';
 
 		if (type == 'error') {
