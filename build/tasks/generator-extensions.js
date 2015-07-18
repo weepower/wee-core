@@ -1,4 +1,4 @@
-/* global __dirname, module, path, project, require */
+/* global __dirname, module, path, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('loadExtensions', function(task) {

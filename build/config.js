@@ -1,4 +1,4 @@
-/* global config, JSCS, jshint, global, path, module, project, reloadPaths, require */
+/* global config, JSCS, jshint, global, path, module, project, reloadPaths */
 
 // -------------------------------------
 // Load Dependencies

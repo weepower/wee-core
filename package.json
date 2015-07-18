@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "3.0.0",
+	"version": "1.0.0-alpha",
 	"description": "Blueprint for modern web development",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",

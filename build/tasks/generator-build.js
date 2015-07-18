@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 				);
 
 				Wee.$toArray(block.target).forEach(function(target) {
-					target = path.join(staticRoot, target);
+					target = path.join(staticRoot, siteConfig.paths.target || '', target);
 
 					// Target writing function
 					var writeTarget = function(target, data) {

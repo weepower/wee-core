@@ -1,4 +1,4 @@
-/* global module, project, require */
+/* global module, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('configGenerator', function() {
