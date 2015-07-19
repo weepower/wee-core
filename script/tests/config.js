@@ -1,5 +1,3 @@
-// Documentation available at https://theintern.github.io/intern/#common-config
-
 define({
 	proxyPort: 9010,
 	proxyUrl: 'http://localhost:9010/',
@@ -9,8 +7,8 @@ define({
 		packages: [
 			{
 				name: 'Wee',
-				location: 'public/assets/js',
-				main: 'script.min.js'
+				location: 'script',
+				main: 'wee.js'
 			}
 		]
 	},
@@ -18,7 +16,15 @@ define({
 
 	],
 	suites: [
-		'tests/unit/wee'
+		'script/tests/unit/wee',
+		'script/tests/unit/wee.assets',
+		'script/tests/unit/wee.chain',
+		'script/tests/unit/wee.data',
+		'script/tests/unit/wee.dom',
+		'script/tests/unit/wee.events',
+		'script/tests/unit/wee.routes',
+		'script/tests/unit/wee.screen',
+		'script/tests/unit/wee.view'
 	],
 	environments: [
 		{
