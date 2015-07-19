@@ -17,7 +17,7 @@
 	"bugs": {
 		"url": "https://github.com/weepower/wee-core/issues"
 	},
-	"devDependencies": {
+	"dependencies": {
 		"browser-sync": "~2.7.13",
 		"fs-extra": "~0.21.0",
 		"html-minifier": "~0.7.2",
