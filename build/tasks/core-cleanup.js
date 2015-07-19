@@ -12,6 +12,9 @@ module.exports = function(grunt) {
 			});
 		}
 
+		// Ensure the temp directory exists
+		fs.emptyDirSync(config.paths.temp);
+
 		// Remove temporary files
 		remFiles(config.paths.temp);
 
