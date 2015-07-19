@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 
 		if (project.script.sourceMaps === true) {
 			// Create source map directory if needed
-			fs.ensureDir(config.paths.maps);
+			fs.ensureDirSync(config.paths.maps);
 
 			// Remove source maps
 			remFiles(config.paths.maps);
