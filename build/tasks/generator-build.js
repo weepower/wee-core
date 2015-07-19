@@ -260,17 +260,17 @@ module.exports = function(grunt) {
 						}
 
 						// Loop through segment values
-						values.forEach(function(value, i) {
+						values.forEach(function(value, x) {
 							// Calculate ending index
 							var name = value.name,
-								end = (i + 1) < values.length ?
-									values[i + 1].start :
+								end = (x + 1) < values.length ?
+									values[x + 1].start :
 									last,
 								helpers = value.helpers,
 								content = obj.original.substr(value.end, end - value.end).trim();
 
 							// Process primary content block
-							if (i === 0 && value.start > 0) {
+							if (x === 0 && value.start > 0) {
 								obj.input = obj.original.substr(0, value.start);
 
 								obj.blocks.push({

@@ -241,7 +241,8 @@
 										'##': i + 1
 									}, W.$isObject(el) ?
 										el :
-										(isObj ? val : {}));
+										(isObj ? val : {})
+									);
 
 								resp += scope.parse(inner, item, data, init, i);
 
@@ -354,7 +355,7 @@
 							data = data(orig, init, x);
 						}
 
-						if (data) {
+						if (data || data === 0) {
 							return data;
 						}
 
