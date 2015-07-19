@@ -134,19 +134,28 @@
 				this.$private.process(conf.routes, 0, this.$set('segs', this.segments()).length);
 
 				// Execute queued init functions on last iteration
-				var any = this.$get('any');
+				var any = this.$private.any;
 
 				if (any) {
 					for (var i = 0; i < any.length; i++) {
-						W.$exec(any[i]);
+						var rule = any[i];
+
+						W.$exec(rule[0], {
+							args: rule[1]
+						});
 					}
 
 					// Clear array for next iteration
-					this.$set('any', []);
+					any = [];
 				}
 			}
 		}
 	}, {
+		/**
+		 * Any route matching storage
+		 */
+		any: [],
+
 		/**
 		 * Add default filters
 		 */
@@ -155,11 +164,13 @@
 				if (W.$isObject(child)) {
 					return true;
 				} else {
-					W.routes.$push('any', child);
+					W.routes.$private.any.push([child, seg]);
 				}
 			},
-			'any:fire': function() {
-				return true;
+			'any:fire': function(seg, child) {
+				W.$exec(child, {
+					args: [seg]
+				});
 			},
 			root: function(seg, child, depth) {
 				if (! seg) {
@@ -224,7 +235,9 @@
 
 						// If the second character is / then test regex
 						if (opt.charAt(0) == '/') {
-							if (new RegExp(opt).test(seg)) {
+							var split = opt.split('/');
+
+							if (new RegExp(split[1], split[2]).test(seg)) {
 								match = true;
 							}
 						} else {
