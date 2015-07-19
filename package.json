@@ -21,13 +21,15 @@
 		"browser-sync": "~2.7.13",
 		"fs-extra": "~0.21.0",
 		"html-minifier": "~0.7.2",
-		"intern": "^2.2.2",
 		"js-yaml": "~3.3.1",
 		"jscs": "~1.13.1",
 		"jshint": "~2.8.0",
 		"less-plugin-clean-css": "~1.5.0",
 		"node-notifier": "~4.2.3",
 		"remarkable": "~1.6.0"
+	},
+	"devDependencies": {
+		"intern": "~2.2.2"
 	},
 	"scripts": {
 		"test": "node node_modules/.bin/intern-runner config=script/tests/config"
