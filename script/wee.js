@@ -37,6 +37,8 @@
 
 				/**
 				 * Execute any matching observed callbacks
+				 *
+				 * @param {string} key
 				 */
 				fire = function(key) {
 					var val = observe[key];
@@ -133,7 +135,11 @@
 								Private = W.$extend(Private, data);
 							}
 
-							// Interface $public and $private methods
+							// Clone public and private objects
+							Public = W.$extend({}, Public);
+							Private = W.$extend({}, Private);
+
+							// Interface $public and $private
 							Public.$private = Private;
 							Private.$public = Public;
 
@@ -151,7 +157,7 @@
 								Public._construct();
 							}
 
-							return W.$extend({}, Public);
+							return Public;
 						};
 
 						W[name] = new W.fn[name]();
@@ -725,8 +731,10 @@
 
 				/**
 				 * Add metadata variables to datastore
+				 *
+				 * @param {(HTMLElement|string)} [context=document]
 				 */
-				$setVars: function() {
+				$setVars: function(context) {
 					W.$each('[data-set]', function(el) {
 						var key = el.getAttribute('data-set'),
 							val = el.getAttribute('data-value'),
@@ -770,6 +778,8 @@
 						} else {
 							W.$push(obj, key, val);
 						}
+					}, {
+						context: context
 					});
 				},
 
