@@ -1,7 +1,7 @@
 Wee.fn.extend({
 	// Build root or relative path
 	buildPath: function(loc, file) {
-		return file.substring(0, 2) == './' ?
+		return file.substring(0, 2) === './' ?
 			file :
 			path.join(loc, file);
 	},
@@ -16,9 +16,9 @@ Wee.fn.extend({
 	validate: function(config, grunt, filepath) {
 		var ext = path.extname(filepath);
 
-		if (filepath.indexOf('temp') == -1 &&
-			filepath.indexOf('/vendor') == -1) {
-			if (ext == '.js') {
+		if (filepath.indexOf('temp') === -1 &&
+			filepath.indexOf('/vendor') === -1) {
+			if (ext === '.js') {
 				var js = grunt.file.read(filepath),
 					errors = [],
 					total = 0;
@@ -97,7 +97,7 @@ Wee.fn.extend({
 			iconPath = 'node_modules/wee-core/build/img/';
 		type = type || 'notice';
 
-		if (type == 'error') {
+		if (type === 'error') {
 			console.error(data.message);
 			data.icon = iconPath + 'error.png';
 		} else {

@@ -2,30 +2,32 @@
 	'use strict';
 
 	W.fn.make('animate', {
-		_construct: function() {
-			this.easing = {
-				linear: function(val, target, rem) {
-					return val;
-				},
-				swing: function(val, target, rem) {
+		/**
+		 * Define default easing functions
+		 */
+		easing: {
+			linear: function(val, target, rem) {
+				return val;
+			},
+			swing: function(val, target, rem) {
 
-				}
 			}
 		},
 
 		/**
+		 * Transition to a specified attribute or property value
 		 *
 		 * @param target
-		 * @param props
-		 * @param opt
+		 * @param {object} props
+		 * @param {object} options
 		 */
-		tween: function(target, props, opt) {
+		tween: function(target, props, options) {
 			var scope = this,
 				conf = W.$extend({
 					complete: false,
 					duration: 400,
 					easing: 'swing'
-				}, opt);
+				}, options);
 
 			W.$each(target, function(el) {
 				for (var prop in props) {
@@ -49,6 +51,7 @@
 		}
 	}, {
 		/**
+		 * Iterate an attribute or property value based on a given easing
 		 *
 		 * @param el
 		 * @param css

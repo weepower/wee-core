@@ -5,9 +5,9 @@ module.exports = function(grunt) {
 		var scripts = grunt.file.expand({
 				cwd: config.paths.js,
 				filter: function(src) {
-					return src.indexOf('/polyfill') == -1 &&
-						src.indexOf('.min.js') == -1 &&
-						src.indexOf('/vendor') == -1;
+					return src.indexOf('/polyfill') === -1 &&
+						src.indexOf('.min.js') === -1 &&
+						src.indexOf('/vendor') === -1;
 				}
 			}, '**/*.js');
 

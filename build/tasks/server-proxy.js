@@ -16,10 +16,10 @@ module.exports = function(grunt) {
 			var inject = [];
 
 			project.server.inject.forEach(function(file) {
-				if (file.slice(-3) == '.js') {
+				if (file.slice(-3) === '.js') {
 					inject.push('<script src="' + file + '"></script>');
 					Wee.serverWatch(file);
-				} else if (file.slice(-4) == '.css') {
+				} else if (file.slice(-4) === '.css') {
 					inject.push('<link rel="stylesheet" href="' + file + '">');
 					Wee.serverWatch(file);
 				}

@@ -5,12 +5,12 @@
 		/**
 		 * Set the initial state and popstate event, and bind global actions
 		 *
-		 * @param {object} [opt]
-		 * @param {boolean] [opt.push=true]
-		 * @param {boolean} [opt.run=true]
-		 * @param {($|HTMLElement|string)} [opt.bind]
+		 * @param {object} [options]
+		 * @param {boolean] [options.push=true]
+		 * @param {boolean} [options.run=true]
+		 * @param {($|HTMLElement|string)} [options.bind]
 		 */
-		init: function(opt) {
+		init: function(options) {
 			if (! this.data && H && H.pushState) {
 				var loc = W._win.location,
 					path = loc.pathname,
@@ -19,7 +19,7 @@
 						partials: 'title,main',
 						push: true,
 						run: true
-					}, opt);
+					}, options);
 
 				this.settings = settings;
 				this.data = settings.data;
@@ -100,15 +100,15 @@
 		/**
 		 * Navigate to a new path or within the browser history
 		 *
-		 * @param {object} opt
-		 * @param {string} [opt.path=current path]
-		 * @param {boolean} [opt.push=true]
-		 * @param {boolean} [opt.run=true]
-		 * @param {string} [opt.title='']
-		 * @param {object} [opt.data]
+		 * @param {object} options
+		 * @param {string} [options.path=current path]
+		 * @param {boolean} [options.push=true]
+		 * @param {boolean} [options.run=true]
+		 * @param {string} [options.title='']
+		 * @param {object} [options.data]
 		 * @param {($|HTMLElement|string)} [scrollTop]
 		 */
-		go: function(opt) {
+		go: function(options) {
 			var scope = this;
 
 			if (! scope.data) {
@@ -118,8 +118,9 @@
 			var global = scope.settings,
 				globalData = scope.data,
 				conf = W.$extend(
+					{},
 					global,
-					opt
+					options
 				),
 				data = conf.data || {};
 

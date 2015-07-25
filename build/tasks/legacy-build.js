@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 			legacy.build.forEach(function(name) {
 				var filePath = '@{sourcePath}' + '/' + name.replace(config.paths.source, '');
 
-				if (path.extname(filePath) == '.css') {
+				if (path.extname(filePath) === '.css') {
 					imports.push('@import (inline) "' + filePath + '";');
 				} else {
 					imports.push('@import "' + filePath + '";');

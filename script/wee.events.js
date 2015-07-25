@@ -153,15 +153,15 @@
 		 *
 		 * @param {Array} els
 		 * @param {object} obj
-		 * @param {object} c
+		 * @param {object} options
 		 */
-		bind: function(els, obj, opt) {
+		bind: function(els, obj, options) {
 			var scope = this;
 
 			// Redefine variables when delegating
-			if (opt && opt.delegate) {
-				opt.targ = els;
-				els = opt.delegate;
+			if (options && options.delegate) {
+				options.targ = els;
+				els = options.delegate;
 			}
 
 			// For each element attach events
@@ -176,7 +176,7 @@
 								args: [],
 								once: false,
 								scope: el
-							}, opt),
+							}, options),
 							fn = obj[key],
 							evt = evts[i],
 							ev = evt,

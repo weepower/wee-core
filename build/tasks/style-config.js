@@ -125,7 +125,7 @@ module.exports = function(grunt) {
 			for (var key in configVars) {
 				var value = configVars[key];
 
-				if (typeof value == 'string') {
+				if (typeof value === 'string') {
 					config.style.vars[key] = value;
 				}
 			}

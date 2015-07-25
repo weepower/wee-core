@@ -117,7 +117,7 @@ module.exports = function(grunt) {
 
 						var done;
 
-						if (grunt.cli.tasks[0] == 'generate') {
+						if (grunt.cli.tasks[0] === 'generate') {
 							done = scope.async();
 						}
 
@@ -132,7 +132,7 @@ module.exports = function(grunt) {
 								errors++;
 							}
 
-							if (grunt.cli.tasks[0] == 'generate') {
+							if (grunt.cli.tasks[0] === 'generate') {
 								done();
 							}
 						});
@@ -201,7 +201,7 @@ module.exports = function(grunt) {
 							};
 
 						// Check for front matter
-						if (template.substring(0, 3) == '---') {
+						if (template.substring(0, 3) === '---') {
 							var results = /^(---(?:\n|\r)([\w\W]+?)---)?([\w\W]*)*/.exec(template);
 
 							// Merge YAML into the data
@@ -374,7 +374,7 @@ module.exports = function(grunt) {
 							});
 						}
 
-						if (block.sort == 'desc') {
+						if (block.sort === 'desc') {
 							data.content.reverse();
 						}
 
@@ -409,7 +409,7 @@ module.exports = function(grunt) {
 
 				if (block.content) {
 					Wee.$toArray(block.content).forEach(function(value, i) {
-						if (value.substring(0, 4) == 'http') {
+						if (value.substring(0, 4) === 'http') {
 							var filename = '/remote-' + remoteIndex + '.html',
 								absolutePath = tempPath + filename,
 								relativePath = './' + path.relative(
@@ -424,7 +424,7 @@ module.exports = function(grunt) {
 							remoteIndex++;
 
 							// Inject temp path into content value
-							if (typeof block.content == 'string') {
+							if (typeof block.content === 'string') {
 								block.content = relativePath;
 							} else {
 								block.content[i] = path.resolve(configPath, relativePath);
@@ -451,7 +451,7 @@ module.exports = function(grunt) {
 			var cacheRemote = function(i) {
 				var arr = remoteUrls[i],
 					url = arr[0],
-					http = url.substring(4, 5) == 's' ?
+					http = url.substring(4, 5) === 's' ?
 						require('https') :
 						require('http'),
 					tempFile = fs.createWriteStream(arr[1]);

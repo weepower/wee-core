@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 					fs.unlinkSync(loc);
 				}
 			});
-		}
+		};
 
 		// Ensure the temp directory exists
 		fs.emptyDirSync(config.paths.temp);
