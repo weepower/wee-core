@@ -2,8 +2,6 @@
 // Licensed under Apache 2 (http://www.apache.org/licenses/LICENSE-2.0)
 // DO NOT MODIFY
 
-/* global define */
-
 (function(N, U) {
 	'use strict';
 
@@ -59,6 +57,30 @@
 				 */
 				contains = function(source, target) {
 					return (source === D ? W._html : source).contains(target);
+				},
+
+				/**
+				 * Extend target object with source object(s)
+				 *
+				 * @param {object} target
+				 * @param {object} source
+				 * @param {boolean} deep
+				 * @returns object
+				 */
+				extend = function(target, object, deep) {
+					if (object) {
+						for (var key in object) {
+							var src = object[key];
+
+							if (deep === true && (W.$isObject(src) || Array.isArray(src))) {
+								target[key] = extend(target[key], src, deep);
+							} else if (src !== U) {
+								target[key] = src;
+							}
+						}
+					}
+
+					return target;
 				};
 
 			return {
@@ -69,6 +91,40 @@
 				_slice: [].slice,
 				_win: N,
 				_$: N.WeeAlias || '$',
+				app: {
+					/**
+					 * Create an application
+					 *
+					 * @param {string} name
+					 * @param {object} options
+					 */
+					make: function(name, options) {
+						var conf = extend({
+								model: {},
+								view: ''
+							}, options),
+							$target = $(conf.view);
+
+						conf.view = $target.html();
+
+						var fn = function(data) {
+							var rendered = W.view.render(conf.view, data);
+
+							$target.html(rendered);
+						};
+
+						W.$set(name, conf.model);
+
+						W.$observe(name, fn);
+
+						// Execute constructor
+						if (options._construct !== U) {
+							options._construct();
+						}
+
+						fn(conf.model);
+					}
+				},
 				fn: {
 					/**
 					 * Create a namespaced controller
@@ -106,12 +162,30 @@
 									},
 
 									/**
+									 * Unset value from controller storage
+									 *
+									 * @returns {*}
+									 */
+									$unset: function() {
+										return W.$unset.apply(this.store, arguments);
+									},
+
+									/**
 									 * Push value into controller storage
 									 *
 									 * @returns {Array}
 									 */
 									$push: function() {
 										return W.$push.apply(this.store, arguments);
+									},
+
+									/**
+									 * Pull value from controller storage
+									 *
+									 * @returns {Array}
+									 */
+									$pull: function() {
+										return W.$pull.apply(this.store, arguments);
 									},
 
 									/**
@@ -131,13 +205,13 @@
 								};
 
 								// Extend public and private objects with data
-								Public = W.$extend(Public, data);
-								Private = W.$extend(Private, data);
+								Public = extend(Public, data);
+								Private = extend(Private, data);
 							}
 
 							// Clone public and private objects
-							Public = W.$extend({}, Public);
-							Private = W.$extend({}, Private);
+							Public = extend({}, Public);
+							Private = extend({}, Private);
 
 							// Interface $public and $private
 							Public.$private = Private;
@@ -173,11 +247,11 @@
 					extend: function(a, b, c) {
 						if (W.$isObject(a)) {
 							// Merge into the global object
-							W.$extend(W, a);
+							extend(W, a);
 						} else if (W.hasOwnProperty(a)) {
 							// Merge the objects else create the controller
 							this.make('_tmp', b, c);
-							W.$extend(W[a], W._tmp);
+							extend(W[a], W._tmp);
 							delete W._tmp;
 						} else {
 							this.make(a, b, c);
@@ -249,20 +323,7 @@
 						// Use third-party selector engine if defined
 						if (N.WeeSelector !== U) {
 							el = N.WeeSelector(selector, context);
-						} else if (
-							selector.indexOf(' ') > 0 ||
-							selector.indexOf(',') > 0 ||
-							selector.indexOf(':') > -1 ||
-							selector.indexOf('[') > -1 ||
-							selector.indexOf('#') > -1 ||
-							selector.lastIndexOf('.') > 0
-						) {
-							try {
-								el = context.querySelectorAll(selector);
-							} catch (e) {
-								return W.$parseHTML(selector);
-							}
-						} else {
+						} else if (/^[#.]?[\w-]+$/.test(selector)) {
 							var pre = selector.charAt(0);
 
 							if (pre == '#') {
@@ -273,6 +334,12 @@
 									context.getElementsByClassName(selector.substr(1));
 							} else {
 								el = context.getElementsByTagName(selector);
+							}
+						} else {
+							try {
+								el = context.querySelectorAll(selector);
+							} catch (e) {
+								return W.$parseHTML(selector);
 							}
 						}
 					}
@@ -328,6 +395,19 @@
 					fire(key);
 
 					return set;
+				},
+
+				/**
+				 * Unset global variable
+				 *
+				 * @param {string} key
+				 */
+				$unset: function(key) {
+					var split = storeData(key, this);
+
+					delete split[0][split[1]];
+
+					fire(key);
 				},
 
 				/**
@@ -403,7 +483,7 @@
 				 */
 				$each: function(target, fn, options) {
 					if (target) {
-						var conf = W.$extend({
+						var conf = extend({
 								args: []
 							}, options),
 							els = W._selArray(target, conf),
@@ -481,7 +561,7 @@
 				$exec: function(fn, options) {
 					options = options || {};
 
-					var conf = W.$extend({
+					var conf = extend({
 							args: []
 						}, options),
 						fns = W.$toArray(fn),
@@ -493,14 +573,17 @@
 
 						if (typeof fn == 'string') {
 							var segs = fn.split(':');
-							fn = W[segs[0]][
-								segs.length > 1 ?
-									segs[1] :
-									'init'
-							];
 
-							if (! options.scope) {
-								conf.scope = W[segs[0]];
+							if (W[segs[0]]) {
+								fn = W[segs[0]][
+									segs.length > 1 ?
+										segs[1] :
+										'init'
+									];
+
+								if (!options.scope) {
+									conf.scope = W[segs[0]];
+								}
 							}
 						}
 
@@ -518,27 +601,22 @@
 				},
 
 				/**
-				 * Extend target object with source object
+				 * Extend target object with source object(s)
 				 *
-				 * @param {object} target
-				 * @param {object} source
-				 * @param {boolean} [deep=false] - extend nested properties
-				 * @returns {object} merged
+				 * @param {(boolean|object)} - extend nested properties else target object
+				 * @param {object} - target object
+				 * @param {...object} - merged objects
+				 * @returns {object}
 				 */
-				$extend: function(target, source, deep) {
-					target = target || {};
+				$extend: function(deep) {
+					var bool = typeof deep == 'boolean',
+						args = W._slice.call(arguments).slice(bool ? 1 : 0),
+						target = args[0] || {};
+					deep = bool ? deep : false;
 
-					if (source) {
-						for (var key in source) {
-							var src = source[key];
-
-							if (deep && (W.$isObject(src) || W.$isArray(src))) {
-								target[key] = W.$extend(target[key], src, deep);
-							} else if (src !== U) {
-								target[key] = src;
-							}
-						}
-					}
+					args.slice(1).forEach(function(source) {
+						target = extend(target, source, deep);
+					});
 
 					return target;
 				},
@@ -598,7 +676,7 @@
 						target = W._selArray(target, options);
 					}
 
-					var conf = W.$extend({
+					var conf = extend({
 							args: []
 						}, options),
 						res = [],
@@ -669,6 +747,33 @@
 					fire(key);
 
 					return root[key];
+				},
+
+				/**
+				 * Pull value from global array
+				 *
+				 * @param {string} key
+				 * @param {*} a
+				 */
+				$pull: function(key, a) {
+					var split = storeData(key, this),
+						root = split[0];
+					key = split[1];
+
+					var obj = root[key];
+
+					if (obj) {
+						if (W.$isObject(obj)) {
+							delete root[key];
+							return;
+						}
+
+						var index = obj.indexOf(a);
+
+						if (index > -1) {
+							obj.splice(index, 1);
+						}
+					}
 				},
 
 				/**
@@ -774,7 +879,7 @@
 								}
 							}
 
-							W.$set(obj, W.$extend(Wee.$get(obj, {}), set, true));
+							W.$set(obj, extend(Wee.$get(obj, {}), set, true));
 						} else {
 							W.$push(obj, key, val);
 						}
@@ -812,8 +917,8 @@
 				 * @returns {Array} unique values
 				 */
 				$unique: function(array) {
-					return array.reverse().filter(function(e, i, array) {
-						return array.indexOf(e, i + 1) < 0;
+					return array.reverse().filter(function(el, i, array) {
+						return array.indexOf(el, i + 1) < 0;
 					}).reverse();
 				},
 
@@ -829,18 +934,18 @@
 				 * @param {*} value
 				 * @returns {boolean} is executable
 				 */
-				_canExec: function(value) {
-					if (typeof value == 'string' && value.indexOf(':') > -1) {
-						var split = value.split(':'),
-							fn = split[0],
+				_canExec: function(fn) {
+					if (typeof fn == 'string' && fn.indexOf(':') > -1) {
+						var split = fn.split(':'),
+							controller = W[split[0]],
 							method = split[1];
 
-						if (W[fn] && W[fn][method]) {
-							value = W[fn][method];
+						if (controller && controller[method]) {
+							fn = controller[method];
 						}
 					}
 
-					return W.$isFunction(value);
+					return W.$isFunction(fn);
 				},
 
 				/**
@@ -871,11 +976,13 @@
 				 * @param {(Array|function|string)} fn
 				 */
 				ready: function(fn) {
-					D.readyState == 'complete' ?
+					var state = D.readyState;
+
+					state == 'complete' ?
 						W.$exec(fn) :
 						W._legacy ?
 							D.attachEvent('onreadystatechange', function() {
-								if (D.readyState == 'complete') {
+								if (state == 'complete') {
 									W.$exec(fn);
 								}
 							}) :
