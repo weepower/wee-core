@@ -38,7 +38,7 @@
 		 * @param {(Array|string)} [options.css]
 		 * @param {(Array|string)} [options.img]
 		 * @param {(Array|function|string)} [options.success]
-		 * @param {(Array|function|string)} [options.failure]
+		 * @param {(Array|function|string)} [options.error]
 		 * @param {string} [options.group]
 		 * @param {boolean} [options.cache=false]
 		 */
@@ -152,7 +152,7 @@
 		 * @param {Array} [options.args]
 		 * @param {object} [options.scope]
 		 * @param {(Array|function|string)} [options.success]
-		 * @param {(Array|function|string)} [options.failure]
+		 * @param {(Array|function|string)} [options.error]
 		 * @param {boolean} [poll=false]
 		 * @returns {boolean} ready
 		 */
@@ -170,8 +170,8 @@
 					scope: conf.scope
 				};
 
-				if (conf.failure && this.$get(group + 'fail') > 0) {
-					W.$exec(conf.failure, options);
+				if (conf.error && this.$get(group + 'fail') > 0) {
+					W.$exec(conf.error, options);
 				} else if (conf.success) {
 					W.$exec(conf.success, options);
 				}
