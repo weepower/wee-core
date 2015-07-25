@@ -1167,7 +1167,7 @@
 
 .font-size (@value: @baseFontSize; ...) when not (@value = false) {
 	.check () when (isunit(@value, '')) {
-		@temp: unit(@value, @defaultUnit);
+		@temp: unit(@value, @defaultFontSizeUnit);
 	}
 	.check () when (default()) {
 		@temp: @value;
@@ -1304,7 +1304,7 @@
 
 .line-height (@value: @baseLineHeight) when not (@value = false) {
 	.check () when (isunit(@value, '')) {
-		@temp: unit(@value, @defaultUnit);
+		@temp: unit(@value, @defaultLineHeightUnit);
 	}
 	.check () when (default()) {
 		@temp: @value;
