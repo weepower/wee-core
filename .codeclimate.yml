@@ -2,7 +2,5 @@ languages:
   JavaScript: true
 exclude_paths:
 - "*.min.js"
-- "build/*"
-- "commands/*"
 - "templates/*"
 - "script/tests/*"
