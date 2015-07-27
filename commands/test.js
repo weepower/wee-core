@@ -1,6 +1,8 @@
 /* global __dirname */
 
 (function() {
+	'use strict';
+
 	var exec = require('child_process').exec;
 
 	exec(
