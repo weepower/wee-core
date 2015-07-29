@@ -49,7 +49,7 @@
 						source;
 
 				if (typeof aft == 'string') {
-					aft = W.$parseHTML(aft);
+					aft = W.$(aft);
 				}
 
 				if (aft) {
@@ -88,7 +88,7 @@
 						source;
 
 				if (typeof app == 'string') {
-					app = W.$parseHTML(app);
+					app = W.$(app);
 				}
 
 				if (app) {
@@ -151,7 +151,7 @@
 						source;
 
 				if (typeof bef == 'string') {
-					bef = W.$parseHTML(bef);
+					bef = W.$(bef);
 				}
 
 				if (bef) {
@@ -801,7 +801,7 @@
 						source;
 
 				if (typeof pre == 'string') {
-					pre = W.$parseHTML(pre);
+					pre = W.$(pre);
 				}
 
 				if (pre) {
