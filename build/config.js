@@ -6,11 +6,11 @@
 
 var LessCssClean = require('less-plugin-clean-css');
 
-global.browserSync = require('browser-sync');
-global.jshint = require('jshint').JSHINT;
-global.JSCS = require('jscs');
 global.fs = require('fs-extra');
 global.path = require('path');
+global.browserSync = require('browser-sync');
+global.JSCS = require('jscs');
+global.jshint = require('jshint').JSHINT;
 global.Wee = require('../script/wee').Wee;
 
 // Load build utilities
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 						'!**/*.min.css'
 					],
 					rename: function(dest, src) {
-						return Wee.getMinifiedExtension(dest, src, '.min.css');
+						return Wee.getMinExtension(dest, src, '.min.css');
 					}
 				}]
 			}
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
 						'!**/*.min.js'
 					],
 					rename: function(dest, src) {
-						return Wee.getMinifiedExtension(dest, src, '.min.js');
+						return Wee.getMinExtension(dest, src, '.min.js');
 					}
 				}]
 			}
@@ -113,8 +113,8 @@ module.exports = function(grunt) {
 				files: [
 					{
 						expand: true,
-						cwd: '<%= config.paths.assets %>',
-						dest: '<%= config.paths.assets %>',
+						cwd: '<%= config.paths.imgSource %>',
+						dest: '<%= config.paths.img %>',
 						src: [
 							'**/*.{gif,jpg,png,svg}'
 						]
@@ -225,15 +225,6 @@ module.exports = function(grunt) {
 		}
 	});
 
-	//// Watch for changes to validate
-	//if (project.script.validate.watch) {
-	//	grunt.event.on('watch', function(action, file) {
-	//		if (action !== 'deleted') {
-	//			Wee.validate(config, grunt, file);
-	//		}
-	//	});
-	//}
-
 	// -------------------------------------
 	// Load Plugins
 	// -------------------------------------
@@ -252,11 +243,12 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', [
 		'init',
 		'cleanup',
+		'setup',
 		'configStyle',
 		'configScript',
 		'configGenerator',
 		'buildStyle',
-		'configModules',
+		'buildModules',
 		'buildLegacy',
 		'uglify:core',
 		'uglify:lib',
