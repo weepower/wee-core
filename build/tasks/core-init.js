@@ -1,4 +1,4 @@
-/* global config, configPath, global, module, path */
+/* global config, configPath, global, path */
 
 module.exports = function(grunt) {
 	grunt.registerTask('init', function() {
@@ -20,17 +20,29 @@ module.exports = function(grunt) {
 			paths: {
 				source: sourcePath,
 				assets: assetPath,
+
 				cssSource: sourcePath + '/css/',
 				css: assetPath + 'css/',
+				cssMaps: assetPath + 'js/maps/',
+
 				jsSource: sourcePath + '/js/',
 				js: assetPath + 'js/',
+				jsMaps: assetPath + 'js/maps/',
+
+				fontsSource: sourcePath + '/fonts/',
+				fonts: assetPath + 'fonts/',
+
+				imgSource: sourcePath + '/img/',
+				img: assetPath + 'img/',
+
 				modulesSource: sourcePath + '/modules/',
 				modules: assetPath + 'modules/',
-				root: './' + rootPath,
-				maps: assetPath + 'js/maps/',
-				temp: tempPath,
+
 				wee: 'node_modules/wee-core/',
-				weeTemp: tempPath + 'wee.less'
+				weeTemp: tempPath + 'wee.less',
+
+				root: './' + rootPath,
+				temp: tempPath
 			},
 			script: {
 				files: []
@@ -44,6 +56,7 @@ module.exports = function(grunt) {
 			}
 		};
 
+		// Set Grunt configuration
 		grunt.config.set('config', config);
 	});
 };

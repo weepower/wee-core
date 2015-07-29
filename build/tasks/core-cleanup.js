@@ -1,33 +1,15 @@
-/* global config, fs, module, project */
+/* global config */
 
 module.exports = function(grunt) {
 	grunt.registerTask('cleanup', function() {
-		var remFiles = function(dir) {
-			fs.readdirSync(dir).forEach(function(file) {
-				var loc = dir + file;
-
-				if (file.charAt(0) !== '.' && fs.lstatSync(loc).isFile()) {
-					fs.unlinkSync(loc);
-				}
-			});
-		};
-
-		// Ensure the temp directory exists
+		// Remove temporary files
 		fs.emptyDirSync(config.paths.temp);
 
-		// Remove temporary files
-		remFiles(config.paths.temp);
-
-		// Remove compiled assets
-		remFiles(config.paths.css);
-		remFiles(config.paths.js);
-
-		if (project.script.sourceMaps === true) {
-			// Create source map directory if needed
-			fs.ensureDirSync(config.paths.maps);
-
-			// Remove source maps
-			remFiles(config.paths.maps);
-		}
+		// Remove all public assets
+		fs.removeSync(config.paths.css);
+		fs.removeSync(config.paths.js);
+		fs.removeSync(config.paths.fonts);
+		fs.removeSync(config.paths.img);
+		fs.removeSync(config.paths.modules);
 	});
 };

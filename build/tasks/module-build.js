@@ -1,7 +1,7 @@
-/* global config, fs, legacyConvert, module, moduleLegacy, path, project */
+/* global config, fs, legacyConvert, moduleLegacy, path, project */
 
 module.exports = function(grunt) {
-	grunt.registerTask('configModules', function() {
+	grunt.registerTask('buildModules', function() {
 		// Loop through module directories
 		var children = fs.readdirSync(config.paths.modulesSource);
 
@@ -22,6 +22,15 @@ module.exports = function(grunt) {
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = grunt.file.read(config.paths.wee + 'style/wee.module.less');
+
+					// Copy fonts and images as-is for later optimization
+					if (fs.existsSync(modulePath + '/fonts')) {
+						fs.copySync(modulePath + '/fonts', config.paths.modules + name + '/fonts');
+					}
+
+					if (fs.existsSync(modulePath + '/img')) {
+						fs.copySync(modulePath + '/img', config.paths.modules + name + '/img');
+					}
 
 					// Set module variables
 					vars.moduleName = name;
@@ -53,7 +62,7 @@ module.exports = function(grunt) {
 									files = [];
 
 								for (var sourcePath in sources) {
-									files.push(Wee.buildPath(config.paths.css, sources[sourcePath]));
+									files.push(Wee.buildPath(modulePath, sources[sourcePath]));
 								}
 
 								// Merge watch config
@@ -67,7 +76,7 @@ module.exports = function(grunt) {
 								// Create Less task
 								grunt.config.set('less.' + taskName, {
 									files: [{
-										dest: Wee.buildPath(modulePath, target),
+										dest: config.paths.modules + name + '/' + target + '.min.css',
 										src: files
 									}],
 									options: {
@@ -139,7 +148,7 @@ module.exports = function(grunt) {
 								// Create uglify task
 								grunt.config.set('uglify.' + taskName, {
 									files: [{
-										dest: Wee.buildPath(modulePath, target),
+										dest: config.paths.modules + name + '/' + target + '.min.js',
 										src: src
 									}]
 								});
@@ -231,7 +240,7 @@ module.exports = function(grunt) {
 					// Create module style compile task
 					var dest = (module.autoload === true) ?
 							config.paths.temp + name + '.css' :
-							config.paths.css + 'module.' + name + '.min.css',
+							config.paths.modules + name + '/style.min.css',
 						obj = {};
 
 					obj[name] = {
@@ -294,7 +303,7 @@ module.exports = function(grunt) {
 						// Create module style compile task
 						obj[name] = {
 							files: [{
-								dest: config.paths.js + 'module.' + name + '.min.js',
+								dest: config.paths.modules + name + '/script.min.js',
 								src: moduleScript
 							}]
 						};
@@ -320,7 +329,7 @@ module.exports = function(grunt) {
 						var taskName = name + '-legacy';
 						dest = module.autoload ?
 							config.paths.temp + taskName + '.css' :
-							config.paths.css + 'module.' + name + '.legacy.min.css';
+							config.paths.modules + name + '/legacy.min.css';
 
 						// Create legacy task
 						grunt.config.set('less.' + taskName, {

@@ -142,7 +142,7 @@ module.exports = function(grunt) {
 					.replace(/\\|\//g, '-')
 					.replace('.min.js', '');
 
-				return path.join(config.paths.maps, dest + '.js.map');
+				return path.join(config.paths.jsMaps, dest + '.js.map');
 			});
 		}
 	});
