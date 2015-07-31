@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 			});
 
 			server.middleware = function(req, res, next) {
-				if (req.headers && req.headers.accept.match(/^text\/html/)) {
+				if (req.headers && req.headers.accept && req.headers.accept.match(/^text\/html/)) {
 					var _write = res.write;
 
 					res.setHeader(
@@ -38,8 +38,8 @@ module.exports = function(grunt) {
 						_write.call(
 							res,
 							data.toString().replace(
-								'</head>',
-								inject.join('') + '</head>'
+								'</body>',
+								inject.join('') + '</body>'
 							)
 						);
 					};
