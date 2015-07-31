@@ -4,7 +4,25 @@ define(function(require) {
 		Wee = require('Wee');
 
 	registerSuite({
-		'{{name}}': function() {
+		name: '{{name}}',
+
+		setup: function() {
+			// Executes before suite starts
+		},
+
+		teardown: function() {
+			// Executes after suite ends
+		},
+
+		beforeEach: function() {
+			// Executes before each test
+		},
+
+		afterEach: function() {
+			// Executes after each test
+		},
+
+		'{{name}} Test': function() {
 			var string = 'string';
 
 			assert.equal(string, 'string',
