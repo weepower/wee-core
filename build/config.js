@@ -100,6 +100,7 @@ module.exports = function(grunt) {
 		},
 		imagemin: {
 			options: {
+				progressive: true,
 				svgoPlugins: [
 					{
 						removeViewBox: false
@@ -118,6 +119,14 @@ module.exports = function(grunt) {
 						src: [
 							'**/*.{gif,jpg,png,svg}'
 						]
+					},
+					{
+						expand: true,
+						cwd: '<%= config.paths.modulesSource %>',
+						dest: '<%= config.paths.modules %>',
+						src: [
+							'**/*.{gif,jpg,png,svg}'
+						]
 					}
 				]
 			}
@@ -126,9 +135,10 @@ module.exports = function(grunt) {
 			options: {
 				spawn: false
 			},
-			images: {
+			imgCore: {
 				files: [
-					'<%= config.paths.assets %>/**/*.{gif,jpg,png,svg}'
+					'<%= config.paths.imgSource %>/**/*.{gif,jpg,png,svg}',
+					'<%= config.paths.modulesSource %>/**/*.{gif,jpg,png,svg}'
 				],
 				tasks: [
 					'newer:imagemin',
@@ -160,7 +170,8 @@ module.exports = function(grunt) {
 				],
 				tasks: [
 					'less:core',
-					'concat:style'
+					'concat:style',
+					'notify:style'
 				]
 			},
 			styleLib: {
@@ -212,6 +223,15 @@ module.exports = function(grunt) {
 					'notify:style'
 				]
 			},
+			fontSync: {
+				files: [
+					'<%= config.paths.fontSource %>/**/*.{eot,svg,ttf,woff,woff2}'
+				],
+				tasks: [
+					'syncDirectory:fonts',
+					'notify:fonts'
+				]
+			},
 			project: {
 				files: [
 					'<%= config.path %>',
@@ -252,15 +272,16 @@ module.exports = function(grunt) {
 		'buildLegacy',
 		'uglify:core',
 		'uglify:lib',
-		'imagemin'
+		'imagemin',
+		'syncDirectory:fonts'
 	]);
 
 	// Build + Watch
 	grunt.registerTask('local', [
 		'default',
 		'proxy',
-		'checkUpdates',
 		'sync',
+		'checkUpdates',
 		'watch'
 	]);
 
@@ -268,8 +289,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('static', [
 		'default',
 		'server',
-		'checkUpdates',
 		'sync',
+		'checkUpdates',
 		'watch'
 	]);
 
