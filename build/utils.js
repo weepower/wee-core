@@ -13,7 +13,7 @@ Wee.fn.extend({
 
 		return dest + '/' + dir + filename + ext;
 	},
-	validate: function(config, grunt, filepath) {
+	validate: function(config, grunt, filepath, log) {
 		var ext = path.extname(filepath);
 
 		if (filepath.indexOf('temp') === -1 &&
@@ -51,7 +51,7 @@ Wee.fn.extend({
 						this.notify({
 							title: 'JSHint Validation Error',
 							message: 'Check console for error details'
-						}, 'error');
+						}, 'error', log);
 					}
 				}
 
@@ -83,7 +83,7 @@ Wee.fn.extend({
 						this.notify({
 							title: 'JSCS Validation Error',
 							message: 'Check console for error details'
-						}, 'error');
+						}, 'error', log);
 					}
 				}
 			}
@@ -92,17 +92,14 @@ Wee.fn.extend({
 	logError: function(grunt, pos, msg, details) {
 		grunt.log.writeln('['.cyan + pos + '] '.cyan + msg + ' ' + (details || '').magenta);
 	},
-	notify: function(data, type) {
-		var notifier = require('node-notifier'),
-			iconPath = 'node_modules/wee-core/build/img/';
-		type = type || 'notice';
+	notify: function(data, type, log) {
+		var notifier = require('node-notifier');
 
-		if (type === 'error') {
-			console.error(data.message);
-			data.icon = iconPath + 'error.png';
-		} else {
+		data.icon = 'node_modules/wee-core/build/img/' +
+			(type || 'notice') + '.png';
+
+		if (log !== false) {
 			console.log(data.message);
-			data.icon = iconPath + 'notice.png';
 		}
 
 		notifier.notify(data);

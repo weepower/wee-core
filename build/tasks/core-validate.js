@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 	grunt.registerTask('runValidation', function() {
 		var scripts = grunt.file.expand({
-				cwd: config.paths.js,
+				cwd: config.paths.jsSource,
 				filter: function(src) {
 					return src.indexOf('/polyfill') === -1 &&
 						src.indexOf('.min.js') === -1 &&
@@ -13,8 +13,8 @@ module.exports = function(grunt) {
 
 		// Validate scripts
 		scripts.forEach(function(scriptPath) {
-			var script = path.join(config.paths.js, scriptPath);
-			Wee.validate(config, grunt, script);
+			var script = path.join(config.paths.jsSource, scriptPath);
+			Wee.validate(config, grunt, script, false);
 		});
 	});
 };
