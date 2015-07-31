@@ -319,13 +319,26 @@
 		 * @returns {(string|undefined)}
 		 */
 		$data: function(target, a, b) {
+			var toDashed = function(name) {
+					return name.replace(/[A-Z]/g, function(match) {
+						return '-' + match[0].toLowerCase();
+					});
+				},
+				toCamel = function(name) {
+					return name.toLowerCase()
+						.replace(/-(.)/g, function(match, val) {
+							return val.toUpperCase();
+						});
+				};
+
 			if (a === U) {
 				var el = W.$first(target),
 					arr = {};
 
 				W._slice.call(el.attributes).forEach(function(attr) {
 					if (attr.name.substr(0, 5) == 'data-') {
-						arr[attr.name.substring(5)] = attr.value;
+						arr[toCamel(attr.name.substring(5))] =
+							W._castString(attr.value);
 					}
 				});
 
@@ -336,15 +349,15 @@
 				var obj = {};
 
 				Object.keys(a).forEach(function(key) {
-					obj['data-' + key] = a[key];
+					obj['data-' + toDashed(key)] = a[key];
 				});
 
 				a = obj;
 			} else {
-				a = 'data-' + a;
+				a = 'data-' + toDashed(a);
 			}
 
-			return W.$attr(target, a, b);
+			return W._castString(W.$attr(target, a, b));
 		},
 
 		/**
@@ -1263,7 +1276,7 @@
 			var func = W._canExec(html);
 
 			W.$each(target, function(el, i) {
-				var wrap = W.$parseHTML(
+				var wrap = W.$(
 					func ?
 						W.$exec(html, {
 							args: [i],
@@ -1274,6 +1287,7 @@
 
 				if (wrap) {
 					W.$each(wrap, function(cel) {
+						cel = cel.cloneNode(true);
 						cel.appendChild(el.cloneNode(true));
 						el.parentNode.replaceChild(cel, el);
 					});

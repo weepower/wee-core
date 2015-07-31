@@ -581,7 +581,7 @@
 										'init'
 									];
 
-								if (!options.scope) {
+								if (! options.scope) {
 									conf.scope = W[segs[0]];
 								}
 							}
@@ -842,7 +842,7 @@
 				$setVars: function(context) {
 					W.$each('[data-set]', function(el) {
 						var key = el.getAttribute('data-set'),
-							val = el.getAttribute('data-value'),
+							val = W._castString(el.getAttribute('data-value')),
 							ind = key.search(/\[.*]/g);
 
 						if (ind == -1) {
@@ -946,6 +946,27 @@
 					}
 
 					return W.$isFunction(fn);
+				},
+
+				/**
+				 * Cast string to most applicable data type
+				 *
+				 * @private
+				 * @param {*} val
+				 */
+				_castString: function(val) {
+					if (typeof val == 'string') {
+						try {
+							val = val === 'true' ? true :
+								val === 'false' ? false :
+								val === 'null' ? null :
+								parseInt(val) + '' === val ? parseInt(val) :
+								/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
+								val;
+						} catch (e) {}
+					}
+
+					return val;
 				},
 
 				/**
