@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "1.0.0-alpha.6",
+	"version": "1.0.0-alpha.7",
 	"description": "Blueprint for modern web development",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
@@ -18,18 +18,19 @@
 		"url": "https://github.com/weepower/wee-core/issues"
 	},
 	"dependencies": {
-		"browser-sync": "~2.8.0",
-		"fs-extra": "~0.21.0",
+		"browser-sync": "~2.8.1",
+		"fs-extra": "~0.22.1",
+		"glob": "~5.0.14",
 		"html-minifier": "~0.7.2",
 		"js-yaml": "~3.3.1",
-		"jscs": "~1.13.1",
+		"jscs": "~2.0.0",
 		"jshint": "~2.8.0",
 		"less-plugin-clean-css": "~1.5.1",
 		"node-notifier": "~4.2.3",
 		"remarkable": "~1.6.0"
 	},
 	"devDependencies": {
-		"intern": "~2.2.2"
+		"intern": "~3.0.0"
 	},
 	"scripts": {
 		"test": "node node_modules/.bin/intern-runner config=script/tests/config"

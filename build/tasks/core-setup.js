@@ -9,15 +9,6 @@ module.exports = function(grunt) {
 		fs.mkdirsSync(config.paths.css);
 		fs.mkdirsSync(config.paths.js);
 
-		// Copy fonts and images as-is for later optimization
-		if (fs.existsSync(config.paths.fontsSource)) {
-			fs.copySync(config.paths.fontsSource, config.paths.fonts);
-		}
-
-		if (fs.existsSync(config.paths.imgSource)) {
-			fs.copySync(config.paths.imgSource, config.paths.img);
-		}
-
 		// Create source map directory if needed
 		if (project.script.sourceMaps === true) {
 			fs.mkdirsSync(config.paths.jsMaps);

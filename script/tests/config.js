@@ -1,13 +1,14 @@
 define({
 	proxyPort: 9010,
 	proxyUrl: 'http://localhost:9010/',
-	excludeInstrumentation: /^(?:bower_components|node_modules)\//,
+	initialBaseUrl: '../../',
+	excludeInstrumentation: /^(?:node_modules|script\/tests)\//,
 	tunnel: 'NullTunnel',
-	loader: {
+	loaderOptions: {
 		packages: [
 			{
 				name: 'Wee',
-				location: 'script',
+				location: '/script',
 				main: 'wee.js'
 			}
 		]

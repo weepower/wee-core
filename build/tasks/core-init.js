@@ -29,8 +29,8 @@ module.exports = function(grunt) {
 				js: assetPath + 'js/',
 				jsMaps: assetPath + 'js/maps/',
 
-				fontsSource: sourcePath + '/fonts/',
-				fonts: assetPath + 'fonts/',
+				fontSource: sourcePath + '/fonts/',
+				font: assetPath + 'fonts/',
 
 				imgSource: sourcePath + '/img/',
 				img: assetPath + 'img/',

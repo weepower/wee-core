@@ -1,5 +1,3 @@
-/* global module */
-
 module.exports = function(grunt) {
 	grunt.registerTask('notify', function(task) {
 		var obj = {};
@@ -19,6 +17,9 @@ module.exports = function(grunt) {
 		} else if (task === 'legacy') {
 			obj.title = 'Legacy Compiled';
 			obj.message = 'Legacy style successfully compiled';
+		} else if (task === 'fonts') {
+			obj.title = 'Fonts Synced';
+			obj.message = 'Fonts synced successfully';
 		}
 
 		Wee.notify(obj);
