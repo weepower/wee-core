@@ -13,7 +13,7 @@
 			templatePath = __dirname + '/../templates/',
 			commands = {
 				controller: function() {
-					var name = config.args['name'] || '',
+					var name = config.args.name || '',
 						target = 'source/js/build/' + name + '.js';
 
 					if (!name) {
@@ -32,7 +32,7 @@
 					}
 				},
 				module: function() {
-					var name = config.args['name'] || '',
+					var name = config.args.name || '',
 						slug = name.toLowerCase(),
 						target = 'source/modules/' + slug;
 
@@ -49,8 +49,8 @@
 					}
 				},
 				test: function() {
-					var name = config.args['name'],
-						type = config.args['type'] || 'unit',
+					var name = config.args.name,
+						type = config.args.type || 'unit',
 						types = [
 							'unit',
 							'functional'
@@ -77,7 +77,7 @@
 			};
 
 		if (config.options.length) {
-			var type = options[0],
+			var type = config.options[0],
 				command = commands[type];
 
 			if (command) {

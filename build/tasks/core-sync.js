@@ -4,15 +4,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('syncDirectory', function(task) {
 		if (task === 'fonts') {
 			var glob = require('glob'),
-				fonts;
-
-			// Remove existing fonts
-			fs.removeSync(config.paths.font);
-
-			var paths = [
-				config.paths.fontSource,
-				config.paths.modulesSource
-			];
+				files;
 
 			// Sync core fonts
 			fs.removeSync(config.paths.font);

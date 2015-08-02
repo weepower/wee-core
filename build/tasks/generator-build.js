@@ -168,7 +168,7 @@ module.exports = function(grunt) {
 					data.sections = block.sections;
 					data.content = [];
 
-					content.forEach(function(name, i) {
+					content.forEach(function(name) {
 						var src = path.isAbsolute(name) ?
 								name :
 								Wee.buildPath(staticRoot, root + '/' + name),

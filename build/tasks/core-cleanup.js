@@ -1,4 +1,4 @@
-/* global config */
+/* global config, fs */
 
 module.exports = function(grunt) {
 	grunt.registerTask('cleanup', function() {

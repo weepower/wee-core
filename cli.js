@@ -1,4 +1,4 @@
-/* global global */
+/* global global, process */
 
 (function() {
 	'use strict';
@@ -40,6 +40,11 @@
 				options: options,
 				args: args
 			});
+		} else {
+			Wee.notify({
+				title: 'Command Error',
+				message: 'Command not available'
+			}, 'error');
 		}
 	} else {
 		Wee.notify({

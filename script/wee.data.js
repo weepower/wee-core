@@ -28,7 +28,7 @@
 					headers: {},
 					method: 'get',
 					root: ''
-				}, options);;
+				}, options);
 
 			if (conf.cache === false) {
 				conf.data.dt = Date.now();

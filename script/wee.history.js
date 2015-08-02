@@ -32,7 +32,7 @@
 				H.replaceState(0, 0, path);
 
 				// Listen for browser navigation
-				W.events.on(W._win, 'popstate', function(e) {
+				W.events.on(W._win, 'popstate', function() {
 					var path = loc.pathname,
 						conf = this.$get('entries')[
 							path.replace(/^\//g, '')
@@ -176,7 +176,7 @@
 							}, {
 								context: html
 							});
-						})
+						});
 					} else {
 						targets.innerHTML = html;
 					}
@@ -243,7 +243,7 @@
 			}
 		}
 	}, {
-		process: function(conf, html) {
+		process: function(conf) {
 			var key = conf.path.replace(/^\//g, '');
 
 			this.$push('entries', key, conf);

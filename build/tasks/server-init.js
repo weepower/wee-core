@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 		// Test routing
 		server.server.routes = {
 			'/$root': ''
-		}
+		};
 
 		// Secure mode
 		if (staticConfig.https === true) {

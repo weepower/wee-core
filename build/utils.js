@@ -1,3 +1,5 @@
+/* global cofig, JSCS, jshint, path, project, reloadPaths */
+
 Wee.fn.extend({
 	// Build root or relative path
 	buildPath: function(loc, file) {
@@ -24,69 +26,73 @@ Wee.fn.extend({
 					total = 0;
 
 				if (project.script.validate.jshint) {
-					// JSHint
-					var jshintConfig = grunt.file.readJSON(
-						project.script.validate.jshint === true ?
-							'wee/script/.jshintrc' :
-							project.script.validate.jshint
-					);
-
-					if (! jshint(js, jshintConfig)) {
-						var out = jshint.data();
-						errors = out.errors,
-							total = errors.length;
-
-						grunt.log.header('Script validation errors found');
-
-						grunt.log.error('JSHint error' +
-							((total > 1) ? 's' : '') + ' in ' + filepath + '.');
-
-						errors.forEach(function(message) {
-							Wee.logError(grunt, message.line + ':' + message.character, message.reason, message.evidence);
-						});
-
-						grunt.log.writeln();
-						grunt.log.writeln();
-
-						this.notify({
-							title: 'JSHint Validation Error',
-							message: 'Check console for error details'
-						}, 'error', log);
-					}
+					this.validateJshint(js, grunt, filepath, log);
 				}
 
 				if (project.script.validate.jscs) {
-					// JSCS
-					var jscsConfig = grunt.file.readJSON(
-							project.script.validate.jscs === true ?
-								'wee/script/.jscs.json' :
-								project.script.validate.jscs
-						),
-						checker = new JSCS();
-
-					checker.registerDefaultRules();
-					checker.configure(jscsConfig);
-
-					errors = checker.checkString(js);
-
-					var errorList = errors.getErrorList();
-					total = errorList.length;
-
-					if (total > 0) {
-						grunt.log.error('JSCS error' +
-							((total > 1) ? 's' : '') + ' in ' + filepath + '.');
-
-						errorList.forEach(function(message) {
-							Wee.logError(grunt, message.line + ':' + message.column, message.rule, message.message);
-						});
-
-						this.notify({
-							title: 'JSCS Validation Error',
-							message: 'Check console for error details'
-						}, 'error', log);
-					}
+					this.validateJscs(js, grunt, filepath, log);
 				}
 			}
+		}
+	},
+	validateJshint: function(js, grunt, filepath, log) {
+		var jshintConfig = grunt.file.readJSON(
+			project.script.validate.jshint === true ?
+				'wee/script/.jshintrc' :
+				project.script.validate.jshint
+		);
+
+		if (! jshint(js, jshintConfig)) {
+			var out = jshint.data();
+			errors = out.errors,
+				total = errors.length;
+
+			grunt.log.header('Script validation errors found');
+
+			grunt.log.error('JSHint error' +
+				((total > 1) ? 's' : '') + ' in ' + filepath + '.');
+
+			errors.forEach(function(message) {
+				Wee.logError(grunt, message.line + ':' + message.character, message.reason, message.evidence);
+			});
+
+			grunt.log.writeln();
+			grunt.log.writeln();
+
+			this.notify({
+				title: 'JSHint Validation Error',
+				message: 'Check console for error details'
+			}, 'error', log);
+		}
+	},
+	validateJscs: function(js, grunt, filepath, log) {
+		var jscsConfig = grunt.file.readJSON(
+				project.script.validate.jscs === true ?
+					'wee/script/.jscs.json' :
+					project.script.validate.jscs
+			),
+			checker = new JSCS();
+
+		checker.registerDefaultRules();
+		checker.configure(jscsConfig);
+
+		errors = checker.checkString(js);
+
+		var errorList = errors.getErrorList();
+		total = errorList.length;
+
+		if (total > 0) {
+			grunt.log.error('JSCS error' +
+				((total > 1) ? 's' : '') + ' in ' + filepath + '.');
+
+			errorList.forEach(function(message) {
+				Wee.logError(grunt, message.line + ':' + message.column, message.rule, message.message);
+			});
+
+			this.notify({
+				title: 'JSCS Validation Error',
+				message: 'Check console for error details'
+			}, 'error', log);
 		}
 	},
 	logError: function(grunt, pos, msg, details) {

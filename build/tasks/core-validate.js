@@ -2,8 +2,8 @@
 
 module.exports = function(grunt) {
 	grunt.registerTask('runValidation', function() {
-		var scripts = grunt.file.expand({
-				cwd: config.paths.jsSource,
+		var assets = grunt.file.expand({
+				cwd: config.paths.source,
 				filter: function(src) {
 					return src.indexOf('/polyfill') === -1 &&
 						src.indexOf('.min.js') === -1 &&
@@ -11,10 +11,10 @@ module.exports = function(grunt) {
 				}
 			}, '**/*.js');
 
-		// Validate scripts
-		scripts.forEach(function(scriptPath) {
-			var script = path.join(config.paths.jsSource, scriptPath);
-			Wee.validate(config, grunt, script, false);
+		// Validate assets
+		assets.forEach(function(assetPath) {
+			var asset = path.join(config.paths.source, assetPath);
+			Wee.validate(config, grunt, asset, false);
 		});
 	});
 };

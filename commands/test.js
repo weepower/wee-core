@@ -7,7 +7,7 @@
 
 	exec(
 		__dirname + '/../node_modules/.bin/intern-runner config=source/js/tests/config.js',
-		function(error, stdout, stderr) {
+		function(error, stdout) {
 			if (error) {
 				console.log(error);
 			} else {
