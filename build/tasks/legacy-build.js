@@ -1,4 +1,4 @@
-/* global config, global, legacyConvert, module, moduleLegacy, path, project */
+/* global config, global, legacyConvert, moduleLegacy, path, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildLegacy', function() {

@@ -1,4 +1,4 @@
-/* global config, module, path, project */
+/* global config, path, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('configScript', function() {

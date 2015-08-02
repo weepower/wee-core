@@ -1,4 +1,4 @@
-/* global browserSync, config, module, path, project */
+/* global browserSync, config, path, project */
 
 module.exports = function(grunt) {
 	var fs = require('fs'),

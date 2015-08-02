@@ -1,4 +1,4 @@
-/* global browserSync, config, module, project, reloadPaths, server */
+/* global browserSync, config, project, reloadPaths, server */
 
 module.exports = function(grunt) {
 	grunt.registerTask('sync', function() {

@@ -1,4 +1,4 @@
-/* global module, project, server */
+/* global project, server */
 
 module.exports = function(grunt) {
 	grunt.registerTask('server', function() {

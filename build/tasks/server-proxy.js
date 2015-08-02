@@ -1,4 +1,4 @@
-/* global module, project, server, Wee */
+/* global project, server, Wee */
 
 module.exports = function(grunt) {
 	grunt.registerTask('proxy', function() {
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 						_write.call(
 							res,
 							data.toString().replace(
-								'</body>',
+								/<\/body>/i,
 								inject.join('') + '</body>'
 							)
 						);

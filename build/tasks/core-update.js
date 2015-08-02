@@ -1,4 +1,4 @@
-/* global module, version */
+/* global version */
 
 module.exports = function(grunt) {
 	var https = require('https');
