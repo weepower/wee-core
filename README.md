@@ -1,4 +1,4 @@
-[![Wee Core](https://www.weepower.com/share.png?v1)](https://www.weepower.com)
+[![Wee Core](https://www.weepower.com/repo/banner.jpg?v1)](https://www.weepower.com)
 
 This package is part of the [Wee framework](https://github.com/weepower/wee).
 

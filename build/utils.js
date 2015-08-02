@@ -1,4 +1,4 @@
-/* global cofig, JSCS, jshint, path, project, reloadPaths */
+/* global config, JSCS, jshint, path, project, reloadPaths */
 
 Wee.fn.extend({
 	// Build root or relative path
@@ -21,9 +21,7 @@ Wee.fn.extend({
 		if (filepath.indexOf('temp') === -1 &&
 			filepath.indexOf('/vendor') === -1) {
 			if (ext === '.js') {
-				var js = grunt.file.read(filepath),
-					errors = [],
-					total = 0;
+				var js = grunt.file.read(filepath);
 
 				if (project.script.validate.jshint) {
 					this.validateJshint(js, grunt, filepath, log);
@@ -43,8 +41,8 @@ Wee.fn.extend({
 		);
 
 		if (! jshint(js, jshintConfig)) {
-			var out = jshint.data();
-			errors = out.errors,
+			var out = jshint.data(),
+				errors = out.errors,
 				total = errors.length;
 
 			grunt.log.header('Script validation errors found');
@@ -76,10 +74,9 @@ Wee.fn.extend({
 		checker.registerDefaultRules();
 		checker.configure(jscsConfig);
 
-		errors = checker.checkString(js);
-
-		var errorList = errors.getErrorList();
-		total = errorList.length;
+		var errors = checker.checkString(js),
+			errorList = errors.getErrorList(),
+			total = errorList.length;
 
 		if (total > 0) {
 			grunt.log.error('JSCS error' +
