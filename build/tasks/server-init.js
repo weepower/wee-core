@@ -5,7 +5,14 @@ module.exports = function(grunt) {
 		var staticConfig = project.server.tasks['static'];
 
 		// Server root
-		server.server = project.paths.root;
+		server.server = {
+			baseDir: project.paths.root
+		};
+
+		// Test routing
+		server.server.routes = {
+			'/$root': ''
+		}
 
 		// Secure mode
 		if (staticConfig.https === true) {
