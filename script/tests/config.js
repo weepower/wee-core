@@ -8,7 +8,7 @@ define({
 		packages: [
 			{
 				name: 'Wee',
-				location: '/script',
+				location: 'script',
 				main: 'wee.js'
 			}
 		]
