@@ -5,6 +5,7 @@ module.exports = function(grunt) {
 		var serverConfig = project.server,
 			reloadConfig = project.server.reload;
 
+		// Configure browser reloading
 		if (reloadConfig.enable === true) {
 			var reloadWatch = reloadConfig.watch,
 				reloadExtensions = reloadWatch.extensions.join();
@@ -33,21 +34,21 @@ module.exports = function(grunt) {
 		}
 
 		// Ghost mode
-		if (serverConfig.ghostMode === false) {
-			server.ghostMode = false;
+		if (serverConfig.ghostMode !== true) {
+			server.ghostMode = serverConfig.ghostMode || false;
 		}
 
 		server.port = serverConfig.port;
 		server.logPrefix = 'Wee';
 		server.open = 'external';
 		server.notify = false;
+
 		server.ui = {
 			port: serverConfig.port + 1,
 			weinre: {
-				port: serverConfig.port + 2
+				port: serverConfig.port + 100
 			}
 		};
-		server.ui.port = serverConfig.port + 1;
 
 		browserSync(server);
 	});
