@@ -23,15 +23,6 @@ module.exports = function(grunt) {
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = grunt.file.read(config.paths.wee + 'style/wee.module.less');
 
-					// Copy fonts and images as-is for later optimization
-					if (fs.existsSync(modulePath + '/fonts')) {
-						fs.copySync(modulePath + '/fonts', config.paths.modules + name + '/fonts');
-					}
-
-					if (fs.existsSync(modulePath + '/img')) {
-						fs.copySync(modulePath + '/img', config.paths.modules + name + '/img');
-					}
-
 					// Set module variables
 					vars.moduleName = name;
 					vars.responsive = false;
