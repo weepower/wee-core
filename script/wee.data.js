@@ -39,55 +39,9 @@
 				conf.url = conf.root + conf.url;
 			}
 
+			// Process JSONP
 			if (conf.jsonp) {
-				var head = W.$('head')[0];
-
-				if (conf.success) {
-					var fn = conf.jsonpCallback;
-
-					if (! fn) {
-						var v = this.$get('v', 1);
-						fn = 'jsonp' + v;
-
-						this.$set('v', v + 1);
-					}
-
-					W._win[fn] = function(data) {
-						conf.args.unshift(data);
-
-						W.$exec(conf.success, {
-							args: conf.args,
-							scope: conf.scope
-						});
-					};
-
-					conf.data[
-						conf.jsonp === true ?
-							'callback' :
-							conf.jsonp
-					] = fn;
-				}
-
-				if (Object.keys(conf.data).length > 0) {
-					conf.url += '?' + W.$serialize(conf.data);
-				}
-
-				var el = W._doc.createElement('script');
-
-				el.src = conf.url;
-
-				if (conf.error) {
-					el.onerror = function() {
-						W.$exec(conf.error, {
-							args: conf.args,
-							scope: conf.scope
-						});
-					};
-				}
-
-				head.appendChild(el);
-
-				return;
+				return this.$private.jsonp(conf);
 			}
 
 			var scope = this,
@@ -219,6 +173,60 @@
 
 			// Execute success callback if specified
 			W.$exec(conf.success, exec);
+		},
+
+		/**
+		 * Process JSONP request
+		 *
+		 * @param {object} conf
+		 */
+		jsonp: function(conf) {
+			var head = W.$('head')[0];
+
+			if (conf.success) {
+				var fn = conf.jsonpCallback;
+
+				if (! fn) {
+					var v = this.$get('v', 1);
+					fn = 'jsonp' + v;
+
+					this.$set('v', v + 1);
+				}
+
+				W._win[fn] = function(data) {
+					conf.args.unshift(data);
+
+					W.$exec(conf.success, {
+						args: conf.args,
+						scope: conf.scope
+					});
+				};
+
+				conf.data[
+					conf.jsonp === true ?
+						'callback' :
+						conf.jsonp
+				] = fn;
+			}
+
+			if (Object.keys(conf.data).length > 0) {
+				conf.url += '?' + W.$serialize(conf.data);
+			}
+
+			var el = W._doc.createElement('script');
+
+			el.src = conf.url;
+
+			if (conf.error) {
+				el.onerror = function() {
+					W.$exec(conf.error, {
+						args: conf.args,
+						scope: conf.scope
+					});
+				};
+			}
+
+			head.appendChild(el);
 		}
 	});
 })(Wee);

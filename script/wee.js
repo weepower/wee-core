@@ -285,7 +285,7 @@
 						context = context !== U ? W.$(context)[0] : D;
 
 						if (! context) {
-							return [];
+							return ref;
 						}
 
 						// Check for pre-cached elements
@@ -581,7 +581,7 @@
 										'init'
 									];
 
-								if (! options.scope) {
+								if (! conf.scope) {
 									conf.scope = W[segs[0]];
 								}
 							}

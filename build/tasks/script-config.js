@@ -29,6 +29,10 @@ module.exports = function(grunt) {
 
 			if (features.animate === true) {
 				config.script.files.push(weeScriptRoot + 'wee.animate.js');
+
+				if (features.chain === true) {
+					config.script.files.push(weeScriptRoot + 'chain/wee.chain.animate.js');
+				}
 			}
 
 			if (features.assets === true) {

@@ -1,4 +1,4 @@
-(function(W, V) {
+(function(W) {
 	'use strict';
 
 	W.$chain({
@@ -10,10 +10,10 @@
 		 */
 		render: function(data) {
 			W.$each(this, function(el) {
-				W.$html(el, V.render(W.$html(el), data));
+				W.$html(el, Wee.view.render(W.$html(el), data));
 			});
 
 			return this;
 		}
 	});
-})(Wee, Wee.view);
+})(Wee);

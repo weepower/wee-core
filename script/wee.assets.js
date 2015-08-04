@@ -54,8 +54,7 @@
 				css = W.$toArray(conf.css),
 				img = W.$toArray(conf.img),
 				root = conf.root !== U ? conf.root : this.root(),
-				now = new Date().getTime(),
-				absolute = /^(https?:)?\/\//i,
+				now = Date.now(),
 				i = 0,
 				assets = [],
 				type;
@@ -68,8 +67,8 @@
 			// Determine file type
 			for (; i < files.length; i++) {
 				var ext = files[i].split('.').pop().split(/#|\?/)[0];
-				type = (ext == 'js' || ext == 'css') ?
-					ext : (/(gif|jpe?g|png|svg)$/i).test(ext) ?
+				type = ext == 'js' || ext == 'css' ?
+					ext : /(gif|jpe?g|png|svg)$/i.test(ext) ?
 						'img' : '';
 
 				if (type) {
@@ -97,7 +96,7 @@
 			// Request each specified file
 			for (var file in assets) {
 				// Reset root if the URL is absolute
-				if (root && absolute.test(file)) {
+				if (root && /^(https?:)?\/\//i.test(file)) {
 					root = '';
 				}
 
