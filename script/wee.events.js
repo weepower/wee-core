@@ -243,9 +243,9 @@
 
 							// Ensure the specified element, event, and function
 							// combination hasn't already been bound
-							if (evt != 'init' && scope.$public.bound(el, ev, f).length < 1) {
+							if (evt != 'init' && ! scope.$public.bound(el, ev, f).length) {
 								// Determine if the event is native or custom
-								if ('on' + evt in W._doc) {
+								if ('on' + evt in W._win) {
 									W._legacy ?
 										el.attachEvent('on' + evt, cb) :
 										el.addEventListener(evt, cb);
