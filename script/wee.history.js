@@ -13,7 +13,7 @@
 		init: function(options) {
 			if (! this.data && H && H.pushState) {
 				var loc = W._win.location,
-					path = loc.pathname,
+					path = loc.pathname + loc.search,
 					settings = W.$extend({
 						data: {},
 						partials: 'title,main',
@@ -33,7 +33,7 @@
 
 				// Listen for browser navigation
 				W.events.on(W._win, 'popstate', function() {
-					var path = loc.pathname,
+					var path = loc.pathname + loc.search,
 						conf = this.$get('entries')[
 							path.replace(/^\//g, '')
 						];
