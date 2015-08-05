@@ -141,9 +141,9 @@ module.exports = function(grunt) {
 					moduleRoot = path.normalize(config.paths.modules);
 				dest = path.normalize(dest)
 					.replace(scriptRoot, '')
-					.replace(moduleRoot, '')
+					.replace(moduleRoot, '/')
 					.replace(/^\\|\//, '')
-					.replace(/\\|\//g, '-')
+					.replace(/\\|\//g, '.')
 					.replace('.min.js', '');
 
 				return path.join(config.paths.jsMaps, dest + '.js.map');
