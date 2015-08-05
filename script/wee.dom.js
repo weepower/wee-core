@@ -1,6 +1,83 @@
 (function(W, U) {
 	'use strict';
 
+	/**
+	 * Get the selected options from a select
+	 *
+	 * @private
+	 * @param {HTMLElement} select
+	 * @returns {Array} selected
+	 */
+	var getSelected = function(select) {
+		var options = select.options,
+			selected = [],
+			i = 0;
+
+		for (; i < options.length; i++) {
+			var option = options[i];
+
+			if (option.selected) {
+				selected.push(option.value);
+			}
+		}
+
+		return selected;
+	},
+
+	/**
+	 * Return either direct previous or next sibling
+	 *
+	 * @private
+	 * @param {($|HTMLElement|string)} target
+	 * @param {int} dir
+	 * @param filter
+	 * @param {object} [options]
+	 * @returns {HTMLElement}
+	 */
+	getSibling = function(target, dir, filter, options) {
+		var match;
+
+		W.$each(target, function(el) {
+			var nodes = W.$children(W.$parent(el)),
+				index = W.$index(el) + dir;
+
+			nodes.forEach(function(el, i) {
+				if (i === index && (! filter || filter && W.$is(el, filter, options))) {
+					match = el;
+				}
+			});
+		});
+
+		return match;
+	},
+
+	/**
+	 * Convert dash-separated string to camel-case
+	 *
+	 * @private
+	 * @param {string} name
+	 * @returns {string}
+	 */
+	toCamel = function(name) {
+		return name.toLowerCase()
+			.replace(/-(.)/g, function(match, val) {
+				return val.toUpperCase();
+			});
+	},
+
+	/**
+	 * Convert camel-cased string to dash-separated
+	 *
+	 * @private
+	 * @param {string} name
+	 * @returns {string}
+	 */
+	toDashed = function(name) {
+		return name.replace(/[A-Z]/g, function(match) {
+			return '-' + match[0].toLowerCase();
+		});
+	};
+
 	W.fn.extend({
 		/**
 		 * Add classes to each matching selection
@@ -319,18 +396,6 @@
 		 * @returns {(string|undefined)}
 		 */
 		$data: function(target, a, b) {
-			var toDashed = function(name) {
-					return name.replace(/[A-Z]/g, function(match) {
-						return '-' + match[0].toLowerCase();
-					});
-				},
-				toCamel = function(name) {
-					return name.toLowerCase()
-						.replace(/-(.)/g, function(match, val) {
-							return val.toUpperCase();
-						});
-				};
-
 			if (a === U) {
 				var el = W.$first(target),
 					arr = {};
@@ -665,7 +730,7 @@
 		 */
 		$next: function(target, filter, options) {
 			return W.$unique(W.$map(target, function(el) {
-				return W._sibling(el, 1, filter, options);
+				return getSibling(el, 1, filter, options);
 			}));
 		},
 
@@ -835,7 +900,7 @@
 		 */
 		$prev: function(target, filter, options) {
 			return W.$unique(W.$map(target, function(el) {
-				return W._sibling(el, -1, filter, options);
+				return getSibling(el, -1, filter, options);
 			}));
 		},
 
@@ -1019,7 +1084,7 @@
 					if (type == 'select-multiple') {
 						name += name.slice(-2) == '[]' ? '' : '[]';
 
-						W._getSelected(child).forEach(function(val) {
+						getSelected(child).forEach(function(val) {
 							arr.push(
 								name +
 								'=' +
@@ -1183,7 +1248,7 @@
 				var el = W.$first(target);
 
 				if (el.type == 'select-multiple') {
-					return W._getSelected(el);
+					return getSelected(el);
 				}
 
 				return el.value;
@@ -1317,7 +1382,7 @@
 				if (wrap) {
 					var children = W.$children(el);
 
-					if (children.length === 0) {
+					if (! children.length) {
 						children = W.$html(el);
 
 						W.$empty(el);
@@ -1331,56 +1396,6 @@
 					W.$append(el, wrap);
 				}
 			});
-		},
-
-		/**
-		 * Get the selected options from a select
-		 *
-		 * @private
-		 * @param {HTMLElement} select
-		 * @returns {Array} selected
-		 */
-		_getSelected: function(select) {
-			var options = select.options,
-				selected = [],
-				i = 0;
-
-			for (; i < options.length; i++) {
-				var option = options[i];
-
-				if (option.selected) {
-					selected.push(option.value);
-				}
-			}
-
-			return selected;
-		},
-
-		/**
-		 * Return either direct previous or next sibling
-		 *
-		 * @private
-		 * @param {($|HTMLElement|string)} target
-		 * @param {int} dir
-		 * @param filter
-		 * @param {object} [options]
-		 * @returns {HTMLElement}
-		 */
-		_sibling: function(target, dir, filter, options) {
-			var match;
-
-			W.$each(target, function(el) {
-				var nodes = W.$children(W.$parent(el)),
-				index = W.$index(el) + dir;
-
-				nodes.forEach(function(el, i) {
-					if (i === index && (! filter || filter && W.$is(el, filter, options))) {
-						match = el;
-					}
-				});
-			});
-
-			return match;
 		}
 	});
 })(Wee, undefined);
