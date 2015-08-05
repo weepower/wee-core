@@ -33,6 +33,11 @@ module.exports = function(grunt) {
 							'/module/style/screen.less";\n',
 						responsive = '';
 
+					// Reference core Less if extension
+					if (module.extension) {
+						inject += "@import (reference) 'wee.less';\n";
+					}
+
 					if (module.style) {
 						// Build additional style
 						if (module.style.build) {
