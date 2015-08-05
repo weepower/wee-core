@@ -11,60 +11,46 @@
 		 * @param {string} [value.hash]
 		 * @param {string} [value.path] - relative path
 		 * @param {object} [value.query]
+		 * @param {boolean} [value.history]
+		 * @param {array} [value.segments]
 		 * @returns {object} data
 		 */
 		uri: function(value) {
 			if (value) {
 				if (W.$isObject(value)) {
 					return this.$set('uri', W.$extend(this.uri(), value));
-				} else {
-					var a = W._doc.createElement('a'),
-						query = {};
-					a.href = value;
-
-					var path = this.$get('path', a.pathname, true);
-
-					if (a.search !== '') {
-						var arr = decodeURIComponent(a.search)
-								.replace(/^\?/, '')
-								.split('&'),
-							i = 0;
-
-						for (; i < arr.length; i++) {
-							var split = arr[i].split('=');
-							query[split[0]] = split[1] == U ? '' : split[1];
-						}
-					}
-
-					return this.$set('uri', {
-						path: (path.charAt(0) == '/' ? '' : '/') + path,
-						query: query,
-						hash: a.hash.slice(1),
-						history: false
-					});
 				}
-			} else {
-				return this.$get('uri', function() {
-					return W.routes.uri(W._win.location.href);
-				}, true);
-			}
-		},
 
-		/**
-		 * Get currently bound path or set path with a specified string
-		 *
-		 * @param {string} [value]
-		 * @param {object} [options]
-		 * @param {Array} [options.args]
-		 * @param {object} [options.scope]
-		 * @returns {string} path
-		 */
-		path: function(value, options) {
-			return value ?
-				this.uri({
-					path: this.$set('path', value, options)
-				}).path :
-				this.$get('path', this.uri().path, true, options);
+				var a = W._doc.createElement('a'),
+					query = {};
+				a.href = value;
+
+				if (a.search !== '') {
+					var arr = decodeURIComponent(a.search)
+							.replace(/^\?/, '')
+							.split('&'),
+						i = 0;
+
+					for (; i < arr.length; i++) {
+						var split = arr[i].split('=');
+						query[split[0]] = split[1] == U ? '' : split[1];
+					}
+				}
+
+				var path = a.pathname.replace(/^\/|\/$/g, '');
+
+				return this.$set('uri', {
+					hash: a.hash.slice(1),
+					history: false,
+					path: '/' + path + a.search + a.hash,
+					query: query,
+					segments: path.split('/')
+				});
+			}
+
+			return this.$get('uri', function() {
+				return W.routes.uri(W._win.location.href);
+			}, true);
 		},
 
 		/**
@@ -74,11 +60,7 @@
 		 * @returns {(Array|string)} segments
 		 */
 		segments: function(index) {
-			var segs = W.$toArray(
-				this.path()
-					.replace(/^\/|\/$/g, '')
-					.split('/')
-			);
+			var segs = this.uri().segments;
 
 			return index !== U ? (segs[index] || '') : segs;
 		},
@@ -227,6 +209,11 @@
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k];
+
+					if (opt.slice(-5) == ':eval') {
+						opt = opt.slice(0, -5);
+						i--;
+					}
 
 					if (opt == seg) {
 						match = true;
