@@ -8,11 +8,13 @@
 		 * Get currently bound URI values or set with string or value object
 		 *
 		 * @param {(object|string)} [value]
+		 * @param {string} [value.full]
 		 * @param {string} [value.hash]
-		 * @param {string} [value.path] - relative path
-		 * @param {object} [value.query]
 		 * @param {boolean} [value.history]
+		 * @param {string} [value.path]
+		 * @param {object} [value.query]
 		 * @param {array} [value.segments]
+		 * @param {string} [value.url]
 		 * @returns {object} data
 		 */
 		uri: function(value) {
@@ -25,26 +27,28 @@
 					query = {};
 				a.href = value;
 
-				if (a.search !== '') {
-					var arr = decodeURIComponent(a.search)
-							.replace(/^\?/, '')
-							.split('&'),
+				var search = a.search.slice(1);
+
+				if (search) {
+					var arr = decodeURIComponent(search).slice(1).split('&'),
 						i = 0;
 
 					for (; i < arr.length; i++) {
 						var split = arr[i].split('=');
-						query[split[0]] = split[1] == U ? '' : split[1];
+						query[split[0]] = split[1] || '';
 					}
 				}
 
 				var path = a.pathname.replace(/^\/|\/$/g, '');
 
 				return this.$set('uri', {
+					full: '/' + path + a.search + a.hash,
 					hash: a.hash.slice(1),
 					history: false,
-					path: '/' + path + a.search + a.hash,
+					path: '/' + path,
 					query: query,
-					segments: path.split('/')
+					segments: path.split('/'),
+					url: a.href
 				});
 			}
 
@@ -104,21 +108,26 @@
 		 * @param {object} [conf]
 		 */
 		run: function(conf) {
-			conf = W.$extend({
-				routes: this.$get('routes')
-			}, conf);
+			conf = conf || {};
+
+			var routes = conf.routes || this.$get('routes');
 
 			if (conf.path) {
 				this.path(conf.path);
 			}
 
-			if (conf.routes) {
-				this.$private.process(conf.routes, 0, this.$set('segs', this.segments()).length);
+			if (routes) {
+				this.$private.process(routes, 0,
+					this.$set(
+						'segs',
+						this.segments()
+					).length
+				);
 
 				// Execute queued init functions on last iteration
 				var any = this.$private.any;
 
-				if (any) {
+				if (any.length) {
 					for (var i = 0; i < any.length; i++) {
 						var rule = any[i];
 
@@ -128,7 +137,7 @@
 					}
 
 					// Clear array for next iteration
-					any = [];
+					this.$private.any = [];
 				}
 			}
 		}
@@ -162,9 +171,7 @@
 				}
 			},
 			num: function(seg) {
-				if (! isNaN(seg) && seg.trim() !== '') {
-					return true;
-				}
+				return ! isNaN(seg) && seg.trim() !== '';
 			}
 		},
 
@@ -204,8 +211,9 @@
 				var key = keys[x],
 					child = route[key],
 					opts = key.split('||'),
-					match = false,
-					k = 0;
+					k = 0,
+					filtered,
+					match;
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k];
@@ -232,6 +240,12 @@
 
 							if (filter) {
 								match = filter(seg, child, i);
+
+								if (match) {
+									filtered = true;
+
+									this.any.push([child, seg]);
+								}
 							} else if (seg && seg.trim() !== '') {
 								match = true;
 							}
@@ -243,7 +257,7 @@
 				if (match) {
 					if (W.$isObject(child)) {
 						this.process(child, i, total);
-					} else if (i === total) {
+					} else if (! filtered && i === total) {
 						W.$exec(child, {
 							args: seg
 						});
