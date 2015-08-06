@@ -4,7 +4,6 @@
 	module.exports = function() {
 		var fs = require('fs-extra'),
 			paths = [
-				'.codeclimate.yml',
 				'bower.json',
 				'LICENSE',
 				'README.md',
