@@ -178,7 +178,7 @@
 				}
 
 				var val = scope.get(data, prev, tag, U, init, index),
-					empty = val === false || val == null || ! val.length,
+					empty = val === false || val == null || val.length === 0,
 					resp = '';
 
 				if (filter || empty) {
@@ -222,7 +222,7 @@
 					}
 
 					val = scope.get(data, prev, tag, U, init, index);
-					empty = val === false || val == null || ! val.length;
+					empty = val === false || val == null || val.length === 0;
 				}
 
 				if (empty === false && resp === '') {
