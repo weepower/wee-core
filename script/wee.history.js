@@ -58,7 +58,7 @@
 		 * Bind click and submit events to PJAX
 		 *
 		 * @param {($|HTMLElement|string)} sel
-		 * @param {HTMLElement} [context]
+		 * @param {HTMLElement} [context=document]
 		 */
 		bind: function(sel, context) {
 			$(sel).each(function(el) {
@@ -157,32 +157,28 @@
 				// Compile success events
 				successEvents.push(function(html) {
 					if (partials) {
-						html = W.$parseHTML(
-							'<i>' + html + '</i>'
-						);
+						html = W.$parseHTML('<i>' + html + '</i>');
 
 						// Make partial replacements from response
 						W.$each(partials.split(','), function(sel) {
-							if (sel == 'body') {
-								sel = '.wbody';
-							}
-
 							W.$each(sel, function(el) {
-								var target = $(sel)[0];
+								var target = W.$(sel)[0],
+									parent = target.parentNode;
 
 								if (target) {
-									target.parentNode.replaceChild(el, target);
+									parent.replaceChild(el, target);
 								}
+
+								scope.$private.reset(parent);
 							}, {
 								context: html
 							});
 						});
 					} else {
 						targets.innerHTML = html;
-					}
 
-					// Update references
-					W.$setRef(targets);
+						scope.$private.reset(targets);
+					}
 				});
 
 				if (data.success) {
@@ -243,6 +239,21 @@
 			}
 		}
 	}, {
+		/**
+		 * Reset references and variables for a given selector
+		 *
+		 * @param sel
+		 */
+		reset: function(sel) {
+			W.$setRef(sel);
+			W.$setVars(sel);
+		},
+
+		/**
+		 * Process the history state of the request
+		 *
+		 * @param {object} conf
+		 */
 		process: function(conf) {
 			var key = conf.path.replace(/^\//g, '');
 
