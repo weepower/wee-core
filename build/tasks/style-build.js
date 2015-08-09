@@ -47,9 +47,9 @@ module.exports = function(grunt) {
 		// Process template
 		config.style.imports.forEach(function(val) {
 			if (path.extname(val) === '.css') {
-				inject += '@import (inline) "' + val + '";\n';
+				inject += '@import (inline, optional) "' + val + '";\n';
 			} else {
-				inject += '@import "' + val + '";\n';
+				inject += '@import (optional) "' + val + '";\n';
 			}
 		});
 
