@@ -1,6 +1,6 @@
 [![Wee Core](https://www.weepower.com/repo/banner.jpg?v1)](https://www.weepower.com)
 
-This package is part of the [Wee framework](https://github.com/weepower/wee).
+This repository is part of the [Wee framework](https://github.com/weepower/wee).
 
 [![Code Climate](https://codeclimate.com/github/weepower/wee-core/badges/gpa.svg)](https://codeclimate.com/github/weepower/wee-core)
 

@@ -13,9 +13,6 @@ define({
 			}
 		]
 	},
-	functionalSuites: [
-
-	],
 	suites: [
 		'script/tests/unit/wee',
 		'script/tests/unit/wee.assets',
@@ -26,6 +23,9 @@ define({
 		'script/tests/unit/wee.routes',
 		'script/tests/unit/wee.screen',
 		'script/tests/unit/wee.view'
+	],
+	functionalSuites: [
+
 	],
 	environments: [
 		{

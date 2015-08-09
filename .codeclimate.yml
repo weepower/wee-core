@@ -1,6 +1,5 @@
 languages:
   JavaScript: true
 exclude_paths:
-- "*.min.js"
 - "templates/*"
 - "script/tests/*"

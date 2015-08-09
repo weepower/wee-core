@@ -103,7 +103,7 @@
 								model: {},
 								view: ''
 							}, options),
-							$target = $(conf.view);
+							$target = W.$(conf.view);
 
 						conf.view = $target.html();
 
