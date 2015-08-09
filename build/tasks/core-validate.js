@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		// Validate assets
 		assets.forEach(function(assetPath) {
 			var asset = path.join(config.paths.source, assetPath);
-			Wee.validate(config, grunt, asset, false);
+			Wee.validate(config, grunt, asset);
 		});
 	});
 };

@@ -3,53 +3,77 @@
 (function() {
 	'use strict';
 
-	global.Wee = require('./script/wee').Wee;
-	require('./build/utils');
+	module.exports = function(rootPath) {
+		// Load dependencies
+		var fs = require('fs-extra'),
+			glob = require('glob'),
+			path = require('path');
 
-	var commands = {
-			clean: function(config) {
-				require('./commands/clean.js')(config);
-			},
-			make: function(config) {
-				require('./commands/make.js')(config);
-			},
-			test: function(config) {
-				require('./commands/test.js')(config);
+		global.Wee = require('./script/wee').Wee;
+
+		// Load build utilities
+		require('./utils');
+
+		var commandPaths = [
+				'node_modules/wee-core/commands/',
+				'source/commands/'
+			],
+			keywords = process.argv.slice(2),
+			commands = {};
+
+		// Register commands
+		commandPaths.forEach(function(commandPath) {
+			var files = glob.sync(commandPath + '*.js');
+
+			files.forEach(function(file) {
+				var name = path.basename(file, '.js');
+				file = path.join(rootPath, file);
+
+				commands[name] = function(config) {
+					require(file)(config);
+				};
+			});
+		});
+
+		// Execute command
+		if (keywords.length) {
+			var split = keywords[0].split(':'),
+				command = commands[split[0]],
+				options = split.slice(1),
+				args = {};
+
+			if (command) {
+				keywords.slice(1).forEach(function(arg) {
+					if (arg.slice(0, 2) == '--') {
+						var segs = arg.slice(2).split('=');
+
+						args[segs[0]] = segs.length > 1 ? segs[1] : '';
+					}
+				});
+
+				// Read project configuration and remove from arguments
+				var configPath = path.join(rootPath, args['config'] || 'wee.json'),
+					project = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+				delete args['config'];
+
+				command({
+					options: options,
+					args: args,
+					rootPath: rootPath,
+					project: project
+				});
+			} else {
+				Wee.notify({
+					title: 'Command Error',
+					message: 'Command not available'
+				}, 'error');
 			}
-		},
-		keywords = process.argv.slice(2);
-
-	if (keywords.length) {
-		var split = keywords[0].split(':'),
-			command = commands[split[0]],
-			options = split.slice(1),
-			args = {};
-
-		if (command) {
-			keywords.slice(1).forEach(function(arg) {
-				if (arg.slice(0, 2) == '--') {
-					var segs = arg.slice(2).split('=');
-
-					args[segs[0]] = segs.length > 1 ?
-						segs[1] :
-						'';
-				}
-			});
-
-			command({
-				options: options,
-				args: args
-			});
 		} else {
 			Wee.notify({
 				title: 'Command Error',
-				message: 'Command not available'
+				message: 'Command option is required'
 			}, 'error');
 		}
-	} else {
-		Wee.notify({
-			title: 'Command Error',
-			message: 'Command option is required'
-		}, 'error');
 	}
 })();
