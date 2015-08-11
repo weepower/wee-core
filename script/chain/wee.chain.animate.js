@@ -9,7 +9,7 @@
 		 * @param {object} options
 		 */
 		tween: function(props, options) {
-			Wee.animate.tween(this, props, options);
+			W.animate.tween(this, props, options);
 
 			return this;
 		}

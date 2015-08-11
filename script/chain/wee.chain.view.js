@@ -10,7 +10,7 @@
 		 */
 		render: function(data) {
 			W.$each(this, function(el) {
-				W.$html(el, Wee.view.render(W.$html(el), data));
+				W.$html(el, W.view.render(W.$html(el), data));
 			});
 
 			return this;

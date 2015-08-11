@@ -879,7 +879,7 @@
 								}
 							}
 
-							W.$set(obj, extend(Wee.$get(obj, {}), set, true));
+							W.$set(obj, extend(W.$get(obj, {}), set, true));
 						} else {
 							W.$push(obj, key, val);
 						}

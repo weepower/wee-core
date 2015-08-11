@@ -233,13 +233,13 @@
 				link.rel = 'stylesheet';
 				link.href = path;
 
-				if (Wee._legacy) {
+				if (W._legacy) {
 					this.ind = this.ind ? this.ind + 1 : 1;
 					var id = 'load-' + this.ind;
 					link.id = id;
 
 					link.attachEvent('onload', function() {
-						var sheets = Wee._doc.styleSheets,
+						var sheets = W._doc.styleSheets,
 							i = sheets.length,
 							text;
 
