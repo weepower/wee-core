@@ -1,4 +1,4 @@
-/* global global */
+/* global __dirname, global */
 
 (function() {
 	'use strict';
@@ -295,7 +295,6 @@
 			'default',
 			'proxy',
 			'sync',
-			'checkUpdates',
 			'watch'
 		]);
 
@@ -304,7 +303,6 @@
 			'default',
 			'server',
 			'sync',
-			'checkUpdates',
 			'watch'
 		]);
 
