@@ -90,11 +90,11 @@
 
 			W.$each(target, function(el, i) {
 				var name = func ?
-						W.$exec(value, {
-							args: [i, el.className],
-							scope: el
-						}) :
-						value;
+					W.$exec(value, {
+						args: [i, el.className],
+						scope: el
+					}) :
+					value;
 
 				if (name) {
 					el.className = (
@@ -119,14 +119,14 @@
 
 			W.$each(target, function(el, i) {
 				var aft = func ?
-						W.$exec(source, {
-							args: [i, el.innerHTML],
-							scope: el
-						}) :
-						source;
+					W.$exec(source, {
+						args: [i, el.innerHTML],
+						scope: el
+					}) :
+					source;
 
 				if (typeof aft == 'string') {
-					aft = W.$(aft);
+					aft = W.$parseHTML(aft);
 				}
 
 				if (aft) {
@@ -158,14 +158,14 @@
 
 			W.$each(target, function(el, i) {
 				var app = func ?
-						W.$exec(source, {
-							args: [i, el.innerHTML],
-							scope: el
-						}) :
-						source;
+					W.$exec(source, {
+						args: [i, el.innerHTML],
+						scope: el
+					}) :
+					source;
 
 				if (typeof app == 'string') {
-					app = W.$(app);
+					app = W.$parseHTML(app);
 				}
 
 				if (app) {
@@ -221,14 +221,14 @@
 
 			W.$each(target, function(el, i) {
 				var bef = func ?
-						W.$exec(source, {
-							args: [i, el.innerHTML],
-							scope: el
-						}) :
-						source;
+					W.$exec(source, {
+						args: [i, el.innerHTML],
+						scope: el
+					}) :
+					source;
 
 				if (typeof bef == 'string') {
-					bef = W.$(bef);
+					bef = W.$parseHTML(bef);
 				}
 
 				if (bef) {
@@ -465,11 +465,11 @@
 
 			return W.$map(target, function(el, i) {
 				var match = func ?
-						W.$exec(filter, {
-							args: [i, el],
-							scope: el
-						}) :
-						W.$is(el, filter, options);
+					W.$exec(filter, {
+						args: [i, el],
+						scope: el
+					}) :
+					W.$is(el, filter, options);
 
 				return match ? el : false;
 			});
@@ -595,11 +595,11 @@
 
 			W.$each(target, function(el, i) {
 				var html = func ?
-						W.$exec(value, {
-							args: [i, el.innerHTML],
-							scope: el
-						}) :
-						value;
+					W.$exec(value, {
+						args: [i, el.innerHTML],
+						scope: el
+					}) :
+					value;
 
 				if (html !== false && html !== U) {
 					el.innerHTML = html;
@@ -872,14 +872,14 @@
 
 			W.$each(target, function(el, i) {
 				var pre = func ?
-						W.$exec(source, {
-							args: [i, el.innerHTML],
-							scope: el
-						}) :
-						source;
+					W.$exec(source, {
+						args: [i, el.innerHTML],
+						scope: el
+					}) :
+					source;
 
 				if (typeof pre == 'string') {
-					pre = W.$(pre);
+					pre = W.$parseHTML(pre);
 				}
 
 				if (pre) {
@@ -977,11 +977,11 @@
 
 			W.$each(target, function(el, i) {
 				var name = func ?
-						W.$exec(value, {
-							args: [i, el.className],
-							scope: el
-						}) :
-						value;
+					W.$exec(value, {
+						args: [i, el.className],
+						scope: el
+					}) :
+					value;
 
 				if (name) {
 					el.className = el.className.replace(
@@ -1182,11 +1182,11 @@
 
 			W.$each(target, function(el, i) {
 				var text = func ?
-						W.$exec(value, {
-							args: [i, (el.textContent || el.innerText).trim()],
-							scope: el
-						}) :
-						value;
+					W.$exec(value, {
+						args: [i, (el.textContent || el.innerText).trim()],
+						scope: el
+					}) :
+					value;
 
 				el.textContent === U ?
 					el.innerText = text :
