@@ -245,8 +245,12 @@
 		 * @param sel
 		 */
 		reset: function(sel) {
+			var pub = this.$public;
+
 			W.$setRef(sel);
 			W.$setVars(sel);
+
+			pub.bind(pub.settings.bind, sel);
 		},
 
 		/**
@@ -271,8 +275,8 @@
 
 			if (W.routes) {
 				// Update current path
+				W.routes.uri(conf.path);
 				W.routes.uri({
-					path: conf.path,
 					history: true
 				});
 
