@@ -25,20 +25,31 @@
 								el.currentStyle[prop] :
 								getComputedStyle(el, null)[prop],
 							css = cssValue !== undefined,
-							start = parseInt(css ? cssValue : el[prop]);
+							val = parseInt(css ? cssValue : el[prop]),
+							dist = Math.abs(target - val),
+							dir = target > val ? 1 : -1,
+							start = Date.now();
 
-						scope.$private.update({
-							el: el,
-							css: css,
-							prop: prop,
-							ease: ease,
-							targ: target,
-							len: conf.duration,
-							dir: target > start ? 1 : -1,
-							fn: conf.complete,
-							val: start,
-							time: Date.now()
-						});
+						var setValue = function(prop, update) {
+								css ?
+									el.style[prop] = update + 'px' :
+									el[prop] = update;
+							},
+							int = setInterval(function() {
+								var diff = Date.now() - start;
+
+								if (dist && diff < conf.duration) {
+									setValue(prop, val + dist * ease(diff / conf.duration) * dir);
+								} else {
+									clearInterval(int);
+
+									if (conf.complete) {
+										W.$exec(conf.complete);
+									}
+
+									setValue(prop, target);
+								}
+							}, 5);
 					}
 				});
 			}
@@ -61,7 +72,7 @@
 		 */
 		easings: {
 			ease: function(t) {
-				return (t < .5 ? 2 * t : -1 + (4 - 2 * t)) * t;
+				return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 			},
 			linear: function(t) {
 				return t;
@@ -83,46 +94,6 @@
 			}
 
 			W.$extend(this.easings, obj);
-		},
-
-		/**
-		 * Iterate an attribute or property value based on a given easing
-		 *
-		 * @param {object} obj
-		 * @param obj.el
-		 * @param obj.css
-		 * @param obj.prop
-		 * @param obj.ease
-		 * @param obj.targ
-		 * @param obj.dir
-		 * @param obj.fn
-		 * @param obj.len
-		 * @param obj.time
-		 */
-		update: function(obj) {
-			var scope = this,
-				rem = Math.abs(obj.targ) - Math.abs(obj.val);
-
-			if (rem <= 0) {
-				if (obj.fn) {
-					W.$exec(obj.fn);
-				}
-			} else {
-				var time = (Date.now() - obj.time) / obj.len;
-				obj.val = obj.val + (obj.ease(time) * rem);
-console.log(obj.val);
-				obj.val = obj.dir > 0 ?
-					Math.floor(obj.val) * 1 :
-					Math.ceil(obj.val) * -1;
-
-				obj.css ?
-					obj.el.style[obj.prop] = obj.val + 'px' :
-					obj.el[obj.prop] = obj.val;
-
-				setTimeout(function() {
-					scope.update(obj);
-				}, 20);
-			}
 		}
 	});
 })(Wee);
