@@ -38,7 +38,7 @@
 							path.replace(/^\//g, '')
 						];
 
-					this.go(Wee.$extend(
+					this.go(W.$extend(
 						conf || {},
 						{
 							path: path,
@@ -50,7 +50,7 @@
 				});
 
 				// Bind PJAX actions
-				this.bind(settings.bind);
+				this.bind(settings.bind, settings.event);
 			}
 		},
 
@@ -60,33 +60,31 @@
 		 * @param {($|HTMLElement|string)} sel
 		 * @param {HTMLElement} [context=document]
 		 */
-		bind: function(sel, context) {
+		bind: function(sel, event, context) {
+			var namespace = '.history';
+
 			$(sel).each(function(el) {
-				var namespace = '.history',
-					event,
+				var evt,
 					host,
 					path;
 
 				if (el.href && el.href[0] !== '#') {
-					event = 'click' + namespace;
+					evt = (event || 'click') + namespace;
 					host = el.hostname;
 					path = el.pathname;
 				} else if (el.action) {
 					var a = W._doc.createElement('a');
 					a.href = el.action;
-					event = 'submit' + namespace;
+					evt = 'submit' + namespace;
 					host = a.hostname;
 					path = a.pathname;
 				}
 
 				// Ensure the path exists and is local
-				if (path && host == W._win.location.hostname) {
-					W.events.on(el, event, function(e) {
+				if (evt && host == W._win.location.hostname) {
+					W.events.on(el, evt, function(e) {
 						W.history.go({
-							path: path,
-							data: {
-								url: path
-							}
+							path: path
 						});
 
 						e.preventDefault();
@@ -166,7 +164,9 @@
 									parent = target.parentNode;
 
 								if (target) {
-									parent.replaceChild(el, target);
+									conf.action == 'append' ?
+										parent.appendChild(el) :
+										parent.replaceChild(el, target);
 								}
 
 								scope.$private.reset(parent);
@@ -245,12 +245,13 @@
 		 * @param sel
 		 */
 		reset: function(sel) {
-			var pub = this.$public;
+			var pub = this.$public,
+				settings = pub.settings;
 
 			W.$setRef(sel);
 			W.$setVars(sel);
 
-			pub.bind(pub.settings.bind, sel);
+			pub.bind(settings.bind, settings.event, sel);
 		},
 
 		/**
