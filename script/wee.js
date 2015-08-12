@@ -324,7 +324,7 @@
 						if (N.WeeSelector !== U) {
 							el = N.WeeSelector(selector, context);
 						} else if (/^[#.]?[\w-]+$/.test(selector)) {
-							var pre = selector.charAt(0);
+							var pre = selector[0];
 
 							if (pre == '#') {
 								el = context.getElementById(selector.substr(1));

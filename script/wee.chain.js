@@ -58,7 +58,7 @@
 
 	// Shortcut core methods from alias
 	for (var key in W) {
-		if (key.charAt(0) !== '_') {
+		if (key[0] !== '_') {
 			$[key.replace(/^\$/, '')] = W[key];
 		}
 	}

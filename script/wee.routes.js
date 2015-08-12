@@ -225,11 +225,11 @@
 
 					if (opt == seg) {
 						match = true;
-					} else if (opt.charAt(0) == '$') {
+					} else if (opt[0] == '$') {
 						opt = opt.slice(1);
 
 						// If the second character is / then test regex
-						if (opt.charAt(0) == '/') {
+						if (opt[0] == '/') {
 							var split = opt.split('/');
 
 							if (new RegExp(split[1], split[2]).test(seg)) {
