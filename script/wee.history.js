@@ -1,4 +1,4 @@
-(function(W, U, H) {
+(function(W, H, U) {
 	'use strict';
 
 	W.fn.make('history', {
@@ -11,22 +11,22 @@
 		 * @param {($|HTMLElement|string)} [options.bind]
 		 */
 		init: function(options) {
-			if (! this.data && H && H.pushState) {
+			if (! this.request && H && H.pushState) {
 				var loc = W._win.location,
 					path = loc.pathname + loc.search,
 					settings = W.$extend({
-						data: {},
+						request: {},
 						partials: 'title,main',
 						push: true,
 						run: true
 					}, options);
 
 				this.settings = settings;
-				this.data = settings.data;
+				this.request = settings.request;
 
-				delete settings.data;
+				delete settings.request;
 
-				this.root = this.data.root;
+				this.root = this.request.root;
 
 				// Set current state
 				H.replaceState(0, 0, path);
@@ -55,44 +55,54 @@
 		},
 
 		/**
-		 * Bind click and submit events to PJAX
+		 * Bind element events and form submit events to PJAX
 		 *
-		 * @param {($|HTMLElement|string)} sel
-		 * @param {HTMLElement} [context=document]
+		 * @param {object} events
+		 * @param {($|HTMLElement|string)} [context=document]
 		 */
-		bind: function(sel, event, context) {
-			var namespace = '.history';
+		bind: function(events, context) {
+			if (W.$isObject(events)) {
+				var keys = Object.keys(events),
+					namespace = '.history',
+					i = 0;
 
-			$(sel).each(function(el) {
-				var evt,
-					host,
-					path;
+				for (; i < keys.length; i++) {
+					var event = keys[i],
+						sel = events[event];
 
-				if (el.href && el.href[0] !== '#') {
-					evt = (event || 'click') + namespace;
-					host = el.hostname;
-					path = el.pathname;
-				} else if (el.action) {
-					var a = W._doc.createElement('a');
-					a.href = el.action;
-					evt = 'submit' + namespace;
-					host = a.hostname;
-					path = a.pathname;
-				}
+					$(sel).each(function(el) {
+						var evt = event.split(' ').map(function(val) {
+								return val + namespace;
+							}).join(' '),
+							loc = el.getAttribute('data-url'),
+							host,
+							path;
 
-				// Ensure the path exists and is local
-				if (evt && host == W._win.location.hostname) {
-					W.events.on(el, evt, function(e) {
-						W.history.go({
-							path: path
-						});
+						if (loc || el.action) {
+							var a = W._doc.createElement('a');
+							a.href = loc || el.action;
+							host = a.hostname;
+							path = a.pathname;
+						} else if (el.href && el.href[0] !== '#') {
+							host = el.hostname;
+							path = el.pathname;
+						}
 
-						e.preventDefault();
+						// Ensure the path exists and is local
+						if (evt && host == W._win.location.hostname) {
+							W.events.on(el, evt, function(e) {
+								W.history.go({
+									path: path
+								});
+
+								e.preventDefault();
+							});
+						}
+					}, {
+						context: context
 					});
 				}
-			}, {
-				context: context
-			});
+			}
 		},
 
 		/**
@@ -103,33 +113,33 @@
 		 * @param {boolean} [options.push=true]
 		 * @param {boolean} [options.run=true]
 		 * @param {string} [options.title='']
-		 * @param {object} [options.data]
+		 * @param {object} [options.request]
 		 * @param {($|HTMLElement|string)} [scrollTop]
 		 */
 		go: function(options) {
 			var scope = this;
 
-			if (! scope.data) {
+			if (! scope.request) {
 				scope.init();
 			}
 
 			var global = scope.settings,
-				globalData = scope.data,
+				globalRequest = scope.request,
 				conf = W.$extend(
 					{},
 					global,
 					options
 				),
-				data = conf.data || {};
+				request = conf.request || {};
 
-			data.root = data.root || scope.root;
+			request.root = request.root || scope.root;
 
-			data.url = data.url !== U ?
-				data.url :
+			request.url = request.url !== U ?
+				request.url :
 				conf.path;
 
-			// Request partial Ajax data
-			if (data.url) {
+			// Request partial Ajax
+			if (request.url) {
 				var sendEvents = [],
 					successEvents = [],
 					errorEvents = [],
@@ -138,19 +148,19 @@
 					targets = W.$(partials);
 
 				// Set Pjax header
-				data.headers = data.headers || {};
-				data.headers['X-PJAX'] = 'true';
+				request.headers = request.headers || {};
+				request.headers['X-PJAX'] = 'true';
 
 				// Process send events
-				if (data.send) {
-					sendEvents.push(data.send);
+				if (request.send) {
+					sendEvents.push(request.send);
 				}
 
-				if (globalData.send) {
-					sendEvents.push(globalData.send);
+				if (globalRequest.send) {
+					sendEvents.push(globalRequest.send);
 				}
 
-				data.send = sendEvents;
+				request.send = sendEvents;
 
 				// Compile success events
 				successEvents.push(function(html) {
@@ -181,12 +191,12 @@
 					}
 				});
 
-				if (data.success) {
-					successEvents.push(data.success);
+				if (request.success) {
+					successEvents.push(request.success);
 				}
 
-				if (globalData.success) {
-					successEvents.push(globalData.success);
+				if (globalRequest.success) {
+					successEvents.push(globalRequest.success);
 				}
 
 				successEvents.push(function() {
@@ -199,26 +209,26 @@
 					}
 				});
 
-				data.success = successEvents;
+				request.success = successEvents;
 
 				// Compile error events
-				if (data.error) {
-					errorEvents.push(data.error);
+				if (request.error) {
+					errorEvents.push(request.error);
 				}
 
-				if (globalData.error) {
-					errorEvents.push(globalData.error);
+				if (globalRequest.error) {
+					errorEvents.push(globalRequest.error);
 				}
 
-				data.error = errorEvents;
+				request.error = errorEvents;
 
 				// Compile complete events
-				if (data.complete) {
-					completeEvents.push(data.complete);
+				if (request.complete) {
+					completeEvents.push(request.complete);
 				}
 
-				if (globalData.complete) {
-					completeEvents.push(globalData.complete);
+				if (globalRequest.complete) {
+					completeEvents.push(globalRequest.complete);
 				}
 
 				completeEvents.push(function(xhr) {
@@ -227,13 +237,13 @@
 					}
 				});
 
-				data.complete = completeEvents;
+				request.complete = completeEvents;
 
 				// Make Ajax request
-				data.args = data.args || [];
-				data.args.unshift(targets);
+				request.args = request.args || [];
+				request.args.unshift(targets);
 
-				W.data.request(data);
+				W.data.request(request);
 			} else {
 				scope.$private.process(conf);
 			}
@@ -288,4 +298,4 @@
 			}
 		}
 	});
-})(Wee, undefined, history);
+})(Wee, history, undefined);
