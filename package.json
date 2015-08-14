@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "1.0.0-alpha.13",
+	"version": "1.0.0-alpha.14",
 	"description": "Blueprint for modern web development",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
@@ -19,11 +19,12 @@
 	},
 	"dependencies": {
 		"browser-sync": "~2.8.2",
+		"chalk": "~1.1.0",
 		"fs-extra": "~0.22.1",
 		"glob": "~5.0.14",
 		"html-minifier": "~0.7.2",
 		"js-yaml": "~3.3.1",
-		"jscs": "~2.0.0",
+		"jscs": "~2.1.0",
 		"jshint": "~2.8.0",
 		"less-plugin-clean-css": "~1.5.1",
 		"node-notifier": "~4.2.3",

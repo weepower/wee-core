@@ -4,46 +4,68 @@
 	'use strict';
 
 	module.exports = function(config) {
-		var fs = require('fs-extra');
+		var fs = require('fs-extra'),
+			path = require('path'),
+			glob = require('glob');
 
 		require('../script/wee.view');
 
 		var error = false,
 			message = false,
 			templatePath = __dirname + '/../templates/',
+			sourcePath = path.join(config.rootPath, config.project.paths.source),
 			commands = {
 				controller: function() {
 					var name = config.args.name || '',
-						target = 'source/js/build/' + name + '.js';
+						target = path.join(sourcePath, 'js/build/' + name + '.js');
 
-					if (!name) {
+					if (! name) {
 						error = 'Missing argument "--name=controllerName"';
 					} else if (fs.existsSync(target)) {
 						error = 'Controller "' + target + '" already exists';
 					}
 
-					if (!error) {
+					if (! error) {
 						var template = fs.readFileSync(templatePath + 'controller/base.js', 'utf8'),
 							parsed = Wee.view.render(template, config.args);
 
-						fs.writeFileSync(target, parsed);
+						fs.outputFileSync(target, parsed);
 
 						message = 'Controller generated at "' + target + '"';
 					}
 				},
 				module: function() {
 					var name = config.args.name || '',
-						slug = name.toLowerCase(),
-						target = 'source/modules/' + slug;
+						slug = (name[0].toLowerCase() + name.slice(1))
+							.replace(' ', ''),
+						target = path.join(sourcePath, 'modules/' + slug);
 
-					if (!name) {
+					if (! name) {
 						error = 'Missing argument "--name=Module"';
 					} else if (fs.existsSync(target)) {
 						error = 'Module "' + name + '" already exists';
 					}
 
-					if (!error) {
-						fs.copySync(templatePath + 'module', target);
+					if (! error) {
+						var moduleTemplate = path.join(templatePath, 'module'),
+							files = glob.sync(path.join(moduleTemplate, '/**/*')),
+							args = Wee.$extend({
+								author: 'test',
+								autoload: 'true',
+								website: '',
+								description: ''
+							}, config.args);
+
+						files.forEach(function(file) {
+							var name = file.replace(moduleTemplate, '');
+
+							if (fs.statSync(file).isFile()) {
+								var template = fs.readFileSync(file, 'utf8'),
+									parsed = Wee.view.render(template, args);
+
+								fs.outputFileSync(path.join(target, name), parsed);
+							}
+						});
 
 						message = 'Module generated at "' + target + '"';
 					}
@@ -55,9 +77,9 @@
 							'unit',
 							'functional'
 						],
-						target = 'source/js/tests/' + type + '/' + name + '.js';
+						target = path.join(sourcePath,';js/tests/' + type + '/' + name + '.js');
 
-					if (!name) {
+					if (! name) {
 						error = 'Missing argument "--name=testName"';
 					} else if (types.indexOf(type) < 0) {
 						error = 'Invalid test type "' + type + '"';
@@ -65,11 +87,11 @@
 						error = 'Test "' + target + '" already exists';
 					}
 
-					if (!error) {
+					if (! error) {
 						var template = fs.readFileSync(templatePath + 'test/unit.js', 'utf8'),
 							parsed = Wee.view.render(template, config.args);
 
-						fs.writeFileSync(target, parsed);
+						fs.outputFileSync(target, parsed);
 
 						message = 'Test generated at "' + target + '"';
 					}

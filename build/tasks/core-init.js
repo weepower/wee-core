@@ -1,9 +1,9 @@
-/* global config, configPath, global, path */
+/* global config, global, path */
 
 module.exports = function(grunt) {
 	grunt.registerTask('init', function() {
 		// Reset config object and set core paths
-		var project = grunt.file.readJSON(configPath),
+		var project = grunt.file.readJSON(config.configPath),
 			rootPath = project.paths.root,
 			sourcePath = project.paths.source,
 			assetPath = path.normalize(
@@ -15,8 +15,8 @@ module.exports = function(grunt) {
 
 		global.project = project;
 
-		global.config = {
-			path: configPath,
+		global.config = Wee.$extend(global.config, {
+			path: config.configPath,
 			paths: {
 				source: sourcePath,
 				assets: assetPath,
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 				print: '',
 				responsive: ''
 			}
-		};
+		});
 
 		// Set Grunt configuration
 		grunt.config.set('config', config);

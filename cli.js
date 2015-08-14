@@ -4,14 +4,12 @@
 	'use strict';
 
 	module.exports = function(rootPath) {
-		// Load dependencies
 		var fs = require('fs-extra'),
 			glob = require('glob'),
 			path = require('path');
 
 		global.Wee = require('./script/wee').Wee;
 
-		// Load build utilities
 		require('./utils');
 
 		var commandPaths = [
@@ -66,7 +64,7 @@
 			} else {
 				Wee.notify({
 					title: 'Command Error',
-					message: 'Command not available'
+					message: 'Command not found'
 				}, 'error');
 			}
 		} else {
@@ -75,5 +73,5 @@
 				message: 'Command option is required'
 			}, 'error');
 		}
-	}
+	};
 })();
