@@ -3,16 +3,34 @@
 (function() {
 	'use strict';
 
-	var notifier = require('node-notifier');
+	var chalk = require('chalk'),
+		fs = require('fs-extra'),
+		glob = require('glob'),
+		notifier = require('node-notifier'),
+		path = require('path');
 
 	Wee.fn.extend({
-		// Build root or relative path
+		/**
+		 * Build root or relative path
+		 *
+		 * @param loc
+		 * @param file
+		 * @returns {*}
+		 */
 		buildPath: function(loc, file) {
 			return file.substring(0, 2) === './' ?
 				file :
 				path.join(loc, file);
 		},
-		// Append minified extension
+
+		/**
+		 * Append minified extension
+		 *
+		 * @param dest
+		 * @param src
+		 * @param ext
+		 * @returns {string}
+		 */
 		getMinExtension: function(dest, src, ext) {
 			var dir = src.substring(0, src.lastIndexOf('/')),
 				filename = src.substring(src.lastIndexOf('/'), src.length);
@@ -20,47 +38,73 @@
 
 			return dest + '/' + dir + filename + ext;
 		},
-		validate: function(config, grunt, filepath, log) {
-			var ext = path.extname(filepath);
 
-			if (filepath.indexOf('temp') === -1 &&
-				filepath.indexOf('/vendor') === -1) {
+		/**
+		 *
+		 * @param file
+		 * @param config
+		 * @param log
+		 */
+		validate: function(root, config, file) {
+			var ext = path.extname(file);
+
+			if (file.indexOf('temp') === -1 &&
+				file.indexOf('/vendor') === -1) {
 				if (ext === '.js') {
-					var js = grunt.file.read(filepath);
+					var validate = config.script.validate,
+						src = fs.readFileSync(file, {
+							encoding: 'utf-8'
+						});
 
-					if (project.script.validate.jshint) {
-						this.validateJshint(js, grunt, filepath, log);
+					if (validate.jshint) {
+						this.validateJshint(
+							path.join(root, validate.jshint),
+							file,
+							src
+						);
 					}
 
-					if (project.script.validate.jscs) {
-						this.validateJscs(js, grunt, filepath, log);
+					if (validate.jscs) {
+						this.validateJscs(
+							path.join(root, validate.jscs),
+							file,
+							src
+						);
 					}
 				}
 			}
 		},
-		validateJshint: function(js, grunt, filepath) {
-			var jshintConfig = grunt.file.readJSON(
-				project.script.validate.jshint === true ?
-					'wee/script/.jshintrc' :
-					project.script.validate.jshint
-			);
 
-			if (! jshint(js, jshintConfig)) {
+		/**
+		 *
+		 * @param src
+		 * @param file
+		 */
+		validateJshint: function(rules, file, src) {
+			var jshint = require('jshint').JSHINT,
+				config = fs.readJsonSync(rules);
+
+			if (! jshint(src, config)) {
 				var out = jshint.data(),
 					errors = out.errors,
 					total = errors.length;
 
-				grunt.log.header('Script validation errors found');
+				console.log(
+					chalk.bgRed('JSHint error' +
+						((total > 1) ? 's' : '') + ' in ' + file + '.')
+				);
 
-				grunt.log.error('JSHint error' +
-					((total > 1) ? 's' : '') + ' in ' + filepath + '.');
-
-				errors.forEach(function(message) {
-					Wee.logError(grunt, message.line + ':' + message.character, message.reason, message.evidence);
+				errors.forEach(function(error) {
+					if (error) {
+						Wee.logError(
+							error.line + ':' + error.character,
+							error.reason,
+							error.evidence
+						);
+					}
 				});
 
-				grunt.log.writeln();
-				grunt.log.writeln();
+				console.log('\n');
 
 				this.notify({
 					title: 'JSHint Validation Error',
@@ -68,28 +112,41 @@
 				}, 'error', false);
 			}
 		},
-		validateJscs: function(js, grunt, filepath) {
-			var jscsConfig = grunt.file.readJSON(
-					project.script.validate.jscs === true ?
-						'wee/script/.jscs.json' :
-						project.script.validate.jscs
-				),
+
+		/**
+		 *
+		 * @param src
+		 * @param file
+		 */
+		validateJscs: function(rules, file, src) {
+			var JSCS = require('jscs'),
+				jscsConfig = fs.readJsonSync(rules),
 				checker = new JSCS();
 
 			checker.registerDefaultRules();
 			checker.configure(jscsConfig);
 
-			var errors = checker.checkString(js),
+			var errors = checker.checkString(src),
 				errorList = errors.getErrorList(),
 				total = errorList.length;
 
 			if (total > 0) {
-				grunt.log.error('JSCS error' +
-					((total > 1) ? 's' : '') + ' in ' + filepath + '.');
+				console.log(
+					chalk.bgRed('JSCS error' +
+						((total > 1) ? 's' : '') + ' in ' + file + '.')
+				);
 
-				errorList.forEach(function(message) {
-					Wee.logError(grunt, message.line + ':' + message.column, message.rule, message.message);
+				errorList.forEach(function(error) {
+					if (error) {
+						Wee.logError(
+							error.line + ':' + error.column,
+							error.rule,
+							error.message
+						);
+					}
 				});
+
+				console.log('\n');
 
 				this.notify({
 					title: 'JSCS Validation Error',
@@ -97,9 +154,28 @@
 				}, 'error', false);
 			}
 		},
-		logError: function(grunt, pos, msg, details) {
-			grunt.log.writeln('['.cyan + pos + '] '.cyan + msg + ' ' + (details || '').magenta);
+
+		/**
+		 *
+		 * @param position
+		 * @param message
+		 * @param details
+		 */
+		logError: function(position, message, details) {
+			var output =
+				chalk.bgBlack.bold('[' + position + '] ') +
+				message + ' ' +
+				(details || '');
+
+			console.log(output);
 		},
+
+		/**
+		 *
+		 * @param options
+		 * @param type
+		 * @param log
+		 */
 		notify: function(options, type, log) {
 			options.icon = 'node_modules/wee-core/build/img/' +
 				(type || 'notice') + '.png';
@@ -117,6 +193,11 @@
 
 			notifier.notify(options);
 		},
+
+		/**
+		 *
+		 * @param url
+		 */
 		serverWatch: function(url) {
 			if (url.substring(0, 4) !== 'http') {
 				reloadPaths.push(path.join(config.paths.root, url));

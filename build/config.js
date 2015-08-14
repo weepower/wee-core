@@ -4,35 +4,32 @@
 	'use strict';
 
 	module.exports = function(grunt, rootPath) {
-		// Load dependencies
 		var LessCssClean = require('less-plugin-clean-css');
-
-		global.fs = require('fs-extra');
-		global.path = require('path');
-		global.browserSync = require('browser-sync');
-		global.JSCS = require('jscs');
-		global.jshint = require('jshint').JSHINT;
-		global.Wee = require('../script/wee').Wee;
-
-		// Load build utilities
-		require('../utils');
-
-		// Set global paths
-		global.rootPath = rootPath;
-		global.configPath = path.join(rootPath, grunt.option('config') || 'wee.json');
-
-		// Initialize global storage
-		global.config = {};
-		global.server = {};
-		global.legacy = {};
-		global.moduleLegacy = [];
-		global.legacyBuild = [];
-		global.legacyConvert = [];
-		global.reloadPaths = [];
 
 		global.version = '3.0.0';
 
-		// Load Grunt tasks
+		global.browserSync = require('browser-sync');
+		global.fs = require('fs-extra');
+		global.path = require('path');
+		global.Wee = require('../script/wee').Wee;
+
+		require('../utils');
+
+		global.config = {
+			configPath: path.join(
+				rootPath,
+				grunt.option('config') || 'wee.json'
+			),
+			rootPath: rootPath
+		};
+
+		global.legacy = {};
+		global.legacyBuild = [];
+		global.legacyConvert = [];
+		global.moduleLegacy = [];
+		global.reloadPaths = [];
+		global.server = {};
+
 		grunt.loadTasks(__dirname + '/tasks');
 
 		grunt.initConfig({
@@ -259,20 +256,12 @@
 			}
 		});
 
-		// -------------------------------------
-		// Load Plugins
-		// -------------------------------------
-
 		grunt.loadNpmTasks('grunt-contrib-concat');
 		grunt.loadNpmTasks('grunt-contrib-imagemin');
 		grunt.loadNpmTasks('grunt-contrib-less');
 		grunt.loadNpmTasks('grunt-contrib-uglify');
 		grunt.loadNpmTasks('grunt-contrib-watch');
 		grunt.loadNpmTasks('grunt-newer');
-
-		// -----------------------------------
-		// Grunt Tasks
-		// -----------------------------------
 
 		grunt.registerTask('default', [
 			'init',
@@ -290,7 +279,9 @@
 			'syncDirectory:fonts'
 		]);
 
-		// Build + Watch
+		/**
+		 * Build, watch
+		 */
 		grunt.registerTask('local', [
 			'default',
 			'proxy',
@@ -298,7 +289,9 @@
 			'watch'
 		]);
 
-		// Build + Server + Open + Watch
+		/**
+		 * Build, serve, open, watch
+		 */
 		grunt.registerTask('static', [
 			'default',
 			'server',
@@ -306,13 +299,9 @@
 			'watch'
 		]);
 
-		// Validate
-		grunt.registerTask('validate', [
-			'init',
-			'runValidation'
-		]);
-
-		// Generate Site
+		/**
+		 * Generate static sites
+		 */
 		grunt.registerTask('generate', [
 			'init',
 			'configGenerator'

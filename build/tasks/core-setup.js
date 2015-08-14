@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 		if (project.script.validate.watch) {
 			grunt.event.on('watch', function(action, file) {
 				if (action !== 'deleted') {
-					Wee.validate(config, grunt, file);
+					Wee.validate(config.rootPath, project, file);
 				}
 			});
 		}
