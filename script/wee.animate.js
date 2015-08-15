@@ -35,13 +35,13 @@
 									el.style[prop] = update + 'px' :
 									el[prop] = update;
 							},
-							int = setInterval(function() {
+							si = setInterval(function() {
 								var diff = Date.now() - start;
 
 								if (dist && diff < conf.duration) {
 									setValue(prop, val + dist * ease(diff / conf.duration) * dir);
 								} else {
-									clearInterval(int);
+									clearInterval(si);
 
 									if (conf.complete) {
 										W.$exec(conf.complete);
@@ -72,7 +72,7 @@
 		 */
 		easings: {
 			ease: function(t) {
-				return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+				return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 			},
 			linear: function(t) {
 				return t;

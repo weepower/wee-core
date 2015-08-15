@@ -1,11 +1,10 @@
-/* global config, JSCS, jshint, path, project, reloadPaths */
+/* global config, reloadPaths */
 
 (function() {
 	'use strict';
 
 	var chalk = require('chalk'),
 		fs = require('fs-extra'),
-		glob = require('glob'),
 		notifier = require('node-notifier'),
 		path = require('path');
 

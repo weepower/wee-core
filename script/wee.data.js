@@ -1,3 +1,5 @@
+/* global JSON */
+
 (function(W) {
 	'use strict';
 
@@ -65,7 +67,7 @@
 
 			// Format data based on specified verb
 			if (method == 'GET') {
-				if (Object.keys(conf.data).length > 0) {
+				if (Object.keys(conf.data).length) {
 					conf.url += '?' + W.$serialize(conf.data);
 				}
 			} else {
@@ -209,7 +211,7 @@
 				] = fn;
 			}
 
-			if (Object.keys(conf.data).length > 0) {
+			if (Object.keys(conf.data).length) {
 				conf.url += '?' + W.$serialize(conf.data);
 			}
 

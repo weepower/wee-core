@@ -20,7 +20,7 @@
 					});
 
 				if (pkg.version.replace(/[^\d\.]/g, '') < data.version) {
-					var current = version.split('.'),
+					var current = pkg.version.split('.'),
 						update = data.version.split('.'),
 						type = 'patch';
 

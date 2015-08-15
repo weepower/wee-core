@@ -1,4 +1,4 @@
-/* global __dirname, global */
+/* global __dirname, global, path */
 
 (function() {
 	'use strict';

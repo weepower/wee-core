@@ -325,7 +325,7 @@
 			var b = false;
 
 			W.$each(parent, function(el) {
-				if (W.$(descendant, el).length > 0) {
+				if (W.$(descendant, el).length) {
 					b = true;
 					return;
 				}

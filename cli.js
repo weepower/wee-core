@@ -50,10 +50,10 @@
 				});
 
 				// Read project configuration and remove from arguments
-				var configPath = path.join(rootPath, args['config'] || 'wee.json'),
+				var configPath = path.join(rootPath, args.config || 'wee.json'),
 					project = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-				delete args['config'];
+				delete args.config;
 
 				command({
 					options: options,
