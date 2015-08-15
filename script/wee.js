@@ -273,14 +273,6 @@
 					if (typeof selector != 'string') {
 						el = selector;
 					} else {
-						if (selector == 'window') {
-							return [N];
-						}
-
-						if (selector == 'document') {
-							return [D];
-						}
-
 						// Return nothing if context doesn't exist
 						context = context !== U ? W.$(context)[0] : D;
 
@@ -561,14 +553,14 @@
 				$exec: function(fn, options) {
 					options = options || {};
 
-					var conf = extend({
-							args: []
-						}, options),
-						fns = W.$toArray(fn),
+					var fns = W.$toArray(fn),
 						len = fns.length,
 						i = 0;
 
 					for (; i < len; i++) {
+						var conf = extend({
+							args: []
+						}, options || {});
 						fn = fns[i];
 
 						if (typeof fn == 'string') {
@@ -960,7 +952,7 @@
 							val = val === 'true' ? true :
 								val === 'false' ? false :
 								val === 'null' ? null :
-								parseInt(val) + '' === val ? parseInt(val) :
+								parseInt(val).toString() === val ? parseInt(val) :
 								/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
 								val;
 						} catch (e) {}
