@@ -113,7 +113,7 @@
 			var routes = conf.routes || this.$get('routes');
 
 			if (conf.path) {
-				this.path(conf.path);
+				this.uri(conf.path);
 			}
 
 			if (routes) {
