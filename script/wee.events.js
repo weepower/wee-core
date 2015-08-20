@@ -117,21 +117,14 @@
 		},
 
 		/**
-		 * Execute event for each matching selection
+		 * Execute bound event for each matching selection
 		 *
 		 * @param {(HTMLElement|string)} target
-		 * @param {string} event
+		 * @param {string} name
 		 */
-		trigger: function(target, event) {
-			W.$each(target, function(el) {
-				if (W._doc.createEvent) {
-					var evt = W._doc.createEvent('HTMLEvents');
-
-					evt.initEvent(event, true, false);
-					el.dispatchEvent(evt);
-				} else {
-					el.fireEvent('on' + event);
-				}
+		trigger: function(target, name) {
+			this.bound(target, name).forEach(function(evt) {
+				evt.cb();
 			});
 		},
 
@@ -192,8 +185,8 @@
 							var cb = function(e) {
 								var cont = true;
 
-								if (W._legacy) {
-									e = W._win.event;
+								if (W._legacy || ! e) {
+									e = W._win.event || {};
 									e.target = e.srcElement;
 
 									e.preventDefault = function() {
@@ -233,8 +226,7 @@
 								if (cont) {
 									W.$exec(fn, conf);
 
-									// If the event is to be executed once
-									// unbind it immediately
+									// Unbind after first execution
 									if (conf.once) {
 										scope.$public.off(el, evt, f);
 									}
@@ -248,18 +240,16 @@
 								if ('on' + evt in W._win) {
 									W._legacy ?
 										el.attachEvent('on' + evt, cb) :
-										el.addEventListener(evt, cb);
-
-									scope.$push('evts', {
-										el: el,
-										ev: ev,
-										evt: evt,
-										cb: cb,
-										fn: f
-									});
-								} else if (scope.custom[evt]) {
-									scope.custom[evt][0](el, fn, conf);
+										el.addEventListener(evt, cb, false);
 								}
+
+								scope.$push('evts', {
+									el: el,
+									ev: ev,
+									evt: evt,
+									cb: cb,
+									fn: f
+								});
 							}
 
 							if (evt == 'init' || conf.init === true) {
@@ -281,19 +271,14 @@
 		off: function(sel, evt, fn) {
 			var scope = this;
 
-			W.$each(this.$public.bound(sel, evt, fn), function(e) {
+			W.$each(this.$public.bound(sel, evt, fn), function(e, i) {
 				if ('on' + e.evt in W._doc) {
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
 						e.el.removeEventListener(e.evt, e.cb);
-
-					// Remove object from the bound array
-					var bound = scope.$get('evts');
-
-					bound.splice(bound.indexOf(e), 1);
-				} else if (scope.custom[evt]) {
-					scope.custom[evt][1](e.el, e.cb);
 				}
+
+				scope.$get('evts').splice(i, 1);
 			});
 		}
 	});
