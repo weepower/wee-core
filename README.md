@@ -3,6 +3,7 @@
 This repository is part of the [Wee framework](https://github.com/weepower/wee).
 
 [![Code Climate](https://codeclimate.com/github/weepower/wee-core/badges/gpa.svg)](https://codeclimate.com/github/weepower/wee-core)
+[![NPM version](https://img.shields.io/npm/v/wee-core.svg?style=flat)](https://www.npmjs.com/package/wee-core)
 
 ## License
 
