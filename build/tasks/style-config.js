@@ -64,16 +64,6 @@ module.exports = function(grunt) {
 				delete breakpoints[key];
 			});
 
-			// Custom breakpoints
-			Object.keys(breakpoints).forEach(function(key) {
-				// TODO: Complete custom breakpoint feature
-				if (breakpoints[key] !== false) {
-					config.style.vars[key + 'Width'] = (
-						breakpoints[key] - offset
-					) + 'px';
-				}
-			});
-
 			config.style.responsive = '@import "../style/wee.responsive.less";';
 		} else {
 			config.style.vars.responsiveEnabled = false;
