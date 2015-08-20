@@ -35,13 +35,24 @@
 		},
 
 		/**
+		 * Get currently bound events to optional specified element and event|function
+		 *
+		 * @param {string} [event] - event name to match
+		 * @param {function} [fn] - specific function to match
+		 * @returns {Array} matches
+		 */
+		bound: function(event, fn) {
+			return E.bound(event, fn);
+		},
+
+		/**
 		 * Execute event on selection
 		 *
-		 * @param {string} event name
+		 * @param {string} name
 		 * @returns {$} selection
 		 */
-		trigger: function(event) {
-			E.trigger(this, event);
+		trigger: function(name) {
+			E.trigger(this, name);
 
 			return this;
 		}
