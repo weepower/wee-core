@@ -1094,7 +1094,7 @@
 						});
 					} else if (
 						type != 'submit' && type != 'button' &&
-						((type != 'checkbox' && type != 'radio') || el.checked)) {
+						((type != 'checkbox' && type != 'radio') || child.checked)) {
 						arr.push(
 							name +
 							'=' +
