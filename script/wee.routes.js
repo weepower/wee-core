@@ -27,7 +27,7 @@
 					query = {};
 				a.href = value;
 
-				var search = a.search.slice(1);
+				var search = a.search;
 
 				if (search) {
 					var arr = decodeURIComponent(search).slice(1).split('&'),
@@ -42,7 +42,7 @@
 				var path = a.pathname.replace(/^\/|\/$/g, '');
 
 				return this.$set('uri', {
-					full: '/' + path + a.search + a.hash,
+					full: '/' + path + search + a.hash,
 					hash: a.hash.slice(1),
 					history: false,
 					path: '/' + path,
