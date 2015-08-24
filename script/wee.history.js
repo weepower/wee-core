@@ -42,7 +42,8 @@
 						conf || {},
 						{
 							path: path,
-							push: false
+							push: false,
+							pop: true
 						}
 					));
 				}, {
@@ -270,9 +271,14 @@
 		 * @param {object} conf
 		 */
 		process: function(conf) {
-			var key = conf.path.replace(/^\//g, '');
+			var key = conf.path.replace(/^\//g, ''),
+				method = conf.request.method;
 
 			this.$push('entries', key, conf);
+
+			if (! method || method == 'get') {
+				conf.path = W.data.$private.getUrl(conf.request);
+			}
 
 			// Add entry to HTML5 history
 			if (conf.push) {
@@ -295,6 +301,18 @@
 				if (conf.run) {
 					W.routes.run();
 				}
+			}
+
+			if (conf.push && conf.pushstate) {
+				W.$exec(conf.pushstate);
+			}
+
+			if (conf.pop && conf.popstate) {
+				W.$exec(conf.popstate);
+			}
+
+			if (conf.callback) {
+				W.$exec(conf.callback);
 			}
 		}
 	});
