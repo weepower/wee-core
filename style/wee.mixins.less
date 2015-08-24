@@ -146,10 +146,10 @@
 	background: @color url('@{imagePath}@{filename}') @x @y @repeat;
 }
 .background (light; @opacity: @defaultOpacity; @fallback: @white) {
-	.background (@white; @opacity; @fallback);
+	.background(@white; @opacity; @fallback);
 }
 .background (dark; @opacity: @defaultOpacity; @fallback: @black) {
-	.background (@black; @opacity; @fallback);
+	.background(@black; @opacity; @fallback);
 }
 .background-color (@color: @bodyBackground) {
 	background-color: @color;
@@ -726,20 +726,55 @@
 .border-style (left; @style) {
 	border-left-style: @style;
 }
-.border-width (@width) {
-	border-width: @width;
+.border-width (@value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	border-width: @temp;
 }
-.border-width (top; @width) {
-	border-top-width: @width;
+.border-width (top; @value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	border-top-width: @temp;
 }
-.border-width (right; @width) {
-	border-right-width: @width;
+.border-width (right; @value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	border-right-width: @temp;
 }
-.border-width (bottom; @width) {
-	border-bottom-width: @width;
+.border-width (bottom; @value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	border-bottom-width: @temp;
 }
-.border-width (left; @width) {
-	border-left-width: @width;
+.border-width (left; @value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	border-left-width: @temp;
 }
 
 
@@ -1456,16 +1491,17 @@
 
 .opacity (@value) {
 	.check () when (ispercentage(@value)) {
-		opacity: unit((@value / 100));
+		@temp: unit((@value / 100));
 	}
 	.check () when (@value > 1)
 			and not (ispercentage(@value)) {
-		opacity: (@value / 100);
+		@temp: (@value / 100);
 	}
 	.check () when (default()) {
-		opacity: @value;
+		@temp: @value;
 	}
 	.check();
+	opacity: @temp;
 }
 .transparent () {
 	opacity: 0;
@@ -2033,6 +2069,53 @@
 
 
 /*------------------------------------*\
+	# SVG
+\*------------------------------------*/
+
+.fill (@color) when (iscolor(@color)) {
+	fill: @color;
+}
+.fill (@color; @opacity) when (iscolor(@color)) and (isnumber(@opacity)) {
+	.check () when (@opacity > 1)
+			and not (ispercentage(@opacity)) {
+		fill: rgba(red(@color), green(@color), blue(@color), (@opacity / 100));
+	}
+	.check () when (@opacity < 1) {
+		fill: rgba(red(@color), green(@color), blue(@color), @opacity);
+	}
+	.check () when (ispercentage(@opacity)) {
+		fill: rgba(red(@color), green(@color), blue(@color), unit((@opacity / 100)));
+	}
+	.check();
+}
+.fill (light; @opacity: @defaultOpacity) {
+	.fill(@white; @opacity);
+}
+.fill (dark; @opacity: @defaultOpacity) {
+	.fill(@black; @opacity);
+}
+.stroke (@color) {
+	stroke: @color;
+}
+.stroke (@color; @width) {
+	.stroke-width(@width);
+}
+.stroke-width (@value) {
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	stroke-width: @temp;
+}
+
+
+
+
+
+/*------------------------------------*\
 	# Tables
 \*------------------------------------*/
 
@@ -2468,9 +2551,6 @@
 }
 .scroll () when (default()) {
 	overflow: scroll;
-}
-.fill (@value) when (iscolor(@value)) {
-	fill: @value;
 }
 .fill (vertical) {
 	height: 100%;
