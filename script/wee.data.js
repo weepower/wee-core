@@ -67,9 +67,7 @@
 
 			// Format data based on specified verb
 			if (method == 'GET') {
-				if (Object.keys(conf.data).length) {
-					conf.url += '?' + W.$serialize(conf.data);
-				}
+				conf.url = this.$private.getUrl(conf);
 			} else {
 				if (method == 'POST') {
 					headers[contentTypeHeader] =
@@ -211,13 +209,9 @@
 				] = fn;
 			}
 
-			if (Object.keys(conf.data).length) {
-				conf.url += '?' + W.$serialize(conf.data);
-			}
-
 			var el = W._doc.createElement('script');
 
-			el.src = conf.url;
+			el.src = this.getUrl(conf);
 
 			if (conf.error) {
 				el.onerror = function() {
@@ -229,6 +223,21 @@
 			}
 
 			head.appendChild(el);
+		},
+
+		/**
+		 * Generate final URL
+		 *
+		 * @param {object} conf
+		 */
+		getUrl: function(conf) {
+			var url = conf.url;
+
+			if (Object.keys(conf.data).length) {
+				url += '?' + W.$serialize(conf.data);
+			}
+
+			return url;
 		}
 	});
 })(Wee);
