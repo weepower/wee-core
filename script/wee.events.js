@@ -77,7 +77,7 @@
 		/**
 		 * Get currently bound events to optional specified element and event|function
 		 *
-		 * @param {(HTMLElement|string)} [target]
+		 * @param {(false|HTMLElement|string)} [target]
 		 * @param {string} [event] - event name to match
 		 * @param {function} [fn] - specific function to match
 		 * @returns {Array} matches
