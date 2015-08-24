@@ -21,7 +21,9 @@ module.exports = function(grunt) {
 							modulePath + '/module/script/*.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
-						less = grunt.file.read(config.paths.wee + 'style/wee.module.less');
+						less = grunt.file.read(config.paths.wee + 'style/wee.module.less'),
+						namespaceOpen = '',
+						namespaceClose = '';
 
 					// Set module variables
 					vars.moduleName = name;
@@ -33,12 +35,21 @@ module.exports = function(grunt) {
 							'/module/style/screen.less";\n',
 						responsive = '';
 
-					// Reference core Less if extension
+					// Reference core Less and inherit namespace if extension
 					if (module.extension) {
 						inject += "@import (reference) 'wee.less';\n";
+
+						namespaceOpen = config.style.namespaceOpen || '';
+						namespaceClose = config.style.namespaceClose || '';
 					}
 
 					if (module.style) {
+						// Namespace mixins and reset
+						if (module.style.core && typeof module.style.core.namespace == 'string') {
+							namespaceOpen = module.style.core.namespace + ' {';
+							namespaceClose = '}';
+						}
+
 						// Build additional style
 						if (module.style.build) {
 							var sources = Wee.$toArray(module.style.build);
@@ -211,7 +222,9 @@ module.exports = function(grunt) {
 					}
 
 					// Process import injection
-					less = less.replace('{{imports}}', inject)
+					less = less.replace('{{namespaceOpen}}', namespaceOpen)
+						.replace('{{namespaceClose}}', namespaceClose)
+						.replace('{{imports}}', inject)
 						.replace('{{responsive}}', responsive);
 
 					// Write temporary file

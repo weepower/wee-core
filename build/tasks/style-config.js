@@ -2,7 +2,19 @@
 
 module.exports = function(grunt) {
 	grunt.registerTask('configStyle', function() {
-		var features = project.style.core;
+		var core = project.style.core,
+			features = core.features;
+
+		// Namespace mixins and reset
+		if (typeof core.namespace == 'string') {
+			config.style.namespaceOpen = core.namespace + ' {';
+			config.style.namespaceClose = '}';
+		}
+
+		// Mixins
+		if (features.mixins === true) {
+			config.style.mixins = '@import "../style/wee.mixins.less";\n';
+		}
 
 		// Core style features
 		config.style.vars = {
@@ -15,37 +27,37 @@ module.exports = function(grunt) {
 			printEnabled: features.print === true
 		};
 
+		if (config.style.vars.buttonEnabled) {
+			config.style.coreImports.push('../style/components/wee.buttons.less');
+		}
+
 		if (config.style.vars.codeEnabled) {
-			config.style.imports.push('../style/components/wee.code.less');
+			config.style.coreImports.push('../style/components/wee.code.less');
 		}
 
 		if (config.style.vars.formEnabled) {
-			config.style.imports.push('../style/components/wee.forms.less');
-		}
-
-		if (config.style.vars.buttonEnabled) {
-			config.style.imports.push('../style/components/wee.buttons.less');
+			config.style.coreImports.push('../style/components/wee.forms.less');
 		}
 
 		if (config.style.vars.tableEnabled) {
-			config.style.imports.push('../style/components/wee.tables.less');
+			config.style.coreImports.push('../style/components/wee.tables.less');
 		}
 
 		if (config.style.vars.printEnabled) {
-			config.style.print = '@media print {\n';
-			config.style.print += '@import "../style/wee.print.less";\n';
-			config.style.print += '@import (optional) "@{sourcePath}/custom/print.less";\n';
-			config.style.print += '}';
+			config.style.print = '@media print {\n' +
+				'@import "../style/wee.print.less";\n' +
+				'@import (optional) "@{sourcePath}/custom/print.less";\n' +
+				'}';
 		}
 
 		// Responsive
-		if (features.responsive && features.responsive.enable === true) {
+		if (core.responsive && core.responsive.enable === true) {
 			config.style.vars.responsiveEnabled = true;
 			config.style.vars.ieBreakpoint = project.style.legacy.breakpoint || 4;
 
 			// Breakpoints
-			var offset = features.responsive.offset || 0,
-				breakpoints = features.responsive.breakpoints,
+			var offset = core.responsive.offset || 0,
+				breakpoints = core.responsive.breakpoints,
 				defaults = [
 					'mobileLandscape',
 					'tabletPortrait',

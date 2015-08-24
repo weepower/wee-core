@@ -1,19 +1,18 @@
 @import (reference) '../style/wee.variables.less';        // Core configuration
 @import (reference) '@{sourcePath}custom/variables.less'; // Custom configuration
-@import '../style/wee.reset.less';                        // Reset
-@import '../style/wee.mixins.less';                       // Mixins
-@import (reference) '@{sourcePath}custom/mixins.less';    // Custom mixins
 
-// Inject imports
+{{namespaceOpen}}
+@import '../style/wee.reset.less';  // Reset
+@import '../style/wee.mixins.less'; // Core mixins
+{{coreImports}}
+{{namespaceClose}}
+
+@import (reference) '@{sourcePath}custom/mixins.less'; // Custom mixins
 {{imports}}
 
-// Core
 @import '@{sourcePath}/custom/screen.less'; // Customizations
 
-// Responsive
 {{responsive}}
-
-// Print
 {{print}}
 
 // Framework

@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 				'**/*.css',
 				'**/*.less'
 			]),
-			imports = [],
+			coreInject = '',
 			inject = '';
 
 		buildFiles.forEach(function(name) {
@@ -17,9 +17,9 @@ module.exports = function(grunt) {
 				name.replace(path.normalize(config.paths.assets), '');
 
 			if (name.indexOf('/vendor/') !== -1) {
-				imports.unshift(name);
+				config.style.imports.unshift(name);
 			} else {
-				imports.push(name);
+				config.style.imports.push(name);
 			}
 		});
 
@@ -36,15 +36,17 @@ module.exports = function(grunt) {
 			name = '@{sourcePath}/' +
 				name.replace(path.normalize(config.paths.assets), '');
 
-			imports.push(name);
+			config.style.imports.push(name);
 		});
 
 		grunt.config.set('watch.styleBuildUpdate.files', buildArray);
 
-		// Merge imports into global imports
-		config.style.imports = config.style.imports.concat(imports);
+		// Process core imports
+		config.style.coreImports.forEach(function(val) {
+			coreInject += '@import (optional) "' + val + '";\n';
+		});
 
-		// Process template
+		// Process custom imports
 		config.style.imports.forEach(function(val) {
 			if (path.extname(val) === '.css') {
 				inject += '@import (inline, optional) "' + val + '";\n';
@@ -53,9 +55,13 @@ module.exports = function(grunt) {
 			}
 		});
 
-		less = less.replace('{{imports}}', inject)
-			.replace('{{print}}', config.style.print)
-			.replace('{{responsive}}', config.style.responsive);
+		less = less.replace('{{namespaceOpen}}', config.style.namespaceOpen || '')
+			.replace('{{namespaceClose}}', config.style.namespaceClose || '')
+			.replace('{{mixins}}', config.style.mixins || '')
+			.replace('{{coreImports}}', coreInject)
+			.replace('{{imports}}', inject)
+			.replace('{{print}}', config.style.print || '')
+			.replace('{{responsive}}', config.style.responsive || '');
 
 		// Write temporary file
 		grunt.file.write(config.paths.weeTemp, less);

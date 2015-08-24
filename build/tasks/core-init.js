@@ -49,6 +49,7 @@ module.exports = function(grunt) {
 			},
 			style: {
 				concat: [],
+				coreImports: [],
 				imports: [],
 				tasks: [],
 				print: '',
