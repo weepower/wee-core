@@ -89,20 +89,23 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				var name = func ?
-					W.$exec(value, {
-						args: [i, el.className],
-						scope: el
-					}) :
-					value;
+				var cn = el.className,
+					name = func ?
+						W.$exec(value, {
+							args: [i, cn],
+							scope: el
+						}) :
+						value;
 
 				if (name) {
-					el.className = (
-							el.className + ' ' +
-							name.split(/\s+/
-						).filter(function(name) {
-							return ! W.$hasClass(el, name);
-						}).join(' ')).trim();
+					var names = cn.split(' '),
+						upd = name.split(' ').filter(function(val) {
+							return names.indexOf(val) < 0;
+						});
+
+					upd.unshift(cn);
+
+					el.className = upd.join(' ');
 				}
 			});
 		},
@@ -976,21 +979,20 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				var name = func ?
-					W.$exec(value, {
-						args: [i, el.className],
-						scope: el
-					}) :
-					value;
+				var cn = el.className,
+					name = func ?
+						W.$exec(value, {
+							args: [i, cn],
+							scope: el
+						}) :
+						value;
 
 				if (name) {
-					el.className = el.className.replace(
-						new RegExp(
-							'(^| )' +
-							name.split(/\s+/).join('|') +
-							'($| )',
-							'gi'
-					), ' ').trim();
+					var names = name.split(' ');
+
+					el.className = cn.split(' ').filter(function(val) {
+						return names.indexOf(val) < 0;
+					}).join(' ');
 				}
 			});
 		},
