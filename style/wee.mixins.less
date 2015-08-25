@@ -2321,7 +2321,14 @@
 	word-spacing: @temp;
 }
 .text-indent (@value) {
-	text-indent: @value;
+	.check () when (isunit(@value, '')) {
+		@temp: unit(@value, @defaultUnit);
+	}
+	.check () when (default()) {
+		@temp: @value;
+	}
+	.check();
+	text-indent: @temp;
 }
 .user-select (@value: none) {
 	-moz-user-select: @value;
