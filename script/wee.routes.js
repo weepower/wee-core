@@ -212,8 +212,8 @@
 					child = route[key],
 					opts = key.split('||'),
 					k = 0,
-					filtered,
-					match;
+					filtered = false,
+					match = false;
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k];
