@@ -57,7 +57,6 @@ module.exports = function(grunt) {
 
 		less = less.replace('{{namespaceOpen}}', config.style.namespaceOpen || '')
 			.replace('{{namespaceClose}}', config.style.namespaceClose || '')
-			.replace('{{mixins}}', config.style.mixins || '')
 			.replace('{{coreImports}}', coreInject)
 			.replace('{{imports}}', inject)
 			.replace('{{print}}', config.style.print || '')

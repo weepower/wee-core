@@ -11,11 +11,6 @@ module.exports = function(grunt) {
 			config.style.namespaceClose = '}';
 		}
 
-		// Mixins
-		if (features.mixins === true) {
-			config.style.mixins = '@import "../style/wee.mixins.less";\n';
-		}
-
 		// Core style features
 		config.style.vars = {
 			sourcePath: '"' + config.paths.cssSource + '"',
