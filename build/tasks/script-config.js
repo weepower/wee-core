@@ -5,7 +5,8 @@ module.exports = function(grunt) {
 		// Core scripts
 		if (project.script.core.enable === true) {
 			var features = project.script.core.features,
-				weeScriptRoot = config.paths.wee + 'script/';
+				weeScriptRoot = config.paths.wee + 'script/',
+				chained = [];
 
 			config.script.files.push(weeScriptRoot + 'wee.js');
 
@@ -24,14 +25,14 @@ module.exports = function(grunt) {
 			}
 
 			if (features.chain === true) {
-				config.script.files.push(weeScriptRoot + 'wee.chain.js');
+				chained.push(weeScriptRoot + 'wee.chain.js');
 			}
 
 			if (features.animate === true) {
 				config.script.files.push(weeScriptRoot + 'wee.animate.js');
 
 				if (features.chain === true) {
-					config.script.files.push(weeScriptRoot + 'chain/wee.chain.animate.js');
+					chained.push(weeScriptRoot + 'chain/wee.chain.animate.js');
 				}
 			}
 
@@ -47,7 +48,7 @@ module.exports = function(grunt) {
 				config.script.files.push(weeScriptRoot + 'wee.dom.js');
 
 				if (features.chain === true) {
-					config.script.files.push(weeScriptRoot + 'chain/wee.chain.dom.js');
+					chained.push(weeScriptRoot + 'chain/wee.chain.dom.js');
 				}
 			}
 
@@ -55,7 +56,7 @@ module.exports = function(grunt) {
 				config.script.files.push(weeScriptRoot + 'wee.events.js');
 
 				if (features.chain === true) {
-					config.script.files.push(weeScriptRoot + 'chain/wee.chain.events.js');
+					chained.push(weeScriptRoot + 'chain/wee.chain.events.js');
 				}
 			}
 
@@ -79,9 +80,11 @@ module.exports = function(grunt) {
 				config.script.files.push(weeScriptRoot + 'wee.view.js');
 
 				if (features.chain === true) {
-					config.script.files.push(weeScriptRoot + 'chain/wee.chain.view.js');
+					chained.push(weeScriptRoot + 'chain/wee.chain.view.js');
 				}
 			}
+
+			config.script.files = config.script.files.concat(chained);
 		}
 
 		// Build/vendor directory scripts
