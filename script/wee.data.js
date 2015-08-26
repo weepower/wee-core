@@ -233,7 +233,7 @@
 		getUrl: function(conf) {
 			var url = conf.url;
 
-			if (Object.keys(conf.data).length) {
+			if (conf.data && Object.keys(conf.data).length) {
 				url += '?' + W.$serialize(conf.data);
 			}
 
