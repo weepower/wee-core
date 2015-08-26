@@ -83,10 +83,10 @@
 							var a = W._doc.createElement('a');
 							a.href = loc || el.action;
 							host = a.hostname;
-							path = a.pathname;
+							path = a.pathname + a.search + a.hash;
 						} else if (el.href && el.href[0] !== '#') {
 							host = el.hostname;
-							path = el.pathname;
+							path = el.pathname + el.search + el.hash;
 						}
 
 						// Ensure the path exists and is local
@@ -138,6 +138,8 @@
 			request.url = request.url !== U ?
 				request.url :
 				conf.path;
+
+			conf.request = request;
 
 			// Request partial Ajax
 			if (request.url) {
@@ -272,12 +274,13 @@
 		 */
 		process: function(conf) {
 			var key = conf.path.replace(/^\//g, ''),
-				method = conf.request.method;
+				request = conf.request,
+				method = request.method;
 
 			this.$push('entries', key, conf);
 
 			if (! method || method == 'get') {
-				conf.path = W.data.$private.getUrl(conf.request);
+				conf.path = W.data.$private.getUrl(request);
 			}
 
 			// Add entry to HTML5 history
