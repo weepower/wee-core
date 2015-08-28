@@ -124,7 +124,7 @@
 		 */
 		trigger: function(target, name) {
 			this.bound(target, name).forEach(function(evt) {
-				evt.cb();
+				evt.cb(false);
 			});
 		},
 
@@ -185,7 +185,7 @@
 							var cb = function(e) {
 								var cont = true;
 
-								if (W._legacy || ! e) {
+								if (W._legacy || e === false) {
 									e = W._win.event || {};
 									e.target = e.srcElement;
 
@@ -269,16 +269,16 @@
 		 * @param {function} [fn]
 		 */
 		off: function(sel, evt, fn) {
-			var scope = this;
+			var bound = this.$get('evts');
 
-			W.$each(this.$public.bound(sel, evt, fn), function(e, i) {
+			W.$each(this.$public.bound(sel, evt, fn), function(e) {
 				if ('on' + e.evt in W._doc) {
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
 						e.el.removeEventListener(e.evt, e.cb);
 				}
 
-				scope.$get('evts').splice(i, 1);
+				bound.splice(bound.indexOf(e), 1);
 			});
 		}
 	});
