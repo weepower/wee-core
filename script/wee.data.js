@@ -81,9 +81,11 @@
 
 			x.open(method, conf.url, true);
 
-			// Add JSON header
+			// Add JSON headers
 			if (conf.json) {
 				headers[contentTypeHeader] = 'application/json';
+				headers['Accept'] =
+					'application/json, text/javascript, */*; q=0.01';
 			}
 
 			// Add X-Requested-With header for same domain requests
