@@ -58,9 +58,11 @@
 
 	// Shortcut core methods from alias
 	for (var key in W) {
-		if (key[0] !== '_') {
-			$[key.replace(/^\$/, '')] = W[key];
-		}
+		var val = W[key];
+
+		$[key.replace(/^\$/, '')] = W.$isFunction(val) ?
+			val.bind(W) :
+			val;
 	}
 
 	// Bind core chainable methods
