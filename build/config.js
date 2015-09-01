@@ -276,7 +276,8 @@
 			'uglify:core',
 			'uglify:lib',
 			'imagemin',
-			'syncDirectory:fonts'
+			'syncDirectory:fonts',
+			'syncDirectory:images'
 		]);
 
 		/**
