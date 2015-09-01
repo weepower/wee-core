@@ -83,7 +83,7 @@ module.exports = function(grunt) {
 								// Create Less task
 								grunt.config.set('less.' + taskName, {
 									files: [{
-										dest: config.paths.modules + name + '/' + target + '.min.css',
+										dest: Wee.buildPath(config.paths.modules + name, target),
 										src: files
 									}],
 									options: {
@@ -155,7 +155,7 @@ module.exports = function(grunt) {
 								// Create uglify task
 								grunt.config.set('uglify.' + taskName, {
 									files: [{
-										dest: config.paths.modules + name + '/' + target + '.min.js',
+										dest: Wee.buildPath(config.paths.modules + name, target),
 										src: src
 									}]
 								});
