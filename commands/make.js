@@ -50,7 +50,7 @@
 						var moduleTemplate = path.join(templatePath, 'module'),
 							files = glob.sync(path.join(moduleTemplate, '/**/*')),
 							args = Wee.$extend({
-								author: 'test',
+								author: '',
 								autoload: 'true',
 								website: '',
 								description: ''
