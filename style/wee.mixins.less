@@ -1977,13 +1977,25 @@
 .height (@height; @maxHeight) {
 	.max-height(@maxHeight);
 }
+.size (@value) {
+	.height(@value);
+	.width(@value);
+}
 .size (@width; @height) {
 	.height(@height);
 	.width(@width);
 }
+.min-size (@value) {
+	.min-height(@value);
+	.min-width(@value);
+}
 .min-size (@width; @height) {
 	.min-height(@height);
 	.min-width(@width);
+}
+.max-size (@value) {
+	.max-height(@value);
+	.max-width(@value);
 }
 .max-size (@width; @height) {
 	.max-height(@height);
