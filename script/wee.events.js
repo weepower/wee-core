@@ -139,6 +139,9 @@
 			this.$private.custom[name] = [on, off];
 		}
 	}, {
+		/**
+		 * Custom event storage
+		 */
 		custom: {},
 
 		/**
@@ -241,15 +244,17 @@
 									W._legacy ?
 										el.attachEvent('on' + evt, cb) :
 										el.addEventListener(evt, cb, false);
-								}
 
-								scope.$push('evts', {
-									el: el,
-									ev: ev,
-									evt: evt,
-									cb: cb,
-									fn: f
-								});
+									scope.$push('evts', {
+										el: el,
+										ev: ev,
+										evt: evt,
+										cb: cb,
+										fn: f
+									});
+								} else if (scope.custom[evt]) {
+									scope.custom[evt][0](el, fn, conf);
+								}
 							}
 
 							if (evt == 'init' || conf.init === true) {
@@ -276,6 +281,8 @@
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
 						e.el.removeEventListener(e.evt, e.cb);
+				} else if (scope.custom[evt]) {
+					scope.custom[evt][1](e.el, e.cb);
 				}
 
 				bound.splice(bound.indexOf(e), 1);
