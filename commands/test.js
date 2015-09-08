@@ -1,9 +1,10 @@
+/* global chalk */
+
 (function() {
 	'use strict';
 
 	module.exports = function(config) {
-		var chalk = require('chalk'),
-			exec = require('child_process').exec,
+		var exec = require('child_process').exec,
 			path = require('path'),
 			runnerPath = path.join(
 				config.rootPath,
@@ -20,9 +21,10 @@
 			function(error, stdout) {
 				if (error) {
 					var testPath = path.join(
-						config.project.paths.source,
-						'/js/tests/config'
-					);
+							config.project.paths.source,
+							'/js/tests/config'
+						),
+						protocol = config.project.server.tasks.static.https ? 'https' : 'http';
 
 					Wee.notify({
 						title: 'Test Error',
@@ -37,7 +39,7 @@
 					console.log(
 						chalk.bgRed('To view the browser client run "grunt static" and open the following:')
 					);
-					console.log('http://localhost:' + port + '/$root/node_modules/intern/client.html?config=' + testPath + '&initialBaseUrl=/$root');
+					console.log(protocol + '://localhost:' + port + '/$root/node_modules/intern/client.html?config=' + testPath + '&initialBaseUrl=/$root');
 				} else {
 					console.log(stdout);
 				}
