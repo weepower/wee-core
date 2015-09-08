@@ -12,9 +12,9 @@
 		/**
 		 * Build root or relative path
 		 *
-		 * @param loc
-		 * @param file
-		 * @returns {*}
+		 * @param {string} loc
+		 * @param {string} file
+		 * @returns {string} path
 		 */
 		buildPath: function(loc, file) {
 			return file.substring(0, 2) === './' ?
@@ -25,10 +25,10 @@
 		/**
 		 * Append minified extension
 		 *
-		 * @param dest
-		 * @param src
-		 * @param ext
-		 * @returns {string}
+		 * @param {string} dest
+		 * @param {string} src
+		 * @param {string} ext
+		 * @returns {string} path
 		 */
 		getMinExtension: function(dest, src, ext) {
 			var dir = src.substring(0, src.lastIndexOf('/')),
@@ -39,10 +39,11 @@
 		},
 
 		/**
+		 * Validate source file
 		 *
-		 * @param file
-		 * @param config
-		 * @param log
+		 * @param {string} root
+		 * @param {object} config
+		 * @param {string} file
 		 */
 		validate: function(root, config, file) {
 			var ext = path.extname(file);
@@ -75,9 +76,11 @@
 		},
 
 		/**
+		 * Validate JavaScript source file using JSHint
 		 *
-		 * @param src
-		 * @param file
+		 * @param {object} rules
+		 * @param {string} file
+		 * @param {string} src
 		 */
 		validateJshint: function(rules, file, src) {
 			var jshint = require('jshint').JSHINT,
@@ -113,9 +116,11 @@
 		},
 
 		/**
+		 * Validate JavaScript source file using JSCS
 		 *
-		 * @param src
-		 * @param file
+		 * @param {object} rules
+		 * @param {string} file
+		 * @param {string} src
 		 */
 		validateJscs: function(rules, file, src) {
 			var JSCS = require('jscs'),
@@ -155,25 +160,25 @@
 		},
 
 		/**
+		 * Log an error to the console
 		 *
-		 * @param position
-		 * @param message
-		 * @param details
+		 * @param {number} position
+		 * @param {string} message
+		 * @param {string} [details]
 		 */
 		logError: function(position, message, details) {
-			var output =
-				chalk.bgBlack.bold('[' + position + '] ') +
-				message + ' ' +
-				(details || '');
+			var output = chalk.bgBlack.bold('[' + position + '] ') +
+				message + ' ' + (details || '');
 
 			console.log(output);
 		},
 
 		/**
+		 * Notify through a naitvely available notification option
 		 *
-		 * @param options
-		 * @param type
-		 * @param log
+		 * @param {object} options
+		 * @param {string} [type=notice]
+		 * @param {boolean} [log=true]
 		 */
 		notify: function(options, type, log) {
 			options.icon = 'node_modules/wee-core/build/img/' +
@@ -194,12 +199,15 @@
 		},
 
 		/**
+		 * Push full server watch path
 		 *
-		 * @param url
+		 * @param {string} url
 		 */
 		serverWatch: function(url) {
 			if (url.substring(0, 4) !== 'http') {
-				reloadPaths.push(path.join(config.paths.root, url));
+				reloadPaths.push(
+					path.join(config.paths.root, url)
+				);
 			}
 		}
 	});

@@ -18,7 +18,7 @@
 				orig.push(this[i]);
 			}
 
-			return $(W.$merge(orig, W.$(source), true));
+			return $(W.$unique(orig.concat(W.$(source))));
 		},
 
 		/**

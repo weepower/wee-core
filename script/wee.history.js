@@ -12,7 +12,7 @@
 		 */
 		init: function(options) {
 			if (! this.request && H && H.pushState) {
-				var loc = W._win.location,
+				var loc = location,
 					path = loc.pathname + loc.search,
 					settings = W.$extend({
 						request: {},
@@ -90,7 +90,7 @@
 						}
 
 						// Ensure the path exists and is local
-						if (evt && host == W._win.location.hostname) {
+						if (evt && host == location.hostname) {
 							W.events.on(el, evt, function(e) {
 								W.history.go({
 									path: path
@@ -133,7 +133,9 @@
 				),
 				request = conf.request || {};
 
-			request.root = request.root || scope.root;
+			request.root = request.root !== U ?
+				request.root :
+				scope.root;
 
 			request.url = request.url !== U ?
 				request.url :

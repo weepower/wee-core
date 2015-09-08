@@ -1346,7 +1346,7 @@
 				var wrap = W.$(
 					func ?
 						W.$exec(html, {
-							args: [i],
+							args: i,
 							scope: el
 						}) :
 						html
@@ -1375,7 +1375,7 @@
 				var wrap = W.$parseHTML(
 					func ?
 						W.$exec(html, {
-							args: [i],
+							args: i,
 							scope: el
 						}) :
 						html

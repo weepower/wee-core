@@ -46,7 +46,7 @@
 		},
 
 		/**
-		 * Execute event on selection
+		 * Execute bound event for each matching selection
 		 *
 		 * @param {string} name
 		 * @returns {$} selection

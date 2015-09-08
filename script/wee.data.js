@@ -93,7 +93,7 @@
 				a = W._doc.createElement('a');
 			a.href = conf.url;
 
-			if (a.hostname == W._win.location.hostname) {
+			if (a.hostname == location.hostname) {
 				headers[xrw] = 'XMLHttpRequest';
 			}
 

@@ -5,17 +5,18 @@
 		/**
 		 * Transition to a specified attribute or property value
 		 *
-		 * @param target
+		 * @param {($|HTMLElement|string)} target
 		 * @param {object} props
-		 * @param {object} options
+		 * @param {object} [options]
+		 * @param {number} [options.duration]
+		 * @param {string} [options.ease]
 		 */
 		tween: function(target, props, options) {
-			var scope = this,
-				conf = W.$extend({
+			var conf = W.$extend({
 					duration: 400,
 					ease: 'ease'
 				}, options),
-				ease = scope.$private.easings[conf.ease];
+				ease = this.$private.easings[conf.ease];
 
 			if (ease) {
 				W.$each(target, function(el) {
@@ -66,9 +67,7 @@
 		}
 	}, {
 		/**
-		 * Define default easing functions
-		 *
-		 * @param {number} time
+		 * Default easing functions
 		 */
 		easings: {
 			ease: function(t) {

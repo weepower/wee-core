@@ -53,7 +53,7 @@
 			}
 
 			return this.$get('uri', function() {
-				return W.routes.uri(W._win.location.href);
+				return W.routes.uri(location.href);
 			}, true);
 		},
 
@@ -160,7 +160,7 @@
 			},
 			'any:fire': function(seg, child) {
 				W.$exec(child, {
-					args: [seg]
+					args: seg
 				});
 			},
 			root: function(seg, child, depth) {

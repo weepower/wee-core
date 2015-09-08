@@ -1,4 +1,4 @@
-(function(W) {
+(function(W, E) {
 	'use strict';
 
 	var events = [
@@ -14,17 +14,17 @@
 	 * Loop through custom events and bind applicable standard events
 	 */
 	events.forEach(function(event) {
-		W.events.addEvent(event[0], function(el, fn, conf) {
+		E.addEvent(event[0], function(el, fn, conf) {
 			var scope = this;
 			conf = W.$extend({
 				distance: 50
 			}, conf);
 
-			W.events.on(el, down + '.' + event[0], function(e) {
+			E.on(el, down + '.' + event[0], function(e) {
 				scope.start = e['client' + event[1]];
 			}, conf);
 
-			W.events.on(el, up + '.' + event[0], function(e, el) {
+			E.on(el, up + '.' + event[0], function(e, el) {
 				var travel = (scope.start - e['client' + event[1]]) * event[2];
 
 				if (travel > conf.distance) {
@@ -32,7 +32,7 @@
 				}
 			}, conf);
 		}, function(el, fn) {
-			W.events.off(el, down + '.' + event[0] + ' ' + up + '.' + event[0], fn);
+			E.off(el, down + '.' + event[0] + ' ' + up + '.' + event[0], fn);
 		});
 	});
-})(Wee);
+})(Wee, Wee.events);
