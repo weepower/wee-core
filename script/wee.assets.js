@@ -1,19 +1,18 @@
 (function(W, U) {
 	'use strict';
 
+	var loaded = {},
+		root = '';
+
 	W.fn.make('assets', {
 		/**
-		 * Cache pre-existing CSS and JavaScript asset references
+		 * Cache existing CSS and JavaScript asset references
 		 *
 		 * @constructor
 		 */
 		_construct: function() {
-			this.loaded = {};
-
 			W.$each('link[rel="stylesheet"], script[src]', function(el) {
-				this.loaded[el.src || el.href] = el;
-			}, {
-				scope: this
+				loaded[el.src || el.href] = el;
 			});
 		},
 
@@ -24,9 +23,11 @@
 		 * @returns {string} root
 		 */
 		root: function(value) {
-			return value ?
-				this.$set('.', value) :
-				this.$get('.', '');
+			if (value) {
+				root = value;
+			}
+
+			return root;
 		},
 
 		/**
@@ -103,7 +104,7 @@
 				type = assets[file];
 				file = root + file;
 
-				if (! this.loaded[file]) {
+				if (! loaded[file]) {
 					if (conf.cache === false) {
 						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
 					}
@@ -133,12 +134,13 @@
 				a.href = src;
 				src = a.href;
 
-				var el = this.loaded[src];
+				var el = loaded[src];
 
 				if (el !== U) {
 					el.parentNode.removeChild(el);
 					el = null;
-					delete this.loaded[src];
+
+					delete loaded[src];
 				}
 			}
 		},
@@ -201,7 +203,7 @@
 			if (type == 'js') {
 				var js = W._doc.createElement('script'),
 					fn = function() {
-						pub.loaded[js.src] = js;
+						loaded[js.src] = js;
 						scope.done(group);
 					};
 
