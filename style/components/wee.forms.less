@@ -113,14 +113,6 @@
 	.input () when not (@inputRounded = false) {
 		.rounded(@inputRounded);
 	}
-	.input () when (@inputEnableInnerShadow = true) {
-		.shadow(inner; dark; .1; 1px; 1px; 2px; 0);
-	}
-	.input () when (@inputEnableFocusOuterShadow = true) {
-		&:focus {
-			.shadow(dark; .1; 0; 0; 2px; 2px);
-		}
-	}
 	input[type='email'],
 	input[type='file'],
 	input[type='number'],
@@ -169,20 +161,6 @@
 		color: @inputColorDisabled;
 		cursor: @inputCursorDisabled;
 		.background-color(@inputBackgroundDisabled);
-	}
-	.inline-field {
-		button,
-		input,
-		select,
-		textarea {
-			display: inline-block;
-			width: auto;
-		}
-		label {
-			display: inline-block;
-			.margin(right; @labelMarginRight);
-
-		}
 	}
 	.input-placeholder();
 }
