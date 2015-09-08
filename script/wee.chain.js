@@ -115,6 +115,15 @@
 			}
 
 			return this;
+		},
+
+		/**
+		 * Add ref elements to datastore
+		 */
+		setRef: function() {
+			W.$setRef(this);
+
+			return this;
 		}
 	};
 
