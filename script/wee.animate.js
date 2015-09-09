@@ -29,9 +29,8 @@
 							val = parseInt(css ? cssValue : el[prop]),
 							dist = Math.abs(target - val),
 							dir = target > val ? 1 : -1,
-							start = Date.now();
-
-						var setValue = function(prop, update) {
+							start = Date.now(),
+							setValue = function(prop, update) {
 								css ?
 									el.style[prop] = update + 'px' :
 									el[prop] = update;

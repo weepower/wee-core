@@ -1,7 +1,8 @@
 (function(W, U) {
 	'use strict';
 
-	var loaded = {},
+	var groups = {},
+		loaded = {},
 		root = '';
 
 	W.fn.make('assets', {
@@ -90,9 +91,11 @@
 			}
 
 			// Set file array length to check against
-			this.$set(conf.group, Object.keys(assets).length);
-			this.$set(conf.group + 'fail', 0);
-			this.$set(conf.group + 'conf', conf);
+			groups[conf.group] = [
+				Object.keys(assets).length,
+				conf,
+				0
+			];
 
 			// Request each specified file
 			for (var file in assets) {
@@ -158,20 +161,20 @@
 		 * @returns {boolean} ready
 		 */
 		ready: function(group, options, poll) {
-			var complete = this.$get(group) === 0;
+			var complete = groups[group] < 1;
 
 			if (options === U) {
 				return complete;
 			}
 
 			if (complete) {
-				var conf = W.$extend(this.$get(group + 'conf'), options);
+				var conf = W.$extend(groups[group][1], options);
 				options = {
 					args: conf.args,
 					scope: conf.scope
 				};
 
-				if (conf.error && this.$get(group + 'fail') > 0) {
+				if (conf.error && groups[group][2] > 0) {
 					W.$exec(conf.error, options);
 				} else if (conf.success) {
 					W.$exec(conf.success, options);
@@ -195,7 +198,6 @@
 		 */
 		load: function(path, type, conf) {
 			var scope = this,
-				pub = scope.$public,
 				head = W._doc.getElementsByTagName('head')[0],
 				group = conf.group;
 
@@ -294,7 +296,7 @@
 		 * @param {string} group
 		 */
 		done: function(group) {
-			this.$set(group, this.$get(group) - 1);
+			groups[group][0]--;
 			this.$public.ready(group, {}, false);
 		},
 
@@ -305,9 +307,7 @@
 		 * @param {string} group
 		 */
 		fail: function(group) {
-			var key = group + 'fail';
-
-			this.$set(key, this.$get(key) + 1);
+			groups[group][2]++;
 			this.done(group);
 		}
 	});

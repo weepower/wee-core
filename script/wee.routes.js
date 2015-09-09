@@ -1,7 +1,11 @@
-/* jshint maxdepth: 5 */
+/* jshint maxdepth: 6 */
 
 (function(W, U) {
 	'use strict';
+
+	var routes,
+		segs,
+		uri;
 
 	W.fn.make('routes', {
 		/**
@@ -20,7 +24,8 @@
 		uri: function(value) {
 			if (value) {
 				if (W.$isObject(value)) {
-					return this.$set('uri', W.$extend(this.uri(), value));
+					uri = W.$extend(this.uri(), value);
+					return uri;
 				}
 
 				var a = W._doc.createElement('a'),
@@ -34,14 +39,22 @@
 						i = 0;
 
 					for (; i < arr.length; i++) {
-						var split = arr[i].split('=');
-						query[split[0]] = split[1] || '';
+						var split = arr[i].split('='),
+							key = split[0],
+							val = split[1] || '';
+
+						if (query[key]) {
+							query[key] = W.$toArray(query[key]);
+							query[key].push(val);
+						} else {
+							query[key] = val;
+						}
 					}
 				}
 
 				var path = a.pathname.replace(/^\/|\/$/g, '');
 
-				return this.$set('uri', {
+				uri = {
 					full: '/' + path + search + a.hash,
 					hash: a.hash.slice(1),
 					history: false,
@@ -49,12 +62,12 @@
 					query: query,
 					segments: path.split('/'),
 					url: a.href
-				});
+				};
+			} else if (! uri) {
+				uri = W.routes.uri(location.href);
 			}
 
-			return this.$get('uri', function() {
-				return W.routes.uri(location.href);
-			}, true);
+			return uri;
 		},
 
 		/**
@@ -72,15 +85,15 @@
 		/**
 		 * Retrieve or add route endpoints to route storage
 		 *
-		 * @param {object} routes
+		 * @param {object} obj - routes
 		 * @param {bool} [init=false] - evaluate the map immediately
 		 * @returns {object} routes
 		 */
-		map: function(routes, init) {
-			var curr = this.$get('routes', {});
+		map: function(obj, init) {
+			var curr = routes || {};
 
-			if (routes) {
-				this.$set('routes', W.$extend(curr, routes));
+			if (obj) {
+				routes = W.$extend(curr, obj);
 
 				if (init) {
 					this.run({
@@ -110,19 +123,16 @@
 		run: function(conf) {
 			conf = conf || {};
 
-			var routes = conf.routes || this.$get('routes');
+			var rules = conf.routes || routes;
 
 			if (conf.path) {
 				this.uri(conf.path);
 			}
 
-			if (routes) {
-				this.$private.process(routes, 0,
-					this.$set(
-						'segs',
-						this.segments()
-					).length
-				);
+			if (rules) {
+				segs = this.segments();
+
+				this.$private.process(rules, 0, segs.length);
 
 				// Execute queued init functions on last iteration
 				var any = this.$private.any;
@@ -201,7 +211,7 @@
 		 * @param {int} total - total number of routes
 		 */
 		process: function(route, i, total) {
-			var seg = this.$get('segs')[i],
+			var seg = segs[i],
 				keys = Object.keys(route),
 				x = 0;
 			i++;

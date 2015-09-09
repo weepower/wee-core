@@ -3,6 +3,8 @@
 (function(W) {
 	'use strict';
 
+	var version = 1;
+
 	W.fn.make('data', {
 		/**
 		 * Make Ajax request based on specified options
@@ -84,8 +86,7 @@
 			// Add JSON headers
 			if (conf.json) {
 				headers[contentTypeHeader] = 'application/json';
-				headers['Accept'] =
-					'application/json, text/javascript, */*; q=0.01';
+				headers.Accept = 'application/json, text/javascript, */*; q=0.01';
 			}
 
 			// Add X-Requested-With header for same domain requests
@@ -189,10 +190,8 @@
 				var fn = conf.jsonpCallback;
 
 				if (! fn) {
-					var v = this.$get('v', 1);
-					fn = 'jsonp' + v;
-
-					this.$set('v', v + 1);
+					fn = 'jsonp' + version;
+					version++;
 				}
 
 				W._win[fn] = function(data) {

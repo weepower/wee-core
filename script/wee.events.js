@@ -3,6 +3,8 @@
 (function(W) {
 	'use strict';
 
+	var bound = [];
+
 	W.fn.make('events', {
 		/**
 		 * Bind specified function to specified element and event
@@ -83,8 +85,7 @@
 		 * @returns {Array} matches
 		 */
 		bound: function(target, event, fn) {
-			var bound = this.$get('evts', []),
-				matches = [];
+			var matches = [];
 			target = target || [0];
 
 			W.$each(target, function(el) {
@@ -245,7 +246,7 @@
 										el.attachEvent('on' + evt, cb) :
 										el.addEventListener(evt, cb, false);
 
-									scope.$push('evts', {
+									bound.push({
 										el: el,
 										ev: ev,
 										evt: evt,
@@ -274,7 +275,7 @@
 		 * @param {function} [fn]
 		 */
 		off: function(sel, evt, fn) {
-			var bound = this.$get('evts');
+			var scope = this;
 
 			W.$each(this.$public.bound(sel, evt, fn), function(e) {
 				if ('on' + e.evt in W._doc) {
