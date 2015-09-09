@@ -677,8 +677,7 @@
 		$is: function(target, filter, options) {
 			return W.$map(target, function(el, i) {
 				if (typeof filter == 'string' && filter.slice(0, 4) == 'ref:') {
-					filter = W.$get(filter);
-					return filter ? filter.indexOf(el) > -1 : false;
+					return W.$(filter).indexOf(el) > -1;
 				}
 
 				if (W.$isObject(filter)) {
