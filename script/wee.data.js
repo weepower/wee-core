@@ -3,6 +3,9 @@
 (function(W) {
 	'use strict';
 
+	/**
+	 * Setup initial variables
+	 */
 	var version = 1;
 
 	W.fn.make('data', {

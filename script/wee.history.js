@@ -1,6 +1,11 @@
 (function(W, H, U) {
 	'use strict';
 
+	/**
+	 * Setup initial variables
+	 */
+	var entries = [];
+
 	W.fn.make('history', {
 		/**
 		 * Set the initial state and popstate event, and bind global actions
@@ -34,9 +39,7 @@
 				// Listen for browser navigation
 				W.events.on(W._win, 'popstate', function() {
 					var path = loc.pathname + loc.search,
-						conf = this.$get('entries')[
-							path.replace(/^\//g, '')
-						];
+						conf = entries[path.replace(/^\//g, '')];
 
 					this.go(W.$extend(
 						conf || {},
@@ -118,7 +121,8 @@
 		 * @param {($|HTMLElement|string)} [scrollTop]
 		 */
 		go: function(options) {
-			var scope = this;
+			var scope = this,
+				priv = scope.$private;
 
 			if (! scope.request) {
 				scope.init();
@@ -184,7 +188,7 @@
 										parent.replaceChild(el, target);
 								}
 
-								scope.$private.reset(parent);
+								priv.reset(parent);
 							}, {
 								context: html
 							});
@@ -192,7 +196,7 @@
 					} else {
 						targets.innerHTML = html;
 
-						scope.$private.reset(targets);
+						priv.reset(targets);
 					}
 				});
 
@@ -238,7 +242,7 @@
 
 				completeEvents.push(function(xhr) {
 					if (xhr.status == 200) {
-						scope.$private.process(conf);
+						priv.process(conf);
 					}
 				});
 
@@ -250,7 +254,7 @@
 
 				W.data.request(request);
 			} else {
-				scope.$private.process(conf);
+				priv.process(conf);
 			}
 		}
 	}, {
@@ -279,7 +283,7 @@
 				request = conf.request,
 				method = request.method;
 
-			this.$push('entries', key, conf);
+			entries[key] = conf;
 
 			if (! method || method == 'get') {
 				conf.path = W.data.$private.getUrl(request);

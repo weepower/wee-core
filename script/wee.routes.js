@@ -3,7 +3,35 @@
 (function(W, U) {
 	'use strict';
 
-	var routes,
+	/**
+	 * Setup initial variables
+	 */
+	var filters = {
+			any: function(seg, child) {
+				if (W.$isObject(child)) {
+					return true;
+				} else {
+					any.push([child, seg]);
+				}
+			},
+			'any:fire': function(seg, child) {
+				W.$exec(child, {
+					args: seg
+				});
+			},
+			root: function(seg, child, depth) {
+				if (! seg) {
+					W.$exec(child, {
+						args: W.routes.segments(depth - 2)
+					});
+				}
+			},
+			num: function(seg) {
+				return ! isNaN(seg) && seg.trim() !== '';
+			}
+		},
+		any = [],
+		routes,
 		segs,
 		uri;
 
@@ -135,8 +163,6 @@
 				this.$private.process(rules, 0, segs.length);
 
 				// Execute queued init functions on last iteration
-				var any = this.$private.any;
-
 				if (any.length) {
 					for (var i = 0; i < any.length; i++) {
 						var rule = any[i];
@@ -147,44 +173,11 @@
 					}
 
 					// Clear array for next iteration
-					this.$private.any = [];
+					any = [];
 				}
 			}
 		}
 	}, {
-		/**
-		 * Any route matching storage
-		 */
-		any: [],
-
-		/**
-		 * Add default filters
-		 */
-		filters: {
-			any: function(seg, child) {
-				if (W.$isObject(child)) {
-					return true;
-				} else {
-					W.routes.$private.any.push([child, seg]);
-				}
-			},
-			'any:fire': function(seg, child) {
-				W.$exec(child, {
-					args: seg
-				});
-			},
-			root: function(seg, child, depth) {
-				if (! seg) {
-					W.$exec(child, {
-						args: W.routes.segments(depth - 2)
-					});
-				}
-			},
-			num: function(seg) {
-				return ! isNaN(seg) && seg.trim() !== '';
-			}
-		},
-
 		/**
 		 * Extend routing engine
 		 *
@@ -199,7 +192,7 @@
 				obj[a] = b;
 			}
 
-			W.$extend(this.filters, obj);
+			W.$extend(filters, obj);
 		},
 
 		/**
@@ -246,7 +239,7 @@
 								match = true;
 							}
 						} else {
-							var filter = this.filters[opt];
+							var filter = filters[opt];
 
 							if (filter) {
 								match = filter(seg, child, i);
@@ -254,7 +247,7 @@
 								if (match) {
 									filtered = true;
 
-									this.any.push([child, seg]);
+									any.push([child, seg]);
 								}
 							} else if (seg && seg.trim() !== '') {
 								match = true;

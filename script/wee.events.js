@@ -3,7 +3,11 @@
 (function(W) {
 	'use strict';
 
-	var bound = [];
+	/**
+	 * Setup initial variables
+	 */
+	var bound = [],
+		custom = {};
 
 	W.fn.make('events', {
 		/**
@@ -124,7 +128,7 @@
 		 * @param {string} name
 		 */
 		trigger: function(target, name) {
-			this.bound(target, name).forEach(function(evt) {
+			bound(target, name).forEach(function(evt) {
 				evt.cb(false);
 			});
 		},
@@ -137,14 +141,9 @@
 		 * @param {function} off
 		 */
 		addEvent: function(name, on, off) {
-			this.$private.custom[name] = [on, off];
+			custom[name] = [on, off];
 		}
 	}, {
-		/**
-		 * Custom event storage
-		 */
-		custom: {},
-
 		/**
 		 * Attach specific event logic to element
 		 *
@@ -253,8 +252,8 @@
 										cb: cb,
 										fn: f
 									});
-								} else if (scope.custom[evt]) {
-									scope.custom[evt][0](el, fn, conf);
+								} else if (custom[evt]) {
+									custom[evt][0](el, fn, conf);
 								}
 							}
 
@@ -275,15 +274,13 @@
 		 * @param {function} [fn]
 		 */
 		off: function(sel, evt, fn) {
-			var scope = this;
-
 			W.$each(this.$public.bound(sel, evt, fn), function(e) {
 				if ('on' + e.evt in W._doc) {
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
 						e.el.removeEventListener(e.evt, e.cb);
-				} else if (scope.custom[evt]) {
-					scope.custom[evt][1](e.el, e.cb);
+				} else if (custom[evt]) {
+					custom[evt][1](e.el, e.cb);
 				}
 
 				bound.splice(bound.indexOf(e), 1);

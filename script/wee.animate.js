@@ -1,6 +1,18 @@
 (function(W) {
 	'use strict';
 
+	/**
+	 * Default easing functions
+	 */
+	var easings = {
+		ease: function(t) {
+			return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+		},
+		linear: function(t) {
+			return t;
+		}
+	};
+
 	W.fn.make('animate', {
 		/**
 		 * Transition to a specified attribute or property value
@@ -16,43 +28,45 @@
 					duration: 400,
 					ease: 'ease'
 				}, options),
-				ease = this.$private.easings[conf.ease];
+				ease = easings[conf.ease];
 
-			if (ease) {
-				W.$each(target, function(el) {
-					for (var prop in props) {
-						var target = parseInt(props[prop]),
-							cssValue = W._legacy ?
-								el.currentStyle[prop] :
-								getComputedStyle(el, null)[prop],
-							css = cssValue !== undefined,
-							val = parseInt(css ? cssValue : el[prop]),
-							dist = Math.abs(target - val),
-							dir = target > val ? 1 : -1,
-							start = Date.now(),
-							setValue = function(prop, update) {
-								css ?
-									el.style[prop] = update + 'px' :
-									el[prop] = update;
-							},
-							si = setInterval(function() {
-								var diff = Date.now() - start;
-
-								if (dist && diff < conf.duration) {
-									setValue(prop, val + dist * ease(diff / conf.duration) * dir);
-								} else {
-									clearInterval(si);
-
-									if (conf.complete) {
-										W.$exec(conf.complete);
-									}
-
-									setValue(prop, target);
-								}
-							}, 5);
-					}
-				});
+			if (! ease) {
+				return;
 			}
+
+			W.$each(target, function(el) {
+				for (var prop in props) {
+					var target = parseInt(props[prop]),
+						cssValue = W._legacy ?
+							el.currentStyle[prop] :
+							getComputedStyle(el, null)[prop],
+						css = cssValue !== undefined,
+						val = parseInt(css ? cssValue : el[prop]),
+						dist = Math.abs(target - val),
+						dir = target > val ? 1 : -1,
+						start = Date.now(),
+						setValue = function(prop, update) {
+							css ?
+								el.style[prop] = update + 'px' :
+								el[prop] = update;
+						},
+						si = setInterval(function() {
+							var diff = Date.now() - start;
+
+							if (dist && diff < conf.duration) {
+								setValue(prop, val + dist * ease(diff / conf.duration) * dir);
+							} else {
+								clearInterval(si);
+
+								if (conf.complete) {
+									W.$exec(conf.complete);
+								}
+
+								setValue(prop, target);
+							}
+						}, 5);
+				}
+			});
 		},
 
 		/**
@@ -62,36 +76,14 @@
 		 * @param {function} fn
 		 */
 		addEasing: function(name, fn) {
-			this.$private.extend(name, fn);
-		}
-	}, {
-		/**
-		 * Default easing functions
-		 */
-		easings: {
-			ease: function(t) {
-				return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-			},
-			linear: function(t) {
-				return t;
-			}
-		},
+			var obj = name;
 
-		/**
-		 * Extend easing options
-		 *
-		 * @param {(object|string)} a
-		 * @param {function} b
-		 */
-		extend: function(a, b) {
-			var obj = a;
-
-			if (typeof a == 'string') {
+			if (typeof name == 'string') {
 				obj = [];
-				obj[a] = b;
+				obj[name] = fn;
 			}
 
-			W.$extend(this.easings, obj);
+			W.$extend(easings, obj);
 		}
 	});
 })(Wee);

@@ -3,7 +3,8 @@
 
 	var groups = {},
 		loaded = {},
-		root = '';
+		root = '',
+		index = 0;
 
 	W.fn.make('assets', {
 		/**
@@ -238,8 +239,8 @@
 				link.href = path;
 
 				if (W._legacy) {
-					this.ind = this.ind ? this.ind + 1 : 1;
-					var id = 'load-' + this.ind;
+					index++;
+					var id = 'load-' + index;
 					link.id = id;
 
 					link.attachEvent('onload', function() {

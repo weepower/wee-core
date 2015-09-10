@@ -1,6 +1,13 @@
 (function(W) {
 	'use strict';
 
+	/**
+	 * Setup initial variables
+	 */
+	var bound = false,
+		events = [],
+		current;
+
 	W.fn.make('screen', {
 		/**
 		 * Get current breakpoint value
@@ -50,15 +57,6 @@
 		}
 	}, {
 		/**
-		 * Setup initial variables
-		 *
-		 * @private
-		 */
-		_construct: function() {
-			this.events = [];
-		},
-
-		/**
 		 * Add individual ruleset to mapped events
 		 *
 		 * @private
@@ -79,12 +77,12 @@
 
 				// Only setup watching when enabled
 				if (conf.watch !== false) {
-					scope.events.push(conf);
+					events.push(conf);
 
 					// Only attach event once
-					if (! this.bound) {
-						scope.bound = 1;
-						scope.events = [conf];
+					if (! bound) {
+						bound = 1;
+						events = [conf];
 
 						// Attach resize event
 						W._legacy ?
@@ -110,12 +108,11 @@
 		check: function(init, rules) {
 			var scope = W.screen,
 				priv = scope.$private,
-				size = scope.size(),
-				prev = priv.current;
+				size = scope.size();
 
 			// If breakpoint has been hit or resize logic initialized
-			if (size && (size !== prev || init === true)) {
-				var evts = rules || priv.events,
+			if (size && (size !== current || init === true)) {
+				var evts = rules || events,
 					i = 0;
 
 				for (; i < evts.length; i++) {
@@ -127,19 +124,19 @@
 					// Check match against rules
 					if ((! sz && ! mn && ! mx) ||
 						(sz && sz === size) ||
-						(mn && size >= mn && (init || prev < mn) && (! mx || size <= mx)) ||
-						(mx && size <= mx && (init || prev > mx) && (! mn || size >= mn))) {
+						(mn && size >= mn && (init || current < mn) && (! mx || size <= mx)) ||
+						(mx && size <= mx && (init || current > mx) && (! mn || size >= mn))) {
 						priv.execute(evt, {
-							dir: init ? 0 : (size > prev ? 1 : -1),
+							dir: init ? 0 : (size > current ? 1 : -1),
 							size: size,
-							prev: prev,
+							prev: current,
 							init: init
 						});
 					}
 				}
 
 				// Update current breakpoint value
-				priv.current = size;
+				current = size;
 			}
 		},
 
@@ -151,14 +148,16 @@
 		 * @param {object} data
 		 */
 		execute: function(evt, data) {
+			var args = evt.args ? [data].concat(evt.args) : [data];
+
 			W.$exec(evt.callback, {
-				args: [data].concat(evt.args),
+				args: args,
 				scope: evt.scope
 			});
 
 			// Disable future execution if set for once
 			if (evt.once) {
-				this.events = this.events.filter(function(el) {
+				events = events.filter(function(el) {
 					return el !== evt;
 				});
 			}
