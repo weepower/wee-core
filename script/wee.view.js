@@ -3,6 +3,32 @@
 (function(W, U) {
 	'use strict';
 
+	W.app = {
+		/**
+		 * Create an application
+		 *
+		 * @param {string} name
+		 * @param {object} [options] - application configuration
+		 */
+		make: function(name, options) {
+			var views = W.$(options.view).map(function(el) {
+					return [el, el.outerHTML];
+				}),
+				fn = function(data) {
+					views.forEach(function(view) {
+						W.view.diff(view[0], W.view.render(view[1], data));
+					});
+				};
+
+			W.app[name] = W._make(name, {}, false, options.model);
+			W[name] = new W.app[name]();
+
+			fn(options.model);
+
+			W[name].$observe('*', fn);
+		}
+	};
+
 	W.fn.make('view', {
 		/**
 		 * Parse data into template string
@@ -48,11 +74,12 @@
 		/**
 		 * Set matching patterns
 		 */
-		tags: /{{([#\/])([^#{\|\n]+)(\|[^{\n]+)?}}/g,
-		partial: /{{> (.+?)}}/g,
-		pair: /{{#(.+?)(?:|\|([^}]*))}}([\s\S]*?){{\/\1}}/g,
+		tags: /{{\s*([#\/])([^#{\|\n]+)(\|[^{\n]+)?}}/g,
+		partial: /{{\s*> (.+?)}}/g,
+		pair: /{{#(.+?)(?:|\|?([^}]*))}}([\s\S]*?){{\/\1}}/g,
 		single: /{{(.+?)}}/g,
 		ext: /(.[^\(]+)(?:\((.*)\))?/,
+		str: /^\\?("|')/,
 
 		/**
 		 * Create extension objects
@@ -65,10 +92,10 @@
 		 */
 		filters: {
 			is: function(val) {
-				return this.val == val;
+				return this.val === val;
 			},
 			not: function(val) {
-				return this.val != val;
+				return this.val !== val;
 			},
 			isEmpty: function() {
 				return this.empty;
@@ -108,20 +135,18 @@
 				tags = [];
 			this.esc = false;
 
-			// Make partial replacements
-			while (temp.indexOf('{{> ') > -1) {
-				temp = temp.replace(this.partial, function(match, tag) {
-					var partial = scope.partials[tag];
-					return partial ? (
-						W.$isFunction(partial) ?
-							partial() :
-							partial
-						) : '';
-				});
-			}
+			// Make partial replacements and match tag pairs
+			temp = temp.replace(this.partial, function(match, tag) {
+				var partial = scope.partials[tag.trim()];
 
-			// Pre-process tags to allow for reliable tag matching
-			temp = temp.replace(this.tags, function(m, pre, tag, filter) {
+				return partial ? (
+					W.$isFunction(partial) ?
+						partial() :
+						partial
+					) : '';
+			}).replace(this.tags, function(m, pre, tag, filter) {
+				tag = tag.trim();
+
 				var resp = '{{' + pre,
 					exists = tags.hasOwnProperty(tag);
 
@@ -190,12 +215,31 @@
 
 					// Loop through tag filters
 					var cont = filters.every(function(el) {
-						var arr = el.match(scope.ext),
-							args = arr[2] !== U ? arr[2].split(',') : [];
+						var arr = el.match(scope.ext);
 						el = arr[1];
 						filter = scope.filters[el];
 
 						if (filter) {
+							var args = arr[2] !== U ? arr[2].split(',') : [];
+							args = args.map(function(arg) {
+								if (data.hasOwnProperty(arg)) {
+									return data[arg];
+								} else {
+									var match = arg.match(scope.str);
+
+									if (match) {
+										return arg.replace(scope.str, '')
+											.replace(new RegExp(match[0] + '$'), '');
+									}
+								}
+
+								return arg == 'true' ? true :
+									arg == 'false' ? false :
+									arg == 'null' ? null :
+									parseInt(arg).toString() == arg ? parseInt(arg) :
+									'';
+							});
+
 							var rv = filter.apply({
 								val: val,
 								data: data,
@@ -366,17 +410,18 @@
 				}
 			}
 
+			if (key == '.') {
+				return data;
+			}
+
 			// Process fallback value
 			if (fb && fb !== '') {
 				fb = fb.trim();
-				var pre = /^\\?("|')/,
-					match = fb.match(pre);
+				var match = fb.match(this.str);
 
 				if (match) {
-					var post = new RegExp(match[0] + '$');
-
-					return fb.replace(pre, '')
-						.replace(post, '');
+					return fb.replace(this.str, '')
+						.replace(new RegExp(match[0] + '$'), '');
 				}
 
 				return this.get(orig, prev, fb, '', init, x);
