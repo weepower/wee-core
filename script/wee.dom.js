@@ -8,20 +8,20 @@
 	 * @param {HTMLElement} select
 	 * @returns {Array} selected
 	 */
-	var getSelected = function(select) {
+	var _getSelected = function(select) {
 		var options = select.options,
-			selected = [],
+			arr = [],
 			i = 0;
 
 		for (; i < options.length; i++) {
 			var option = options[i];
 
 			if (option.selected) {
-				selected.push(option.value);
+				arr.push(option.value);
 			}
 		}
 
-		return selected;
+		return arr;
 	},
 
 	/**
@@ -34,14 +34,13 @@
 	 * @param {object} [options]
 	 * @returns {HTMLElement}
 	 */
-	getSibling = function(target, dir, filter, options) {
+	_getSibling = function(target, dir, filter, options) {
 		var match;
 
 		W.$each(target, function(el) {
-			var nodes = W.$children(W.$parent(el)),
-				index = W.$index(el) + dir;
+			var index = W.$index(el) + dir;
 
-			nodes.forEach(function(el, i) {
+			W.$children(W.$parent(el)).forEach(function(el, i) {
 				if (i === index && (! filter || filter && W.$is(el, filter, options))) {
 					match = el;
 				}
@@ -58,7 +57,7 @@
 	 * @param {string} name
 	 * @returns {string}
 	 */
-	toCamel = function(name) {
+	_toCamel = function(name) {
 		return name.toLowerCase()
 			.replace(/-(.)/g, function(match, val) {
 				return val.toUpperCase();
@@ -72,7 +71,7 @@
 	 * @param {string} name
 	 * @returns {string}
 	 */
-	toDashed = function(name) {
+	_toDashed = function(name) {
 		return name.replace(/[A-Z]/g, function(match) {
 			return '-' + match[0].toLowerCase();
 		});
@@ -405,7 +404,7 @@
 
 				W._slice.call(el.attributes).forEach(function(attr) {
 					if (attr.name.substr(0, 5) == 'data-') {
-						arr[toCamel(attr.name.substring(5))] =
+						arr[_toCamel(attr.name.substring(5))] =
 							W._castString(attr.value);
 					}
 				});
@@ -417,12 +416,12 @@
 				var obj = {};
 
 				Object.keys(a).forEach(function(key) {
-					obj['data-' + toDashed(key)] = a[key];
+					obj['data-' + _toDashed(key)] = a[key];
 				});
 
 				a = obj;
 			} else {
-				a = 'data-' + toDashed(a);
+				a = 'data-' + _toDashed(a);
 			}
 
 			return W._castString(W.$attr(target, a, b));
@@ -732,7 +731,7 @@
 		 */
 		$next: function(target, filter, options) {
 			return W.$unique(W.$map(target, function(el) {
-				return getSibling(el, 1, filter, options);
+				return _getSibling(el, 1, filter, options);
 			}));
 		},
 
@@ -902,7 +901,7 @@
 		 */
 		$prev: function(target, filter, options) {
 			return W.$unique(W.$map(target, function(el) {
-				return getSibling(el, -1, filter, options);
+				return _getSibling(el, -1, filter, options);
 			}));
 		},
 
@@ -1064,49 +1063,39 @@
 		 * Serialize input values from first matching form selection
 		 *
 		 * @param {($|HTMLElement|string)} target
+		 * @param {boolean} json
 		 * @returns {string}
 		 */
-		$serializeForm: function(target) {
-			var el = W.$first(target);
+		$serializeForm: function(target, json) {
+			var el = W.$first(target),
+				obj = {},
+				i = 0;
 
 			if (el.nodeName != 'FORM') {
 				return '';
 			}
-
-			var arr = [],
-				i = 0;
 
 			for (; i < el.elements.length; i++) {
 				var child = el.elements[i],
 					name = child.name,
 					type = child.type;
 
-				if (child.name && type != 'file' && type != 'reset') {
+				if (name && type != 'file' && type != 'reset') {
 					if (type == 'select-multiple') {
 						name += name.slice(-2) == '[]' ? '' : '[]';
 
-						getSelected(child).forEach(function(val) {
-							arr.push(
-								name +
-								'=' +
-								encodeURIComponent(val)
-									.replace(/%20/g, '+')
-							);
+						_getSelected(child).forEach(function(val) {
+							obj[name] = val;
 						});
 					} else if (
 						type != 'submit' && type != 'button' &&
 						((type != 'checkbox' && type != 'radio') || child.checked)) {
-						arr.push(
-							name +
-							'=' +
-							encodeURIComponent(child.value)
-								.replace(/%20/g, '+')
-						);
+						obj[name] = child.value;
 					}
 				}
 			}
 
-			return arr.join('&');
+			return json ? obj : W.$serialize(obj);
 		},
 
 		/**
@@ -1249,7 +1238,7 @@
 				var el = W.$first(target);
 
 				if (el.type == 'select-multiple') {
-					return getSelected(el);
+					return _getSelected(el);
 				}
 
 				return el.value;

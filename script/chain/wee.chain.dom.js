@@ -520,10 +520,11 @@
 		/**
 		 * Serialize input values from first matching form selection
 		 *
+		 * @param {boolean} json
 		 * @returns {string}
 		 */
-		serialize: function() {
-			return W.$serializeForm(this);
+		serialize: function(json) {
+			return W.$serializeForm(this, json);
 		},
 
 		/**
