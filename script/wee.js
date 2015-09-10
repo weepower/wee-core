@@ -2,78 +2,268 @@
 // Licensed under Apache 2 (http://www.apache.org/licenses/LICENSE-2.0)
 // DO NOT MODIFY
 
+/* jshint maxdepth: 4, maxparams: 6 */
+
 (function(N, U) {
 	'use strict';
 
 	var web = typeof window != 'undefined',
 		W = (function() {
-			var store = {},
+			var D = web ? document : {},
+				store = {},
 				observe = {},
-				D = web ? document : {},
+				refs = {},
+				env,
 
 				/**
 				 * Determine data storage root and key
 				 *
+				 * @private
+				 * @param {object} obj
 				 * @param {string} key
-				 * @param {object} [scope=Wee]
+				 * @param {boolean} [create=false]
 				 * @returns {Array} value
 				 */
-				storeData = function(key, scope) {
-					if (key.indexOf(':') < 0) {
-						return [scope !== W ? scope : store, key];
+				_storage = function(obj, key, create) {
+					var data = obj;
+
+					if (key) {
+						var segs = key.split('.');
+						key = segs.pop();
+
+						segs.forEach(function(key) {
+							data = data.hasOwnProperty(key) ?
+								data[key] :
+								(create ? data[key] = {} : []);
+						});
 					}
 
-					var segs = key.split(':');
-					key = segs[0];
-
-					if (! store.hasOwnProperty(key)) {
-						store[key] = [];
-					}
-
-					return [store[key], segs[1]];
+					return [data, key];
 				},
 
 				/**
-				 * Execute any matching observed callbacks
+				 * Set global variable
 				 *
-				 * @param {string} key
+				 * @private
 				 */
-				fire = function(key) {
-					var val = observe[key];
+				_set = function(obj, obs, key, val, options) {
+					var stored = _storage(obj, key, true),
+						data = W._canExec(val) ?
+							W.$exec(val, options) :
+							val;
 
-					if (val) {
-						W.$exec(val, {
-							args: W.$get(key)
-						});
+					if (stored[0][stored[1]] !== data) {
+						stored[0][stored[1]] = data;
+
+						_trigger(obj, obs, key, 'set');
+					}
+
+					return data;
+				},
+
+				/**
+				 * Get global variable
+				 *
+				 * @private
+				 */
+				_get = function(obj, obs, key, fallback, set, options) {
+					var stored = _storage(obj, key),
+						data = stored[0];
+
+					if (key) {
+						if (data.hasOwnProperty(stored[1])) {
+							return data[stored[1]];
+						}
+
+						if (fallback !== U) {
+							return set ?
+								_set(obj, obs, key, fallback, options) :
+								fallback;
+						}
+
+						return null;
+					}
+
+					return data;
+				},
+
+				/**
+				 * Check if storage criteria is set
+				 *
+				 * @private
+				 */
+				_has = function(obj, key, val) {
+					var data = _storage(obj, key),
+						resp = data[0][data[1]];
+
+					if (val !== U) {
+						if (W.$isObject(resp)) {
+							return resp.hasOwnProperty(val);
+						} else if (typeof resp == 'string') {
+							return resp === val;
+						}
+
+						return resp.indexOf(val) > -1;
+					}
+
+					return obj !== U;
+				},
+
+				/**
+				 * Push or concatenate values into global array
+				 *
+				 * @private
+				 */
+				_add = function(type, obj, obs, key, val, prepend) {
+					var stored = _storage(obj, key, true),
+						root = stored[0],
+						seg = stored[1];
+
+					root[seg] = root[seg] || [];
+
+					if (type == 1) {
+						root[seg] = prepend ?
+							val.concat(root[seg]) :
+							root[seg].concat(val);
+					} else {
+						prepend ?
+							root[seg].unshift(val) :
+							root[seg].push(val);
+					}
+
+					if (obs) {
+						_trigger(obj, obs, key, 'add');
+					}
+
+					return root[seg];
+				},
+
+				/**
+				 * Remove key or value from global array
+				 *
+				 * @private
+				 */
+				_drop = function(obj, obs, key, val) {
+					var data = _storage(obj, key),
+						root = data[0],
+						seg = data[1],
+						resp = root[seg];
+
+					if (val !== U) {
+						if (resp !== U) {
+							if (W.$isObject(resp)) {
+								delete root[key];
+							} else if (typeof resp == 'string' && resp === val) {
+								delete root[seg];
+							} else {
+								var i = resp.indexOf(val) > -1;
+
+								if (i > -1) {
+									resp.splice(i, 1);
+								}
+							}
+						}
+					} else {
+						delete root[seg];
+					}
+
+					if (obs) {
+						_trigger(obj, obs, key, 'drop');
+					}
+
+					return root[seg];
+				},
+
+				/**
+				 * Attach callback to data storage change
+				 *
+				 * @private
+				 */
+				_observe = function(obs, key, fn, options) {
+					options = options || {};
+					options.fn = fn;
+
+					obs[key] = obs[key] || [];
+					obs[key].push(options);
+				},
+
+				/**
+				 * Fire callback from data storage change
+				 *
+				 * @private
+				 */
+				_trigger = function(obj, obs, key, type) {
+					if (Object.keys(obs).length) {
+						var arr = [],
+							opts = key.split('.').map(function(seg) {
+								arr.push(seg);
+								return arr.join('.');
+							});
+
+						for (var val in obs) {
+							if (opts.indexOf(val) > -1 || val == '*') {
+								var data;
+
+								if (val == '*') {
+									data = obj;
+								} else {
+									data = _storage(obj, val);
+									data = data[0][data[1]];
+								}
+
+								if (data) {
+									obs[val].forEach(function(el, i) {
+										if (val === key || val == '*' || el.recursive) {
+											if (! el.value || el.value === data) {
+												W.$exec(el.fn, {
+													args: [
+														data,
+														type
+													]
+												});
+
+												if (el.once) {
+													obs[val].splice(i, 1);
+												}
+											}
+										}
+									});
+								}
+							}
+						}
 					}
 				},
 
 				/**
 				 * Check if a node contains another node
 				 *
+				 * @private
 				 * @param {HTMLElement} source
 				 * @param {HTMLElement} target
 				 * @returns {boolean} match
 				 */
-				contains = function(source, target) {
+				_contains = function(source, target) {
 					return (source === D ? W._html : source).contains(target);
 				},
 
 				/**
 				 * Extend target object with source object(s)
 				 *
+				 * @private
 				 * @param {object} target
 				 * @param {object} source
 				 * @param {boolean} deep
 				 * @returns object
 				 */
-				extend = function(target, object, deep) {
+				_extend = function(target, object, deep) {
 					if (object) {
 						for (var key in object) {
 							var src = object[key];
 
-							if (deep === true && (W.$isObject(src) || Array.isArray(src))) {
-								target[key] = extend(target[key], src, deep);
+							if (deep === true && (W.$isObject(src) ||
+								Array.isArray(src))
+							) {
+								target[key] = _extend(target[key], src, deep);
 							} else if (src !== U) {
 								target[key] = src;
 							}
@@ -84,47 +274,13 @@
 				};
 
 			return {
+				_$: N.WeeAlias || '$',
 				_body: D.body,
 				_doc: D,
 				_html: D.documentElement,
 				_legacy: D.getElementsByClassName ? false : true,
 				_slice: [].slice,
 				_win: N,
-				_$: N.WeeAlias || '$',
-				app: {
-					/**
-					 * Create an application
-					 *
-					 * @param {string} name
-					 * @param {object} options
-					 */
-					make: function(name, options) {
-						var conf = extend({
-								model: {},
-								view: ''
-							}, options),
-							$target = W.$(conf.view);
-
-						conf.view = $target.html();
-
-						var fn = function(data) {
-							var rendered = W.view.render(conf.view, data);
-
-							$target.html(rendered);
-						};
-
-						W.$set(name, conf.model);
-
-						W.$observe(name, fn);
-
-						// Execute constructor
-						if (options._construct !== U) {
-							options._construct();
-						}
-
-						fn(conf.model);
-					}
-				},
 				fn: {
 					/**
 					 * Create a namespaced controller
@@ -134,107 +290,17 @@
 					 * @param {object} [priv] - private methods and properties
 					 */
 					make: function(name, pub, priv) {
-						W.fn[name] = function() {
-							var Public = pub,
-								Private = priv || {};
-
-							// Ensure the current controller is not being extended
-							if (name != '_tmp') {
-								var data = {
-									store: {},
-
-									/**
-									 * Get value from controller storage
-									 *
-									 * @returns {*}
-									 */
-									$get: function() {
-										return W.$get.apply(this.store, arguments);
-									},
-
-									/**
-									 * Set value in controller storage
-									 *
-									 * @returns {*}
-									 */
-									$set: function() {
-										return W.$set.apply(this.store, arguments);
-									},
-
-									/**
-									 * Unset value from controller storage
-									 *
-									 * @returns {*}
-									 */
-									$unset: function() {
-										return W.$unset.apply(this.store, arguments);
-									},
-
-									/**
-									 * Push value into controller storage
-									 *
-									 * @returns {Array}
-									 */
-									$push: function() {
-										return W.$push.apply(this.store, arguments);
-									},
-
-									/**
-									 * Pull value from controller storage
-									 *
-									 * @returns {Array}
-									 */
-									$pull: function() {
-										return W.$pull.apply(this.store, arguments);
-									},
-
-									/**
-									 * Destroy current controller
-									 */
-									$destroy: function() {
-										if (Private._destruct) {
-											Private._destruct();
-										}
-
-										if (Public._destruct) {
-											Public._destruct();
-										}
-
-										delete W[name];
-									}
-								};
-
-								// Extend public and private objects with data
-								Public = extend(Public, data);
-								Private = extend(Private, data);
-							}
-
-							// Clone public and private objects
-							Public = extend({}, Public);
-							Private = extend({}, Private);
-
-							// Interface $public and $private
-							Public.$private = Private;
-							Private.$public = Public;
-
-							for (var fn in Private) {
-								Public.$private[fn] = Private[fn];
-							}
-
-							// Execute private constructor
-							if (Private._construct !== U) {
-								Private._construct();
-							}
-
-							// Execute public constructor
-							if (Public._construct !== U) {
-								Public._construct();
-							}
-
-							return Public;
-						};
-
+						W.fn[name] = W._make(name, pub, priv);
 						W[name] = new W.fn[name]();
+
+						// Execute constructors
+						if (W[name].$private._construct !== U) {
+							W[name].$private._construct();
+						}
+
+						if (W[name]._construct !== U) {
+							W[name]._construct();
+						}
 					},
 
 					/**
@@ -247,11 +313,11 @@
 					extend: function(a, b, c) {
 						if (W.$isObject(a)) {
 							// Merge into the global object
-							extend(W, a);
+							_extend(W, a);
 						} else if (W.hasOwnProperty(a)) {
 							// Merge the objects else create the controller
 							this.make('_tmp', b, c);
-							extend(W[a], W._tmp);
+							_extend(W[a], W._tmp);
 							delete W._tmp;
 						} else {
 							this.make(a, b, c);
@@ -273,6 +339,14 @@
 					if (typeof selector != 'string') {
 						el = selector;
 					} else {
+						if (selector == 'window') {
+							return [N];
+						}
+
+						if (selector == 'document') {
+							return [D];
+						}
+
 						// Return nothing if context doesn't exist
 						context = context !== U ? W.$(context)[0] : D;
 
@@ -286,7 +360,8 @@
 								sel = sel.trim();
 
 								if (sel.slice(0, 4) == 'ref:') {
-									sel = W.$get(sel);
+									sel = sel.slice(4);
+									sel = refs[sel];
 
 									// Apply context filter if not document
 									if (sel) {
@@ -294,7 +369,7 @@
 											context === D ?
 												sel :
 												sel.filter(function(el) {
-													return contains(context, el);
+													return _contains(context, el);
 												})
 										);
 									}
@@ -370,36 +445,14 @@
 				 * Set global variable
 				 *
 				 * @param {string} key
-				 * @param {*} value
-				 * @param {object} [options] - available if value is a callback
+				 * @param {*} val
+				 * @param {object} [options] - applicable if value is a callback
 				 * @param {Array} [options.args]
 				 * @param {object} [options.scope]
 				 * @returns {*} value
 				 */
-				$set: function(key, value, options) {
-					var split = storeData(key, this),
-						set = W._canExec(value) || options ?
-							W.$exec(value, options) :
-							value;
-
-					split[0][split[1]] = set;
-
-					fire(key);
-
-					return set;
-				},
-
-				/**
-				 * Unset global variable
-				 *
-				 * @param {string} key
-				 */
-				$unset: function(key) {
-					var split = storeData(key, this);
-
-					delete split[0][split[1]];
-
-					fire(key);
+				$set: function(key, val, options) {
+					return _set(store, observe, key, val, options);
 				},
 
 				/**
@@ -408,37 +461,59 @@
 				 * @param {string} key
 				 * @param {*} [fallback]
 				 * @param {boolean} [set=false]
-				 * @param {object} [options] - available if fallback is a callback
+				 * @param {object} [options] - available for fallback functions
 				 * @param {Array} [options.args]
 				 * @param {object} [options.scope]
 				 * @returns {*} value
 				 */
 				$get: function(key, fallback, set, options) {
-					if (key) {
-						var split = storeData(key, this),
-							root = split[0];
-						key = split[1];
+					return _get(store, observe, key, fallback, set, options);
+				},
 
-						if (root.hasOwnProperty(key)) {
-							return root[key];
-						}
+				/**
+				 * Push value into global array
+				 *
+				 * @param {string} key
+				 * @param {*} value
+				 * @param {boolean} [prepend=false]
+				 * @returns {Array|object} value
+				 */
+				$push: function(key, val, prepend) {
+					return _add(2, store, observe, key, val, prepend);
+				},
 
-						if (fallback !== U) {
-							fallback = W._canExec(fallback) ?
-							W.$exec(fallback, options) || options :
-								fallback;
+				/**
+				 * Concatenate values into global array
+				 *
+				 * @param {string} key
+				 * @param {*} value
+				 * @param {boolean} [prepend=false]
+				 * @returns {Array|object} value
+				 */
+				$concat: function(key, val, prepend) {
+					return _add(1, store, observe, key, val, prepend);
+				},
 
-							if (set) {
-								W.$set(key, fallback);
-							}
+				/**
+				 * Check if storage criteria is set
+				 *
+				 * @param {string} key
+				 * @param {*} [value]
+				 * @returns {boolean}
+				 */
+				$has: function(key, val) {
+					return _has(store, key, val);
+				},
 
-							return fallback;
-						}
-
-						return null;
-					}
-
-					return this !== W ? this : store;
+				/**
+				 * Remove key or value from global array
+				 *
+				 * @param {string} key
+				 * @param {*} [value]
+				 * @returns {Array|object} value
+				 */
+				$drop: function(key, val) {
+					return _drop(store, observe, key, val);
 				},
 
 				/**
@@ -446,11 +521,10 @@
 				 *
 				 * @param {string} key
 				 * @param {function} fn
+				 * @param {object} [options]
 				 */
-				$observe: function(key, fn) {
-					observe[key] = observe[key] || [];
-
-					observe[key].push(fn);
+				$observe: function(key, fn, options) {
+					_observe(observe, key, fn, options);
 				},
 
 				/**
@@ -460,6 +534,15 @@
 				 */
 				$unobserve: function(key) {
 					delete observe[key];
+				},
+
+				/**
+				 * Execute any matching observed callbacks
+				 *
+				 * @param {string} key
+				 */
+				$trigger: function(key) {
+					_trigger(store, observe, key);
 				},
 
 				/**
@@ -475,7 +558,7 @@
 				 */
 				$each: function(target, fn, options) {
 					if (target) {
-						var conf = extend({
+						var conf = _extend({
 								args: []
 							}, options),
 							els = W._selArray(target, conf),
@@ -509,36 +592,31 @@
 				 */
 				$env: function(rules, fallback) {
 					if (rules) {
-						W.$set('_env', function() {
-							var env = fallback || 'local',
-								host = location.host;
+						var host = location.hostname;
 
-							for (var rule in rules) {
-								var val = rules[rule];
+						for (var rule in rules) {
+							var val = rules[rule];
 
-								if (val == host || (W._canExec(val) && W.$exec(val, {
-										args: [host]
-									}) === true)) {
-									env = rule;
-									break;
-								}
+							if (val == host ||
+								(W._canExec(val) && W.$exec(val, {
+									args: host
+								}) === true)) {
+								env = rule;
+								break;
 							}
-
-							return env;
-						});
+						}
 					}
 
-					return W.$get('_env', 'local');
+					return env || fallback || 'local';
 				},
 
 				/**
 				 * Determine if the environment is secured over https
 				 *
-				 * @param {string} [url=current url]
 				 * @returns {boolean} secure
 				 */
-				$envSecure: function(url) {
-					return (url || N.location.href).slice(0, 5) == 'https';
+				$envSecure: function() {
+					return location.protocol == 'https:';
 				},
 
 				/**
@@ -558,7 +636,7 @@
 						i = 0;
 
 					for (; i < len; i++) {
-						var conf = extend({
+						var conf = _extend({
 							args: []
 						}, options || {});
 						fn = fns[i];
@@ -607,7 +685,7 @@
 					deep = bool ? deep : false;
 
 					args.slice(1).forEach(function(source) {
-						target = extend(target, source, deep);
+						target = _extend(target, source, deep);
 					});
 
 					return target;
@@ -668,7 +746,7 @@
 						target = W._selArray(target, options);
 					}
 
-					var conf = extend({
+					var conf = _extend({
 							args: []
 						}, options),
 						res = [],
@@ -690,85 +768,6 @@
 				},
 
 				/**
-				 * Merge source array into target array
-				 *
-				 * @param {Array} target
-				 * @param {Array} source
-				 * @param {boolean} [unique=false] de-duplicate values
-				 * @returns {Array}
-				 */
-				$merge: function(target, source, unique) {
-					target = target.concat(source);
-
-					return unique ?
-						W.$unique(target) :
-						target;
-				},
-
-				/**
-				 * Push value into global array
-				 *
-				 * @param {string} key
-				 * @param {*} a
-				 * @param {*} [b]
-				 * @returns {Array} value
-				 */
-				$push: function(key, a, b) {
-					var split = storeData(key, this),
-						root = split[0];
-					key = split[1];
-
-					if (! root.hasOwnProperty(key)) {
-						root[key] = b !== U ? {} : [];
-					}
-
-					if (b !== U) {
-						var isArr = Array.isArray(b);
-
-						if (! root[key].hasOwnProperty(a)) {
-							root[key][a] = isArr ? [] : {};
-						}
-
-						root[key][a] = isArr ? root[key][a].concat(b) : b;
-					} else {
-						Array.isArray(a) ?
-							root[key] = root[key].concat(a) :
-							root[key].push(a);
-					}
-
-					fire(key);
-
-					return root[key];
-				},
-
-				/**
-				 * Pull value from global array
-				 *
-				 * @param {string} key
-				 * @param {*} a
-				 */
-				$pull: function(key, a) {
-					var split = storeData(key, this),
-						root = split[0];
-					key = split[1];
-
-					var obj = root[key];
-
-					if (obj) {
-						if (W.$isObject(obj)) {
-							delete root[key];
-							return;
-						}
-
-						var index = obj.indexOf(a);
-
-						if (index > -1) {
-							obj.splice(index, 1);
-						}
-					}
-				},
-
-				/**
 				 * Bind specified context to method execution
 				 *
 				 * @param {function} fn
@@ -781,14 +780,15 @@
 				/**
 				 * Serialize object
 				 *
-				 * @param {object} value
+				 * @param {object} val
 				 * @returns {string} value
 				 */
-				$serialize: function(value) {
-					return Object.keys(value).map(function(key) {
-						if (typeof value[key] != 'object') {
+				$serialize: function(val) {
+					return Object.keys(val).map(function(key) {
+						if (typeof val[key] != 'object') {
 							return encodeURIComponent(key) + '=' +
-								encodeURIComponent(value[key]);
+								encodeURIComponent(val[key])
+									.replace(/%20/g, '+');
 						}
 					}).join('&');
 				},
@@ -799,28 +799,25 @@
 				 * @param {(HTMLElement|string)} [context=document]
 				 */
 				$setRef: function(context) {
-					var sets = W.$get('ref');
 					context = context ? W.$(context)[0] : D;
 
 					// Clear existing refs if reset
-					if (sets) {
-						Object.keys(sets).forEach(function(key) {
-							W.$set('ref:' + key, sets[key].filter(function(el) {
-								return ! (
-									! contains(D, el) ||
-									(contains(context, el) && context !== el)
-								);
-							}));
+					Object.keys(refs).forEach(function(val) {
+						refs[val] = refs[val].filter(function(el) {
+							return ! (
+								! _contains(D, el) ||
+								(_contains(context, el) && context !== el)
+							);
 						});
-					}
+					});
 
 					// Set refs from DOM
 					W.$each('[data-ref]', function(el) {
-						var ref = el.getAttribute('data-ref');
-
-						ref.split(/\s+/).forEach(function(val) {
-							W.$push('ref', val, [el]);
-						});
+						el.getAttribute('data-ref').split(/\s+/)
+							.forEach(function(val) {
+								refs[val] = refs[val] || [];
+								refs[val].push(el);
+							});
 					}, {
 						context: context
 					});
@@ -834,47 +831,11 @@
 				$setVars: function(context) {
 					W.$each('[data-set]', function(el) {
 						var key = el.getAttribute('data-set'),
-							val = W._castString(el.getAttribute('data-value')),
-							ind = key.search(/\[.*]/g);
+							val = W._castString(el.getAttribute('data-value'));
 
-						if (ind == -1) {
-							W.$set(key, val);
-							return;
-						}
-
-						var arr = key.slice(ind).slice(1, -1),
-							obj = key.slice(0, ind);
-
-						if (arr === '') {
-							W.$push(obj, val);
-							return;
-						}
-
-						var segs = arr.split(']['),
-							len = segs.length - 1;
-						key = segs[0];
-
-						if (len) {
-							var set = {},
-								ref,
-								i = 1;
-
-							ref = set[key] = {};
-
-							for (i; i <= len; i++) {
-								var last = i === len;
-
-								ref[segs[i]] = last ? val : {};
-
-								if (! last) {
-									ref = ref[segs[i]];
-								}
-							}
-
-							W.$set(obj, extend(W.$get(obj, {}), set, true));
-						} else {
-							W.$push(obj, key, val);
-						}
+						key.slice(-2) == '[]' ?
+							_add(2, store, observe, key, val) :
+							_set(store, observe, key, val);
 					}, {
 						context: context
 					});
@@ -883,11 +844,11 @@
 				/**
 				 * Cast value to array if it isn't one
 				 *
-				 * @param {*} value
+				 * @param {*} val
 				 * @returns {Array} value
 				 */
-				$toArray: function(value) {
-					return Array.isArray(value) ? value : [value];
+				$toArray: function(val) {
+					return Array.isArray(val) ? val : [val];
 				},
 
 				/**
@@ -922,7 +883,7 @@
 				/**
 				 * Determine if value can be executed as a function
 				 *
-				 * @private
+				 * @protected
 				 * @param {*} value
 				 * @returns {boolean} is executable
 				 */
@@ -943,18 +904,18 @@
 				/**
 				 * Cast string to most applicable data type
 				 *
-				 * @private
+				 * @protected
 				 * @param {*} val
 				 */
 				_castString: function(val) {
 					if (typeof val == 'string') {
 						try {
-							val = val === 'true' ? true :
-								val === 'false' ? false :
-								val === 'null' ? null :
-								parseInt(val).toString() === val ? parseInt(val) :
-								/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
-								val;
+							val = val == 'true' ? true :
+								val == 'false' ? false :
+								val == 'null' ? null :
+								parseInt(val).toString() == val ? parseInt(val) :
+									/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
+									val;
 						} catch (e) {}
 					}
 
@@ -964,7 +925,7 @@
 				/**
 				 * Convert selection to array
 				 *
-				 * @private
+				 * @protected
 				 * @param {($|HTMLElement|string)} selector
 				 * @param {object} [options]
 				 * @param {(HTMLElement|string)} [options.context=document]
@@ -981,6 +942,138 @@
 						selector;
 
 					return el ? W.$toArray(el) : [];
+				},
+
+				/**
+				 * Return a new controller method
+				 *
+				 * @protected
+				 * @returns {Function}
+				 */
+				_make: function(name, pub, priv, model) {
+					return function() {
+						var Public = pub || {},
+							Private = priv || {};
+
+						// Ensure the current controller is not being extended
+						if (name != '_tmp') {
+							var store = model || {},
+								observe = {},
+								core = {
+									/**
+									 * Get value from controller storage
+									 *
+									 * @returns {*}
+									 */
+									$get: function(key, fallback, set, options) {
+										return _get(store, observe, key, fallback, set, options);
+									},
+
+									/**
+									 * Set value in controller storage
+									 *
+									 * @returns {*}
+									 */
+									$set: function(key, val, options) {
+										return _set(store, observe, key, val, options);
+									},
+
+									/**
+									 * Check if storage criteria is set
+									 *
+									 * @returns {boolean}
+									 */
+									$has: function(key, val) {
+										return _has(store, key, val);
+									},
+
+									/**
+									 * Push value into controller storage
+									 *
+									 * @returns {Array}
+									 */
+									$push: function(key, val, prepend) {
+										return _add(2, store, observe, key, val, prepend);
+									},
+
+									/**
+									 * Concatenate values into controller storage
+									 *
+									 * @returns {Array}
+									 */
+									$concat: function(key, val, prepend) {
+										return _add(1, store, observe, key, val, prepend);
+									},
+
+									/**
+									 * Remove value from controller storage
+									 *
+									 * @returns {Array}
+									 */
+									$drop: function(key, val) {
+										return _drop(store, observe, key, val);
+									},
+
+									/**
+									 * Attach callback to data storage change
+									 */
+									$observe: function(key, fn, options) {
+										_observe(observe, key, fn, options);
+									},
+
+									/**
+									 * Remove callback from data storage change
+									 */
+									$unobserve: function(key) {
+										delete observe[key];
+									},
+
+									/**
+									 * Attach callback to data storage change
+									 */
+									$trigger: function(key) {
+										_trigger(store, observe, key);
+									},
+
+									/**
+									 * Destroy current controller
+									 */
+									$destroy: function() {
+										if (Private._destruct) {
+											Private._destruct();
+										}
+
+										if (Public._destruct) {
+											Public._destruct();
+										}
+
+										delete W[name];
+
+										W.$drop(name);
+									}
+								};
+
+							// Extend public and private objects with data
+							Public = _extend(Public, core);
+							Private = _extend(Private, core);
+						}
+
+						if (priv !== false) {
+							// Clone public and private objects
+							Public = _extend({}, Public);
+							Private = _extend({}, Private);
+
+							// Interface $public and $private
+							Public.$private = Private;
+							Private.$public = Public;
+
+							for (var fn in Private) {
+								Public.$private[fn] = Private[fn];
+							}
+						}
+
+						return Public;
+					};
 				},
 
 				/**
