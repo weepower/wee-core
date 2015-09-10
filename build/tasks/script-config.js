@@ -78,6 +78,7 @@ module.exports = function(grunt) {
 
 			if (features.view === true) {
 				config.script.files.push(weeScriptRoot + 'wee.view.js');
+				config.script.files.push(weeScriptRoot + 'lib/domdiff.js');
 
 				if (features.chain === true) {
 					chained.push(weeScriptRoot + 'chain/wee.chain.view.js');
