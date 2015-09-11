@@ -162,7 +162,7 @@
 		 * @returns {boolean} ready
 		 */
 		ready: function(group, options, poll) {
-			var complete = groups[group] < 1;
+			var complete = groups[group][0] < 1;
 
 			if (options === U) {
 				return complete;
