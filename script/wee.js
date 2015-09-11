@@ -834,7 +834,7 @@
 							val = W._castString(el.getAttribute('data-value'));
 
 						key.slice(-2) == '[]' ?
-							_add(2, store, observe, key, val) :
+							_add(2, store, observe, key.slice(0, -2), val) :
 							_set(store, observe, key, val);
 					}, {
 						context: context
