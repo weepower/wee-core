@@ -18,7 +18,7 @@
 		init: function(options) {
 			if (! this.request && H && H.pushState) {
 				var loc = location,
-					path = loc.pathname + loc.search,
+					path = loc.pathname + loc.search + loc.hash,
 					settings = W.$extend({
 						request: {},
 						partials: 'title,main',
@@ -38,12 +38,15 @@
 
 				// Listen for browser navigation
 				W.events.on(W._win, 'popstate', function() {
-					var path = loc.pathname + loc.search,
+					var path = loc.pathname + loc.search + loc.hash,
 						conf = entries[path.replace(/^\//g, '')];
 
 					this.go(W.$extend(
-						conf || {},
-						{
+						conf || {
+							request: {
+								root: ''
+							}
+						}, {
 							path: path,
 							push: false,
 							pop: true
@@ -144,6 +147,15 @@
 			request.url = request.url !== U ?
 				request.url :
 				conf.path;
+
+			// Navigate to external URL
+			var a = W._doc.createElement('a');
+			a.href = request.root + request.url;
+
+			if (a.hostname != location.hostname) {
+				W._win.location = request.url;
+				return;
+			}
 
 			conf.request = request;
 
