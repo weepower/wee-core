@@ -244,17 +244,17 @@
 									W._legacy ?
 										el.attachEvent('on' + evt, cb) :
 										el.addEventListener(evt, cb, false);
-
-									bound.push({
-										el: el,
-										ev: ev,
-										evt: evt,
-										cb: cb,
-										fn: f
-									});
 								} else if (custom[evt]) {
 									custom[evt][0](el, fn, conf);
 								}
+
+								bound.push({
+									el: el,
+									ev: ev,
+									evt: evt,
+									cb: cb,
+									fn: f
+								});
 							}
 
 							if (evt == 'init' || conf.init === true) {
@@ -279,8 +279,8 @@
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
 						e.el.removeEventListener(e.evt, e.cb);
-				} else if (custom[evt]) {
-					custom[evt][1](e.el, e.cb);
+				} else if (custom[e.evt]) {
+					custom[e.evt][1](e.el, e.cb);
 				}
 
 				bound.splice(bound.indexOf(e), 1);
