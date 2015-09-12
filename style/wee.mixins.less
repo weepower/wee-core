@@ -7,8 +7,8 @@
 	margin-left: auto;
 	margin-right: auto;
 	.box-sizing(content-box);
-	.max-width(@maxWidth);
-	.min-width(@minWidth);
+	.max-width();
+	.min-width();
 	.check () when (@padContainer = true) {
 		.padded();
 	}
@@ -2511,7 +2511,7 @@
 }
 .hide-text () {
 	overflow: hidden;
-	text-indent: 100%;
+	text-indent: 110%;
 	white-space: nowrap;
 }
 .hide () {
