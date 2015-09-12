@@ -1,5 +1,10 @@
 languages:
   JavaScript: true
 exclude_paths:
+- "cli.js"
+- "utils.js"
+- "build/*"
+- "commands/*"
 - "templates/*"
+- "script/lib/*"
 - "script/tests/*"
