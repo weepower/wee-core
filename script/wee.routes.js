@@ -56,31 +56,12 @@
 					return uri;
 				}
 
-				var a = W._doc.createElement('a'),
-					query = {};
+				var a = W._doc.createElement('a');
 				a.href = value;
 
-				var search = a.search;
-
-				if (search) {
-					var arr = decodeURIComponent(search).slice(1).split('&'),
-						i = 0;
-
-					for (; i < arr.length; i++) {
-						var split = arr[i].split('='),
-							key = split[0],
-							val = split[1] || '';
-
-						if (query[key]) {
-							query[key] = W.$toArray(query[key]);
-							query[key].push(val);
-						} else {
-							query[key] = val;
-						}
-					}
-				}
-
-				var path = a.pathname.replace(/^\/|\/$/g, '');
+				var search = a.search,
+					query = search ? W.$unserialize(search) : {},
+					path = a.pathname.replace(/^\/|\/$/g, '');
 
 				uri = {
 					full: '/' + path + search + a.hash,

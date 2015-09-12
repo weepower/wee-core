@@ -794,6 +794,33 @@
 				},
 
 				/**
+				 * Unserialize string into object
+				 *
+				 * @param {string} str
+				 * @returns {object} value
+				 */
+				$unserialize: function(str) {
+					var obj = {};
+
+					decodeURIComponent(str)
+						.replace(/^\?/, '')
+						.split('&').forEach(function(el) {
+							var split = el.split('='),
+								key = split[0],
+								val = split[1] || '';
+
+							if (obj[key]) {
+								obj[key] = W.$toArray(obj[key]);
+								obj[key].push(val);
+							} else {
+								obj[key] = val;
+							}
+						});
+
+					return obj;
+				},
+
+				/**
 				 * Add ref elements to datastore
 				 *
 				 * @param {(HTMLElement|string)} [context=document]
