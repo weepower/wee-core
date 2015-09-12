@@ -132,12 +132,16 @@
 				}
 
 				if (aft) {
+					var par = el.parentNode;
+
 					W.$each(aft, function(cel) {
 						if (i > 0) {
 							cel = W.$clone(cel)[0];
 						}
 
-						el.parentNode.insertBefore(cel, el.nextSibling);
+						par.insertBefore(cel, el.nextSibling);
+
+						W.$setRef(par);
 					}, {
 						reverse: true
 					});
@@ -234,12 +238,16 @@
 				}
 
 				if (bef) {
+					var par = el.parentNode;
+
 					W.$each(bef, function(cel) {
 						if (i > 0) {
 							cel = W.$clone(cel)[0];
 						}
 
-						el.parentNode.insertBefore(cel, el);
+						par.insertBefore(cel, el);
+
+						W.$setRef(par);
 					}, {
 						reverse: true
 					});
@@ -639,12 +647,16 @@
 		 */
 		$insertAfter: function(target, source) {
 			W.$each(source, function(el, i) {
+				var par = el.parentNode;
+
 				W.$each(target, function(cel) {
 					if (i > 0) {
 						cel = W.$clone(cel)[0];
 					}
 
-					el.parentNode.insertBefore(cel, el.nextSibling);
+					par.insertBefore(cel, el.nextSibling);
+
+					W.$setRef(par);
 				});
 			});
 		},
@@ -1341,10 +1353,15 @@
 				);
 
 				if (wrap) {
+					var par = el.parentNode;
+
 					W.$each(wrap, function(cel) {
 						cel = cel.cloneNode(true);
+
 						cel.appendChild(el.cloneNode(true));
-						el.parentNode.replaceChild(cel, el);
+						par.replaceChild(cel, el);
+
+						W.$setRef(par);
 					});
 				}
 			});
