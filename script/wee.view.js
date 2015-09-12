@@ -150,7 +150,7 @@
 				var resp = '{{' + pre,
 					exists = tags.hasOwnProperty(tag);
 
-				if (pre == '#') {
+				if (pre == '#' && tag) {
 					if (exists) {
 						tags[tag].i++;
 						tags[tag].o.push(tags[tag].i);
