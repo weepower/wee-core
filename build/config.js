@@ -70,7 +70,7 @@
 			uglify: {
 				options: {
 					compress: {
-						drop_debugger: false
+						drop_debugger: false // jshint ignore:line
 					}
 				},
 				core: {

@@ -1,4 +1,5 @@
 /* global browserSync, config, path, project */
+/* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
 	var fs = require('fs'),

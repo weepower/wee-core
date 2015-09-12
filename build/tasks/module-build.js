@@ -1,4 +1,5 @@
 /* global config, fs, legacyConvert, moduleLegacy, path, project */
+/* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildModules', function() {
