@@ -276,13 +276,12 @@
 		 * @param sel
 		 */
 		reset: function(sel) {
-			var pub = this.$public,
-				settings = pub.settings;
+			var settings = this.$public.settings;
 
 			W.$setRef(sel);
 			W.$setVars(sel);
 
-			pub.bind(settings.bind, settings.event, sel);
+			this.$public.bind(settings.bind, settings.event, sel);
 		},
 
 		/**

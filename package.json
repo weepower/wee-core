@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "1.0.0-alpha.22",
+	"version": "1.0.0-alpha.23",
 	"description": "Blueprint for modern web development",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
@@ -15,7 +15,7 @@
 		"url": "https://github.com/weepower/wee-core.git"
 	},
 	"bugs": {
-		"url": "https://github.com/weepower/wee-core/issues"
+		"url": "https://github.com/weepower/wee/issues"
 	},
 	"dependencies": {
 		"browser-sync": "~2.9.3",
