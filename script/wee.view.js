@@ -366,15 +366,9 @@
 
 					// Return value on last segment
 					if (i === len) {
-						if (typeof data == 'function') {
-							data = data(orig, init, x);
-						}
-
-						if (data || data === 0) {
-							return data;
-						}
-
-						break;
+						return typeof data == 'function' ?
+							data(orig, init, x) :
+							data;
 					}
 				} else {
 					break;
