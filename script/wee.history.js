@@ -98,11 +98,13 @@
 						// Ensure the path exists and is local
 						if (evt && host == location.hostname) {
 							W.events.on(el, evt, function(e) {
-								W.history.go({
-									path: path
-								});
+								if (! e.metaKey) {
+									W.history.go({
+										path: path
+									});
 
-								e.preventDefault();
+									e.preventDefault();
+								}
 							});
 						}
 					}, {
