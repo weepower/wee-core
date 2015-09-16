@@ -99,14 +99,14 @@
 					if (val !== U) {
 						if (W.$isObject(resp)) {
 							return resp.hasOwnProperty(val);
-						} else if (typeof resp == 'string') {
-							return resp === val;
+						} else if (Array.isArray(resp)) {
+							return resp.indexOf(val) > -1;
 						}
 
-						return resp.indexOf(val) > -1;
+						return resp === val;
 					}
 
-					return obj !== U;
+					return resp !== U;
 				},
 
 				/**
@@ -132,10 +132,28 @@
 					}
 
 					if (obs) {
-						_trigger(obj, obs, key, 'add');
+						_trigger(obj, obs, key, type == 1 ? 'concat' : 'push');
 					}
 
 					return root[seg];
+				},
+
+				/**
+				 * Extend object into into global storage
+				 *
+				 * @private
+				 */
+				_merge = function(obj, obs, key, val) {
+					var curr = _get(obj, obs, key, {});
+
+					_set(obj, obs, key, _extend(
+						curr,
+						val
+					));
+
+					_trigger(obj, obs, key, 'merge');
+
+					return curr;
 				},
 
 				/**
@@ -492,6 +510,15 @@
 				 */
 				$concat: function(key, val, prepend) {
 					return _add(1, store, observe, key, val, prepend);
+				},
+
+				/**
+				 * Extend object into controller storage
+				 *
+				 * @returns {Array}
+				 */
+				$merge: function(key, obj) {
+					return _merge(store, observe, key, obj);
 				},
 
 				/**
@@ -1030,6 +1057,15 @@
 									 */
 									$concat: function(key, val, prepend) {
 										return _add(1, store, observe, key, val, prepend);
+									},
+
+									/**
+									 * Extend object into controller storage
+									 *
+									 * @returns {Array}
+									 */
+									$merge: function(key, obj) {
+										return _merge(store, observe, key, obj);
 									},
 
 									/**
