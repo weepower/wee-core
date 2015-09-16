@@ -37,18 +37,32 @@
 			W.$each(target, function(el) {
 				for (var prop in props) {
 					var target = parseInt(props[prop]),
+						cssValue;
+
+					if (prop == 'scrollTop') {
+						var de = Wee._doc.documentElement;
+
+						el = de && de.scrollTop ? de : el;
+						cssValue = el.scrollTop;
+					} else {
 						cssValue = W._legacy ?
 							el.currentStyle[prop] :
-							getComputedStyle(el, null)[prop],
-						css = cssValue !== undefined,
+							getComputedStyle(el, null)[prop];
+					}
+
+					var	css = cssValue !== undefined,
 						val = parseInt(css ? cssValue : el[prop]),
 						dist = Math.abs(target - val),
 						dir = target > val ? 1 : -1,
 						start = Date.now(),
 						setValue = function(prop, update) {
-							css ?
-								el.style[prop] = update + 'px' :
-								el[prop] = update;
+							if (prop == 'scrollTop') {
+								el.scrollTop = update;
+							} else {
+								css ?
+									el.style[prop] = update + 'px' :
+									el[prop] = update;
+							}
 						},
 						si = setInterval(function() {
 							var diff = Date.now() - start;
