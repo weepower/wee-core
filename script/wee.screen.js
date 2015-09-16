@@ -53,7 +53,7 @@
 				for (; i < sets.length; i++) {
 					priv.addRule(sets[i]);
 				}
-			}, 1);
+			}, W._legacy ? 100 : 0);
 		}
 	}, {
 		/**
