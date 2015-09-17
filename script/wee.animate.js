@@ -39,10 +39,8 @@
 					var target = parseInt(props[prop]),
 						cssValue;
 
-					if (prop == 'scrollTop') {
-						var de = Wee._doc.documentElement;
-
-						el = de && de.scrollTop ? de : el;
+					if (prop == 'scrollTop' && ! W._win.atob) {
+						el = W._doc.documentElement;
 						cssValue = el.scrollTop;
 					} else {
 						cssValue = W._legacy ?
@@ -56,7 +54,7 @@
 						dir = target > val ? 1 : -1,
 						start = Date.now(),
 						setValue = function(prop, update) {
-							if (prop == 'scrollTop') {
+							if (prop == 'scrollTop' && ! W._win.atob) {
 								el.scrollTop = update;
 							} else {
 								css ?
