@@ -361,7 +361,7 @@
 			for (; i <= len; i++) {
 				key = resp[i];
 
-				if (data.hasOwnProperty(key)) {
+				if (data && data.hasOwnProperty(key)) {
 					data = data[key];
 
 					// Return value on last segment
