@@ -4,7 +4,8 @@
 	/**
 	 * Setup initial variables
 	 */
-	var entries = [];
+	var support = H && H.pushState,
+		entries = [];
 
 	W.fn.make('history', {
 		/**
@@ -16,13 +17,14 @@
 		 * @param {($|HTMLElement|string)} [options.bind]
 		 */
 		init: function(options) {
-			if (! this.request && H && H.pushState) {
+			if (! this.request) {
 				var loc = location,
 					path = loc.pathname + loc.search + loc.hash,
 					settings = W.$extend({
-						request: {},
+						fallback: 'nav',
 						partials: 'title,main',
 						push: true,
+						request: {},
 						run: true
 					}, options);
 
@@ -33,28 +35,30 @@
 
 				this.root = this.request.root;
 
-				// Set current state
-				H.replaceState(0, 0, path);
+				if (support) {
+					// Set current state
+					H.replaceState(0, 0, path);
 
-				// Listen for browser navigation
-				W.events.on(W._win, 'popstate', function() {
-					var path = loc.pathname + loc.search + loc.hash,
-						conf = entries[path.replace(/^\//g, '')];
+					// Listen for browser navigation
+					W.events.on(W._win, 'popstate', function () {
+						var path = loc.pathname + loc.search + loc.hash,
+							conf = entries[path.replace(/^\//g, '')];
 
-					this.go(W.$extend(
-						conf || {
-							request: {
-								root: ''
+						this.go(W.$extend(
+							conf || {
+								request: {
+									root: ''
+								}
+							}, {
+								path: path,
+								push: false,
+								pop: true
 							}
-						}, {
-							path: path,
-							push: false,
-							pop: true
-						}
-					));
-				}, {
-					scope: this
-				});
+						));
+					}, {
+						scope: this
+					});
+				}
 
 				// Bind PJAX actions
 				this.bind(settings.bind, settings.event);
@@ -96,7 +100,7 @@
 						}
 
 						// Ensure the path exists and is local
-						if (evt && host == location.hostname) {
+						if (evt && (! host || host == location.hostname)) {
 							W.events.on(el, evt, function(e) {
 								if (! e.metaKey) {
 									W.history.go({
@@ -144,18 +148,19 @@
 
 			request.root = request.root !== U ?
 				request.root :
-				scope.root;
+				scope.root || '';
 
 			request.url = request.url !== U ?
 				request.url :
 				conf.path;
 
-			// Navigate to external URL
+			// Navigate to external URL or in fallback nav mode
 			var a = W._doc.createElement('a');
 			a.href = request.root + request.url;
 
-			if (a.hostname != location.hostname) {
-				W._win.location = request.url;
+			if ((a.hostname && a.hostname != location.hostname) ||
+				(! support && conf.fallback == 'nav')) {
+				W._win.location = request.root + W.data.$private.getUrl(request);
 				return;
 			}
 
@@ -303,7 +308,7 @@
 			}
 
 			// Add entry to HTML5 history
-			if (conf.push) {
+			if (conf.push && support) {
 				H.pushState(0, 0, conf.path);
 			}
 
