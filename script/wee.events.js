@@ -128,7 +128,7 @@
 		 * @param {string} name
 		 */
 		trigger: function(target, name) {
-			bound(target, name).forEach(function(evt) {
+			this.bound(target, name).forEach(function(evt) {
 				evt.cb(false);
 			});
 		},
@@ -240,7 +240,7 @@
 							// combination hasn't already been bound
 							if (evt != 'init' && ! scope.$public.bound(el, ev, f).length) {
 								// Determine if the event is native or custom
-								if ('on' + evt in W._win) {
+								if ('on' + evt in el) {
 									W._legacy ?
 										el.attachEvent('on' + evt, cb) :
 										el.addEventListener(evt, cb, false);
