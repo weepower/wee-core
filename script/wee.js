@@ -143,13 +143,13 @@
 				 *
 				 * @private
 				 */
-				_merge = function(obj, obs, key, val) {
+				_merge = function(obj, obs, key, val, deep) {
 					var curr = _get(obj, obs, key, {});
 
 					_set(obj, obs, key, _extend(
 						curr,
 						val
-					));
+					), deep);
 
 					_trigger(obj, obs, key, 'merge');
 
@@ -296,7 +296,7 @@
 				_body: D.body,
 				_doc: D,
 				_html: D.documentElement,
-				_legacy: D.getElementsByClassName ? false : true,
+				_legacy: D.addEventListener === U,
 				_slice: [].slice,
 				_win: N,
 				fn: {
@@ -517,8 +517,8 @@
 				 *
 				 * @returns {Array}
 				 */
-				$merge: function(key, obj) {
-					return _merge(store, observe, key, obj);
+				$merge: function(key, obj, deep) {
+					return _merge(store, observe, key, obj, deep);
 				},
 
 				/**
@@ -1064,8 +1064,8 @@
 									 *
 									 * @returns {Array}
 									 */
-									$merge: function(key, obj) {
-										return _merge(store, observe, key, obj);
+									$merge: function(key, obj, deep) {
+										return _merge(store, observe, key, obj, deep);
 									},
 
 									/**
@@ -1145,13 +1145,11 @@
 				 * @param {(Array|function|string)} fn
 				 */
 				ready: function(fn) {
-					var state = D.readyState;
-
-					state == 'complete' ?
+					D.readyState == 'complete' ?
 						W.$exec(fn) :
 						W._legacy ?
 							D.attachEvent('onreadystatechange', function() {
-								if (state == 'complete') {
+								if (D.readyState == 'complete') {
 									W.$exec(fn);
 								}
 							}) :
