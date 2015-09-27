@@ -5,7 +5,26 @@
 	 * Setup initial variables
 	 */
 	var support = H && H.pushState,
-		entries = [];
+		entries = [],
+
+		/**
+		 * Determine if path is valid for history navigation
+		 *
+		 * @param {HTMLElement} el
+		 */
+		_isValid = function(el) {
+			var exts = W.history.settings.extensions,
+				host = el.hostname,
+				segs = el.href.split('.'),
+				ext;
+
+			if (segs.length > 1) {
+				ext = segs.pop().split(/#|\?/)[0];
+			}
+
+			return (! host || host == location.hostname) &&
+				(! ext || (ext && (! exts || exts.indexOf(ext) > -1)));
+		};
 
 	W.fn.make('history', {
 		/**
@@ -13,8 +32,12 @@
 		 *
 		 * @param {object} [options]
 		 * @param {boolean] [options.push=true]
+		 * @param {string] [options.partials='title,main']
+		 * @param {string] [options.fallback='nav']
 		 * @param {boolean} [options.run=true]
 		 * @param {($|HTMLElement|string)} [options.bind]
+		 * @param {object} [options.request]
+		 * @param {array} [options.extensions]
 		 */
 		init: function(options) {
 			if (! this.request) {
@@ -40,7 +63,7 @@
 					H.replaceState(0, 0, path);
 
 					// Listen for browser navigation
-					W.events.on(W._win, 'popstate', function () {
+					W.events.on(W._win, 'popstate', function() {
 						var path = loc.pathname + loc.search + loc.hash,
 							conf = entries[path.replace(/^\//g, '')];
 
@@ -86,25 +109,19 @@
 								return val + namespace;
 							}).join(' '),
 							loc = el.getAttribute('data-url'),
-							host,
-							path;
+							a = el;
 
-						if (loc || el.action) {
-							var a = W._doc.createElement('a');
+						if (loc || a.action) {
+							a = W._doc.createElement('a');
 							a.href = loc || el.action;
-							host = a.hostname;
-							path = a.pathname + a.search + a.hash;
-						} else if (el.href && el.href[0] !== '#') {
-							host = el.hostname;
-							path = el.pathname + el.search + el.hash;
 						}
 
 						// Ensure the path exists and is local
-						if (evt && (! host || host == location.hostname)) {
+						if (evt && _isValid(a)) {
 							W.events.on(el, evt, function(e) {
 								if (! e.metaKey) {
 									W.history.go({
-										path: path
+										path: a.pathname + a.search + a.hash
 									});
 
 									e.preventDefault();
@@ -158,7 +175,7 @@
 			var a = W._doc.createElement('a');
 			a.href = request.root + request.url;
 
-			if ((a.hostname && a.hostname != location.hostname) ||
+			if (! _isValid(a) ||
 				(! support && conf.fallback == 'nav')) {
 				W._win.location = request.root + W.data.$private.getUrl(request);
 				return;
