@@ -58,6 +58,7 @@
 	}
 	.check();
 }
+
 .wee-table-bordered () when (@tableBordered = true) {
 	.border(bottom; @tableCellBorderColor);
 	caption {
@@ -73,9 +74,11 @@
 		}
 	}
 }
+
 .wee-table-striped () when (@tableStriped = true) {
 	tbody tr:nth-child(@{tableStripedPosition}) td {
 		.background(@tableStripedBackground);
 	}
 }
+
 .wee-table();
