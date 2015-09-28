@@ -4,13 +4,13 @@
 	module.exports = function(config) {
 		var glob = require('glob'),
 			path = require('path'),
-			scriptPath = path.join(config.project.paths.source, 'js'),
+			scriptPath = config.project.paths.source,
 			files = glob.sync('**/*.js', {
 				cwd: scriptPath,
 				ignore: [
 					'**/*.min.js',
-					'polyfill/*',
-					'vendor/*'
+					'**/polyfill/*',
+					'**/vendor/*'
 				]
 			});
 
