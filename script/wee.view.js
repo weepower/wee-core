@@ -213,7 +213,7 @@
 					var meth = filter ? filter.split('|') : [];
 
 					if (empty) {
-						var arg = meth[0][0] == '(';
+						var arg = meth[0] && meth[0][0] == '(';
 
 						meth.unshift(tag + (arg ? meth[0] : '()'));
 
