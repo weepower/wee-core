@@ -26,6 +26,9 @@
 				return ! this.empty;
 			}
 		},
+		_isEmpty = function(val) {
+			return val === false || val == null || val.length === 0;
+		},
 		helpers = {},
 		partials = {},
 		esc;
@@ -139,23 +142,29 @@
 			}).replace(reg.tags, function(m, pre, tag, filter) {
 				tag = tag.trim();
 
-				var resp = '{{' + pre,
+				var segs = tag.split('('),
+					root = segs[0],
+					resp = '{{' + pre,
 					exists = tags.hasOwnProperty(tag);
 
 				if (pre == '#' && tag) {
 					if (exists) {
-						tags[tag].i++;
-						tags[tag].o.push(tags[tag].i);
+						tags[root].i++;
+						tags[root].o.push(tags[root].i);
 					} else {
-						tags[tag] = {
+						tags[root] = {
 							i: 1,
 							o: [1]
 						};
 					}
 
-					resp += tag + '%' + tags[tag].i + (filter || '');
+					if (segs.length > 1) {
+						filter = '(' + segs.slice(1).join('(');
+					}
+
+					resp += root + '%' + tags[root].i + (filter || '');
 				} else if (exists) {
-					resp += tag + '%' + tags[tag].o.pop();
+					resp += root + '%' + tags[root].o.pop();
 				}
 
 				return resp + '}}';
@@ -197,14 +206,20 @@
 				}
 
 				var val = scope.get(data, prev, tag, U, init, index),
-					empty = val === false || val == null || val.length === 0,
+					empty = _isEmpty(val),
 					resp = '';
 
 				if (filter || empty) {
 					var meth = filter ? filter.split('|') : [];
 
 					if (empty) {
-						meth.unshift(tag + '()');
+						var arg = meth[0][0] == '(';
+
+						meth.unshift(tag + (arg ? meth[0] : '()'));
+
+						if (arg) {
+							meth.splice(1, 1);
+						}
 					}
 
 					// Loop through tag filters
@@ -239,7 +254,7 @@
 					}
 
 					val = scope.get(data, prev, tag, U, init, index);
-					empty = val === false || val == null || val.length === 0;
+					empty = _isEmpty(val);
 				}
 
 				if (empty === false && resp === '') {
