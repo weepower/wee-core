@@ -18,7 +18,7 @@
 	@import (optional) '@{sourcePath}@{responsivePath}/desktop-large.less';
 }
 
-.responsive () when not (@legacyMode = true) {
+.wee-responsive () when not (@legacyMode = true) {
 	// IE Metro Compatibility
 	@-ms-viewport {
 		width: device-width;
@@ -77,4 +77,4 @@
 	.check();
 }
 
-.responsive();
+.wee-responsive();
