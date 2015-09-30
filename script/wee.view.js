@@ -1,4 +1,4 @@
-/* jshint maxdepth: 4, maxparams: 6 */
+/* jshint maxdepth: 5, maxparams: 6 */
 
 (function(W, U) {
 	'use strict';
@@ -11,6 +11,9 @@
 			ext: /(.[^\(]+)(?:\((.*)\))?/,
 			str: /^\\?("|')/,
 			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g
+		},
+		_isEmpty = function(val) {
+			return val === false || val == null || val.length === 0;
 		},
 		filters = {
 			is: function(val) {
@@ -25,9 +28,6 @@
 			notEmpty: function() {
 				return ! this.empty;
 			}
-		},
-		_isEmpty = function(val) {
-			return val === false || val == null || val.length === 0;
 		},
 		helpers = {},
 		partials = {},
@@ -68,7 +68,7 @@
 		 * @returns {string}
 		 */
 		render: function(template, data) {
-			return this.$private.render(template, W.$extend({}, data));
+			return this.$private.render(template, W.$extend(data));
 		},
 
 		/**
@@ -127,8 +127,7 @@
 		 * @returns {string}
 		 */
 		render: function(temp, data) {
-			var scope = this,
-				tags = [];
+			var tags = [];
 
 			// Make partial replacements and match tag pairs
 			temp = temp.replace(reg.partial, function(match, tag) {
@@ -207,11 +206,16 @@
 
 				var val = scope.get(data, prev, tag, U, init, index),
 					empty = _isEmpty(val),
-					resp = '';
+					resp = '',
+					filt = [],
+					each;
 
+				// Parse filters
 				if (filter || empty) {
-					var meth = filter ? filter.split('|') : [];
+					var meth = filter ? filter.split('|') : [],
+						agg = [];
 
+					// Handle root filters
 					if (empty) {
 						var arg = meth[0] && meth[0][0] == '(';
 
@@ -222,49 +226,58 @@
 						}
 					}
 
-					// Loop through tag filters
-					var cont = meth.every(function(el) {
-						var arr = el.match(reg.ext);
-						filter = filters[arr[1]];
+					// Capture available filters and aggregates
+					meth.forEach(function(el) {
+						var arr = el.match(reg.ext),
+							name = arr[1].trim();
 
-						if (filter) {
-							var rv = filter.apply({
+						if (name == 'each') {
+							each = true;
+						} else if (filters[name]) {
+							el = [filters[name], arr[2]];
+							each ? filt.push(el) : agg.push(el);
+						}
+					});
+
+					// Process aggregates
+					if (agg.length) {
+						if (! agg.every(function(f) {
+							var rv = f[0].apply({
 								val: val,
 								data: data,
 								root: init,
 								tag: tag,
 								inner: inner,
-								empty: empty
-							}, scope.parseArgs(arr[2], data));
+								empty: empty,
+								index: index
+							}, scope.parseArgs(f[1], val));
 
-							// If the filter response is true skip into interior
-							// If false abort the current process
 							if (rv === false) {
 								return false;
-							} else if (rv === true) {
+							} else if (rv === true && ! each) {
 								resp = scope.parse(inner, data, prev, init, index);
 							}
+
+							return true;
+						})) {
+							return '';
+						} else {
+							val = scope.get(data, prev, tag, U, init, index);
+
+							empty = _isEmpty(val);
 						}
-
-						return true;
-					});
-
-					if (cont === false) {
-						return '';
 					}
-
-					val = scope.get(data, prev, tag, U, init, index);
-					empty = _isEmpty(val);
 				}
 
 				if (empty === false && resp === '') {
 					// Loop through objects and arrays
-					if (typeof val == 'object') {
+					if (each && typeof val == 'object') {
 						var isObj = W.$isObject(val),
 							i = 0;
 
 						for (var key in val) {
 							if (val.hasOwnProperty(key)) {
+								// Merge default properties
 								var el = val[key],
 									item = W.$extend({
 										$key: key,
@@ -275,8 +288,22 @@
 										el :
 										(isObj ? val : {})
 									);
+								empty = _isEmpty(el);
 
-								resp += scope.parse(inner, item, data, init, i);
+								// Process filters
+								if (! filt.length || filt.every(function(f) {
+									return f[0].apply({
+										val: el,
+										data: val,
+										root: init,
+										tag: tag,
+										inner: inner,
+										empty: empty,
+										index: i
+									}, scope.parseArgs(f[1], el)) !== false;
+								})) {
+									resp += scope.parse(inner, item, data, init, i);
+								}
 
 								i++;
 							}
@@ -422,7 +449,7 @@
 			return args.map(function(arg) {
 				arg = arg.trim();
 
-				if (data.hasOwnProperty(arg)) {
+				if (data && data.hasOwnProperty(arg)) {
 					return data[arg];
 				} else {
 					var match = arg.match(reg.str);
