@@ -203,7 +203,7 @@
 
 								conf.args[0] = e;
 
-								// If watch within parent make sure the target
+								// If watch within ancestor make sure the target
 								// matches the selector
 								if (conf.targ) {
 									var targ = conf.targ,

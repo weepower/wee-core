@@ -1,4 +1,4 @@
-[![Wee Core](https://www.weepower.com/repo/banner.jpg?v1)](https://www.weepower.com)
+[![Wee Core](https://www.weepower.com/repo/logo.svg)](https://www.weepower.com)
 
 This repository is part of the [Wee framework](https://github.com/weepower/wee).
 
