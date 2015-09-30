@@ -829,16 +829,6 @@
 				},
 
 				/**
-				 * Copy value to a new instance
-				 *
-				 * @param {*} val
-				 * @returns {*}
-				 */
-				$copy: function(val) {
-					return _copy(val);
-				},
-
-				/**
 				 * Generate a delta from two objects
 				 *
 				 * @param {object} a
