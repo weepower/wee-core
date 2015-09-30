@@ -38,7 +38,7 @@
 						});
 					}
 
-					return [data, key];
+					return [data, key, _copy(data[key])];
 				},
 
 				/**
@@ -52,11 +52,9 @@
 							W.$exec(val, options) :
 							val;
 
-					if (stored[0][stored[1]] !== data) {
-						stored[0][stored[1]] = data;
+					stored[0][stored[1]] = data;
 
-						_trigger(obj, obs, key, 'set');
-					}
+					_trigger(obj, obs, key, stored[2], data, 'set');
 
 					return data;
 				},
@@ -131,9 +129,8 @@
 							root[seg].push(val);
 					}
 
-					if (obs) {
-						_trigger(obj, obs, key, type == 1 ? 'concat' : 'push');
-					}
+					_trigger(obj, obs, key, stored[2], root[seg],
+						type == 1 ? 'concat' : 'push');
 
 					return root[seg];
 				},
@@ -144,16 +141,8 @@
 				 * @private
 				 */
 				_merge = function(obj, obs, key, val, deep) {
-					var curr = _get(obj, obs, key, {});
-
-					_set(obj, obs, key, _extend(
-						curr,
-						val
-					), deep);
-
-					_trigger(obj, obs, key, 'merge');
-
-					return curr;
+					return _set(obj, obs, key,
+						_extend(_get(obj, obs, key, {}), val, deep));
 				},
 
 				/**
@@ -162,9 +151,9 @@
 				 * @private
 				 */
 				_drop = function(obj, obs, key, val) {
-					var data = _storage(obj, key),
-						root = data[0],
-						seg = data[1],
+					var stored = _storage(obj, key),
+						root = stored[0],
+						seg = stored[1],
 						resp = root[seg];
 
 					if (val !== U) {
@@ -185,11 +174,7 @@
 						delete root[seg];
 					}
 
-					if (obs) {
-						_trigger(obj, obs, key, 'drop');
-					}
-
-					return root[seg];
+					_trigger(obj, obs, key, stored[2], root[seg], 'drop');
 				},
 
 				/**
@@ -210,8 +195,8 @@
 				 *
 				 * @private
 				 */
-				_trigger = function(obj, obs, key, type) {
-					if (Object.keys(obs).length) {
+				_trigger = function(obj, obs, key, orig, upd, type) {
+					if (Object.keys(obs).length && ! _equals(upd, orig)) {
 						var arr = [],
 							opts = key.split('.').map(function(seg) {
 								arr.push(seg);
@@ -220,36 +205,49 @@
 
 						for (var val in obs) {
 							if (opts.indexOf(val) > -1 || val == '*') {
-								var data;
+								var data = val == '*' ? obj : upd;
 
-								if (val == '*') {
-									data = obj;
-								} else {
-									data = _storage(obj, val);
-									data = data[0][data[1]];
-								}
+								obs[val].forEach(function(el, i) {
+									if (val === key || val == '*' || el.recursive) {
+										if (! el.value || _equals(el.value, data)) {
+											var args = [data, type];
 
-								if (data) {
-									obs[val].forEach(function(el, i) {
-										if (val === key || val == '*' || el.recursive) {
-											if (! el.value || el.value === data) {
-												W.$exec(el.fn, {
-													args: [
-														data,
-														type
-													]
-												});
+											if (el.diff) {
+												args.push(_diff(orig, data));
+											}
 
-												if (el.once) {
-													obs[val].splice(i, 1);
-												}
+											W.$exec(el.fn, {
+												args: args
+											});
+
+											if (el.once) {
+												obs[val].splice(i, 1);
 											}
 										}
-									});
-								}
+									}
+								});
 							}
 						}
 					}
+				},
+
+				/**
+				 * Copy value to a new instance
+				 *
+				 * @param {*} val
+				 * @returns {*}
+				 */
+				_copy = function(val) {
+					var type = W.$type(val);
+
+					if (type == 'object') {
+						val = _extend({}, val, true);
+						console.log(val);
+					} else if (type == 'array') {
+						val = val.slice(0);
+					}
+
+					return val;
 				},
 
 				/**
@@ -261,7 +259,8 @@
 				 * @returns {boolean} match
 				 */
 				_contains = function(source, target) {
-					return (source === D ? W._html : source).contains(target);
+					return (source === D ? W._html : source)
+						.contains(target);
 				},
 
 				/**
@@ -276,19 +275,126 @@
 				_extend = function(target, object, deep) {
 					if (object) {
 						for (var key in object) {
-							var src = object[key];
+							var src = object[key],
+								type = W.$type(src);
 
-							if (deep === true && (W.$isObject(src) ||
-								Array.isArray(src))
-							) {
-								target[key] = _extend(target[key], src, deep);
+							if (deep === true && type == 'object') {
+								target[key] = _extend(target[key] || {}, src, deep);
 							} else if (src !== U) {
-								target[key] = src;
+								target[key] = type == 'array' ? src.slice(0) : src;
 							}
 						}
 					}
 
 					return target;
+				},
+
+				/**
+				 * Compare two values for equality
+				 *
+				 * @private
+				 * @param {*} a
+				 * @param {*} b
+				 * @returns {boolean}
+				 */
+				_equals = function(a, b) {
+					if (a === b) {
+						return true;
+					}
+
+					var aType = W.$type(a);
+
+					if (aType != W.$type(b)) {
+						return false;
+					}
+
+					if (aType == 'array') {
+						return _arrEquals(a, b);
+					}
+
+					if (aType == 'object') {
+						return _objEquals(a, b);
+					}
+
+					if (aType == 'date') {
+						return +a == +b; // jscs:ignore
+					}
+
+					return false;
+				},
+
+				/**
+				 * Compare two arrays for equality
+				 *
+				 * @private
+				 * @param {array} a
+				 * @param {array} b
+				 * @returns {boolean}
+				 */
+				_arrEquals = function(a, b) {
+					return a.length == b.length &&
+						a.every(function(el, i) {
+							return _equals(el, b[i]);
+						});
+				},
+
+				/**
+				 * Compare two objects for equality
+				 *
+				 * @private
+				 * @param {object} a
+				 * @param {object} b
+				 * @returns {boolean}
+				 */
+				_objEquals = function(a, b) {
+					var aKeys = Object.keys(a);
+
+					return _arrEquals(aKeys.sort(), Object.keys(b).sort()) &&
+						aKeys.every(function(i) {
+							return _equals(a[i], b[i]);
+						});
+				},
+
+				/**
+				 * Generate a delta from two objects
+				 *
+				 * @private
+				 * @param {object} a - original object
+				 * @param {object} b - updated object
+				 * @returns {object}
+				 */
+				_diff = function(a, b) {
+					if (! (W.$isObject(a) || W.$isObject(b))) {
+						var type = 'update';
+
+						if (_equals(a, b)) {
+							type = '-';
+						} else if (a === U) {
+							type = 'create';
+						} else if (b === U) {
+							type = 'delete';
+						}
+
+						return {
+							after: b,
+							before: a,
+							type: type
+						};
+					}
+
+					var diff = {};
+
+					Object.keys(a).forEach(function(key) {
+						diff[key] = _diff(a[key], b[key]);
+					});
+
+					Object.keys(b).forEach(function(key) {
+						if (! diff[key]) {
+							diff[key] = _diff(U, b[key]);
+						}
+					});
+
+					return diff;
 				};
 
 			return {
@@ -549,6 +655,10 @@
 				 * @param {string} key
 				 * @param {function} fn
 				 * @param {object} [options]
+				 * @param {boolean} [options.once=false]
+				 * @param {boolean} [options.diff=false]
+				 * @param {boolean} [options.recursive=false]
+				 * @param {*} [options.value]
 				 */
 				$observe: function(key, fn, options) {
 					_observe(observe, key, fn, options);
@@ -719,6 +829,38 @@
 				},
 
 				/**
+				 * Copy value to a new instance
+				 *
+				 * @param {*} val
+				 * @returns {*}
+				 */
+				$copy: function(val) {
+					return _copy(val);
+				},
+
+				/**
+				 * Generate a delta from two objects
+				 *
+				 * @param {object} a
+				 * @param {object} b
+				 * @returns {object}
+				 */
+				$diff: function(a, b) {
+					return _diff(a, b);
+				},
+
+				/**
+				 * Compare two values for equality
+				 *
+				 * @param {*} a
+				 * @param {*} b
+				 * @returns {boolean}
+				 */
+				$equals: function(a, b) {
+					return _equals(a, b);
+				},
+
+				/**
 				 * Determine if value is an array
 				 *
 				 * @param {*} obj
@@ -792,16 +934,6 @@
 					}
 
 					return res;
-				},
-
-				/**
-				 * Bind specified context to method execution
-				 *
-				 * @param {function} fn
-				 * @param {object} context
-				 */
-				$proxy: function(fn, context) {
-					fn.apply(context, W._slice.call(arguments).slice(2));
 				},
 
 				/**
