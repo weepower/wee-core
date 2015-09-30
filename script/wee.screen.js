@@ -18,8 +18,8 @@
 			var style = W._html.currentStyle,
 				size = W._legacy ?
 					(style ?
-							style.fontFamily :
-							null
+						style.fontFamily :
+						null
 					) :
 					W._win.getComputedStyle(W._html, null)
 						.getPropertyValue('font-family');
@@ -48,16 +48,30 @@
 				sets = W.$toArray(rules),
 				i = 0;
 
-			// Delay check 1ms to prevent incorrect breakpoint value in IE
+			// Delay check 100ms to prevent incorrect breakpoint value in IE
 			setTimeout(function() {
 				for (; i < sets.length; i++) {
 					priv.addRule(sets[i]);
 				}
 			}, W._legacy ? 100 : 0);
+		},
+
+		/**
+		 * Evaluate the current breakpoint
+		 */
+		check: function() {
+			this.$private.check(2);
+		},
+
+		/**
+		 * Reset all bound events
+		 */
+		reset: function() {
+			events = [];
 		}
 	}, {
 		/**
-		 * Add individual ruleset to mapped events
+		 * Add individual rule to mapped events
 		 *
 		 * @private
 		 * @param {object} conf - breakpoint rules
@@ -93,7 +107,7 @@
 
 				// Check current screen if not disabled
 				if (conf.init !== false) {
-					check(true, [conf]);
+					check(1, [conf]);
 				}
 			}
 		},
@@ -102,7 +116,7 @@
 		 * Check mapped events for matching conditions
 		 *
 		 * @private
-		 * @param {boolean} [init=false] - initial page load
+		 * @param {number} [init] - initial page load
 		 * @param {Array} [rules] - breakpoint rules
 		 */
 		check: function(init, rules) {
@@ -111,7 +125,7 @@
 				size = scope.size();
 
 			// If breakpoint has been hit or resize logic initialized
-			if (size && (size !== current || init === true)) {
+			if (size && (size !== current || init)) {
 				var evts = rules || events,
 					i = 0;
 
@@ -127,10 +141,10 @@
 						(mn && size >= mn && (init || current < mn) && (! mx || size <= mx)) ||
 						(mx && size <= mx && (init || current > mx) && (! mn || size >= mn))) {
 						priv.execute(evt, {
-							dir: init ? 0 : (size > current ? 1 : -1),
+							dir: init == 1 ? 0 : (size > current ? 1 : -1),
 							size: size,
 							prev: current,
-							init: init
+							init: init == 1
 						});
 					}
 				}
