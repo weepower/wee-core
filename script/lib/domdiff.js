@@ -18,23 +18,25 @@
 /* jshint ignore: start */
 /* jscs: disable */
 
-(function(W) {
+(function(W, D) {
 	// Create a range object for efficently rendering strings to elements.
 	var range;
 
 	function toElement(str) {
-		if (!range) {
-			range = document.createRange();
-			range.selectNode(document.body);
+		if (! range && ! W._legacy) {
+			range = D.createRange();
+			range.selectNode(D.body);
 		}
 
 		var fragment;
-		if (range.createContextualFragment) {
+
+		if (range && range.createContextualFragment) {
 			fragment = range.createContextualFragment(str);
 		} else {
-			fragment = document.createElement('body');
+			fragment = D.createElement('body');
 			fragment.innerHTML = str;
 		}
+
 		return fragment.childNodes[0];
 	}
 
@@ -361,7 +363,7 @@
 				if (toNodeType === 1) {
 					if (fromNode.tagName !== toNode.tagName) {
 						onNodeDiscarded(fromNode);
-						morphedNode = moveChildren(fromNode, document.createElement(toNode.tagName));
+						morphedNode = moveChildren(fromNode, D.createElement(toNode.tagName));
 					}
 				} else {
 					// Going from an element node to a text node
@@ -407,4 +409,4 @@
 
 		return morphedNode;
 	}
-})(Wee);
+})(Wee, document);
