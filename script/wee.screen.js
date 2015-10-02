@@ -125,7 +125,7 @@
 				size = scope.size();
 
 			// If breakpoint has been hit or resize logic initialized
-			if (size && (size !== current || init)) {
+			if (size && (size !== current || ! isNaN(init))) {
 				var evts = rules || events,
 					i = 0;
 
