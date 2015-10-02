@@ -412,7 +412,7 @@
 
 				W._slice.call(el.attributes).forEach(function(attr) {
 					if (attr.name.substr(0, 5) == 'data-') {
-						arr[_toCamel(attr.name.substring(5))] =
+						arr[_toCamel(attr.name.substr(5))] =
 							W._castString(attr.value);
 					}
 				});
