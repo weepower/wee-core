@@ -89,32 +89,39 @@
 		 * @returns {Array} matches
 		 */
 		bound: function(target, event, fn) {
-			var matches = [];
+			var segs = (event || '').split('.'),
+				matches = [];
 			target = target || [0];
 
 			W.$each(target, function(el) {
 				for (var e in bound) {
-					var binding = bound[e];
+					var binding = bound[e],
+						parts = binding.ev.split('.'),
+						match = true;
 
-					if (
-						(
-							el &&
-							el !== binding.el
-						) ||
-						(
-							event &&
-							! new RegExp('^' + event).test(binding.ev) &&
-							! new RegExp(event + '$').test(binding.ev)
-						) ||
-						(
-							fn &&
-							String(fn) !== String(binding.fn)
-						)
-					) {
-						continue;
+					if (el !== binding.el) {
+						match = false;
 					}
 
-					matches.push(binding);
+					if (event &&
+						(
+							segs[0] != '' &&
+							segs[0] != parts[0]
+						) ||
+						(
+							segs[1] &&
+							segs[1] != parts[1]
+						)) {
+						match = false;
+					}
+
+					if (fn && String(fn) !== String(binding.fn)) {
+						match = false;
+					}
+
+					if (match) {
+						matches.push(binding);
+					}
 				}
 			});
 
