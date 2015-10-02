@@ -13,7 +13,10 @@
 			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g
 		},
 		_isEmpty = function(val) {
-			return val === false || val == null || val.length === 0;
+			return val == '' ||
+				val === false ||
+				val == null ||
+				(typeof val == 'object' && ! Object.keys(val).length);
 		},
 		filters = {
 			is: function(val) {
@@ -137,7 +140,7 @@
 					W.$isFunction(partial) ?
 						partial() :
 						partial
-					) : '';
+				) : '';
 			}).replace(reg.tags, function(m, pre, tag, filter) {
 				tag = tag.trim();
 
@@ -194,19 +197,21 @@
 			var scope = this;
 
 			return temp.replace(reg.pair, function(m, tag, filter, inner) {
+				// Remove tag depth suffix
 				tag = tag.replace(/%\d+/, '');
 
 				// Escape child template tags
 				if (tag == '!') {
 					esc = true;
-					return inner.replace(/{{/g, '{~').replace(/}}/g, '~}');
-				} else {
-					esc = false;
+
+					return inner.replace(/{{/g, '{~')
+						.replace(/}}/g, '~}');
 				}
+
+				esc = false;
 
 				var val = scope.get(data, prev, tag, U, init, index),
 					empty = _isEmpty(val),
-					resp = '',
 					filt = [],
 					each;
 
@@ -215,10 +220,9 @@
 					var meth = filter ? filter.split('|') : [],
 						agg = [];
 
-					// Handle root filters
+					// Check for root filters
 					if (empty) {
 						var arg = meth[0] && meth[0][0] == '(';
-
 						meth.unshift(tag + (arg ? meth[0] : '()'));
 
 						if (arg) {
@@ -226,11 +230,12 @@
 						}
 					}
 
-					// Capture available filters and aggregates
+					// Capture available aggregates and filters
 					meth.forEach(function(el) {
 						var arr = el.match(reg.ext),
 							name = arr[1].trim();
 
+						// Check for each filter
 						if (name == 'each') {
 							each = true;
 						} else if (filters[name]) {
@@ -242,84 +247,81 @@
 					// Process aggregates
 					if (agg.length) {
 						if (! agg.every(function(f) {
-							var rv = f[0].apply({
-								val: val,
-								data: data,
-								root: init,
-								tag: tag,
-								inner: inner,
-								empty: empty,
-								index: index
-							}, scope.parseArgs(f[1], val));
-
-							if (rv === false) {
-								return false;
-							} else if (rv === true && ! each) {
-								resp = scope.parse(inner, data, prev, init, index);
-							}
-
-							return true;
-						})) {
+								return f[0].apply({
+									val: val,
+									data: data,
+									root: init,
+									tag: tag,
+									empty: empty,
+									index: index
+								}, scope.parseArgs(f[1], val)) !== false;
+							})) {
 							return '';
-						} else {
-							val = scope.get(data, prev, tag, U, init, index);
-
-							empty = _isEmpty(val);
 						}
 					}
 				}
 
-				if (empty === false && resp === '') {
+				var isObject = typeof val == 'object';
+
+				if (! each) {
+					if (! isObject) {
+						val = W.$extend({}, data, {
+							'.': val,
+							'#': 0,
+							'##': 1
+						});
+					}
+
+					return scope.parse(inner, val, data, init, index);
+				}
+
+				if (! empty) {
 					// Loop through objects and arrays
-					if (each && typeof val == 'object') {
-						var isObj = W.$isObject(val),
+					if (isObject) {
+						var isPlainObject = W.$isObject(val),
+							resp = '',
 							i = 0;
 
 						for (var key in val) {
 							if (val.hasOwnProperty(key)) {
 								// Merge default properties
 								var el = val[key],
-									item = W.$extend({
+									item = W.$extend({}, W.$isObject(el) ?
+										el :
+										(isPlainObject ? val : {}),
+									{
 										$key: key,
 										'.': el,
 										'#': i,
 										'##': i + 1
-									}, W.$isObject(el) ?
-										el :
-										(isObj ? val : {})
-									);
+									});
+
 								empty = _isEmpty(el);
 
 								// Process filters
-								if (! filt.length || filt.every(function(f) {
-									return f[0].apply({
-										val: el,
-										data: val,
-										root: init,
-										tag: tag,
-										inner: inner,
-										empty: empty,
-										index: i
-									}, scope.parseArgs(f[1], el)) !== false;
-								})) {
+								if (! filt.length ||
+									filt.every(function(f) {
+										return f[0].apply({
+											val: el,
+											data: val,
+											root: init,
+											tag: tag,
+											empty: empty,
+											index: i
+										}, scope.parseArgs(f[1], el)) !== false;
+									})) {
 									resp += scope.parse(inner, item, data, init, i);
 								}
 
 								i++;
 							}
 						}
-					} else if (val !== false) {
-						resp = scope.parse(inner, W.$extend(data, {
-							'.': val,
-							'#': 0,
-							'##': 1
-						}), data, init, 0);
-					} else {
-						resp = inner;
-					}
-				}
 
-				return resp;
+						return resp;
+					}
+
+					return inner;
+				}
 			}).replace(reg.single, function(m, set) {
 				var split = set.split('||'),
 					fb = split[1],
@@ -328,13 +330,15 @@
 					val = scope.get(data, prev, tag, fb, init, index),
 					help = segs.length > 1 ? segs.slice(1) : segs;
 
+				// Return empty string if output isn't available
 				if (val === U || typeof val == 'object') {
 					val = '';
 				}
 
 				// Process helpers
-				help.forEach(function(el) {
+				help.forEach(function(el, i) {
 					var arr = el.match(reg.ext);
+					help[i] = el.trim();
 
 					if (arr) {
 						var helper = helpers[arr[1].trim()];
@@ -353,17 +357,15 @@
 				});
 
 				// Encode output by default
-				if (typeof val == 'string') {
+				if (val === U) {
+					val = '';
+				} else if (typeof val == 'string') {
 					if (help.indexOf('raw') < 0) {
 						val = val.replace(/&amp;/g, '&')
 							.replace(/&/g, '&amp;')
 							.replace(/</g, '&lt;')
 							.replace(/>/g, '&gt;')
 							.replace(/"/g, '&quot;');
-					}
-
-					if (val.indexOf('{{') > 0) {
-						val = scope.parse(val, data, prev, init, index);
 					}
 				}
 
@@ -383,34 +385,32 @@
 		 * @returns {*}
 		 */
 		get: function(data, prev, key, fb, init, x) {
-			var trim = key.trim(),
-				resp = trim == '.' ? key : key.split('.'),
-				orig = data,
-				i = 0;
+			key = key.trim();
 
 			// Alter context
-			if (resp[0] == '$root') {
+			if (key.substr(0, 6) == '$root.') {
+				key = key.substr(6);
 				data = init;
-				resp.shift();
-			} else if (trim.substring(0, 3) == '../') {
+			} else if (key.substr(0, 3) == '../') {
+				key = key.substr(3);
 				data = prev;
-				resp.splice(0, 3, trim.substring(3));
 			}
 
-			var len = resp.length - 1;
+			var segs = key == '.' ? ['.'] : key.split('.'),
+				orig = data,
+				len = segs.length - 1,
+				i = 0;
 
 			// Loop through object segments
 			for (; i <= len; i++) {
-				key = resp[i];
+				key = segs[i];
 
 				if (data && data.hasOwnProperty(key)) {
 					data = data[key];
 
 					// Return value on last segment
 					if (i === len) {
-						return typeof data == 'function' ?
-							data(orig, init, x) :
-							data;
+						return data;
 					}
 				} else {
 					break;
@@ -449,7 +449,7 @@
 			return args.map(function(arg) {
 				arg = arg.trim();
 
-				if (data && data.hasOwnProperty(arg)) {
+				if (data && data.hasOwnProperty(arg) && isNaN(arg)) {
 					return data[arg];
 				} else {
 					var match = arg.match(reg.str);
