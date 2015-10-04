@@ -1,3 +1,5 @@
+/* jshint maxdepth: 4 */
+
 (function(W, U) {
 	'use strict';
 
@@ -1093,16 +1095,21 @@
 					type = child.type;
 
 				if (name && type != 'file' && type != 'reset') {
-					if (type == 'select-multiple') {
-						name += name.slice(-2) == '[]' ? '' : '[]';
+					if (name.slice(-2) == '[]') {
+						name = name.slice(0, -2);
+					}
 
-						_getSelected(child).forEach(function(val) {
-							obj[name] = val;
-						});
+					if (type == 'select-multiple') {
+						obj[name] = _getSelected(child);
 					} else if (
 						type != 'submit' && type != 'button' &&
 						((type != 'checkbox' && type != 'radio') || child.checked)) {
-						obj[name] = child.value;
+						if (type == 'checkbox' && obj[name]) {
+							obj[name] = W.$toArray(obj[name]);
+							obj[name].push(child.value);
+						} else {
+							obj[name] = child.value;
+						}
 					}
 				}
 			}
@@ -1238,8 +1245,7 @@
 		},
 
 		/**
-		 * Get value of first matching selection or set values of
-		 * each matching selection
+		 * Get value of first matching selection or set match values
 		 *
 		 * @param {($|HTMLElement|string)} target
 		 * @param {(function|string)} value
