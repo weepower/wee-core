@@ -19,6 +19,7 @@ temp/
 .settings/
 .tern-project
 .tmproj
+.vscode/
 *.esproj
 *.komodoproject
 *.sublime-*

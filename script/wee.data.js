@@ -14,6 +14,7 @@
 		 *
 		 * @param {object} options
 		 * @param {string} options.url - endpoint to request
+		 * @param {string} [options.root=''] - prepended request path
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
 		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
 		 * @param {(Array|function|string)} [options.error] - callback if request fails
@@ -214,7 +215,6 @@
 			}
 
 			var el = W._doc.createElement('script');
-
 			el.src = this.getUrl(conf);
 
 			if (conf.error) {

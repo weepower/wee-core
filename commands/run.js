@@ -9,6 +9,8 @@
 			task = config.options[0];
 		}
 
-		cp.execSync('grunt ' + task, {stdio: [0,1,2]});
+		cp.execSync('grunt ' + task, {
+			stdio: [0, 1, 2]
+		});
 	};
 })();

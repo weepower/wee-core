@@ -4,9 +4,8 @@
 	module.exports = function(config) {
 		var glob = require('glob'),
 			path = require('path'),
-			scriptPath = config.project.paths.source,
 			files = glob.sync('**/*.js', {
-				cwd: scriptPath,
+				cwd: config.project.paths.source,
 				ignore: [
 					'**/*.min.js',
 					'**/polyfill/*',
@@ -18,7 +17,7 @@
 			Wee.validate(
 				config.rootPath,
 				config.project,
-				path.join(scriptPath, file)
+				path.join(config.project.paths.source, file)
 			);
 		});
 	};
