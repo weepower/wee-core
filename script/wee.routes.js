@@ -27,7 +27,7 @@
 				}
 			},
 			num: function(seg) {
-				return ! isNaN(seg) && seg.trim() !== '';
+				return Number(parseInt(seg)) == seg;
 			}
 		},
 		any = [],
