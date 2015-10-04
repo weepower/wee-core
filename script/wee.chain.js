@@ -124,6 +124,15 @@
 			W.$setRef(this);
 
 			return this;
+		},
+
+		/**
+		 * Add metadata variables to datastore
+		 */
+		setVars: function() {
+			W.$setVars(this);
+
+			return this;
 		}
 	};
 
