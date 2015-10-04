@@ -744,7 +744,11 @@
 						}
 					}
 
-					return env || fallback || 'local';
+					if (! env) {
+						env = fallback || 'local';
+					}
+
+					return env;
 				},
 
 				/**
@@ -929,17 +933,26 @@
 				/**
 				 * Serialize object
 				 *
-				 * @param {object} val
+				 * @param {object} obj
 				 * @returns {string} value
 				 */
-				$serialize: function(val) {
-					return Object.keys(val).map(function(key) {
-						if (typeof val[key] != 'object') {
-							return encodeURIComponent(key) + '=' +
-								encodeURIComponent(val[key])
-									.replace(/%20/g, '+');
+				$serialize: function(obj) {
+					var arr = [];
+
+					Object.keys(obj || {}).forEach(function(key) {
+						var val = obj[key];
+						key = encodeURIComponent(key);
+
+						if (typeof val != 'object') {
+							arr.push(key + '=' + encodeURIComponent(val));
+						} else if (Array.isArray(val)) {
+							val.forEach(function(el) {
+								arr.push(key + '[]=' + encodeURIComponent(el));
+							});
 						}
-					}).join('&');
+					});
+
+					return arr.length ? arr.join('&').replace(/%20/g, '+') : '';
 				},
 
 				/**
@@ -1024,7 +1037,7 @@
 				 * @returns {Array} value
 				 */
 				$toArray: function(val) {
-					return Array.isArray(val) ? val : [val];
+					return val !== U ? (Array.isArray(val) ? val : [val]) : [];
 				},
 
 				/**
@@ -1046,8 +1059,8 @@
 				 * @returns {Array} unique values
 				 */
 				$unique: function(array) {
-					return array.reverse().filter(function(el, i, array) {
-						return array.indexOf(el, i + 1) < 0;
+					return array.reverse().filter(function(el, i, arr) {
+						return arr.indexOf(el, i + 1) < 0;
 					}).reverse();
 				},
 
@@ -1099,6 +1112,25 @@
 				},
 
 				/**
+				 * Extend object storage with object or key -> val
+				 *
+				 * @protected
+				 * @param {object} obj
+				 * @param {(object|string)} a
+				 * @param {*} b
+				 */
+				_extend: function(obj, a, b) {
+					var val = a;
+
+					if (typeof a == 'string') {
+						val = [];
+						val[a] = b;
+					}
+
+					_extend(obj, val);
+				},
+
+				/**
 				 * Convert selection to array
 				 *
 				 * @protected
@@ -1113,11 +1145,12 @@
 					}
 
 					options = options || {};
+
 					var el = typeof selector == 'string' ?
 						W.$(selector, options.context) :
 						selector;
 
-					return el ? W.$toArray(el) : [];
+					return W.$toArray(el);
 				},
 
 				/**
@@ -1286,8 +1319,8 @@
 
 	// Set data variables and bind elements
 	if (web) {
-		W.$setVars();
 		W.$setRef();
+		W.$setVars();
 	}
 
 	// AMD setup
