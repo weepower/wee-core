@@ -91,10 +91,9 @@
 		bound: function(target, event, fn) {
 			var segs = (event || '').split('.'),
 				matches = [];
-			target = target || [0];
 
 			W.$each(target, function(el) {
-				for (var e in bound) {
+				Object.keys(bound).forEach(function(e) {
 					var binding = bound[e],
 						parts = binding.ev.split('.'),
 						match = true;
@@ -105,7 +104,7 @@
 
 					if (event &&
 						(
-							segs[0] != '' &&
+							segs[0] !== '' &&
 							segs[0] != parts[0]
 						) ||
 						(
@@ -122,10 +121,10 @@
 					if (match) {
 						matches.push(binding);
 					}
-				}
+				});
 			});
 
-			return matches;
+			return target ? matches : bound;
 		},
 
 		/**
@@ -195,6 +194,7 @@
 							var cb = function(e) {
 								var cont = true;
 
+								// Patch core event functionality
 								if (W._legacy || e === false) {
 									e = W._win.event || {};
 									e.target = e.srcElement;
@@ -221,16 +221,12 @@
 										W.$setRef(el);
 									}
 
-									targ = W.$toArray(W.$(sel));
-
-									if (! targ.some(function(el) {
+									cont = W.$toArray(W.$(sel)).some(function(el) {
 										return el.contains(e.target);
-									})) {
-										cont = false;
-									}
+									});
 
 									// Ensure element argument is the target
-									conf.args[1] = e.target;
+									conf.args[1] = conf.scope = e.target;
 								}
 
 								if (cont) {
