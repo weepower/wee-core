@@ -121,7 +121,7 @@
 		 * @param {function} fn
 		 */
 		addFilter: function(name, fn) {
-			this.$private.extend(name, fn);
+			W._extend(filters, name, fn);
 		},
 
 		/**
@@ -159,23 +159,6 @@
 			}
 		}
 	}, {
-		/**
-		 * Extend routing engine
-		 *
-		 * @param {(object|string)} a
-		 * @param {function} b
-		 */
-		extend: function(a, b) {
-			var obj = a;
-
-			if (typeof a == 'string') {
-				obj = [];
-				obj[a] = b;
-			}
-
-			W.$extend(filters, obj);
-		},
-
 		/**
 		 * Recursively process routes
 		 *
