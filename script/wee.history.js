@@ -6,6 +6,8 @@
 	 */
 	var support = H && H.pushState,
 		entries = [],
+		settings = {},
+		root = '',
 
 		/**
 		 * Determine if path is valid for history navigation
@@ -13,7 +15,7 @@
 		 * @param {HTMLElement} el
 		 */
 		_isValid = function(el) {
-			var exts = W.history.settings.extensions,
+			var exts = settings.extensions,
 				host = el.hostname,
 				segs = el.href.split('.'),
 				ext;
@@ -24,6 +26,18 @@
 
 			return (! host || host == location.hostname) &&
 				(! ext || (ext && (! exts || exts.indexOf(ext) > -1)));
+		},
+
+		/**
+		 * Reset references and variables for a given selector
+		 *
+		 * @param sel
+		 */
+		_reset = function(sel) {
+			W.$setRef(sel);
+			W.$setVars(sel);
+
+			W.history.bind(settings.bind, settings.event, sel);
 		};
 
 	W.fn.make('history', {
@@ -42,21 +56,18 @@
 		init: function(options) {
 			if (! this.request) {
 				var loc = location,
-					path = loc.pathname + loc.search + loc.hash,
-					settings = W.$extend({
-						fallback: 'nav',
-						partials: 'title,main',
-						push: true,
-						request: {},
-						run: true
-					}, options);
+					path = loc.pathname + loc.search + loc.hash;
+				settings = W.$extend({
+					fallback: 'nav',
+					partials: 'title,main',
+					push: true,
+					request: {},
+					run: true
+				}, options);
+				root = settings.request.root || '';
 
-				this.settings = settings;
 				this.request = settings.request;
-
 				delete settings.request;
-
-				this.root = this.request.root;
 
 				if (support) {
 					// Set current state
@@ -147,25 +158,23 @@
 		 * @param {($|HTMLElement|string)} [scrollTop]
 		 */
 		go: function(options) {
-			var scope = this,
-				priv = scope.$private;
+			var scope = this;
 
 			if (! scope.request) {
 				scope.init();
 			}
 
-			var global = scope.settings,
-				globalRequest = scope.request,
+			var globalRequest = scope.request,
 				conf = W.$extend(
 					{},
-					global,
+					settings,
 					options
 				),
 				request = conf.request || {};
 
 			request.root = request.root !== U ?
 				request.root :
-				scope.root || '';
+				root;
 
 			request.url = request.url !== U ?
 				request.url :
@@ -224,7 +233,7 @@
 										parent.replaceChild(el, target);
 								}
 
-								priv.reset(parent);
+								_reset(parent);
 							}, {
 								context: html
 							});
@@ -232,7 +241,7 @@
 					} else {
 						targets.innerHTML = html;
 
-						priv.reset(targets);
+						_reset(targets);
 					}
 				});
 
@@ -278,7 +287,7 @@
 
 				completeEvents.push(function(xhr) {
 					if (xhr.status == 200) {
-						priv.process(conf);
+						scope.$private.process(conf);
 					}
 				});
 
@@ -290,24 +299,10 @@
 
 				W.data.request(request);
 			} else {
-				priv.process(conf);
+				scope.$private.process(conf);
 			}
 		}
 	}, {
-		/**
-		 * Reset references and variables for a given selector
-		 *
-		 * @param sel
-		 */
-		reset: function(sel) {
-			var settings = this.$public.settings;
-
-			W.$setRef(sel);
-			W.$setVars(sel);
-
-			this.$public.bind(settings.bind, settings.event, sel);
-		},
-
 		/**
 		 * Process the history state of the request
 		 *
