@@ -21,7 +21,7 @@
 		/**
 		 * Get currently bound resource root or set root with specified value
 		 *
-		 * @param {string} [value]
+		 * @param {string} [value='']
 		 * @returns {string} root
 		 */
 		root: function(value) {
@@ -46,32 +46,26 @@
 		 * @param {boolean} [options.cache=false]
 		 */
 		load: function(options) {
-			var conf = W.$extend({
-					files: [],
-					js: [],
-					css: [],
-					img: []
-				}, options),
-				files = W.$toArray(conf.files),
-				js = W.$toArray(conf.js),
-				css = W.$toArray(conf.css),
-				img = W.$toArray(conf.img),
-				root = conf.root !== U ? conf.root : this.root(),
+			var files = W.$toArray(options.files),
+				js = W.$toArray(options.js),
+				css = W.$toArray(options.css),
+				img = W.$toArray(options.img),
+				root = options.root !== U ? options.root : this.root(),
 				now = Date.now(),
-				i = 0,
 				assets = [],
+				i = 0,
 				type;
 
 			// Create group name if not specified
-			if (! conf.group) {
-				conf.group = 'load-' + now;
+			if (! options.group) {
+				options.group = 'a' + now;
 			}
 
 			// Determine file type
 			for (; i < files.length; i++) {
 				var ext = files[i].split('.').pop().split(/#|\?/)[0];
 				type = ext == 'js' || ext == 'css' ?
-					ext : /(gif|jpe?g|png|svg)$/i.test(ext) ?
+					ext : /(gif|jpe?g|png|svg|webp)$/i.test(ext) ?
 						'img' : '';
 
 				if (type) {
@@ -92,9 +86,9 @@
 			}
 
 			// Set file array length to check against
-			groups[conf.group] = [
+			groups[options.group] = [
 				Object.keys(assets).length,
-				conf,
+				options,
 				0
 			];
 
@@ -109,11 +103,11 @@
 				file = root + file;
 
 				if (! loaded[file]) {
-					if (conf.cache === false) {
+					if (options.cache === false) {
 						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
 					}
 
-					this.$private.load(file, type, conf);
+					this.$private.load(file, type, options);
 				}
 			}
 		},
@@ -122,19 +116,16 @@
 		 * Remove one or more files from the DOM
 		 *
 		 * @param {(Array|string)} files
-		 * @param {string} [root]
+		 * @param {string} [root='']
 		 */
 		remove: function(files, root) {
 			files = W.$toArray(files);
 			root = root || '';
 
-			var keys = Object.keys(files),
-				a = W._doc.createElement('a'),
-				i = 0;
+			var a = W._doc.createElement('a');
 
-			for (; i < keys.length; i++) {
-				var key = keys[i],
-					src = root + files[key];
+			files.forEach(function(key) {
+				var src = root + files[key];
 				a.href = src;
 				src = a.href;
 
@@ -146,11 +137,11 @@
 
 					delete loaded[src];
 				}
-			}
+			});
 		},
 
 		/**
-		 * When specified references are ready execute callback
+		 * Execute callback when specified references are ready
 		 *
 		 * @param {string} group
 		 * @param {object} [options]
@@ -222,7 +213,6 @@
 					};
 				} else {
 					js.async = conf.async === true;
-
 					js.onload = fn;
 
 					js.onerror = function() {
@@ -240,7 +230,7 @@
 
 				if (W._legacy) {
 					index++;
-					var id = 'load-' + index;
+					var id = 'a' + index;
 					link.id = id;
 
 					link.attachEvent('onload', function() {
