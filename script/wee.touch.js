@@ -15,10 +15,8 @@
 	 */
 	events.forEach(function(event) {
 		E.addEvent(event[0], function(el, fn, conf) {
-			var scope = this;
-			conf = W.$extend({
-				distance: 50
-			}, conf);
+			var scope = this,
+				distance = conf.distance || 50;
 
 			E.on(el, down + '.' + event[0], function(e) {
 				scope.start = e['client' + event[1]];
@@ -27,7 +25,7 @@
 			E.on(el, up + '.' + event[0], function(e, el) {
 				var travel = (scope.start - e['client' + event[1]]) * event[2];
 
-				if (travel > conf.distance) {
+				if (travel > distance) {
 					fn.apply(conf.scope || el, W._slice.call(arguments));
 				}
 			}, conf);
