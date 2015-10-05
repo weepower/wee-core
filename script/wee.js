@@ -140,9 +140,9 @@
 				 *
 				 * @private
 				 */
-				_merge = function(obj, obs, key, val, deep) {
+				_merge = function(obj, obs, key, val) {
 					return _set(obj, obs, key,
-						_extend(_get(obj, obs, key, {}), val, deep));
+						W.$extend(true, {}, _get(obj, obs, key, {}), val));
 				},
 
 				/**
@@ -234,6 +234,7 @@
 				/**
 				 * Copy value to a new instance
 				 *
+				 * @private
 				 * @param {*} val
 				 * @returns {*}
 				 */
@@ -242,7 +243,6 @@
 
 					if (type == 'object') {
 						val = _extend({}, val, true);
-						console.log(val);
 					} else if (type == 'array') {
 						val = val.slice(0);
 					}
@@ -623,8 +623,8 @@
 				 *
 				 * @returns {Array}
 				 */
-				$merge: function(key, obj, deep) {
-					return _merge(store, observe, key, obj, deep);
+				$merge: function(key, obj) {
+					return _merge(store, observe, key, obj);
 				},
 
 				/**
@@ -1219,8 +1219,8 @@
 									 *
 									 * @returns {Array}
 									 */
-									$merge: function(key, obj, deep) {
-										return _merge(store, observe, key, obj, deep);
+									$merge: function(key, obj) {
+										return _merge(store, observe, key, obj);
 									},
 
 									/**
