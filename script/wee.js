@@ -1047,9 +1047,10 @@
 				 * @returns string
 				 */
 				$type: function(obj) {
-					return Object.prototype.toString.call(obj)
-						.replace(/^\[object (.+)]$/, '$1')
-						.toLowerCase();
+					return obj === U ? 'undefined' :
+						Object.prototype.toString.call(obj)
+							.replace(/^\[object (.+)]$/, '$1')
+							.toLowerCase();
 				},
 
 				/**
