@@ -440,9 +440,11 @@
 							_extend(W, a);
 						} else if (W.hasOwnProperty(a)) {
 							// Merge the objects else create the controller
-							this.make('_tmp', b, c);
-							_extend(W[a], W._tmp);
-							delete W._tmp;
+							if (c) {
+								b.$private = c;
+							}
+
+							_extend(W[a], b, true);
 						} else {
 							this.make(a, b, c);
 						}
