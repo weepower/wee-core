@@ -644,14 +644,14 @@
 		 * Insert each matching source selection element after
 		 * each matching target selection
 		 *
-		 * @param {($|HTMLElement|string)} target
 		 * @param {($|HTMLElement|string)} source
+		 * @param {($|HTMLElement|string)} target
 		 */
-		$insertAfter: function(target, source) {
-			W.$each(source, function(el, i) {
+		$insertAfter: function(source, target) {
+			W.$each(target, function(el, i) {
 				var par = el.parentNode;
 
-				W.$each(target, function(cel) {
+				W.$each(source, function(cel) {
 					if (i > 0) {
 						cel = W.$clone(cel)[0];
 					}
@@ -667,12 +667,12 @@
 		 * Insert each matching source selection element before
 		 * each matching target selection
 		 *
-		 * @param {($|HTMLElement|string)} target
 		 * @param {($|HTMLElement|string)} source
+		 * @param {($|HTMLElement|string)} target
 		 */
-		$insertBefore: function(target, source) {
-			W.$each(source, function(el) {
-				W.$each(target, function(cel) {
+		$insertBefore: function(source, target) {
+			W.$each(target, function(el) {
+				W.$each(source, function(cel) {
 					el.parentNode.insertBefore(cel, el);
 				});
 			});
