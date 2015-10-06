@@ -1017,7 +1017,7 @@
 				 *
 				 * @param {(HTMLElement|string)} [context=document]
 				 */
-				$setVars: function(context) {
+				$setVar: function(context) {
 					W.$each('[data-set]', function(el) {
 						var key = el.getAttribute('data-set'),
 							val = W._castString(el.getAttribute('data-value'));
@@ -1320,7 +1320,7 @@
 	// Set data variables and bind elements
 	if (web) {
 		W.$setRef();
-		W.$setVars();
+		W.$setVar();
 	}
 
 	// AMD setup

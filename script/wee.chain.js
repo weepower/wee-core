@@ -129,10 +129,17 @@
 		/**
 		 * Add metadata variables to datastore
 		 */
-		setVars: function() {
-			W.$setVars(this);
+		setVar: function() {
+			W.$setVar(this);
 
 			return this;
+		},
+
+		/**
+		 * Convert selection to standard array
+		 */
+		toArray: function() {
+			return W._slice.call(this);
 		}
 	};
 

@@ -393,7 +393,7 @@ define(function(require) {
 				'Data attribute "test" was set correctly.'
 			);
 		},
-		'$setVars': function() {
+		'$setVar': function() {
 			Wee.$html('#wee',
 				'<div data-set="test-var" data-value="Test Value"></div>' +
 				'<div data-set="test:test-var" data-value="Test Value"></div>' +
@@ -402,7 +402,7 @@ define(function(require) {
 				'<div data-set="test-arr[]" data-value="Three"></div>'
 			);
 
-			Wee.$setVars();
+			Wee.$setVar();
 
 			assert.strictEqual(Wee.$get('test-var'), 'Test Value',
 				'Meta variable "test-var" was set correctly.'
