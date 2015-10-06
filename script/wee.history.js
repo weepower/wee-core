@@ -35,9 +35,9 @@
 		 */
 		_reset = function(sel) {
 			W.$setRef(sel);
-			W.$setVars(sel);
+			W.$setVar(sel);
 
-			W.history.bind(settings.bind, settings.event, sel);
+			W.history.bind();
 		};
 
 	W.fn.make('history', {
@@ -95,7 +95,7 @@
 				}
 
 				// Bind PJAX actions
-				this.bind(settings.bind, settings.event);
+				this.bind();
 			}
 		},
 
@@ -103,10 +103,18 @@
 		 * Bind element events and form submit events to PJAX
 		 *
 		 * @param {object} events
+		 * @param {($|HTMLElement|Object|string)} [a] - settings or context
 		 * @param {($|HTMLElement|string)} [context=document]
 		 */
-		bind: function(events, context) {
-			if (W.$isObject(events)) {
+		bind: function(events, a, context) {
+			events = events || settings.bind;
+
+			if (typeof a !== 'object') {
+				context = a;
+				a = {};
+			}
+
+			if (typeof events == 'object') {
 				var keys = Object.keys(events),
 					namespace = '.history',
 					i = 0;
@@ -120,20 +128,22 @@
 								return val + namespace;
 							}).join(' '),
 							loc = el.getAttribute('data-url'),
-							a = el;
+							l = el;
 
-						if (loc || a.action) {
-							a = W._doc.createElement('a');
-							a.href = loc || el.action;
+						if (loc || l.action) {
+							l = W._doc.createElement('a');
+							l.href = loc || el.action;
 						}
 
 						// Ensure the path exists and is local
-						if (evt && _isValid(a)) {
+						if (evt && _isValid(l)) {
+							a = W.$extend(a, {
+								path: l.pathname + l.search + l.hash
+							});
+
 							W.events.on(el, evt, function(e) {
 								if (! e.metaKey) {
-									W.history.go({
-										path: a.pathname + a.search + a.hash
-									});
+									W.history.go(a);
 
 									e.preventDefault();
 								}
