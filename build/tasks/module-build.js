@@ -18,8 +18,10 @@ module.exports = function(grunt) {
 				if (grunt.file.exists(configFile)) {
 					// Get module config
 					var module = grunt.file.readJSON(configFile),
+						scriptRoot = modulePath + '/module/script/',
 						moduleScript = [
-							modulePath + '/module/script/*.js'
+							scriptRoot + 'script.js',
+							scriptRoot + '*.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = grunt.file.read(config.paths.wee + 'style/wee.module.less'),
