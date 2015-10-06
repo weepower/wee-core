@@ -292,7 +292,7 @@
 											root: init,
 											tag: tag,
 											empty: empty,
-											index: index
+											index: i
 										}, scope.parseArgs(f[1], val));
 
 										if (rv === false) {
