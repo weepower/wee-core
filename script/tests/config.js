@@ -22,7 +22,10 @@ define({
 		'script/tests/unit/wee.events',
 		'script/tests/unit/wee.routes',
 		'script/tests/unit/wee.screen',
-		'script/tests/unit/wee.view'
+		'script/tests/unit/wee.view',
+		'script/tests/unit/wee.touch',
+		'script/tests/unit/wee.animate',
+		'script/tests/unit/wee.history'
 	],
 	functionalSuites: [
 

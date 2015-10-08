@@ -6,42 +6,40 @@ define(function(require) {
 	require('script/wee.data.js');
 
 	registerSuite({
-		'data.request': function() {
-			//var dfd = this.async(1000),
-			//	dfd2 = this.async(1000);
-			//
-			//Wee.data.request({
-			//	url: 'sample.json',
-			//	json: true,
-			//	failed: function(data) {
-			//		dfd.callback(function(error, data) {
-			//			if (error) {
-			//				throw error;
-			//			}
-			//
-			//			assert.strictEqual(data.name, 'Wee',
-			//				'JSON data requested successfully.'
-			//			);
-			//		});
-			//	}
-			//});
-			//
-			//Wee.data.request({
-			//	url: 'sample.json',
-			//	json: true,
-			//	template: '{{ name }}',
-			//	success: function(data) {
-			//		dfd.callback(function(error, data) {
-			//			if (error) {
-			//				throw error;
-			//			}
-			//
-			//			assert.strictEqual(data, 'Wee',
-			//				'JSON data requested and rendered successfully.'
-			//			);
-			//		});
-			//	}
-			//});
+		name: 'Wee Data',
+
+		'data.request': {
+			'get': function() {
+				var promise = this.async(100, 3);
+
+				Wee.data.request({
+					url: '/$root/node_modules/wee-core/script/tests/sample-files/sample.json',
+					success: promise.callback(function() {
+						assert.isTrue(Wee.$get('sampleJsLoaded'),
+							'Sample file was not loaded successfully'
+						);
+					})
+				});
+			},
+			'get & render': function() {
+				var promise = this.async(100, 3);
+
+				Wee.data.request({
+					url: '/$root/node_modules/wee-core/script/tests/sample-files/sample.json',
+					template: '{{person.firstName}}',
+					success: promise.callback(function(data) {
+						assert.strictEqual(data, 'Don',
+							'Data was not retrieved or rendered successfully'
+						);
+					})
+				});
+			},
+			'post with data': function() {
+				assert.isTrue(false);
+			},
+			'JSONP': function() {
+				assert.isTrue(false);
+			}
 		}
 	});
 });

@@ -6,17 +6,26 @@ define(function(require) {
 	require('script/wee.screen.js');
 
 	registerSuite({
-		'screen.size': function() {
-			//assert.strictEqual(Wee.screen.size(), 5,
-			//	'Screen size returned 5 successfully.'
-			//);
+		name: 'Wee Screen',
+		'setup': function() {
+			Wee.$html('head',
+				'<style id="style"> html { font-family: "5"; } </style>'
+			);
 		},
-		'screen.map': function() {
+		'teardown': function() {
+			$('#style').remove();
+		},
+		'size': function() {
+			assert.strictEqual(Wee.screen.size(), 5,
+				'Screen size was not returned 5 successfully.'
+			);
+		},
+		'map': function() {
 			assert.strictEqual(Wee.screen.map({
 					size: 1,
 					callback: function() {}
 				}), undefined,
-				'Single event mapped successfully.'
+				'Single event was not mapped successfully.'
 			);
 
 			assert.strictEqual(Wee.screen.map([{
@@ -26,7 +35,7 @@ define(function(require) {
 					size: 2,
 					callback: function() {}
 				}]), undefined,
-				'Multiple events mapped successfully.'
+				'Multiple events were not mapped successfully.'
 			);
 		}
 	});

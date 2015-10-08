@@ -4,78 +4,285 @@ define(function(require) {
 		Wee = require('Wee');
 
 	registerSuite({
-		'fn.make': function() {
-			Wee.fn.make('controller', {
-				test: function() {
-					return 'response';
+		name: 'Core',
+
+		beforeEach: function() {
+			var fixtureOne = document.createElement('div');
+
+			fixtureOne.id = 'wee-core-id';
+			fixtureOne.className = 'wee-core-class';
+
+			document.body.appendChild(fixtureOne);
+		},
+		afterEach: function() {
+			$('#wee-core-id').remove();
+		},
+		'fn.make': {
+			'public': {
+				'make': function() {
+					Wee.fn.make('controller', {
+						test: function() {
+							return 'response';
+						}
+					});
+
+					assert.equal(Wee.controller.test(), 'response',
+						'Controller function response correctly returned.'
+					);
+				},
+				'$get': function() {
+					assert.isObject(Wee.controller.$get(),
+						'$get did not return an object'
+					);
+
+					assert.isNull(Wee.controller.$get('var 123'),
+						'Variable "var 123" is not currently null'
+					);
+
+					assert.isNull(Wee.controller.$get('var-123'),
+						'Variable "var-123" is not currently null'
+					);
+
+					assert.strictEqual(Wee.controller.$get('var-123', 'string'), 'string',
+						'Variable "var-123" is not returned as the default "string"'
+					);
+
+					assert.isNull(Wee.controller.$get('var-123'),
+						'Variable "var-123" is still not correctly set to null'
+					);
+
+					assert.strictEqual(Wee.controller.$get('cont.var-123', 'string'), 'string',
+						'Variable "var-123" is not returned as the default "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$get('123 var', 'Testing 123'), 'Testing 123',
+						'Variable "123 var" is not returned as the default "Testing 123"'
+					);
+
+					assert.strictEqual(Wee.controller.$get('var-123', function() {
+							return 'string';
+						}), 'string',
+						'Variable "var-123" is not returned as the default "string"'
+					);
+				},
+				'$set': function() {
+					assert.isFunction(Wee.controller.$set,
+						'$set did not return a function'
+					);
+
+					Wee.controller.$set('var-123', 'string');
+
+					assert.strictEqual(Wee.controller.$set('var-123', 'string'), 'string',
+						'Variable "var-123" was not set to "string"'
+					);
+
+					assert.strictEqual(Wee.controller.$set('cont:var-123', 'string'), 'string',
+						'Variable "var-123" was not set to "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$set('123 var', 'Testing 123'), 'Testing 123',
+						'Variable "var-123" was not set to "Testing 123"'
+					);
+
+					assert.strictEqual(Wee.controller.$get('var-123'), 'string',
+						'Variable "var-123" is not correctly set to "string"'
+					);
+
+					assert.strictEqual(Wee.controller.$get('cont:var-123'), 'string',
+						'Variable "var-123" is not correctly set to "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$get('123 var'), 'Testing 123',
+						'Variable "123 var" is not correctly set to "Testing 123"'
+					);
+
+				},
+				'$push': function() {
+					Wee.controller.$push('test', 'test-1');
+
+					assert.isFunction(Wee.controller.$push,
+						'$push did not return as a function'
+					);
+
+					assert.isArray(Wee.controller.$get('test'),
+						'$push did not push'
+					);
+
+					assert.equal(Wee.controller.$get('test'), 'test-1');
+				},
+				'$drop': function() {
+					Wee.controller.$set('test', 'test-2');
+
+					assert.strictEqual(Wee.controller.$get('test'), 'test-2',
+						'Variable test-2 was not properly set'
+					);
+
+					Wee.controller.$drop('test');
+
+					assert.strictEqual(Wee.controller.$get('test'), null,
+						'Variable test-2 was not properly dropped'
+					);
+				},
+				'$destroy': function() {
+					Wee.controller.$destroy();
+
+					assert.isUndefined(Wee.controller,
+						'Controller was not successfully destroyed'
+					);
 				}
-			});
+			},
+			'private': {
+				'make': function() {
+					Wee.fn.make('controller', {
+						test: function() {
+							return this.key;
+						}
+					}, {
+						privateFunction: function() {
+							this.$public.key = 'success';
 
-			assert.equal(Wee.controller.test(), 'response',
-				'Controller function response correctly returned.'
-			);
-		},
-		'fn.extend': function() {
-			Wee.fn.extend('controller', {
-				test2: function() {
-					return 'response';
+							return this.$public.test();
+						}
+					});
+
+					assert.isFunction(Wee.controller.$private.privateFunction,
+						'Controller did not return a function'
+					);
+
+					assert.equal(Wee.controller.$private.privateFunction(), 'success',
+						'Controller function response incorrectly returned.'
+					);
+				},
+				'$get': function() {
+					assert.isObject(Wee.controller.$private.$get(),
+						'$get did not return an object'
+					);
+
+					assert.isNull(Wee.controller.$private.$get('var 123'),
+						'Variable "var 123" is not currently null'
+					);
+
+					assert.isNull(Wee.controller.$private.$get('var-123'),
+						'Variable "var-123" is not currently null'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('var-123', 'string'), 'string',
+						'Variable "var-123" is not returned as the default "string"'
+					);
+
+					assert.isNull(Wee.controller.$private.$get('var-123'),
+						'Variable "var-123" is still not correctly set to null'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('cont:var-123', 'string'), 'string',
+						'Variable "var-123" is not returned as the default "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('123 var', 'Testing 123'), 'Testing 123',
+						'Variable "123 var" is not returned as the default "Testing 123"'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('var-123', function() {
+							return 'string';
+						}), 'string',
+						'Variable "var-123" is not returned as the default "string"'
+					);
+				},
+				'$set': function() {
+					assert.isFunction(Wee.controller.$private.$set,
+						'$set did not return a function'
+					);
+
+					Wee.controller.$private.$set('var-123', 'string');
+
+					assert.strictEqual(Wee.controller.$private.$set('var-123', 'string'), 'string',
+						'Variable "var-123" was not set to "string"'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$set('cont:var-123', 'string'), 'string',
+						'Variable "var-123" was not set to "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$set('123 var', 'Testing 123'), 'Testing 123',
+						'Variable "var-123" was not set to "Testing 123"'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('var-123'), 'string',
+						'Variable "var-123" is not correctly set to "string"'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('cont:var-123'), 'string',
+						'Variable "var-123" is not correctly set to "string" in the "cont" namespace'
+					);
+
+					assert.strictEqual(Wee.controller.$private.$get('123 var'), 'Testing 123',
+						'Variable "123 var" is not correctly set to "Testing 123"'
+					);
+				},
+				'$push': function() {
+					Wee.controller.$private.$push('test', 'test-1');
+
+					assert.isFunction(Wee.controller.$private.$push,
+						'$push did not return as a function'
+					);
+
+					assert.isArray(Wee.controller.$private.$get('test'),
+						'$push did not push'
+					);
+
+					assert.equal(Wee.controller.$private.$get('test'), 'test-1');
 				}
-			});
+			}
+		},
+		'fn.extend': {
+			'controller': function() {
+				Wee.fn.extend('controller', {
+					test2: function() {
+						return 'response';
+					}
+				});
 
-			assert.strictEqual(Wee.controller.test2(), 'response',
-				'Controller extended successfully.'
+				assert.strictEqual(Wee.controller.test2(), 'response',
+					'Controller was not extended successfully.'
+				);
+			},
+			'core': function() {
+				Wee.fn.extend({
+				    addNumbers: function(num1, num2) {
+				        return num1 + num2;
+				    }
+				});
+
+				assert.strictEqual(Wee.addNumbers(2, 4), 6,
+					'Core was not extended successfully'
+				);
+			}
+		},
+		'$': function() {
+			Wee.$html('#wee-core-id',
+				'<div id="testing"></div>' +
+				'<div class="testing"></div>'
+			);
+
+			assert.strictEqual(Wee.$('#testing').length, 1,
+				'Element with ID "testing" was selected successfully.'
+			);
+
+			assert.strictEqual(Wee.$('.testing').length, 1,
+				'Element with class "testing" was selected successfully.'
 			);
 		},
-		'$env': function() {
-			// Default
-			assert.strictEqual(Wee.$env(), 'local',
-				'Default environment is correctly set to "local".'
+		'$parseHTML': function() {
+			var newElem = Wee.$parseHTML(
+				'<span class="testing">Testing</span>'
 			);
 
-			// Settings
-			Wee.$env({
-				prod: 'www.weepower.com',
-				stage: 'www.weepower.stage'
-			}, 'here');
-
-			assert.strictEqual(Wee.$env(), 'here',
-				'Default environment is correctly set to "here".'
-			);
-		},
-		'$envSecure': function() {
-			assert.ok(Wee.$envSecure('https://www.weepower.com'),
-				'The environment is correctly identified as secure.'
-			);
-		},
-		'$get': function() {
-			assert.strictEqual(Wee.$get('var-123'), null,
-				'Variable "var-123" is currently null.'
+			assert.strictEqual(newElem.length, 1,
+				'HTML was not parsed successfully'
 			);
 
-			assert.strictEqual(Wee.$get('123 var'), null,
-				'Variable "123 var" is currently null.'
-			);
-
-			assert.strictEqual(Wee.$get('var-123', 'string'), 'string',
-				'Variable "var-123" is returned as the default "string".'
-			);
-
-			assert.strictEqual(Wee.$get('var-123'), null,
-				'Variable "var-123" is still correctly set to null.'
-			);
-
-			assert.strictEqual(Wee.$get('cont:var-123', 'string'), 'string',
-				'Variable "var-123" is returned as the default "string" in the "cont" namespace.'
-			);
-
-			assert.strictEqual(Wee.$get('123 var', 'Testing 123'), 'Testing 123',
-				'Variable "123 var" is returned as the default "Testing 123".'
-			);
-
-			assert.strictEqual(Wee.$get('var-123', function() {
-					return 'string';
-				}), 'string',
-				'Variable "var-123" is returned as the default "string".'
+			assert.ok(Wee.$hasClass(newElem, 'testing'),
+				'HTML was not parsed successfully'
 			);
 		},
 		'$set': function() {
@@ -109,6 +316,110 @@ define(function(require) {
 
 			assert.strictEqual(Wee.$get('set-var-123'), 'string',
 				'Variable "set-var-123" is correctly set to "string".'
+			);
+		},
+		'$get': function() {
+			assert.strictEqual(Wee.$get('var-123'), null,
+				'Variable "var-123" is currently null.'
+			);
+
+			assert.strictEqual(Wee.$get('123 var'), null,
+				'Variable "123 var" is currently null.'
+			);
+
+			assert.strictEqual(Wee.$get('var-123', 'string'), 'string',
+				'Variable "var-123" is returned as the default "string".'
+			);
+
+			assert.strictEqual(Wee.$get('var-123'), null,
+				'Variable "var-123" is still correctly set to null.'
+			);
+
+			assert.strictEqual(Wee.$get('var-123', function() {
+					return 'string';
+				}), 'string',
+				'Variable "var-123" is returned as the default "string".'
+			);
+		},
+		'$observe': function() {
+			assert.isTrue(false);
+		},
+		'$unobserve': function() {
+			assert.isTrue(false);
+		},
+		'$each': {
+			'simple': function() {
+				Wee.$html('#wee-core-id',
+					'<div class="testing">1</div>' +
+					'<div class="testing">2</div>' +
+					'<div class="testing">3</div>'
+				);
+
+				var total = 0;
+
+				Wee.$each('.testing', function(el) {
+					total += parseInt(Wee.$text(el), 10);
+				});
+
+				assert.strictEqual(total, 6,
+					'Elements were not successfully iterated'
+				);
+			},
+			'advanced': function() {
+				Wee.$html('#wee-core-id',
+					'<div class="testing">1</div>' +
+					'<div class="testing">2</div>' +
+					'<div class="testing">3</div>'
+				);
+
+				var total = 0;
+
+				Wee.$each('.testing', function(el) {
+					total += parseInt(Wee.$text(el));
+				}, {
+					reverse: true,
+					scope: this
+				});
+
+				assert.strictEqual(total, 6,
+					'Elements were not successfully iterated'
+				);
+			}
+		},
+		'$env': {
+			'get': function() {
+				assert.strictEqual(Wee.$env(), 'local',
+					'Environment was not detected successfully'
+				);
+			},
+			'set': function() {
+				assert.strictEqual(Wee.$env(), 'local',
+					'Default environment is not correctly set to "local"'
+				);
+
+				Wee.$env({
+					prod: 'www.weepower.com',
+					stage: 'www.weepower.stage'
+				}, 'here');
+
+				assert.strictEqual(Wee.$env(), 'here',
+					'Default environment is not correctly set to "here"'
+				);
+
+				Wee.$env({
+					prod: 'www.weepower.com',
+					stage: 'www.weepower.stage'
+				}, 'local');
+
+			}
+		},
+		'$envSecure': function() {
+			assert.ok(Wee.$envSecure('https://www.weepower.com'),
+				'The environment was not correctly identified as secure'
+			);
+
+			assert.notOk(Wee.$envSecure('http://www.weepower.com'),
+				'The environement was not successfully identifed as secure'
 			);
 		},
 		'$exec': function() {
@@ -145,6 +456,45 @@ define(function(require) {
 				'Module callback with argument was executed correctly.'
 			);
 		},
+		'$extend': function() {
+			var obj = {
+					key: 'value'
+				},
+				src = {
+					key2: 'value2'
+				},
+				result = {
+					key: 'value',
+					key2: 'value2'
+				};
+
+			assert.deepEqual(Wee.$extend(obj, src), result,
+				'Objects merged at top level.'
+			);
+
+			var obj1 = {
+					key: {
+						subKey: 'value'
+					}
+				},
+				src1 = {
+					key: {
+						subKey2: 'value2'
+					},
+					key2: 'value2'
+				},
+				result1 = {
+					key: {
+						subKey: 'value',
+						subKey2: 'value2'
+					},
+					key2: 'value2'
+				};
+
+			assert.deepEqual(Wee.$extend(obj1, src1, true), result1,
+				'Objects merged recursively.'
+			);
+		},
 		'$isArray': function() {
 			assert.notOk(Wee.$isArray('string'),
 				'Variable "string" is not an array.'
@@ -167,35 +517,6 @@ define(function(require) {
 		'$inArray': function() {
 			assert.strictEqual(Wee.$isArray(['string']), true,
 				'Array "[\'string\']" is an array.'
-			);
-		},
-		'$toArray': function() {
-			assert.deepEqual(Wee.$toArray('string'), ['string'],
-				'String "string" is now ["string"].'
-			);
-
-			assert.deepEqual(Wee.$toArray(['string']), ['string'],
-				'Array ["string"] is still ["string"].'
-			);
-		},
-		'$isString': function() {
-			assert.notOk(Wee.$isString(function test() {
-				}),
-				'Function "test()" is not a string.'
-			);
-
-			assert.notOk(Wee.$isString({
-					string: 'string'
-				}),
-				'Object "string" is not a string.'
-			);
-
-			assert.notOk(Wee.$isString(['string']),
-				'Array "[\'string\']" is not a string.'
-			);
-
-			assert.ok(Wee.$isString('string'),
-				'Variable "string" is a string.'
 			);
 		},
 		'$isFunction': function() {
@@ -236,52 +557,39 @@ define(function(require) {
 				'Object "string" is an object.'
 			);
 		},
-		'$serialize': function() {
-			assert.strictEqual(Wee.$serialize({
-					key1: 'val1',
-					key2: 'val2',
-					key3: 'val3'
-				}), 'key1=val1&key2=val2&key3=val3',
-				'Object serialization properly returned.'
+		'$isString': function() {
+			assert.notOk(Wee.$isString(function test() {
+				}),
+				'Function "test()" is not a string.'
+			);
+
+			assert.notOk(Wee.$isString({
+					string: 'string'
+				}),
+				'Object "string" is not a string.'
+			);
+
+			assert.notOk(Wee.$isString(['string']),
+				'Array "[\'string\']" is not a string.'
+			);
+
+			assert.ok(Wee.$isString('string'),
+				'Variable "string" is a string.'
 			);
 		},
-		'$extend': function() {
-			var obj = {
-					key: 'value'
-				},
-				src = {
-					key2: 'value2'
-				},
-				result = {
-					key: 'value',
-					key2: 'value2'
-				};
-
-			assert.deepEqual(Wee.$extend(obj, src), result,
-				'Objects merged at top level.'
+		'$map': function() {
+			Wee.$html('#wee-core-id',
+				'<div class="testing">1</div>' +
+				'<div class="testing">2</div>' +
+				'<div class="testing">3</div>'
 			);
 
-			var obj = {
-					key: {
-						subKey: 'value'
-					}
-				},
-				src = {
-					key: {
-						subKey2: 'value2'
-					},
-					key2: 'value2'
-				},
-				result = {
-					key: {
-						subKey: 'value',
-						subKey2: 'value2'
-					},
-					key2: 'value2'
-				};
+			var values = Wee.$map('.testing', function(el) {
+				return parseInt(Wee.$html(el), 10);
+			});
 
-			assert.deepEqual(Wee.$extend(obj, src, true), result,
-				'Objects merged recursively.'
+			assert.deepEqual(values, [1, 2, 3],
+				'Elements successfully iterated.'
 			);
 		},
 		'$merge': function() {
@@ -300,101 +608,34 @@ define(function(require) {
 				'Arrays merged with duplicates removed.'
 			);
 		},
-		'$unique': function() {
-			var arr = [1, 2, 3, 3, 4, 4, 5];
-
-			assert.deepEqual(Wee.$unique(arr), [1, 2, 3, 4, 5],
-				'Only unique elements were correctly returned.'
+		'$push': function() {
+			assert.isFunction(Wee.controller.$push,
+				'$push did not return as a function'
 			);
 		},
-		'$': function() {
-			Wee.$html('#wee',
-				'<div id="testing"></div>' +
-				'<div class="testing"></div>'
-			);
-
-			assert.strictEqual(Wee.$('#testing').length, 1,
-				'Element with ID "testing" was selected successfully.'
-			);
-
-			assert.strictEqual(Wee.$('.testing').length, 1,
-				'Element with class "testing" was selected successfully.'
+		'$proxy': function() {
+			assert.isTrue(false);
+		},
+		'$serialize': function() {
+			assert.strictEqual(Wee.$serialize({
+					key1: 'val1',
+					key2: 'val2',
+					key3: 'val3'
+				}), 'key1=val1&key2=val2&key3=val3',
+				'Object serialization properly returned.'
 			);
 		},
-		'$eq': function() {
-			Wee.$html('#wee',
-				'<div class="testing">1</div>' +
-				'<div class="testing">2</div>' +
-				'<div class="testing">3</div>'
-			);
+		'$setRef': function() {
+			Wee.$html('#wee-core-id', '<div data-ref="testElement">1</div>');
 
-			var el = Wee.$eq('.testing', 1);
+			Wee.$setRef();
 
-			assert.strictEqual(Wee.$text(el), '2',
-				'Element with index 1 was selected successfully.'
+			assert.strictEqual(Wee.$text('ref:testElement'), '1',
+				'Reference element was successfully selected.'
 			);
 		},
-		'$first': function() {
-			Wee.$html('#wee',
-				'<div class="testing">1</div>' +
-				'<div class="testing">2</div>' +
-				'<div class="testing">3</div>'
-			);
-
-			var el = Wee.$first('.testing');
-
-			assert.strictEqual(Wee.$text(el), '1',
-				'First element was selected successfully.'
-			);
-		},
-		'$each': function() {
-			Wee.$html('#wee',
-				'<div class="testing">1</div>' +
-				'<div class="testing">2</div>' +
-				'<div class="testing">3</div>'
-			);
-
-			var total = 0;
-
-			Wee.$each('.testing', function(el) {
-				total += parseInt(Wee.$text(el), 10);
-			});
-
-			assert.strictEqual(total, 6,
-				'Elements successfully iterated.'
-			);
-		},
-		'$map': function() {
-			Wee.$html('#wee',
-				'<div class="testing">1</div>' +
-				'<div class="testing">2</div>' +
-				'<div class="testing">3</div>'
-			);
-
-			var values = Wee.$map('.testing', function(el) {
-				return parseInt(Wee.$html(el), 10);
-			});
-
-			assert.deepEqual(values, [1, 2, 3],
-				'Elements successfully iterated.'
-			);
-		},
-		'$attr': function() {
-			Wee.$attr('#wee', 'test', 'value');
-
-			assert.strictEqual(Wee.$attr('#wee', 'test'), 'value',
-				'Attribute "test" was set correctly.'
-			);
-		},
-		'$data': function() {
-			Wee.$data('#wee', 'test', 'value');
-
-			assert.strictEqual(Wee.$data('#wee', 'test'), 'value',
-				'Data attribute "test" was set correctly.'
-			);
-		},
-		'$setVar': function() {
-			Wee.$html('#wee',
+		'$setVars': function() {
+			Wee.$html('#wee-core-id',
 				'<div data-set="test-var" data-value="Test Value"></div>' +
 				'<div data-set="test:test-var" data-value="Test Value"></div>' +
 				'<div data-set="test-arr[]" data-value="One"></div>' +
@@ -402,7 +643,7 @@ define(function(require) {
 				'<div data-set="test-arr[]" data-value="Three"></div>'
 			);
 
-			Wee.$setVar();
+			Wee.$setVars();
 
 			assert.strictEqual(Wee.$get('test-var'), 'Test Value',
 				'Meta variable "test-var" was set correctly.'
@@ -416,14 +657,85 @@ define(function(require) {
 				'Meta array "test-arr" was set correctly.'
 			);
 		},
-		'$setRef': function() {
-			Wee.$html('#wee', '<div data-ref="testElement">1</div>');
-
-			Wee.$setRef();
-
-			assert.strictEqual(Wee.$text('ref:testElement'), '1',
-				'Reference element was successfully selected.'
+		'$toArray': function() {
+			assert.deepEqual(Wee.$toArray('string'), ['string'],
+				'String "string" is now ["string"].'
 			);
+
+			assert.deepEqual(Wee.$toArray(['string']), ['string'],
+				'Array ["string"] is still ["string"].'
+			);
+		},
+		'$type': function() {
+			var obj = {},
+				arr = [],
+				fun = function() {},
+				bool = true,
+				num = 15,
+				string = 'string',
+				und = undefined,
+				nul = null;
+
+			assert.strictEqual(Wee.$type(obj), 'object',
+				'Type of "object" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(arr), 'array',
+				'Type of "array" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(fun), 'function',
+				'Type of "function" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(bool), 'boolean',
+				'Type of "boolean" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(num), 'number',
+				'Type of "number" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(string), 'string',
+				'Type of "string" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(und), 'undefined',
+				'Type of "undefined" was not successfully identifed'
+			);
+
+			assert.strictEqual(Wee.$type(nul), 'null',
+				'Type of "null" was not successfully identifed'
+			);
+		},
+		'$unique': function() {
+			var arr = [1, 2, 3, 3, 4, 4, 5];
+
+			assert.deepEqual(Wee.$unique(arr), [1, 2, 3, 4, 5],
+				'Only unique elements were correctly returned.'
+			);
+		},
+		'$chain': function() {
+			assert.isTrue(false);
+		},
+		'_canExec': function() {
+			var fun = function() {};
+
+			assert.isTrue(Wee._canExec(fun),
+				'Method did not identify executable function successfully'
+			);
+		},
+		'_castString': function() {
+			var num = '5';
+
+			assert.strictEqual(num, 5,
+				'String was not converted to number'
+			);
+		},
+		'_selArray': function() {
+			var arr = [1, 2, 3, 4];
+
+			assert.isArray(arr);
 		}
 	});
 });

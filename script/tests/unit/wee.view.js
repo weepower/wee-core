@@ -6,7 +6,9 @@ define(function(require) {
 	require('script/wee.view.js');
 
 	registerSuite({
-		'view.render': function() {
+		name: 'View',
+
+		'render': function() {
 			var data = {
 				firstName: 'Keith',
 				lastName: 'Roberts',
@@ -61,7 +63,7 @@ define(function(require) {
 				'Child variables parsed successfully.'
 			);
 		},
-		'view.addFilter': function() {
+		'addFilter': function() {
 			Wee.view.addFilter('range', function(offset, limit) {
 				if (! this.empty) {
 					var val = this.val;
@@ -102,7 +104,7 @@ define(function(require) {
 				'Template parsed successfully.'
 			);
 		},
-		'view.addHelper': function() {
+		'addHelper': function() {
 			Wee.view.addHelper('upper', function() {
 				return this.val.toUpperCase();
 			});
@@ -111,7 +113,7 @@ define(function(require) {
 				'Template parsed successfully.'
 			);
 		},
-		'view.addPartial': function() {
+		'addPartial': function() {
 			Wee.view.addPartial('partial', '123');
 			Wee.view.addPartial('partial2', '456');
 
