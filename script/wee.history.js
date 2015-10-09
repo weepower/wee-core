@@ -8,6 +8,7 @@
 		entries = [],
 		settings = {},
 		root = '',
+		path = '',
 
 		/**
 		 * Determine if path is valid for history navigation
@@ -55,8 +56,8 @@
 		 */
 		init: function(options) {
 			if (! this.request) {
-				var loc = location,
-					path = loc.pathname + loc.search + loc.hash;
+				var loc = location;
+				path = loc.pathname + loc.search + loc.hash;
 				settings = W.$extend({
 					fallback: 'nav',
 					partials: 'title,main',
@@ -228,6 +229,14 @@
 
 				// Compile success events
 				successEvents.push(function(html) {
+					// Evaluate unload routes against updated path
+					if (W.routes && conf.run) {
+						W.routes.run({
+							event: 'unload',
+							path: path
+						});
+					}
+
 					if (partials) {
 						html = W.$parseHTML('<i>' + html + '</i>');
 
@@ -348,8 +357,17 @@
 
 				// Evaluate routes against updated path
 				if (conf.run) {
-					W.routes.run();
+					W.routes.run({
+						event: 'pop',
+						path: path
+					});
+
+					W.routes.run({
+						path: conf.path
+					});
 				}
+
+				path = conf.path;
 			}
 
 			if (conf.push && conf.pushstate) {
