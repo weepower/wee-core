@@ -14,11 +14,6 @@
 					any.push([child, seg]);
 				}
 			},
-			'any:fire': function(seg, child) {
-				W.$exec(child, {
-					args: seg
-				});
-			},
 			root: function(seg, child, depth) {
 				if (! seg) {
 					W.$exec(child, {
@@ -128,20 +123,20 @@
 		 * Process stored routes
 		 *
 		 * @param {object} [conf]
+		 * @param {object} [conf.rules]
+		 * @param {string} [conf.path]
+		 * @param {string} [cong.event='load']
 		 */
 		run: function(conf) {
 			conf = conf || {};
-
 			var rules = conf.routes || routes;
 
-			if (conf.path) {
-				this.uri(conf.path);
-			}
-
 			if (rules) {
-				segs = this.segments();
+				segs = conf.path ?
+					conf.path.replace(/^\/|\/$/g, '').split('/') :
+					this.segments();
 
-				this.$private.process(rules, 0, segs.length);
+				this.$private.process(rules, 0, segs.length, conf.event || 'load');
 
 				// Execute queued init functions on last iteration
 				if (any.length) {
@@ -166,8 +161,9 @@
 		 * @param {string} route - route to evaluate
 		 * @param {int} i - current index in iteration
 		 * @param {int} total - total number of routes
+		 * @param {string} [event='load'] - lifecycle event
 		 */
-		process: function(route, i, total) {
+		process: function(route, i, total, event) {
 			var seg = segs[i],
 				keys = Object.keys(route),
 				x = 0;
@@ -183,17 +179,27 @@
 					match = false;
 
 				for (; k < opts.length; k++) {
-					var opt = opts[k];
+					var opt = opts[k],
+						parts = opt.split(':'),
+						history = event != 'load';
 
-					if (opt.slice(-5) == ':eval') {
-						opt = opt.slice(0, -5);
-						i--;
+					if ((! history && (parts.indexOf('unload') > -1 || parts.indexOf('pop') > -1)) ||
+						(history && (! W.$isObject(child) && parts.indexOf(event) < 0))) {
+						continue;
+					}
+
+					if (parts.length > 1) {
+						opt = parts[0];
 					}
 
 					if (opt == seg) {
 						match = true;
 					} else if (opt[0] == '$') {
 						opt = opt.slice(1);
+
+						if (parts.indexOf('eval') > -1) {
+							i--;
+						}
 
 						// If the second character is / then test regex
 						if (opt[0] == '/') {
@@ -202,6 +208,10 @@
 							if (new RegExp(split[1], split[2]).test(seg)) {
 								match = true;
 							}
+						} else if (opt == 'any' && parts.indexOf('fire') > -1) {
+							W.$exec(child, {
+								args: seg
+							});
 						} else {
 							var filter = filters[opt];
 
@@ -210,7 +220,6 @@
 
 								if (match) {
 									filtered = true;
-
 									any.push([child, seg]);
 								}
 							} else if (seg && seg.trim() !== '') {
@@ -218,12 +227,16 @@
 							}
 						}
 					}
+
+					if (parts.indexOf('once') > -1) {
+						delete route[key];
+					}
 				}
 
 				// If matched process recursively or execute if complete
 				if (match) {
 					if (W.$isObject(child)) {
-						this.process(child, i, total);
+						this.process(child, i, total, event);
 					} else if (! filtered && i === total) {
 						W.$exec(child, {
 							args: seg
