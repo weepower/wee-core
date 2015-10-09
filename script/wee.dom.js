@@ -447,6 +447,8 @@
 				while (el.firstChild) {
 					el.removeChild(el.firstChild);
 				}
+
+				W.$setRef(el);
 			});
 		},
 
@@ -961,7 +963,11 @@
 		 */
 		$remove: function(target, context) {
 			W.$each(target, function(el) {
-				el.parentNode.removeChild(el);
+				var par = el.parentNode;
+
+				par.removeChild(el);
+
+				W.$setRef(par);
 			}, {
 				context: context
 			});
