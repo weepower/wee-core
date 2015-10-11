@@ -28,7 +28,7 @@
 					duration: 400,
 					ease: 'ease'
 				}, options),
-				ease = easings[conf.ease] || easings['ease'];
+				ease = easings[conf.ease] || easings.ease;
 
 			W.$each(target, function(el) {
 				for (var prop in props) {

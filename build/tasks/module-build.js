@@ -1,5 +1,5 @@
 /* global config, fs, legacyConvert, moduleLegacy, path, project */
-/* jshint maxdepth: 4 */
+/* jshint maxdepth: 5 */
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildModules', function() {
@@ -55,9 +55,9 @@ module.exports = function(grunt) {
 
 						// Build additional style
 						if (module.style.build) {
-							var sources = Wee.$toArray(module.style.build);
+							var buildStyleSources = Wee.$toArray(module.style.build);
 
-							sources.forEach(function(filepath) {
+							buildStyleSources.forEach(function(filepath) {
 								inject += '@import "' +
 									config.paths.modulesSource + name +
 									'/' + filepath + '";\n';
@@ -66,13 +66,13 @@ module.exports = function(grunt) {
 
 						// Compile additional style
 						if (module.style.compile) {
-							for (var target in module.style.compile) {
-								var taskName = target.replace(/\./g, '-') + '-' + name + '-style',
-									sources = Wee.$toArray(module.style.compile[target]),
+							for (var compileStyleTarget in module.style.compile) {
+								var taskName = compileStyleTarget.replace(/\./g, '-') + '-' + name + '-style',
+									compileStyleSources = Wee.$toArray(module.style.compile[compileStyleTarget]),
 									files = [];
 
-								for (var sourcePath in sources) {
-									files.push(Wee.buildPath(modulePath, sources[sourcePath]));
+								for (var sourcePath in compileStyleSources) {
+									files.push(Wee.buildPath(modulePath, compileStyleSources[sourcePath]));
 								}
 
 								// Merge watch config
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 								// Create Less task
 								grunt.config.set('less.' + taskName, {
 									files: [{
-										dest: Wee.buildPath(config.paths.modules + name, target),
+										dest: Wee.buildPath(config.paths.modules + name, compileStyleTarget),
 										src: files
 									}],
 									options: {
@@ -115,8 +115,8 @@ module.exports = function(grunt) {
 							(module.script && module.script.data && Object.keys(module.script.data).length)
 						) {
 							var weeScriptGlobal = config.paths.temp + name + '.data.js',
-								configVars = Wee.$extend(module.data || {}, module.script.data || {}),
-								script = 'Wee.$set("' + name + ':global", ' + JSON.stringify(configVars) + ');';
+								configScriptVars = Wee.$extend(module.data || {}, module.script.data || {}),
+								script = 'Wee.$set("' + name + ':global", ' + JSON.stringify(configScriptVars) + ');';
 
 							grunt.file.write(weeScriptGlobal, script);
 
@@ -125,26 +125,26 @@ module.exports = function(grunt) {
 
 						// Build additional script
 						if (module.script.build) {
-							var sources = Wee.$toArray(module.script.build);
+							var buildScriptSources = Wee.$toArray(module.script.build);
 
-							sources.forEach(function(filepath) {
+							buildScriptSources.forEach(function(filepath) {
 								moduleScript.push(path.join(modulePath, filepath));
 							});
 						}
 
 						// Compile additional script
 						if (module.script.compile) {
-							for (var target in module.script.compile) {
-								var taskName = target.replace(/\./g, '-') + '-' + name + '-script',
-									sources = module.script.compile[target],
+							for (var compileScriptTarget in module.script.compile) {
+								var taskName = compileScriptTarget.replace(/\./g, '-') + '-' + name + '-script',
+									compileScriptSources = module.script.compile[compileScriptTarget],
 									src = [];
 
-								if (sources instanceof Array) {
-									for (var source in sources) {
-										src.push(Wee.buildPath(config.paths.js, sources[source]));
+								if (compileScriptSources instanceof Array) {
+									for (var source in compileScriptSources) {
+										src.push(Wee.buildPath(config.paths.js, compileScriptSources[source]));
 									}
 								} else {
-									src = Wee.buildPath(modulePath, sources);
+									src = Wee.buildPath(modulePath, compileScriptSources);
 								}
 
 								// Merge watch config
@@ -158,7 +158,7 @@ module.exports = function(grunt) {
 								// Create uglify task
 								grunt.config.set('uglify.' + taskName, {
 									files: [{
-										dest: Wee.buildPath(config.paths.modules + name, target),
+										dest: Wee.buildPath(config.paths.modules + name, compileScriptTarget),
 										src: src
 									}]
 								});
@@ -238,10 +238,10 @@ module.exports = function(grunt) {
 						(module.data && Object.keys(module.data).length) ||
 						(module.style && module.style.data && Object.keys(module.style.data).length)
 					) {
-						var configVars = Wee.$extend(module.data || {}, module.style.data || {});
+						var configStyleVars = Wee.$extend(module.data || {}, module.style.data || {});
 
-						for (var key in configVars) {
-							var value = configVars[key];
+						for (var key in configStyleVars) {
+							var value = configStyleVars[key];
 
 							if (typeof value === 'string') {
 								vars[key] = value;

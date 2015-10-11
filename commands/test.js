@@ -24,7 +24,7 @@
 							config.project.paths.source,
 							'/js/tests/config'
 						),
-						protocol = config.project.server.tasks.static.https ? 'https' : 'http';
+						protocol = config.project.server.tasks['static'].https ? 'https' : 'http';
 
 					Wee.notify({
 						title: 'Test Error',
