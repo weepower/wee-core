@@ -129,23 +129,21 @@
 								return val + namespace;
 							}).join(' '),
 							loc = el.getAttribute('data-url'),
-							a = el;
+							l = el;
 
 						if (loc || a.action) {
-							a = W._doc.createElement('a');
-							a.href = loc || el.action;
+							l = W._doc.createElement('a');
+							l.href = loc || el.action;
 						}
 
 						// Ensure the path exists and is local
-						if (evt && _isValid(a)) {
-							var options = W.$extend(a, {
-								path: a.pathname + a.search + a.hash
-							});
+						if (evt && _isValid(l)) {
+							var options = W.$extend(true, {}, a);
+							options.path = l.pathname + l.search + l.hash;
 
 							W.events.on(el, evt, function(e) {
 								if (! e.metaKey) {
 									W.history.go(options);
-
 									e.preventDefault();
 								}
 							});
