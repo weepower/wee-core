@@ -42,7 +42,7 @@
 		 * @returns {Array} matches
 		 */
 		bound: function(event, fn) {
-			return E.bound(event, fn);
+			return E.bound(this, event, fn);
 		},
 
 		/**
