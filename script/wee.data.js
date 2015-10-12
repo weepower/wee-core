@@ -235,10 +235,11 @@
 		 * @param {object} conf
 		 */
 		getUrl: function(conf) {
-			var url = conf.url;
+			var url = conf.url.replace(/[\?&]$/, '');
 
 			if (conf.data && Object.keys(conf.data).length) {
-				url += '?' + W.$serialize(conf.data);
+				url += (url.indexOf('?') < 0 ? '?' : '&') +
+					W.$serialize(conf.data);
 			}
 
 			return url;
