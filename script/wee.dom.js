@@ -616,7 +616,13 @@
 					value;
 
 				if (html !== false && html !== U) {
-					el.innerHTML = html;
+					if (el.nodeName == 'SELECT' && ! W._win.atob) {
+						el.outerHTML = el.outerHTML.replace(
+							el.innerHTML + '</s', html + '</s'
+						);
+					} else {
+						el.innerHTML = html;
+					}
 				}
 			});
 		},
