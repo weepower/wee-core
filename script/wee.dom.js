@@ -1107,7 +1107,9 @@
 					type = child.type;
 
 				if (name && type != 'file' && type != 'reset') {
-					if (name.slice(-2) == '[]') {
+					var arr = name.slice(-2) == '[]';
+
+					if (arr) {
 						name = name.slice(0, -2);
 					}
 
@@ -1116,7 +1118,7 @@
 					} else if (
 						type != 'submit' && type != 'button' &&
 						((type != 'checkbox' && type != 'radio') || child.checked)) {
-						if (type == 'checkbox' && obj[name]) {
+						if (arr || (type == 'checkbox' && obj[name])) {
 							obj[name] = W.$toArray(obj[name]);
 							obj[name].push(child.value);
 						} else {
@@ -1195,7 +1197,7 @@
 		$text: function(target, value) {
 			if (value === U) {
 				return W.$map(target, function(el) {
-					return (el.textContent || el.innerText).trim();
+					return (W._legacy ? el.innerText : el.textContent).trim();
 				}).join('');
 			}
 
@@ -1204,12 +1206,12 @@
 			W.$each(target, function(el, i) {
 				var text = func ?
 					W.$exec(value, {
-						args: [i, (el.textContent || el.innerText).trim()],
+						args: [i, (W._legacy ? el.innerText : el.textContent).trim()],
 						scope: el
 					}) :
 					value;
 
-				el.textContent === U ?
+				W._legacy ?
 					el.innerText = text :
 					el.textContent = text;
 			});
