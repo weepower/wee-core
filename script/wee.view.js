@@ -348,7 +348,8 @@
 					if (arr) {
 						var helper = helpers[arr[1].trim()];
 
-						if (helper) {
+						if (helper && segs.length > 1 ||
+							! data.hasOwnProperty(tag)) {
 							val = helper.apply({
 								val: val,
 								data: data,
