@@ -217,7 +217,8 @@
 										sel = targ._$ ? targ.sel : targ;
 
 									// Update refs when targeting ref
-									if (sel.indexOf('ref:') > -1) {
+									if (typeof sel == 'string' &&
+										sel.indexOf('ref:') > -1) {
 										W.$setRef(el);
 									}
 
