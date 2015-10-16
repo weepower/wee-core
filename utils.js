@@ -181,7 +181,7 @@
 		 * @param {boolean} [log=true]
 		 */
 		notify: function(options, type, log) {
-			options.icon = 'node_modules/wee-core/build/img/' +
+			options.icon = 'build/img/' +
 				(type || 'notice') + '.png';
 			options.group = 1;
 

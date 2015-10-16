@@ -4,14 +4,14 @@ module.exports = function(grunt) {
 	grunt.registerTask('init', function() {
 		// Reset config object and set core paths
 		var project = grunt.file.readJSON(config.configPath),
-			rootPath = project.paths.root,
-			sourcePath = project.paths.source,
+			rootPath = '../../' + project.paths.root,
+			sourcePath = '../../' + project.paths.source,
 			assetPath = path.normalize(
 				rootPath !== '' ?
 					rootPath + '/' + project.paths.assets :
 					project.assets
 			) + '/',
-			tempPath = 'node_modules/wee-core/temp/';
+			tempPath = 'temp/';
 
 		global.project = project;
 
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 				modulesSource: sourcePath + '/modules/',
 				modules: assetPath + 'modules/',
 
-				wee: 'node_modules/wee-core/',
+				wee: '',
 				weeTemp: tempPath + 'wee.less',
 
 				root: './' + rootPath,

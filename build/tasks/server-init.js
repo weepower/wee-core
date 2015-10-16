@@ -6,12 +6,12 @@ module.exports = function(grunt) {
 
 		// Server root
 		server.server = {
-			baseDir: project.paths.root
+			baseDir: '../../' + project.paths.root
 		};
 
 		// Test routing
 		server.server.routes = {
-			'/$root': ''
+			'/$root': '../../'
 		};
 
 		// Secure mode

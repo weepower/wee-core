@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 
 			// Add root to watchlist
 			if (reloadWatch.root === true) {
-				reloadPaths.unshift(project.paths.root + '/**/*.' + reloadExtensions);
+				reloadPaths.unshift('../../' + project.paths.root + '/**/*.' + reloadExtensions);
 			}
 
 			// Bind BrowserSync watchlist
