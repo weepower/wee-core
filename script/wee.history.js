@@ -164,7 +164,7 @@
 		 * @param {boolean} [options.run=true]
 		 * @param {string} [options.title='']
 		 * @param {object} [options.request]
-		 * @param {($|HTMLElement|string)} [scrollTop]
+		 * @param {($|HTMLElement|string)} [options.scrollTop]
 		 */
 		go: function(options) {
 			var scope = this;
@@ -272,11 +272,20 @@
 
 				successEvents.push(function() {
 					// Scroll vertically to target
-					if (conf.scrollTop !== U) {
-						W._body.scrollTop = typeof conf.scrollTop == 'number' ?
-							conf.scrollTop :
-							W.$(conf.scrollTop)[0].getBoundingClientRect().top +
-								W._win.pageYOffset;
+					if (conf.scrollTop !== false && conf.scrollTop !== U) {
+						var top = typeof conf.scrollTop == 'number' ?
+								conf.scrollTop :
+								W.$(conf.scrollTop)[0].getBoundingClientRect().top +
+									W._win.pageYOffset,
+							anim = W.animate;
+
+						if (anim) {
+							anim.tween(W._body, {
+								scrollTop: top
+							});
+						} else {
+							W._body.scrollTop = top;
+						}
 					}
 				});
 
