@@ -1,16 +1,15 @@
-/* global browserSync, config, path, project */
+/* global browserSync, config, global, path, project */
 /* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
-	var fs = require('fs'),
-		yaml = require('js-yaml'),
+	var yaml = require('js-yaml'),
 		Remarkable = require('remarkable');
 
 	grunt.registerTask('buildGenerator', function(task) {
 		var scope = this,
 			build = Wee.$toArray(project.generator.build),
-			configPath = build[task],
-			json = grunt.file.readJSON(configPath),
+			configPath = '../../' + build[task],
+			json = fs.readJsonSync(configPath),
 			siteConfig = json.config,
 			staticRoot = path.dirname(configPath),
 			site = Wee.$extend(json.data, {
@@ -64,11 +63,11 @@ module.exports = function(grunt) {
 					block.template += '.html';
 				}
 
-				var template = grunt.file.read(
+				var template = fs.readFileSync(
 					Wee.buildPath(
 						staticRoot,
 						siteConfig.paths.templates + '/' + block.template
-					)
+					), 'utf8'
 				);
 
 				Wee.$toArray(block.target).forEach(function(target) {
@@ -84,14 +83,14 @@ module.exports = function(grunt) {
 						// Create target directory
 						var dir = target.substring(0, target.lastIndexOf('/'));
 
-						try {
-							grunt.file.mkdir(dir);
-						} catch (e) {
-							Wee.notify({
-								title: 'Generator Error',
-								message: 'Error creating "' + dir + '" directory'
-							}, 'error');
-						}
+						fs.ensureDirSync(dir, function(err) {
+							if (err) {
+								Wee.notify({
+									title: 'Generator Error',
+									message: 'Error creating "' + dir + '" directory'
+								}, 'error');
+							}
+						});
 
 						// Render template
 						var output = Wee.view.render(template, data);
@@ -123,7 +122,7 @@ module.exports = function(grunt) {
 						}
 
 						// Write output to target file
-						fs.writeFile(target, output, function(err) {
+						fs.outputFileSync(target, output, {}, function(err) {
 							if (err) {
 								Wee.notify({
 									title: 'Generator Error',
@@ -173,7 +172,7 @@ module.exports = function(grunt) {
 						var src = path.isAbsolute(name) ?
 								name :
 								Wee.buildPath(staticRoot, root + '/' + name),
-							template = grunt.file.read(src),
+							template = fs.readFileSync(src, 'utf8'),
 							fileSegments = name.replace(/^.*[\\\/]/, '').split('.');
 
 						fileSegments.splice(-1, 1);
@@ -346,7 +345,7 @@ module.exports = function(grunt) {
 						data.content.push(obj);
 
 						// Set current target, path, and URL
-						var uri = target.replace(project.paths.root, '');
+						var uri = target.replace(global.config.paths.root, '');
 
 						if (siteConfig.removeIndex) {
 							uri = uri.replace('index.html', '');
@@ -447,7 +446,7 @@ module.exports = function(grunt) {
 			done = this.async();
 
 			// Create remote cache directory
-			grunt.file.mkdir(path.normalize(tempPath));
+			fs.mkdirSync(path.normalize(tempPath));
 
 			var cacheRemote = function(i) {
 				var arr = remoteUrls[i],

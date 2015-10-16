@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 	grunt.registerTask('convertLegacy', function(task) {
 		var dest = legacyConvert[task],
-			content = grunt.file.read(dest),
+			content = fs.readFileSync(dest, 'utf8'),
 			rootSize = project.style.legacy.rootSize,
 			rootValue = 10;
 
@@ -24,6 +24,6 @@ module.exports = function(grunt) {
 			return 'filter:alpha(opacity=' + Math.round((match * 100) * 100 / 100) + ')';
 		}).replace(/::/g, ':');
 
-		grunt.file.write(dest, content);
+		fs.writeFileSync(dest, content);
 	});
 };

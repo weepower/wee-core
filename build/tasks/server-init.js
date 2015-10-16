@@ -1,4 +1,4 @@
-/* global project, server */
+/* global global, project, server */
 
 module.exports = function(grunt) {
 	grunt.registerTask('server', function() {
@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
 		// Server root
 		server.server = {
-			baseDir: '../../' + project.paths.root
+			baseDir: global.config.paths.root
 		};
 
 		// Test routing

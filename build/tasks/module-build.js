@@ -15,16 +15,16 @@ module.exports = function(grunt) {
 				var configFile = modulePath + '/module.json';
 
 				// Ensure the module.json file exists
-				if (grunt.file.exists(configFile)) {
+				if (fs.existsSync(configFile)) {
 					// Get module config
-					var module = grunt.file.readJSON(configFile),
+					var module = fs.readJsonSync(configFile),
 						scriptRoot = modulePath + '/module/script/',
 						moduleScript = [
 							scriptRoot + 'script.js',
 							scriptRoot + '*.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
-						less = grunt.file.read(config.paths.wee + 'style/wee.module.less'),
+						less = fs.readFileSync(config.paths.wee + 'style/wee.module.less', 'utf8'),
 						namespaceOpen = '',
 						namespaceClose = '';
 
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
 								configScriptVars = Wee.$extend(module.data || {}, module.script.data || {}),
 								script = 'Wee.$set("' + name + ':global", ' + JSON.stringify(configScriptVars) + ');';
 
-							grunt.file.write(weeScriptGlobal, script);
+							fs.writeFileSync(weeScriptGlobal, script);
 
 							moduleScript.unshift(weeScriptGlobal);
 						}
@@ -231,7 +231,7 @@ module.exports = function(grunt) {
 						.replace('{{responsive}}', responsive);
 
 					// Write temporary file
-					grunt.file.write(config.paths.temp + name + '.less', less);
+					fs.writeFileSync(config.paths.temp + name + '.less', less);
 
 					// Set global data variables
 					if (

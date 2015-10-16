@@ -3,8 +3,8 @@
 module.exports = function(grunt) {
 	grunt.registerTask('loadExtensions', function(task) {
 		var build = Wee.$toArray(project.generator.build),
-			configPath = build[task],
-			json = grunt.file.readJSON(configPath),
+			configPath = '../../' + build[task],
+			json = fs.readJsonSync(configPath),
 			staticRoot = path.dirname(configPath),
 			extensionRoot = path.join(staticRoot, json.config.paths.extensions),
 			extensions = grunt.file.expand({

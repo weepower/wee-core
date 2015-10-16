@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 	grunt.registerTask('init', function() {
 		// Reset config object and set core paths
-		var project = grunt.file.readJSON(config.configPath),
+		var project = fs.readJsonSync(config.configPath),
 			rootPath = '../../' + project.paths.root,
 			sourcePath = '../../' + project.paths.source,
 			assetPath = path.normalize(
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 				wee: '',
 				weeTemp: tempPath + 'wee.less',
 
-				root: './' + rootPath,
+				root: rootPath,
 				temp: tempPath
 			},
 			script: {

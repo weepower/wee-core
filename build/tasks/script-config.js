@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 					configVars = Wee.$extend(project.data, project.script.data || {}),
 					script = 'Wee.$set("global", ' + JSON.stringify(configVars) + ');';
 
-				grunt.file.write(weeScriptGlobal, script);
+				fs.writeFileSync(weeScriptGlobal, script);
 
 				config.script.files.push(weeScriptGlobal);
 			}

@@ -6,9 +6,17 @@ module.exports = function(grunt) {
 			// Import view library
 			require('../../script/wee.view');
 
+			var build = project.generator.build;
+
+			if (build && build.length) {
+				build = build.map(function(file) {
+					return path.join('../../', file)
+				});
+			}
+
 			// Loop through static site config files
-			grunt.file.expand(project.generator.build).forEach(function(src, i) {
-				var json = grunt.file.readJSON(src);
+			grunt.file.expand(build).forEach(function(src, i) {
+				var json = fs.readJsonSync(src);
 
 				// Watch for config updates
 				if (json.config.watch === true) {

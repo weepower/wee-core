@@ -3,8 +3,8 @@
 module.exports = function(grunt) {
 	grunt.registerTask('initGenerator', function(task) {
 		var build = Wee.$toArray(project.generator.build),
-			configPath = build[task],
-			json = grunt.file.readJSON(configPath),
+			configPath = '../../' + build[task],
+			json = fs.readJsonSync(configPath),
 			config = json.config,
 			staticRoot = path.dirname(configPath);
 
@@ -78,7 +78,7 @@ module.exports = function(grunt) {
 
 			// Watch partials
 			if (config.paths.partials) {
-				var partialPath = config.paths.partials;
+				var partialPath = '../../' + config.paths.partials;
 
 				// Watch for partial updates
 				grunt.config.set('watch.cachePartials-' + task, {

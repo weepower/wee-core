@@ -2,7 +2,7 @@
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildStyle', function() {
-		var less = grunt.file.read(config.paths.wee + 'style/wee.less'),
+		var less = fs.readFileSync(config.paths.wee + 'style/wee.less', 'utf8'),
 			buildFiles = grunt.file.expand({
 				cwd: config.paths.cssSource + 'build'
 			}, [
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
 			.replace('{{responsive}}', config.style.responsive || '');
 
 		// Write temporary file
-		grunt.file.write(config.paths.weeTemp, less);
+		fs.writeFileSync(config.paths.weeTemp, less);
 
 		// Add to concat array
 		config.style.concat.push(config.paths.temp + 'wee.css');
