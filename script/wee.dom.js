@@ -180,6 +180,8 @@
 					W.$each(app, function(cel) {
 						el.appendChild(cel);
 					});
+
+					W.$setRef(el);
 				}
 			});
 		},
