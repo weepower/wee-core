@@ -1,4 +1,4 @@
-/* global browserSync, config, global, project, reloadPaths, server */
+/* global browserSync, config, project, reloadPaths, server */
 
 module.exports = function(grunt) {
 	grunt.registerTask('sync', function() {
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 
 			// Add root to watchlist
 			if (reloadWatch.root === true) {
-				reloadPaths.unshift('../../' + global.config.paths.root + '/**/*.' + reloadExtensions);
+				reloadPaths.unshift('../../' + config.paths.root + '/**/*.' + reloadExtensions);
 			}
 
 			// Bind BrowserSync watchlist

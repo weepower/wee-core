@@ -4,8 +4,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('init', function() {
 		// Reset config object and set core paths
 		var project = fs.readJsonSync(config.configPath),
-			rootPath = '../../' + project.paths.root,
-			sourcePath = '../../' + project.paths.source,
+			rootPath = config.rootPath + project.paths.root,
+			sourcePath = config.rootPath + project.paths.source,
 			assetPath = path.normalize(
 				rootPath !== '' ?
 					rootPath + '/' + project.paths.assets :

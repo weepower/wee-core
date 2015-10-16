@@ -1,4 +1,4 @@
-/* global browserSync, config, global, path, project */
+/* global browserSync, config, path, project */
 /* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
@@ -345,7 +345,7 @@ module.exports = function(grunt) {
 						data.content.push(obj);
 
 						// Set current target, path, and URL
-						var uri = target.replace(global.config.paths.root, '');
+						var uri = target.replace(config.paths.root, '');
 
 						if (siteConfig.removeIndex) {
 							uri = uri.replace('index.html', '');
