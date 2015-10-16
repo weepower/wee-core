@@ -5,13 +5,14 @@
 	 * Default easing functions
 	 */
 	var easings = {
-		ease: function(t) {
-			return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+			ease: function(t) {
+				return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+			},
+			linear: function(t) {
+				return t;
+			}
 		},
-		linear: function(t) {
-			return t;
-		}
-	};
+		timers = [];
 
 	W.fn.make('animate', {
 		/**
@@ -49,35 +50,43 @@
 					var	css = cssValue !== undefined,
 						unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
 						val = parseInt(css ? cssValue : el[prop]),
-						dist = Math.abs(target - val),
-						dir = target > val ? 1 : -1,
 						start = Date.now(),
 						setValue = function(prop, update) {
 							if (scrollTop && ! W._win.atob) {
 								el.scrollTop = update;
 							} else {
 								css ?
-									el.style[prop] = update + unit:
+									el.style[prop] = update + unit :
 									el[prop] = update;
 							}
 						},
-						si = setInterval(function() {
-							var diff = Date.now() - start;
+						fn = (function() {
+							var scope = this,
+								diff = Date.now() - scope.start;
 
-							if (dist && diff < conf.duration) {
+							if (scope.dist && diff < conf.duration) {
 								setValue(
-									prop,
-									val + dist * ease(diff / conf.duration) * dir
+									scope.prop,
+									scope.val + scope.dist * ease(diff / conf.duration) * scope.dir
 								);
 							} else {
-								clearInterval(si);
-								setValue(prop, target);
+								clearInterval(timers[scope.prop + scope.start]);
+								setValue(scope.prop, scope.target);
 
 								if (conf.complete) {
 									W.$exec(conf.complete);
 								}
 							}
-						}, 5);
+						}).bind({
+							dir: target > val ? 1 : -1,
+							dist: Math.abs(target - val),
+							prop: prop,
+							start: start,
+							target: target,
+							val: val
+						});
+
+					timers[prop + start] = setInterval(fn, 5);
 				}
 			});
 		},
