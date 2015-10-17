@@ -244,6 +244,19 @@
 						'notify:images'
 					]
 				},
+				assetRemove: {
+					files: [
+						'<%= config.paths.source %>**/*.{css,less,js,gif,jpg,png,svg}'
+					],
+					tasks: [
+						'rebuild'
+					],
+					options: {
+						event: [
+							'deleted'
+						]
+					}
+				},
 				project: {
 					files: [
 						'<%= config.path %>',
@@ -271,6 +284,22 @@
 			'configStyle',
 			'configScript',
 			'configGenerator',
+			'buildStyle',
+			'buildModules',
+			'buildLegacy',
+			'uglify:core',
+			'uglify:lib',
+			'imagemin',
+			'syncDirectory:fonts',
+			'syncDirectory:images'
+		]);
+
+		/**
+		 * Rebuild only
+		 */
+		grunt.registerTask('rebuild', [
+			'cleanup',
+			'setup',
 			'buildStyle',
 			'buildModules',
 			'buildLegacy',
