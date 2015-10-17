@@ -142,9 +142,9 @@
 						(mx && size <= mx && (init || current > mx) && (! mn || size >= mn))) {
 						priv.execute(evt, {
 							dir: init == 1 ? 0 : (size > current ? 1 : -1),
-							size: size,
+							init: init == 1,
 							prev: current,
-							init: init == 1
+							size: size
 						});
 					}
 				}
