@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 		global.config = Wee.$extend(global.config, {
 			path: config.configPath,
 			paths: {
-				source: sourcePath,
+				source: sourcePath + '/',
 				assets: assetPath,
 
 				cssSource: sourcePath + '/css/',
