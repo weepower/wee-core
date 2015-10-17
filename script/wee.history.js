@@ -345,6 +345,16 @@
 				conf.path = W.data.$private.getUrl(request);
 			}
 
+			var obj = {
+				args: [
+					{
+						dir: conf.push ? 1 : -1,
+						path: conf.path,
+						prev: path
+					}
+				]
+			};
+
 			// Add entry to HTML5 history
 			if (conf.push && support) {
 				H.pushState(0, 0, conf.path);
@@ -378,15 +388,15 @@
 			}
 
 			if (conf.push && conf.pushstate) {
-				W.$exec(conf.pushstate);
+				W.$exec(conf.pushstate, obj);
 			}
 
 			if (conf.pop && conf.popstate) {
-				W.$exec(conf.popstate);
+				W.$exec(conf.popstate, obj);
 			}
 
 			if (conf.callback) {
-				W.$exec(conf.callback);
+				W.$exec(conf.callback, obj);
 			}
 		}
 	});
