@@ -94,6 +94,9 @@
 
 			// Request each specified file
 			for (var file in assets) {
+				var scope = this.$private,
+					noCache = options.cache === false;
+
 				// Reset root if the URL is absolute
 				if (root && /^(https?:)?\/\//i.test(file)) {
 					root = '';
@@ -102,12 +105,14 @@
 				type = assets[file];
 				file = root + file;
 
-				if (! loaded[file]) {
-					if (options.cache === false) {
+				if (! loaded[file] || noCache) {
+					if (noCache) {
 						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
 					}
 
-					this.$private.load(file, type, options);
+					scope.load(file, type, options);
+				} else {
+					scope.done(options.group);
 				}
 			}
 		},
