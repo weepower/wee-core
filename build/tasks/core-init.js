@@ -5,12 +5,12 @@ module.exports = function(grunt) {
 		// Reset config object and set core paths
 		var project = fs.readJsonSync(config.configPath),
 			rootPath = config.rootPath + project.paths.root,
-			sourcePath = config.rootPath + project.paths.source,
+			sourcePath = config.rootPath + project.paths.source + '/',
 			assetPath = path.normalize(
-				rootPath !== '' ?
+					rootPath !== '' ?
 					rootPath + '/' + project.paths.assets :
-					project.assets
-			) + '/',
+						project.assets
+				) + '/',
 			tempPath = 'temp/';
 
 		global.project = project;
@@ -18,24 +18,24 @@ module.exports = function(grunt) {
 		global.config = Wee.$extend(global.config, {
 			path: config.configPath,
 			paths: {
-				source: sourcePath + '/',
+				source: sourcePath,
 				assets: assetPath,
 
-				cssSource: sourcePath + '/css/',
+				cssSource: sourcePath + 'css/',
 				css: assetPath + 'css/',
 				cssMaps: assetPath + 'js/maps/',
 
-				jsSource: sourcePath + '/js/',
+				jsSource: sourcePath + 'js/',
 				js: assetPath + 'js/',
 				jsMaps: assetPath + 'js/maps/',
 
-				fontSource: sourcePath + '/fonts/',
+				fontSource: sourcePath + 'fonts/',
 				font: assetPath + 'fonts/',
 
-				imgSource: sourcePath + '/img/',
+				imgSource: sourcePath + 'img/',
 				img: assetPath + 'img/',
 
-				modulesSource: sourcePath + '/modules/',
+				modulesSource: sourcePath + 'modules/',
 				modules: assetPath + 'modules/',
 
 				wee: '',

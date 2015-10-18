@@ -16,18 +16,18 @@ module.exports = function(grunt) {
 
 			// Add user-defined paths
 			reloadWatch.paths.forEach(function(path) {
-				reloadPaths.push(path + '/**/*.' + reloadExtensions);
+				reloadPaths.push('../../' + path + '/**/*.' + reloadExtensions);
 			});
 
 			// Add root to watchlist
 			if (reloadWatch.root === true) {
-				reloadPaths.unshift('../../' + config.paths.root + '/**/*.' + reloadExtensions);
+				reloadPaths.unshift(config.paths.root + '/**/*.' + reloadExtensions);
 			}
 
 			// Bind BrowserSync watchlist
 			reloadPaths.unshift(
 				config.paths.assets +
-					'**/*.{min.css,min.js,gif,jpg,png,svg,webp,woff}'
+				'**/*.{min.css,min.js,gif,jpg,png,svg,webp,woff}'
 			);
 
 			server.files = reloadPaths;
