@@ -1,5 +1,5 @@
 @import (reference) '../style/wee.variables.less';        // Core configuration
-@import (reference) '@{sourcePath}custom/variables.less'; // Custom configuration
+@import (optional, reference) '@{sourcePath}custom/variables.less'; // Custom configuration
 
 {{namespaceOpen}}
 
@@ -11,7 +11,7 @@
 {{coreImports}}
 {{namespaceClose}}
 
-@import (reference) '@{sourcePath}custom/mixins.less'; // Custom mixins
+@import (optional, reference) '@{sourcePath}custom/mixins.less'; // Custom mixins
 {{imports}}
 
 @import '@{sourcePath}/custom/screen.less'; // Customizations
