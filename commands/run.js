@@ -1,3 +1,5 @@
+/* global __dirname */
+
 (function() {
 	'use strict';
 
@@ -9,8 +11,8 @@
 			task = config.options[0];
 		}
 
-		cp.execSync('grunt ' + task + ' --b ' + __dirname + '/../ --gruntfile '
-			+ __dirname + '/../Gruntfile.js', {
+		cp.execSync('grunt ' + task + ' --b ' + __dirname +
+			'/../ --gruntfile ' + __dirname + '/../Gruntfile.js', {
 			stdio: [0, 1, 2]
 		});
 	};

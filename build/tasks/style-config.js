@@ -1,4 +1,4 @@
-/* global config, project */
+/* global config, fs, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('configStyle', function() {

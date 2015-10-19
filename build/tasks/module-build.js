@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 						// Compile additional style
 						if (module.style.compile) {
 							for (var compileStyleTarget in module.style.compile) {
-								var taskName = compileStyleTarget.replace(/\./g, '-') + '-' + name + '-style',
+								var compileStyleTaskName = compileStyleTarget.replace(/\./g, '-') + '-' + name + '-style',
 									compileStyleSources = Wee.$toArray(module.style.compile[compileStyleTarget]),
 									files = [];
 
@@ -76,15 +76,15 @@ module.exports = function(grunt) {
 								}
 
 								// Merge watch config
-								grunt.config.set('watch.' + taskName, {
+								grunt.config.set('watch.' + compileStyleTaskName, {
 									files: files,
 									tasks: [
-										'less:' + taskName
+										'less:' + compileStyleTaskName
 									]
 								});
 
 								// Create Less task
-								grunt.config.set('less.' + taskName, {
+								grunt.config.set('less.' + compileStyleTaskName, {
 									files: [{
 										dest: Wee.buildPath(config.paths.modules + name, compileStyleTarget),
 										src: files
@@ -97,10 +97,10 @@ module.exports = function(grunt) {
 								});
 
 								// Push style task
-								config.style.tasks.push('less:' + taskName);
+								config.style.tasks.push('less:' + compileStyleTaskName);
 
 								// Run task
-								grunt.task.run('less:' + taskName);
+								grunt.task.run('less:' + compileStyleTaskName);
 							}
 						}
 					}
@@ -135,7 +135,7 @@ module.exports = function(grunt) {
 						// Compile additional script
 						if (module.script.compile) {
 							for (var compileScriptTarget in module.script.compile) {
-								var taskName = compileScriptTarget.replace(/\./g, '-') + '-' + name + '-script',
+								var compileScriptTaskName = compileScriptTarget.replace(/\./g, '-') + '-' + name + '-script',
 									compileScriptSources = module.script.compile[compileScriptTarget],
 									src = [];
 
@@ -148,15 +148,15 @@ module.exports = function(grunt) {
 								}
 
 								// Merge watch config
-								grunt.config.set('watch.' + taskName, {
+								grunt.config.set('watch.' + compileScriptTaskName, {
 									files: src,
 									tasks: [
-										'uglify:' + taskName
+										'uglify:' + compileScriptTaskName
 									]
 								});
 
 								// Create uglify task
-								grunt.config.set('uglify.' + taskName, {
+								grunt.config.set('uglify.' + compileScriptTaskName, {
 									files: [{
 										dest: Wee.buildPath(config.paths.modules + name, compileScriptTarget),
 										src: src
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
 								});
 
 								// Run task
-								grunt.task.run('uglify:' + taskName);
+								grunt.task.run('uglify:' + compileScriptTaskName);
 							}
 						}
 					}
@@ -303,7 +303,7 @@ module.exports = function(grunt) {
 						if (project.style.legacy.watch === true) {
 							// Configure legacy watch task
 							grunt.config.set('watch.' + name + '-legacy', {
-								files: config.paths.temp + taskName + '.css',
+								files: config.paths.temp + compileStyleTaskName + '.css',
 								tasks: [
 									'less:legacy',
 									'convertLegacy:core',
@@ -338,13 +338,13 @@ module.exports = function(grunt) {
 
 					// Legacy processing
 					if (project.style.legacy.enable) {
-						var taskName = name + '-legacy';
+						var legacyTaskName = name + '-legacy';
 						dest = module.autoload ?
-							config.paths.temp + taskName + '.css' :
+							config.paths.temp + legacyTaskName + '.css' :
 							config.paths.modules + name + '/legacy.min.css';
 
 						// Create legacy task
-						grunt.config.set('less.' + taskName, {
+						grunt.config.set('less.' + legacyTaskName, {
 							files: [{
 								dest: dest,
 								src: config.paths.wee + 'style/wee.module-legacy.less'
@@ -359,20 +359,20 @@ module.exports = function(grunt) {
 
 						if (project.style.legacy.watch === true) {
 							// Configure legacy watch task
-							grunt.config.set('watch.' + taskName, {
+							grunt.config.set('watch.' + legacyTaskName, {
 								files: modulePath + '/**/*.less',
 								tasks: [
-									'less:' + taskName,
-									'convertLegacy:' + taskName
+									'less:' + legacyTaskName,
+									'convertLegacy:' + legacyTaskName
 								]
 							});
 						}
 
 						// Push to conversion array
-						legacyConvert[taskName] = dest;
+						legacyConvert[legacyTaskName] = dest;
 
-						grunt.task.run('less:' + taskName);
-						grunt.task.run('convertLegacy:' + taskName);
+						grunt.task.run('less:' + legacyTaskName);
+						grunt.task.run('convertLegacy:' + legacyTaskName);
 					}
 				} else {
 					Wee.notify({

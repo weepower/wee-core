@@ -1,4 +1,4 @@
-/* global config, global, legacyConvert, moduleLegacy, path, project */
+/* global config, fs, global, legacyConvert, moduleLegacy, path, project */
 /* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {

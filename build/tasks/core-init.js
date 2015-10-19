@@ -1,4 +1,4 @@
-/* global config, global, path */
+/* global config, fs, global, path */
 
 module.exports = function(grunt) {
 	grunt.registerTask('init', function() {

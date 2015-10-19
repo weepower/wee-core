@@ -1,4 +1,4 @@
-/* global browserSync, config, path, project */
+/* global browserSync, config, fs, path, project */
 /* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
