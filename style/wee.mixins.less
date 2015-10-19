@@ -1270,7 +1270,7 @@
 	# Grid
 \*------------------------------------*/
 
-.row (@margin: @gridMargin) {
+.row (@margin: @gridMargin) when (ispercentage(@margin)) {
 	margin-left: (@margin * -1);
 	max-width: (100% + @margin);
 	.clearfix();
@@ -1327,6 +1327,45 @@
 }
 .column-offset (spaced; @share; @columns: @gridColumns; @margin: (@gridMargin / 2)) {
 	margin-left: (((100% / @columns) * @share) + (@margin * 2));
+}
+
+
+
+
+
+
+/*------------------------------------*\
+	# Inline Grid
+\*------------------------------------*/
+
+.inline-row (@margin: @gridMargin; ...) {
+	.row(@margin);
+}
+.inline-row (@margin: @gridMargin; @spaceless: @gridSpaceless) when not (@spaceless = true) {
+	letter-spacing: -.32em;
+}
+.wee-grid (@marginLeft: @gridMargin) when not (@marginLeft = 0) {
+	margin-left: @marginLeft;
+}
+.wee-grid (@marginLeft: @gridMargin; ...) {
+	display: inline-block;
+	vertical-align: top;
+}
+.wee-grid (@marginLeft; @spaceless: @gridSpaceless) when not (@spaceless = true) {
+	letter-spacing: normal;
+}
+.inline-column (@share; @columns: @gridColumns; ...) when (isunit(@share, '')) {
+	width: ((100% / @columns) * @share);
+	.wee-grid(0);
+}
+.inline-column (@share; @columns; @spaceless: @gridSpaceless) when (isunit(@share, ''))
+		and not (@spaceless = true) {
+	margin-right: -.32em;
+}
+.inline-column (spaced; @share; @columns: @gridColumns; @margin: @gridMargin; @spaceless: false) {
+	margin-left: @margin;
+	width: (((100% / @columns) * @share) - (@margin));
+	.wee-grid(@margin; @spaceless);
 }
 
 
