@@ -1,4 +1,6 @@
-(function(W, H, U) {
+/* jshint maxparams: 5 */
+
+(function(W, D, E, H, U) {
 	'use strict';
 
 	/**
@@ -11,27 +13,48 @@
 		path = '',
 
 		/**
+		 * Return current path
+		 *
+		 * @private
+		 * @param {object} loc
+		 * @returns {string}
+		 */
+		_path = function(loc) {
+			loc = loc || location;
+			return loc.pathname + loc.search + loc.hash;
+		},
+
+		/**
 		 * Determine if path is valid for history navigation
 		 *
+		 * @private
 		 * @param {HTMLElement} el
 		 */
 		_isValid = function(el) {
+			var host = el.hostname,
+				path = el.pathname,
+				loc = location;
+
+			if ((host && host != loc.hostname) ||
+				(el.hash && path == loc.pathname)) {
+				return false;
+			}
+
 			var exts = settings.extensions,
-				host = el.hostname,
-				segs = el.href.split('.'),
+				segs = path.split('.'),
 				ext;
 
 			if (segs.length > 1) {
 				ext = segs.pop().split(/#|\?/)[0];
 			}
 
-			return (! host || host == location.hostname) &&
-				(! ext || (ext && (! exts || exts.indexOf(ext) > -1)));
+			return ! ext || (exts && exts.indexOf(ext) > -1);
 		},
 
 		/**
 		 * Reset references and variables for a given selector
 		 *
+		 * @private
 		 * @param sel
 		 */
 		_reset = function(sel) {
@@ -48,7 +71,6 @@
 		 * @param {object} [options]
 		 * @param {boolean] [options.push=true]
 		 * @param {string] [options.partials='title,main']
-		 * @param {string] [options.fallback='nav']
 		 * @param {boolean} [options.run=true]
 		 * @param {($|HTMLElement|string)} [options.bind]
 		 * @param {object} [options.request]
@@ -56,14 +78,13 @@
 		 */
 		init: function(options) {
 			if (! this.request) {
-				var loc = location;
-				path = loc.pathname + loc.search + loc.hash;
+				path = _path();
 				settings = W.$extend({
-					fallback: 'nav',
 					partials: 'title,main',
 					push: true,
 					request: {},
-					run: true
+					run: true,
+					scrollTop: 0
 				}, options);
 				root = settings.request.root || '';
 
@@ -72,26 +93,26 @@
 
 				if (support) {
 					// Set current state
-					H.replaceState(0, 0, path);
+					H.replaceState(0, '', path);
 
 					// Listen for browser navigation
-					W.events.on(W._win, 'popstate', function() {
-						var path = loc.pathname + loc.search + loc.hash,
-							conf = entries[path.replace(/^\//g, '')];
+					E.on(W._win, 'popstate.history', function(e) {
+						if (e.state) {
+							var path = _path(),
+								conf = entries[path.replace(/^\//g, '')];
 
-						this.go(W.$extend(
-							conf || {
-								request: {
-									root: ''
+							W.history.go(W.$extend(
+								conf || {
+									request: {
+										root: ''
+									}
+								}, {
+									path: path,
+									push: false,
+									pop: true
 								}
-							}, {
-								path: path,
-								push: false,
-								pop: true
-							}
-						));
-					}, {
-						scope: this
+							));
+						}
 					});
 				}
 
@@ -103,7 +124,7 @@
 		/**
 		 * Bind element events and form submit events to PJAX
 		 *
-		 * @param {object} events
+		 * @param {object} [events]
 		 * @param {($|HTMLElement|Object|string)} [a] - settings or context
 		 * @param {($|HTMLElement|string)} [context=document]
 		 */
@@ -115,9 +136,8 @@
 				a = {};
 			}
 
-			if (typeof events == 'object') {
+			if (support && typeof events == 'object') {
 				var keys = Object.keys(events),
-					namespace = '.history',
 					i = 0;
 
 				for (; i < keys.length; i++) {
@@ -126,7 +146,7 @@
 
 					$(sel).each(function(el) {
 						var evt = event.split(' ').map(function(val) {
-								return val + namespace;
+								return val + '.history';
 							}).join(' '),
 							loc = el.getAttribute('data-url'),
 							l = el;
@@ -139,9 +159,9 @@
 						// Ensure the path exists and is local
 						if (evt && _isValid(l)) {
 							var options = W.$extend(true, {}, a);
-							options.path = l.pathname + l.search + l.hash;
+							options.path = _path(l);
 
-							W.events.on(el, evt, function(e) {
+							E.on(el, evt, function(e) {
 								if (! e.metaKey) {
 									W.history.go(options);
 									e.preventDefault();
@@ -164,6 +184,7 @@
 		 * @param {boolean} [options.run=true]
 		 * @param {string} [options.title='']
 		 * @param {object} [options.request]
+		 * @param {string} [options.action='replace']
 		 * @param {($|HTMLElement|string)} [options.scrollTop]
 		 */
 		go: function(options) {
@@ -189,13 +210,16 @@
 				request.url :
 				conf.path;
 
-			// Navigate to external URL or in fallback nav mode
+			// Navigate to external URL or if history isn't supported
 			var a = W._doc.createElement('a');
 			a.href = request.root + request.url;
 
-			if (! _isValid(a) ||
-				(! support && conf.fallback == 'nav')) {
-				W._win.location = request.root + W.data.$private.getUrl(request);
+			if (! support || ! _isValid(a)) {
+				W._win.location = D.$private.getUrl(request);
+				return false;
+			}
+
+			if (conf.begin && W.$exec(conf.begin) === false) {
 				return;
 			}
 
@@ -227,6 +251,12 @@
 
 				// Compile success events
 				successEvents.push(function(html) {
+					if (conf.replace) {
+						W.$exec(conf.replace, {
+							args: [html]
+						});
+					}
+
 					// Evaluate unload routes against updated path
 					if (W.routes && conf.run) {
 						W.routes.run({
@@ -241,16 +271,17 @@
 						// Make partial replacements from response
 						W.$each(partials.split(','), function(sel) {
 							W.$each(sel, function(el) {
-								var target = W.$(sel)[0],
-									parent = target.parentNode;
+								var target = W.$(sel)[0];
 
 								if (target) {
+									var parent = target.parentNode;
+
 									conf.action == 'append' ?
 										parent.appendChild(el) :
 										parent.replaceChild(el, target);
-								}
 
-								_reset(parent);
+									_reset(parent);
+								}
 							}, {
 								context: html
 							});
@@ -272,7 +303,7 @@
 
 				successEvents.push(function() {
 					// Scroll vertically to target
-					if (conf.scrollTop !== false && conf.scrollTop !== U) {
+					if (conf.scrollTop !== false) {
 						var top = typeof conf.scrollTop == 'number' ?
 								conf.scrollTop :
 								W.$(conf.scrollTop)[0].getBoundingClientRect().top +
@@ -323,7 +354,7 @@
 				request.args = request.args || [];
 				request.args.unshift(targets);
 
-				W.data.request(request);
+				D.request(request);
 			} else {
 				scope.$private.process(conf);
 			}
@@ -342,7 +373,7 @@
 			entries[key] = conf;
 
 			if (! method || method == 'get') {
-				conf.path = W.data.$private.getUrl(request);
+				conf.path = D.$private.getUrl(request);
 			}
 
 			var obj = {
@@ -357,7 +388,7 @@
 
 			// Add entry to HTML5 history
 			if (conf.push && support) {
-				H.pushState(0, 0, conf.path);
+				H.pushState(0, '', conf.path);
 			}
 
 			// Update document title
@@ -395,9 +426,9 @@
 				W.$exec(conf.popstate, obj);
 			}
 
-			if (conf.callback) {
-				W.$exec(conf.callback, obj);
+			if (conf.end) {
+				W.$exec(conf.end, obj);
 			}
 		}
 	});
-})(Wee, history, undefined);
+})(Wee, Wee.data, Wee.events, history, undefined);
