@@ -223,6 +223,9 @@
 				return;
 			}
 
+			// Reset URL to exclude root
+			a.href = request.url;
+
 			request.url = _path(a);
 			conf.request = request;
 
