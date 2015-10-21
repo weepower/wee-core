@@ -1,4 +1,4 @@
-/* global fs, path, project */
+/* global path, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('cachePartials', function(task) {
@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			var partial = path.join(partialRoot, name),
 				content = fs.readFileSync(partial, 'utf8');
 
-			Wee.view.addPartial(path.basename(name, '.html'), content);
+			Wee.view.addPartial(path.basename(name, path.extname(name)), content);
 		});
 	});
 };

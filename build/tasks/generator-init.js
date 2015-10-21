@@ -1,4 +1,4 @@
-/* global fs, path, project, reloadPaths */
+/* global path, project, reloadPaths */
 
 module.exports = function(grunt) {
 	grunt.registerTask('initGenerator', function(task) {
@@ -78,11 +78,11 @@ module.exports = function(grunt) {
 
 			// Watch partials
 			if (config.paths.partials) {
-				var partialPath = '../../' + config.paths.partials;
+				var partialPath = config.paths.partials;
 
 				// Watch for partial updates
 				grunt.config.set('watch.cachePartials-' + task, {
-					files: path.join(staticRoot, partialPath, '**/*.html'),
+					files: path.join(staticRoot, partialPath, '**/*'),
 					tasks: [
 						'cachePartials:' + task,
 						'buildGenerator:' + task
