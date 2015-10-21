@@ -21,11 +21,16 @@ module.exports = function(grunt) {
 							root = block.contentRoot || '',
 							content = block.content ?
 								Wee.$toArray(block.content) :
-								[],
-							template = path.join(
-								staticRoot,
-								config.paths.templates + '/' + block.template + '.html'
-							);
+								[];
+
+						if (block.template.indexOf('.') === -1) {
+							block.template += '.html';
+						}
+
+						var template = path.join(
+							staticRoot,
+							config.paths.templates + '/' + block.template
+						);
 
 						// Push targets to exclude from watch
 						Wee.$toArray(block.target).forEach(function(target) {
@@ -98,10 +103,10 @@ module.exports = function(grunt) {
 				var extensionPath = config.paths.extensions;
 
 				// Watch for partial updates
-				grunt.config.set('watch.loadExtensions-' + task, {
+				grunt.config.set('watch.loadHelpers-' + task, {
 					files: path.join(staticRoot, extensionPath, '**/*.js'),
 					tasks: [
-						'loadExtensions:' + task,
+						'loadHelpers:' + task,
 						'buildGenerator:' + task
 					]
 				});
@@ -118,7 +123,7 @@ module.exports = function(grunt) {
 
 		// Load extensions
 		if (config.paths.extensions) {
-			grunt.task.run('loadExtensions:' + task);
+			grunt.task.run('loadHelpers:' + task);
 		}
 
 		// Build static site
