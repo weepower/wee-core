@@ -97,7 +97,7 @@
 
 					// Listen for browser navigation
 					E.on(W._win, 'popstate.history', function(e) {
-						if (e.state) {
+						if (e.state !== null) {
 							var path = _path(),
 								conf = entries[path.replace(/^\//g, '')];
 
@@ -223,6 +223,7 @@
 				return;
 			}
 
+			request.url = _path(a);
 			conf.request = request;
 
 			// Request partial Ajax
