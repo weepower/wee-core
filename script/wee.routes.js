@@ -175,6 +175,7 @@
 					child = route[key],
 					opts = key.split('||'),
 					k = 0,
+					y = i,
 					filtered = false,
 					match = false;
 
@@ -198,7 +199,7 @@
 						opt = opt.slice(1);
 
 						if (parts.indexOf('eval') > -1) {
-							i--;
+							y--;
 						}
 
 						// If the second character is / then test regex
@@ -216,7 +217,7 @@
 							var filter = filters[opt];
 
 							if (filter) {
-								match = filter(seg, child, i);
+								match = filter(seg, child, y);
 
 								if (match) {
 									filtered = true;
@@ -236,8 +237,8 @@
 				// If matched process recursively or execute if complete
 				if (match) {
 					if (W.$isObject(child)) {
-						this.process(child, i, total, event);
-					} else if (! filtered && i === total) {
+						this.process(child, y, total, event);
+					} else if (! filtered && y === total) {
 						W.$exec(child, {
 							args: seg
 						});
