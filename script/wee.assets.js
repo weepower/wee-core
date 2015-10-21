@@ -158,22 +158,23 @@
 		 * @returns {boolean} ready
 		 */
 		ready: function(group, options, poll) {
-			var complete = groups[group][0] < 1;
+			var complete = ! groups[group][0];
 
 			if (options === U) {
 				return complete;
 			}
 
 			if (complete) {
-				var conf = W.$extend(groups[group][1], options);
+				var conf = W.$extend(groups[group][1], options),
+					hasErrors = groups[group][2];
 				options = {
 					args: conf.args,
 					scope: conf.scope
 				};
 
-				if (conf.error && groups[group][2] > 0) {
+				if (conf.error && hasErrors) {
 					W.$exec(conf.error, options);
-				} else if (conf.success) {
+				} else if (conf.success && ! hasErrors) {
 					W.$exec(conf.success, options);
 				}
 			} else if (poll) {
