@@ -3,24 +3,7 @@
 (function(W, U) {
 	'use strict';
 
-	/**
-	 * Setup initial variables
-	 */
 	var filters = {
-			any: function(seg, child) {
-				if (W.$isObject(child)) {
-					return true;
-				} else {
-					any.push([child, seg]);
-				}
-			},
-			root: function(seg, child, depth) {
-				if (! seg) {
-					W.$exec(child, {
-						args: W.routes.segments(depth - 2)
-					});
-				}
-			},
 			num: function(seg) {
 				return Number(parseInt(seg)) == seg;
 			}
@@ -136,7 +119,7 @@
 					conf.path.replace(/^\/|\/$/g, '').split('/') :
 					this.segments();
 
-				this.$private.process(rules, 0, segs.length, conf.event || 'load');
+				this.$private.process(rules, 0, segs.length, conf.event);
 
 				// Execute queued init functions on last iteration
 				if (any.length) {
@@ -176,69 +159,118 @@
 					opts = key.split('||'),
 					k = 0,
 					y = i,
-					filtered = false,
-					match = false;
+					match = false,
+					ran = false;
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k],
 						parts = opt.split(':'),
-						history = event != 'load';
+						history = event != U,
+						negate = false,
+						push = false,
+						eq = false;
 
-					if ((! history && (parts.indexOf('unload') > -1 || parts.indexOf('pop') > -1)) ||
-						(history && (! W.$isObject(child) && parts.indexOf(event) < 0))) {
+					// Ensure event type matches route type
+					if ((! history && (
+							parts.indexOf('unload') > -1 ||
+							parts.indexOf('pop') > -1)
+						) ||
+						(history && (
+							! W.$isObject(child) &&
+							parts.indexOf(event) < 0
+						))) {
 						continue;
 					}
 
+					// Set option to rule root
 					if (parts.length > 1) {
 						opt = parts[0];
 					}
 
+					// Negate routes prefixed by !
+					if (opt[0] == '!') {
+						opt = opt.slice(1);
+						negate = true;
+					}
+
+					// Move the segment pointer back one level
+					if (parts.indexOf('eval') > -1) {
+						y--;
+					}
+
 					if (opt == seg) {
-						match = true;
+						eq = true;
 					} else if (opt[0] == '$') {
 						opt = opt.slice(1);
 
-						if (parts.indexOf('eval') > -1) {
-							y--;
-						}
+						if (opt == 'any') {
+							eq = true;
 
-						// If the second character is / then test regex
-						if (opt[0] == '/') {
+							if (parts.indexOf('fire') > -1) {
+								ran = true;
+							} else if (! W.$isObject(child)) {
+								push = true;
+							}
+						} else if (opt == 'root') {
+							if (! seg) {
+								eq = true;
+								ran = true;
+							}
+						} else if (opt[0] == '/') {
 							var split = opt.split('/');
 
 							if (new RegExp(split[1], split[2]).test(seg)) {
-								match = true;
+								eq = true;
 							}
-						} else if (opt == 'any' && parts.indexOf('fire') > -1) {
-							W.$exec(child, {
-								args: seg
-							});
 						} else {
 							var filter = filters[opt];
 
 							if (filter) {
-								match = filter(seg, child, y);
-
-								if (match) {
-									filtered = true;
-									any.push([child, seg]);
+								if (filter(seg, child, y) === true) {
+									eq = true;
+									push = true;
 								}
 							} else if (seg && seg.trim() !== '') {
-								match = true;
+								eq = true;
 							}
 						}
 					}
 
-					if (parts.indexOf('once') > -1) {
-						delete route[key];
+					// Invert the equality if the route is negated
+					if (negate) {
+						eq = ! eq;
+					}
+
+					if (eq) {
+						// If ran is true then execute the route immediately
+						if (ran) {
+							W.$exec(child, {
+								args: seg
+							});
+						}
+
+						// If push is true then push the route to the any queue
+						if (push) {
+							ran = true;
+							any.push([child, seg]);
+						}
+
+						// Remove the route if set to once
+						if (parts.indexOf('once') > -1) {
+							delete route[key];
+						}
+
+						// Set match to true and break on match
+						match = true;
+						break;
 					}
 				}
 
-				// If matched process recursively or execute if complete
+				// If matched then process recursively or execute if applicable
 				if (match) {
 					if (W.$isObject(child)) {
 						this.process(child, y, total, event);
-					} else if (! filtered && y === total) {
+					} else if (! ran && y === total) {
 						W.$exec(child, {
 							args: seg
 						});
