@@ -44,7 +44,7 @@
 
 			// Prefix root path to url
 			if (conf.root) {
-				conf.url = conf.root + conf.url;
+				conf.url = (conf.root + '/' + conf.url).replace(/\/{2,}/, '/');
 			}
 
 			// Process JSONP
@@ -240,6 +240,10 @@
 			if (conf.data && Object.keys(conf.data).length) {
 				url += (url.indexOf('?') < 0 ? '?' : '&') +
 					W.$serialize(conf.data);
+			}
+
+			if (url[0] != '/') {
+				url = '/' + url;
 			}
 
 			return url;
