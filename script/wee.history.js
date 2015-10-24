@@ -215,7 +215,7 @@
 			a.href = request.root + request.url;
 
 			if (! support || ! _isValid(a)) {
-				W._win.location = D.$private.getUrl(request);
+				W._win.location = request.url;
 				return false;
 			}
 
