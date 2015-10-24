@@ -1,4 +1,4 @@
-/* global path, project */
+/* global fs, path, project */
 
 module.exports = function(grunt) {
 	grunt.registerTask('cachePartials', function(task) {

@@ -1,5 +1,5 @@
 /* global config, fs, legacyConvert, moduleLegacy, path, project */
-/* jshint maxdepth: 6 */
+/* jshint maxdepth: 7 */
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildModules', function() {
@@ -303,7 +303,7 @@ module.exports = function(grunt) {
 						if (project.style.legacy.watch === true) {
 							// Configure legacy watch task
 							grunt.config.set('watch.' + name + '-legacy', {
-								files: config.paths.temp + compileStyleTaskName + '.css',
+								files: config.paths.temp + name + '.css',
 								tasks: [
 									'less:legacy',
 									'convertLegacy:core',
