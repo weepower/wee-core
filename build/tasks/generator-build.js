@@ -47,7 +47,10 @@ module.exports = function(grunt) {
 			// Loop though sections in current context
 			keys.forEach(function(key) {
 				var block = context[key],
-					root = block.contentRoot || '',
+					root = path.join(
+						siteConfig.paths.content || '',
+						block.contentRoot || ''
+					),
 					content = block.content ?
 						grunt.file.expand({
 							cwd: path.join(staticRoot, root)

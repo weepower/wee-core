@@ -18,7 +18,10 @@ module.exports = function(grunt) {
 
 					keys.forEach(function(key) {
 						var block = context[key],
-							root = block.contentRoot || '',
+							root = path.join(
+								config.paths.content || '',
+								block.contentRoot || ''
+							),
 							content = block.content ?
 								Wee.$toArray(block.content) :
 								[];
@@ -98,21 +101,21 @@ module.exports = function(grunt) {
 				reloadPaths.push('!' + partialPath);
 			}
 
-			// Watch extensions
-			if (config.paths.extensions) {
-				var extensionPath = config.paths.extensions;
+			// Watch helpers
+			if (config.paths.helpers) {
+				var helperPath = config.paths.helpers;
 
-				// Watch for partial updates
+				// Watch for helper updates
 				grunt.config.set('watch.loadHelpers-' + task, {
-					files: path.join(staticRoot, extensionPath, '**/*.js'),
+					files: path.join(staticRoot, helperPath, '**/*.js'),
 					tasks: [
 						'loadHelpers:' + task,
 						'buildGenerator:' + task
 					]
 				});
 
-				// Exclude partials from watch
-				reloadPaths.push('!' + extensionPath);
+				// Exclude helpers from watch
+				reloadPaths.push('!' + helperPath);
 			}
 		}
 
@@ -121,8 +124,8 @@ module.exports = function(grunt) {
 			grunt.task.run('cachePartials:' + task);
 		}
 
-		// Load extensions
-		if (config.paths.extensions) {
+		// Load helpers
+		if (config.paths.helpers) {
 			grunt.task.run('loadHelpers:' + task);
 		}
 
