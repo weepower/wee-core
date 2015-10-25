@@ -23,11 +23,10 @@
 		 * @param {object} [options.data] - object to serialize and pass along with request
 		 * @param {object} [options.headers] - request headers
 		 * @param {boolean} [options.json=false] - evaluate the response as JSON and return object
-		 * @param {(boolean|string)} [options.jsonp=false] - boolean or override name for callback query string parameter
+		 * @param {(boolean|string)} [options.jsonp=false] - boolean or callback query parameter override
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
 		 * @param {string} [options.method=get] - request verb
 		 * @param {object} [options.scope] - callback scope
-		 * @param {string} [options.template] - template string to parse response JSON
 		 */
 		request: function(options) {
 			var conf = W.$extend({
@@ -156,23 +155,17 @@
 		 */
 		success: function(x, conf) {
 			var resp = x.responseText,
-				orig = resp,
 				exec = {
 					args: conf.args.slice(0),
 					scope: conf.scope
 				};
 
 			// Parse JSON response if specified
-			if (conf.json || conf.template) {
+			if (conf.json) {
 				try {
 					resp = JSON.parse(resp);
 				} catch (e) {
 					resp = {};
-				}
-
-				if (conf.template) {
-					resp = W.view.render(conf.template, resp);
-					exec.args.unshift(orig);
 				}
 			}
 
