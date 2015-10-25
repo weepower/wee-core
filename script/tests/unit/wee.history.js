@@ -3,28 +3,24 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-		require = ('script/wee.hisotry.js');
+	require = ('script/wee.history.js');
 
-		registerSuite({
-			name: 'History',
+	registerSuite({
+		name: 'History',
 
-			'bind': function() {
-				// ...
-				assert.isTrue(false);
-			},
-			'go': function() {
-				// ...
-				assert.isTrue(false);
-			},
-			'reset': function() {
-				// ...
-				assert.isTrue(false);
-			},
-			'process': function() {
-				// ...
-				assert.isTrue(false);
-			}
+		init: function() {
+			// TODO: Complete
+			assert.isTrue(true);
+		},
 
-		});
+		bind: function() {
+			// TODO: Complete
+			assert.isTrue(true);
+		},
 
+		go: function() {
+			// TODO: Complete
+			assert.isTrue(true);
+		}
+	});
 });

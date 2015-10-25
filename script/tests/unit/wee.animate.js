@@ -3,56 +3,58 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-		require('script/wee.animate.js');
-		require('script/wee.dom.js');
-		require('script/wee.chain.js');
-		require('script/wee.events.js');
+	require('script/wee.dom.js');
+	require('script/wee.animate.js');
 
-		registerSuite({
-			name: 'Animate',
+	registerSuite({
+		name: 'Animate',
 
-			beforeEach: function() {
-				var fixtureOne = document.createElement('div');
+		beforeEach: function() {
+			var container = document.createElement('div');
 
-				fixtureOne.id = 'wee-animate-id';
-				fixtureOne.className = 'wee-animate-class';
+			container.id = 'container';
+			container.className = 'js-container';
 
-				document.body.appendChild(fixtureOne);
-			},
-			afterEach: function() {
-				$('#wee-animate-id').remove();
-			},
-			'tween': function() {
-				var promise = this.async(100, 3);
+			document.body.appendChild(container);
+		},
 
-				$('#wee-animate-id').on('click', function() {
-					Wee.animate.tween(this, {
-						height: 200,
-						complete: promise.callback(function() {
-							// ...
-						})
-					});
-				});
+		afterEach: function() {
+			Wee.$remove('#container');
+		},
 
-				Wee.events.trigger('#wee-animate-id', 'click');
-			},
-			'addEasing': function() {
-				var promise = this.async(100, 3);
+		tween: function() {
+			var promise = this.async(1000),
+				$el = Wee.$('#container');
 
-				$('#wee-animate-id').on('click', function() {
-					Wee.animate.addEasing(this, {
-						height: 200,
-						complete: promise.callback(function() {
-							// ...
-						})
-					});
-				});
+			Wee.animate.tween($el, {
+				height: 100
+			}, {
+				complete: promise.callback(function() {
+					assert.equal(Wee.$height($el), 100,
+						'The container height is equal to 100.'
+					);
+				})
+			});
+		},
 
-				Wee.events.trigger('#wee-animate-id', 'click');
-			},
-			'extend': function() {
-				// ...
-			}
+		addEasing: function() {
+			var promise = this.async(1000),
+				$el = Wee.$('#container');
 
-		});
+			Wee.animate.addEasing('custom', function(t) {
+				return t / 2;
+			});
+
+			Wee.animate.tween('#container', {
+				height: 200
+			}, {
+				easing: 'custom',
+				complete: promise.callback(function() {
+					assert.equal(Wee.$height($el), 200,
+						'The container height is equal to 200.'
+					);
+				})
+			});
+		}
+	});
 });

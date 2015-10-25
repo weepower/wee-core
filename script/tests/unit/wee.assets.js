@@ -6,10 +6,10 @@ define(function(require) {
 	require('script/wee.assets.js');
 
 	registerSuite({
-		name: 'Wee Assets',
+		name: 'Assets',
 
-		'assets.root': {
-			'set': function() {
+		root: {
+			set: function() {
 				Wee.assets.root(
 					'/$root/node_modules/wee-core/script/tests/sample-files/'
 				);
@@ -19,25 +19,18 @@ define(function(require) {
 					'Asset root set successfully.'
 				);
 			},
-			'get': function() {
+
+			get: function() {
 				assert.strictEqual(Wee.assets.root(),
 					'/$root/node_modules/wee-core/script/tests/sample-files/',
 					'Asset root retreived successfully.'
 				);
-			},
-			'advanced': function() {
-				if (Wee.$env() == 'local') {
-					Wee.assets.root('https://cdn.weepower.com');
-				}
-
-				assert.strictEqual(Wee.assets.root(), 'https://cdn.weepower.com',
-					'Advanced root set successfully'
-				);
 			}
 		},
-		'assets.load': {
+
+		load: {
 			'single file': function() {
-				var promise = this.async(100, 3);
+				var promise = this.async(1000);
 
 				Wee.assets.load({
 					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
@@ -53,8 +46,9 @@ define(function(require) {
 					})
 				});
 			},
+
 			'multiple files': function() {
-				var promise = this.async(100, 3);
+				var promise = this.async(1000);
 
 				Wee.assets.load({
 					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
@@ -80,8 +74,9 @@ define(function(require) {
 					})
 				});
 			},
-			'group': function() {
-				var promise = this.async(100, 3);
+
+			group: function() {
+				var promise = this.async(1000);
 
 				Wee.assets.load({
 					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
@@ -101,61 +96,15 @@ define(function(require) {
 				});
 			}
 		},
-		'assets.remove': {
-			'single file': function() {
-				var promise = this.async(100, 3);
 
-				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
-					files: 'sample.js',
-					success: promise.callback(function() {
-						Wee.assets.remove('/$root/node_modules/wee-core/script/' +
-							'tests/sample-files/sample.js');
-
-						assert.notOk(Wee.assets.ready('sampleGroup'),
-							'Single asset was not removed successfully'
-						);
-					})
-				});
-			},
-			'multiple files': function() {
-				var promise = this.async(100, 3);
-
-				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
-					files: [
-						'sample.js',
-						'sample-2.js'
-					],
-					group: 'assetsGroup',
-					success: promise.callback(function() {
-						Wee.assets.remove([
-							'/$root/node_modules/wee-core/script/' +
-							'tests/sample-files/sample.js',
-							'/$root/node_modules/wee-core/script/' +
-							'tests/sample-files/sample-2.js'
-						]);
-
-						assert.notOk(Wee.assets.ready('sampleGroup'),
-							'Multiple asset was not removed successfully'
-						);
-
-						Wee.assets.remove(
-							'/$root/node_modules/wee-core/script/tests/sample-files/sample.js'
-						);
-					})
-				});
-			}
-		},
-		'assets.ready': {
+		ready: {
 			'check': function() {
-				var promise = this.async(100, 3);
+				var promise = this.async(1000);
 
 				Wee.assets.load({
 					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
 					files: 'sample.js',
-						success: promise.callback(function() {
-
+					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
 							'Asset was set successfully'
 						);
@@ -167,8 +116,9 @@ define(function(require) {
 					})
 				});
 			},
+
 			'check and set': function() {
-				var promise = this.async(100, 3);
+				var promise = this.async(1000);
 
 				Wee.assets.load({
 					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
@@ -177,7 +127,6 @@ define(function(require) {
 					success: promise.callback(function() {
 						Wee.assets.ready('assetsGroup', {
 							success: promise.callback(function() {
-
 								assert.ok(Wee.assets.ready('assetsGroup'),
 									'Asset group was created successfully'
 								);
@@ -187,7 +136,6 @@ define(function(require) {
 									'tests/sample-files/sample.js'
 								);
 							})
-
 						});
 					})
 				});

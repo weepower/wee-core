@@ -9,57 +9,70 @@ define(function(require) {
 			name: 'Touch',
 
 			beforeEach: function() {
-				var fixtureOne = document.createElement('div');
+				var container = document.createElement('div');
 
-				fixtureOne.id = 'wee-touch-id';
-				fixtureOne.className = 'wee-touch-class';
+				container.id = 'container';
+				container.className = 'js-container';
 
-				document.body.appendChild(fixtureOne);
+				document.body.appendChild(container);
 			},
+
 			afterEach: function() {
-				$('#wee-touch-id').remove();
+				Wee.$remove('#container');
 			},
-			'swipeLeft': function() {
-				$('#wee-touch-id').on('swipeLeft', function() {
-					Wee.$addClass($(this), 'wee-touch-class-2');
+
+			swipeLeft: function() {
+				var $el = Wee.$('#container');
+
+				Wee.events.on($el, 'swipeLeft', function() {
+					Wee.$addClass(this, 'wee-touch-class-2');
 				});
 
-				Wee.events.trigger('#wee-touch-id', 'swipeLeft');
+				Wee.events.trigger($el, 'swipeLeft');
 
-				assert.ok(Wee.$hasClass('#wee-touch-id', 'wee-touch-class-2'),
+				assert.ok(Wee.$hasClass($el, 'wee-touch-class-2'),
 					'Swipe Left event was not bound or triggered successfully'
 				);
 			},
-			'swipeRight': function() {
-				$('#wee-touch-id').on('swipeRight', function() {
-					Wee.$addClass($(this), 'wee-touch-class-2');
+
+			swipeRight: function() {
+				var $el = Wee.$('#container');
+
+				Wee.events.on($el, 'swipeRight', function() {
+					Wee.$addClass(this, 'wee-touch-class-2');
 				});
 
-				Wee.events.trigger('#wee-touch-id', 'swipeRight');
+				Wee.events.trigger($el, 'swipeRight');
 
-				assert.ok(Wee.$hasClass('#wee-touch-id', 'wee-touch-class-2'),
+				assert.ok(Wee.$hasClass($el, 'wee-touch-class-2'),
 					'Swipe Left event was not bound or triggered successfully'
 				);
 			},
-			'swipeUp': function() {
-				$('#wee-touch-id').on('swipeUp', function() {
-					Wee.$addClass($(this), 'wee-touch-class-2');
+
+			swipeUp: function() {
+				var $el = Wee.$('#container');
+
+				Wee.events.on($el, 'swipeUp', function() {
+					Wee.$addClass(this, 'wee-touch-class-2');
 				});
 
-				Wee.events.trigger('#wee-touch-id', 'swipeUp');
+				Wee.events.trigger($el, 'swipeUp');
 
-				assert.ok(Wee.$hasClass('#wee-touch-id', 'wee-touch-class-2'),
+				assert.ok(Wee.$hasClass($el, 'wee-touch-class-2'),
 					'Swipe Left event was not bound or triggered successfully'
 				);
 			},
-			'swipdeDown': function() {
-				$('#wee-touch-id').on('swipeDown', function() {
-					Wee.$addClass($(this), 'wee-touch-class-2');
+
+			swipdeDown: function() {
+				var $el = Wee.$('#container');
+
+				Wee.events.on($el, 'swipeDown', function() {
+					Wee.$addClass(this, 'wee-touch-class-2');
 				});
 
-				Wee.events.trigger('#wee-touch-id', 'swipeDown');
+				Wee.events.trigger($el, 'swipeDown');
 
-				assert.ok(Wee.$hasClass('#wee-touch-id', 'wee-touch-class-2'),
+				assert.ok(Wee.$hasClass($el, 'wee-touch-class-2'),
 					'Swipe Left event was not bound or triggered successfully'
 				);
 			}

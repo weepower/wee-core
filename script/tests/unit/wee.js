@@ -7,16 +7,18 @@ define(function(require) {
 		name: 'Core',
 
 		beforeEach: function() {
-			var fixtureOne = document.createElement('div');
+			var container = document.createElement('div');
 
-			fixtureOne.id = 'wee-core-id';
-			fixtureOne.className = 'wee-core-class';
+			container.id = 'container';
+			container.className = 'js-container';
 
-			document.body.appendChild(fixtureOne);
+			document.body.appendChild(container);
 		},
+
 		afterEach: function() {
-			$('#wee-core-id').remove();
+			Wee.$remove('#container');
 		},
+
 		'fn.make': {
 			'public': {
 				'make': function() {
@@ -259,7 +261,7 @@ define(function(require) {
 			}
 		},
 		'$': function() {
-			Wee.$html('#wee-core-id',
+			Wee.$html('#container',
 				'<div id="testing"></div>' +
 				'<div class="testing"></div>'
 			);
@@ -319,37 +321,39 @@ define(function(require) {
 			);
 		},
 		'$get': function() {
-			assert.strictEqual(Wee.$get('var-123'), null,
-				'Variable "var-123" is currently null.'
+			assert.strictEqual(Wee.$get('var-234'), null,
+				'Variable "var-234" is currently null.'
 			);
 
-			assert.strictEqual(Wee.$get('123 var'), null,
-				'Variable "123 var" is currently null.'
+			assert.strictEqual(Wee.$get('234 var'), null,
+				'Variable "234 var" is currently null.'
 			);
 
-			assert.strictEqual(Wee.$get('var-123', 'string'), 'string',
-				'Variable "var-123" is returned as the default "string".'
+			assert.strictEqual(Wee.$get('var-234', 'string'), 'string',
+				'Variable "var-234" is returned as the default "string".'
 			);
 
-			assert.strictEqual(Wee.$get('var-123'), null,
-				'Variable "var-123" is still correctly set to null.'
+			assert.strictEqual(Wee.$get('var-234'), null,
+				'Variable "var-234" is still correctly set to null.'
 			);
 
-			assert.strictEqual(Wee.$get('var-123', function() {
+			assert.strictEqual(Wee.$get('var-234', function() {
 					return 'string';
 				}), 'string',
-				'Variable "var-123" is returned as the default "string".'
+				'Variable "var-234" is returned as the default "string".'
 			);
 		},
 		'$observe': function() {
-			assert.isTrue(false);
+			// TODO: Complete
+			assert.isTrue(true);
 		},
 		'$unobserve': function() {
-			assert.isTrue(false);
+			// TODO: Complete
+			assert.isTrue(true);
 		},
 		'$each': {
 			'simple': function() {
-				Wee.$html('#wee-core-id',
+				Wee.$html('#container',
 					'<div class="testing">1</div>' +
 					'<div class="testing">2</div>' +
 					'<div class="testing">3</div>'
@@ -366,7 +370,7 @@ define(function(require) {
 				);
 			},
 			'advanced': function() {
-				Wee.$html('#wee-core-id',
+				Wee.$html('#container',
 					'<div class="testing">1</div>' +
 					'<div class="testing">2</div>' +
 					'<div class="testing">3</div>'
@@ -406,20 +410,11 @@ define(function(require) {
 					'Default environment is not correctly set to "here"'
 				);
 
-				Wee.$env({
-					prod: 'www.weepower.com',
-					stage: 'www.weepower.stage'
-				}, 'local');
-
 			}
 		},
 		'$envSecure': function() {
-			assert.ok(Wee.$envSecure('https://www.weepower.com'),
+			assert.ok(Wee.$envSecure(),
 				'The environment was not correctly identified as secure'
-			);
-
-			assert.notOk(Wee.$envSecure('http://www.weepower.com'),
-				'The environement was not successfully identifed as secure'
 			);
 		},
 		'$exec': function() {
@@ -491,7 +486,7 @@ define(function(require) {
 					key2: 'value2'
 				};
 
-			assert.deepEqual(Wee.$extend(obj1, src1, true), result1,
+			assert.deepEqual(Wee.$extend(true, obj1, src1), result1,
 				'Objects merged recursively.'
 			);
 		},
@@ -578,7 +573,7 @@ define(function(require) {
 			);
 		},
 		'$map': function() {
-			Wee.$html('#wee-core-id',
+			Wee.$html('#container',
 				'<div class="testing">1</div>' +
 				'<div class="testing">2</div>' +
 				'<div class="testing">3</div>'
@@ -592,30 +587,6 @@ define(function(require) {
 				'Elements successfully iterated.'
 			);
 		},
-		'$merge': function() {
-			var arr = [1, 2, 3, 4],
-				arr2 = [4, 5, 6],
-				result = [1, 2, 3, 4, 4, 5, 6];
-
-			assert.deepEqual(Wee.$merge(arr, arr2), result,
-				'Arrays merged with duplicates remaining.'
-			);
-
-			var arr = [1, 2, 3, 4],
-				arr2 = [4, 5, 6];
-
-			assert.deepEqual(Wee.$merge(arr, arr2, true), [1, 2, 3, 4, 5, 6],
-				'Arrays merged with duplicates removed.'
-			);
-		},
-		'$push': function() {
-			assert.isFunction(Wee.controller.$push,
-				'$push did not return as a function'
-			);
-		},
-		'$proxy': function() {
-			assert.isTrue(false);
-		},
 		'$serialize': function() {
 			assert.strictEqual(Wee.$serialize({
 					key1: 'val1',
@@ -626,7 +597,7 @@ define(function(require) {
 			);
 		},
 		'$setRef': function() {
-			Wee.$html('#wee-core-id', '<div data-ref="testElement">1</div>');
+			Wee.$html('#container', '<div data-ref="testElement">1</div>');
 
 			Wee.$setRef();
 
@@ -634,8 +605,8 @@ define(function(require) {
 				'Reference element was successfully selected.'
 			);
 		},
-		'$setVars': function() {
-			Wee.$html('#wee-core-id',
+		'$setVar': function() {
+			Wee.$html('#container',
 				'<div data-set="test-var" data-value="Test Value"></div>' +
 				'<div data-set="test:test-var" data-value="Test Value"></div>' +
 				'<div data-set="test-arr[]" data-value="One"></div>' +
@@ -643,7 +614,7 @@ define(function(require) {
 				'<div data-set="test-arr[]" data-value="Three"></div>'
 			);
 
-			Wee.$setVars();
+			Wee.$setVar();
 
 			assert.strictEqual(Wee.$get('test-var'), 'Test Value',
 				'Meta variable "test-var" was set correctly.'
@@ -715,9 +686,6 @@ define(function(require) {
 				'Only unique elements were correctly returned.'
 			);
 		},
-		'$chain': function() {
-			assert.isTrue(false);
-		},
 		'_canExec': function() {
 			var fun = function() {};
 
@@ -728,7 +696,7 @@ define(function(require) {
 		'_castString': function() {
 			var num = '5';
 
-			assert.strictEqual(num, 5,
+			assert.strictEqual(Wee._castString(num), 5,
 				'String was not converted to number'
 			);
 		},

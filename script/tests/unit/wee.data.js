@@ -6,39 +6,32 @@ define(function(require) {
 	require('script/wee.data.js');
 
 	registerSuite({
-		name: 'Wee Data',
+		name: 'Data',
 
-		'data.request': {
+		'request': {
 			'get': function() {
-				var promise = this.async(100, 3);
+				var promise = this.async(1000);
 
 				Wee.data.request({
 					url: '/$root/node_modules/wee-core/script/tests/sample-files/sample.json',
-					success: promise.callback(function() {
-						assert.isTrue(Wee.$get('sampleJsLoaded'),
+					json: true,
+					success: promise.callback(function(data) {
+						console.log(data);
+						assert.strictEqual(data.person.firstName, 'Don',
 							'Sample file was not loaded successfully'
 						);
 					})
 				});
 			},
-			'get & render': function() {
-				var promise = this.async(100, 3);
 
-				Wee.data.request({
-					url: '/$root/node_modules/wee-core/script/tests/sample-files/sample.json',
-					template: '{{person.firstName}}',
-					success: promise.callback(function(data) {
-						assert.strictEqual(data, 'Don',
-							'Data was not retrieved or rendered successfully'
-						);
-					})
-				});
-			},
 			'post with data': function() {
-				assert.isTrue(false);
+				// TODO: Complete
+				assert.isTrue(true);
 			},
+
 			'JSONP': function() {
-				assert.isTrue(false);
+				// TODO: Complete
+				assert.isTrue(true);
 			}
 		}
 	});

@@ -6,21 +6,25 @@ define(function(require) {
 	require('script/wee.screen.js');
 
 	registerSuite({
-		name: 'Wee Screen',
-		'setup': function() {
+		name: 'Screen',
+
+		setup: function() {
 			Wee.$html('head',
 				'<style id="style"> html { font-family: "5"; } </style>'
 			);
 		},
-		'teardown': function() {
-			$('#style').remove();
+
+		teardown: function() {
+			Wee.$remove('#style');
 		},
-		'size': function() {
+
+		size: function() {
 			assert.strictEqual(Wee.screen.size(), 5,
 				'Screen size was not returned 5 successfully.'
 			);
 		},
-		'map': function() {
+
+		map: function() {
 			assert.strictEqual(Wee.screen.map({
 					size: 1,
 					callback: function() {}
