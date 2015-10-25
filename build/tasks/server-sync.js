@@ -8,26 +8,26 @@ module.exports = function(grunt) {
 		// Configure browser reloading
 		if (reloadConfig.enable === true) {
 			var reloadWatch = reloadConfig.watch,
-				reloadHelpers = reloadWatch.extensions.join();
+				reloadExt = reloadWatch.extensions.join();
 
 			if (reloadWatch.extensions.length > 1) {
-				reloadHelpers = '{' + reloadHelpers + '}';
+				reloadExt = '{' + reloadExt + '}';
 			}
 
 			// Add user-defined paths
 			reloadWatch.paths.forEach(function(path) {
-				reloadPaths.push('../../' + path + '/**/*.' + reloadHelpers);
+				reloadPaths.push('../../' + path + '/**/*.' + reloadExt);
 			});
 
 			// Add root to watchlist
 			if (reloadWatch.root === true) {
-				reloadPaths.unshift(config.paths.root + '/**/*.' + reloadHelpers);
+				reloadPaths.unshift(config.paths.root + '/**/*.' + reloadExt);
 			}
 
 			// Bind BrowserSync watchlist
 			reloadPaths.unshift(
 				config.paths.assets +
-				'**/*.{min.css,min.js,gif,jpg,png,svg,webp,woff}'
+				'**/*.{css,js,gif,jpg,png,svg,webp,woff}'
 			);
 
 			server.files = reloadPaths;
