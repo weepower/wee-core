@@ -39,6 +39,8 @@
 		 * @param {int} [rules.max] - maximum breakpoint value
 		 * @param {boolean} [rules.watch=true] - check event on screen resize
 		 * @param {boolean} [rules.init=true] - check event on load
+		 * @param {boolean} [conf.once=false] - only execute the callback once
+		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
 		 * @param {object} [rules.scope] - callback scope
 		 * @param {Array} [rules.args] - callback arguments
 		 * @param {function} rules.callback
@@ -59,8 +61,8 @@
 		/**
 		 * Evaluate the current breakpoint
 		 */
-		check: function() {
-			this.$private.check(2);
+		run: function() {
+			this.$private.run(true);
 		},
 
 		/**
@@ -80,14 +82,15 @@
 		 * @param {int} [conf.max] - maximum breakpoint value
 		 * @param {boolean} [conf.watch=true] - check event on screen resize
 		 * @param {boolean} [conf.init=true] - check event on load
+		 * @param {boolean} [conf.once=false] - only execute the callback once
+		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
 		 * @param {object} [conf.scope] - callback scope
 		 * @param {Array} [conf.args] - callback arguments
 		 * @param {function} conf.callback
 		 */
 		addRule: function(conf) {
 			if (conf.callback) {
-				var scope = this,
-					check = scope.check.bind(scope);
+				var run = this.run.bind(this, false, 0);
 
 				// Only setup watching when enabled
 				if (conf.watch !== false) {
@@ -100,14 +103,14 @@
 
 						// Attach resize event
 						W._legacy ?
-							W._win.attachEvent('onresize', check) :
-							W._win.addEventListener('resize', check);
+							W._win.attachEvent('onresize', run) :
+							W._win.addEventListener('resize', run);
 					}
 				}
 
 				// Check current screen if not disabled
 				if (conf.init !== false) {
-					check(1, [conf]);
+					this.run(true, [conf]);
 				}
 			}
 		},
@@ -116,33 +119,26 @@
 		 * Check mapped events for matching conditions
 		 *
 		 * @private
-		 * @param {number} [init] - initial page load
+		 * @param {boolean} [init=false] - initial page load
 		 * @param {Array} [rules] - breakpoint rules
 		 */
-		check: function(init, rules) {
-			var scope = W.screen,
-				priv = scope.$private,
-				size = scope.size();
+		run: function(init, rules) {
+			var size = W.screen.size();
 
 			// If breakpoint has been hit or resize logic initialized
-			if (size && (size !== current || ! isNaN(init))) {
+			if (size && (init || size !== current)) {
 				var evts = rules || events,
 					i = 0;
 
 				for (; i < evts.length; i++) {
-					var evt = evts[i],
-						sz = evt.size,
-						mn = evt.min,
-						mx = evt.max;
+					var evt = evts[i];
 
-					// Check match against rules
-					if ((! sz && ! mn && ! mx) ||
-						(sz && sz === size) ||
-						(mn && size >= mn && (init || current < mn) && (! mx || size <= mx)) ||
-						(mx && size <= mx && (init || current > mx) && (! mn || size >= mn))) {
-						priv.execute(evt, {
-							dir: init == 1 ? 0 : (size > current ? 1 : -1),
-							init: init == 1,
+					if (this.eq(evt, size, init)) {
+						var f = init && ! current;
+
+						this.exec(evt, {
+							dir: f ? 0 : (size > current ? 1 : -1),
+							init: f,
 							prev: current,
 							size: size
 						});
@@ -155,13 +151,34 @@
 		},
 
 		/**
+		 * Compare event rules against current size
+		 *
+		 * @param {object} evt
+		 * @param {number} size
+		 * @param {boolean} init
+		 * @returns {boolean}
+		 */
+		eq: function(evt, size, init) {
+			var sz = evt.size,
+				mn = evt.min,
+				mx = evt.max,
+				ex = evt.each || init;
+
+			// Check match against rules
+			return (! sz && ! mn && ! mx) ||
+				(sz && sz === size) ||
+				(mn && size >= mn && (ex || current < mn) && (! mx || size <= mx)) ||
+				(mx && size <= mx && (ex || current > mx) && (! mn || size >= mn));
+		},
+
+		/**
 		 * Execute a matching breakpoint callback
 		 *
 		 * @private
 		 * @param {object} evt
 		 * @param {object} data
 		 */
-		execute: function(evt, data) {
+		exec: function(evt, data) {
 			var args = evt.args ? [data].concat(evt.args) : [data];
 
 			W.$exec(evt.callback, {
