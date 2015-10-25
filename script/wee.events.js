@@ -192,11 +192,12 @@
 
 						(function(el, evt, fn, f, conf) {
 							var cb = function(e) {
-								var cont = true;
+								var cont = true,
+									trig = e === false;
 
 								// Patch core event functionality
-								if (W._legacy || e === false) {
-									e = W._win.event || {};
+								if (W._legacy || trig) {
+									e = trig ? {} : W._win.event;
 									e.target = e.srcElement;
 
 									e.preventDefault = function() {
