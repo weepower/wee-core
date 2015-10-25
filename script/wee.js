@@ -48,9 +48,7 @@
 				 */
 				_set = function(obj, obs, key, val, options) {
 					var stored = _storage(obj, key, true),
-						data = W._canExec(val) ?
-							W.$exec(val, options) :
-							val;
+						data = _val(val, options);
 
 					stored[0][stored[1]] = data;
 
@@ -76,7 +74,7 @@
 						if (fallback !== U) {
 							return set ?
 								_set(obj, obs, key, fallback, options) :
-								fallback;
+								_val(fallback, options);
 						}
 
 						return null;
@@ -395,6 +393,20 @@
 					});
 
 					return diff;
+				},
+
+				/**
+				 * Get value from function or directly
+				 *
+				 * @protected
+				 * @param {*} val
+				 * @param {object} [options]
+				 * @returns {*}
+				 */
+				_val = function(val, options) {
+					return W._canExec(val) ?
+						W.$exec(val, options) :
+						val;
 				};
 
 			return {
@@ -730,27 +742,28 @@
 				 * @returns {string} environment
 				 */
 				$env: function(rules, fallback) {
+					var fb = fallback || 'local';
+
 					if (rules) {
 						var host = location.hostname;
 
 						for (var rule in rules) {
 							var val = rules[rule];
 
-							if (val == host ||
-								(W._canExec(val) && W.$exec(val, {
+							if (val == host || _val(val, {
 									args: host
-								}) === true)) {
+								}) === true) {
 								env = rule;
 								break;
 							}
 						}
+
+						if (! env) {
+							env = fb;
+						}
 					}
 
-					if (! env) {
-						env = fallback || 'local';
-					}
-
-					return env;
+					return env || fb;
 				},
 
 				/**
