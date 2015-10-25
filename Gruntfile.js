@@ -295,7 +295,7 @@
 		]);
 
 		/**
-		 * Rebuild only
+		 * Rebuild
 		 */
 		grunt.registerTask('rebuild', [
 			'cleanup',
@@ -321,7 +321,7 @@
 		]);
 
 		/**
-		 * Build, serve, open, watch
+		 * Build, watch, serve
 		 */
 		grunt.registerTask('static', [
 			'default',
@@ -331,7 +331,7 @@
 		]);
 
 		/**
-		 * Generate static sites
+		 * Generate
 		 */
 		grunt.registerTask('generate', [
 			'init',
