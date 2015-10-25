@@ -38,9 +38,11 @@
 						cssValue;
 
 					// Patch scrollTop in IE9- browsers
-					if (scrollTop && ! W._win.atob) {
-						el = W._doc.documentElement;
-						cssValue = el.scrollTop;
+					if (scrollTop) {
+						cssValue = Math.max(
+							W._body.scrollTop,
+							W._doc.documentElement.scrollTop
+						).toString();
 					} else {
 						cssValue = W._legacy ?
 							el.currentStyle[prop] :
@@ -52,8 +54,9 @@
 						val = parseInt(css ? cssValue : el[prop]),
 						start = Date.now(),
 						setValue = function(prop, update) {
-							if (scrollTop && ! W._win.atob) {
-								el.scrollTop = update;
+							if (scrollTop) {
+								W._body.scrollTop = update;
+								W._doc.documentElement.scrollTop = update;
 							} else {
 								css ?
 									el.style[prop] = update + unit :
