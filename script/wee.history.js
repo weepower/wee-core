@@ -219,7 +219,9 @@
 				return false;
 			}
 
-			if (conf.begin && W.$exec(conf.begin) === false) {
+			if (conf.begin && W.$exec(conf.begin, {
+					args: [conf]
+				}) === false) {
 				return;
 			}
 
