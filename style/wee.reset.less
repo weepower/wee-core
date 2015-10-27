@@ -114,19 +114,7 @@
 		# Typography
 	\*------------------------------------*/
 
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	.h1,
-	.h2,
-	.h3,
-	.h4,
-	.h5,
-	.h6,
-	.heading {
+	.heading () {
 		color: @headingColor;
 		font-family: @headingFont;
 		font-weight: @headingFontWeight;
@@ -137,28 +125,53 @@
 		}
 	}
 	h1,
-	.h1 {
-		.font-size(@h1);
-	}
 	h2,
-	.h2 {
-		.font-size(@h2);
-	}
 	h3,
-	.h3 {
-		.font-size(@h3);
-	}
 	h4,
-	.h4 {
-		.font-size(@h4);
-	}
 	h5,
-	.h5 {
-		.font-size(@h5);
+	h6 {
+		.heading();
 	}
-	h6,
-	.h6 {
+	.h1 () {
+		.font-size(@h1);
+		.heading();
+	}
+	h1 {
+		.h1();
+	}
+	.h2 () {
+		.font-size(@h2);
+		.heading();
+	}
+	h2 {
+		.h2();
+	}
+	.h3 () {
+		.font-size(@h3);
+		.heading();
+	}
+	h3 {
+		.h3();
+	}
+	.h4 () {
+		.font-size(@h4);
+		.heading();
+	h4 {
+		.h4();
+	}
+	.h5 () {
+		.font-size(@h5);
+		.heading();
+	}
+	h5 {
+		.h5();
+	}
+	.h6 () {
 		.font-size(@h6);
+		.heading();
+	}
+	h6 {
+		.h6();
 	}
 	p {
 		color: @paragraphColor;
@@ -191,16 +204,15 @@
 			color: @quoteColor;
 		}
 	}
-	.wee-blockquote () {
+	.blockquote () {
 		.padding(@quotePaddingVertical; @quotePaddingHorizontal);
 		.spaced();
 		cite {
 			display: block;
 		}
 	}
-	blockquote,
-	.blockquote {
-		.wee-blockquote();
+	blockquote {
+		.blockquote();
 	}
 	del,
 	s,
@@ -227,13 +239,15 @@
 			border: 0;
 		}
 	}
-	hr,
-	.hr {
+	.hr () {
 		border: 0;
 		display: block;
 		height: 1px;
 		.border(top; @ruleColor; @ruleHeight; @ruleStyle);
 		.margin(vertical; @ruleMargin);
+	}
+	hr {
+		.hr();
 	}
 	address {
 		color: @addressColor;
