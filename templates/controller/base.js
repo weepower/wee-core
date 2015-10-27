@@ -1,4 +1,4 @@
-Wee.fn.make('{{name}}', {
+Wee.fn.make('{{ name }}', {
 	_construct: function() {
 		// ...
 	},
