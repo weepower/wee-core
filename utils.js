@@ -1,6 +1,6 @@
 /* global config, reloadPaths */
 
-(function() {
+(function(W) {
 	'use strict';
 
 	var chalk = require('chalk'),
@@ -8,7 +8,7 @@
 		notifier = require('node-notifier'),
 		path = require('path');
 
-	Wee.fn.extend({
+	W.fn.extend({
 		/**
 		 * Build root or relative path
 		 *
@@ -32,8 +32,8 @@
 		 */
 		getMinExtension: function(dest, src, ext) {
 			var dir = src.substring(0, src.lastIndexOf('/')),
-				filename = src.substring(src.lastIndexOf('/'), src.length);
-			filename = filename.substring(0, filename.lastIndexOf('.'));
+				filename = src.substring(src.lastIndexOf('/'), src.length)
+					.substring(0, filename.lastIndexOf('.'));
 
 			return dest + '/' + dir + filename + ext;
 		},
@@ -48,8 +48,7 @@
 		validate: function(root, config, file) {
 			var ext = path.extname(file);
 
-			if (file.indexOf('temp') === -1 &&
-				file.indexOf('/vendor') === -1) {
+			if (['temp', '/vendor'].indexOf(file) < 0) {
 				if (ext === '.js') {
 					var validate = config.script.validate,
 						src = fs.readFileSync(file, {
@@ -98,7 +97,7 @@
 
 				errors.forEach(function(error) {
 					if (error) {
-						Wee.logError(
+						W.logError(
 							error.line + ':' + error.character,
 							error.reason,
 							error.evidence
@@ -142,7 +141,7 @@
 
 				errorList.forEach(function(error) {
 					if (error) {
-						Wee.logError(
+						W.logError(
 							error.line + ':' + error.column,
 							error.rule,
 							error.message
@@ -167,10 +166,10 @@
 		 * @param {string} [details]
 		 */
 		logError: function(position, message, details) {
-			var output = chalk.bgBlack.bold('[' + position + '] ') +
-				message + ' ' + (details || '');
-
-			console.log(output);
+			console.log(
+				chalk.bgBlack.bold('[' + position + '] ') +
+				message + ' ' + (details || '')
+			);
 		},
 
 		/**
@@ -181,8 +180,7 @@
 		 * @param {boolean} [log=true]
 		 */
 		notify: function(options, type, log) {
-			options.icon = 'build/img/' +
-				(type || 'notice') + '.png';
+			options.icon = 'build/img/' + (type || 'notice') + '.png';
 			options.group = 1;
 
 			if (type == 'error') {
@@ -211,4 +209,4 @@
 			}
 		}
 	});
-})();
+})(Wee);

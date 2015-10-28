@@ -3,12 +3,135 @@
 
 	var groups = {},
 		loaded = {},
+		index = 0,
 		root = '',
-		index = 0;
+
+		/**
+		 * Request specific file
+		 *
+		 * @private
+		 * @param {string} path
+		 * @param {string} type
+		 * @param {object} [conf]
+		 * @param {string} [conf.group]
+		 * @param {boolean} [conf.async=false]
+		 */
+		_load = function(path, type, conf) {
+			var head = W._doc.getElementsByTagName('head')[0],
+				group = conf.group;
+
+			// Load file based on extension
+			if (type == 'js') {
+				var js = W._doc.createElement('script'),
+					fn = function() {
+						loaded[js.src] = js;
+						_done(group);
+					};
+
+				if (W._legacy) {
+					js.onreadystatechange = function() {
+						var rs = js.readyState;
+
+						if (rs != 'complete' && rs != 'loaded') {
+							return;
+						}
+
+						fn();
+					};
+				} else {
+					js.async = conf.async === true;
+					js.onload = fn;
+
+					js.onerror = function() {
+						_fail(group);
+					};
+				}
+
+				js.src = path;
+				head.appendChild(js);
+			} else if (type == 'css') {
+				var link = W._doc.createElement('link');
+
+				link.rel = 'stylesheet';
+				link.href = path;
+
+				if (W._legacy) {
+					index++;
+					var id = 'a' + index;
+					link.id = id;
+
+					link.attachEvent('onload', function() {
+						var sheets = W._doc.styleSheets,
+							i = sheets.length,
+							text;
+
+						try {
+							while (i--) {
+								var sheet = sheets[i];
+
+								if (sheet.id == id) {
+									text = sheet.cssText;
+									_done(group);
+									return;
+								}
+							}
+						} catch (e) {}
+
+						if (! text) {
+							_fail(group);
+						}
+					});
+				} else {
+					link.addEventListener('load', function() {
+						_done(group);
+					}, false);
+
+					link.addEventListener('error', function() {
+						_fail(group);
+					}, false);
+				}
+
+				head.appendChild(link);
+			} else if (type == 'img') {
+				var img = new Image();
+
+				img.onload = function() {
+					_done(group);
+				};
+
+				img.onerror = function() {
+					_fail(group);
+				};
+
+				img.src = path;
+			}
+		},
+
+		/**
+		 * Decrement remaining asset count
+		 *
+		 * @private
+		 * @param {string} group
+		 */
+		_done = function(group) {
+			groups[group][0]--;
+			W.assets.ready(group, {}, false);
+		},
+
+		/**
+		 * Increment failed asset count
+		 *
+		 * @private
+		 * @param {string} group
+		 */
+		_fail = function(group) {
+			groups[group][2]++;
+			_done(group);
+		};
 
 	W.fn.make('assets', {
 		/**
-		 * Cache existing CSS and JavaScript asset references
+		 * Cache existing CSS and JavaScript assets
 		 *
 		 * @constructor
 		 */
@@ -19,9 +142,9 @@
 		},
 
 		/**
-		 * Get currently bound resource root or set root with specified value
+		 * Get current asset root or set with specified value
 		 *
-		 * @param {string} [value='']
+		 * @param {string} [value]
 		 * @returns {string} root
 		 */
 		root: function(value) {
@@ -33,17 +156,18 @@
 		},
 
 		/**
-		 * Load specified assets with specified set of options
+		 * Load specified assets with set options
 		 *
 		 * @param {object} options
 		 * @param {(Array|string)} [options.files]
-		 * @param {(Array|string)} [options.js]
 		 * @param {(Array|string)} [options.css]
 		 * @param {(Array|string)} [options.img]
+		 * @param {(Array|string)} [options.js]
+		 * @param {string} [options.root]
+		 * @param {boolean} [options.cache=false]
+		 * @param {string} [options.group]
 		 * @param {(Array|function|string)} [options.success]
 		 * @param {(Array|function|string)} [options.error]
-		 * @param {string} [options.group]
-		 * @param {boolean} [options.cache=false]
 		 */
 		load: function(options) {
 			var files = W.$toArray(options.files),
@@ -94,8 +218,7 @@
 
 			// Request each specified file
 			for (var file in assets) {
-				var scope = this.$private,
-					noCache = options.cache === false;
+				var noCache = options.cache === false;
 
 				// Reset root if the URL is absolute
 				if (root && /^(https?:)?\/\//i.test(file)) {
@@ -110,9 +233,9 @@
 						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
 					}
 
-					scope.load(file, type, options);
+					_load(file, type, options);
 				} else {
-					scope.done(options.group);
+					_done(options.group);
 				}
 			}
 		},
@@ -139,7 +262,6 @@
 				if (el !== U) {
 					el.parentNode.removeChild(el);
 					el = null;
-
 					delete loaded[src];
 				}
 			});
@@ -182,130 +304,6 @@
 					W.assets.ready(group, {}, true);
 				}, 20);
 			}
-		}
-	}, {
-		/**
-		 * Request specific file
-		 *
-		 * @private
-		 * @param {string} path
-		 * @param {string} type
-		 * @param {object} [conf]
-		 * @param {string} [conf.group]
-		 * @param {boolean} [conf.async=false]
-		 */
-		load: function(path, type, conf) {
-			var scope = this,
-				head = W._doc.getElementsByTagName('head')[0],
-				group = conf.group;
-
-			// Load file based on extension
-			if (type == 'js') {
-				var js = W._doc.createElement('script'),
-					fn = function() {
-						loaded[js.src] = js;
-						scope.done(group);
-					};
-
-				if (W._legacy) {
-					js.onreadystatechange = function() {
-						var rs = js.readyState;
-
-						if (rs != 'complete' && rs != 'loaded') {
-							return;
-						}
-
-						fn();
-					};
-				} else {
-					js.async = conf.async === true;
-					js.onload = fn;
-
-					js.onerror = function() {
-						scope.fail(group);
-					};
-				}
-
-				js.src = path;
-				head.appendChild(js);
-			} else if (type == 'css') {
-				var link = W._doc.createElement('link');
-
-				link.rel = 'stylesheet';
-				link.href = path;
-
-				if (W._legacy) {
-					index++;
-					var id = 'a' + index;
-					link.id = id;
-
-					link.attachEvent('onload', function() {
-						var sheets = W._doc.styleSheets,
-							i = sheets.length,
-							text;
-
-						try {
-							while (i--) {
-								var sheet = sheets[i];
-
-								if (sheet.id == id) {
-									text = sheet.cssText;
-									scope.done(group);
-									return;
-								}
-							}
-						} catch (e) {}
-
-						if (! text) {
-							scope.fail(group);
-						}
-					});
-				} else {
-					link.addEventListener('load', function() {
-						scope.done(group);
-					}, false);
-
-					link.addEventListener('error', function() {
-						scope.fail(group);
-					}, false);
-				}
-
-				head.appendChild(link);
-			} else if (type == 'img') {
-				var img = new Image();
-
-				img.onload = function() {
-					scope.done(group);
-				};
-
-				img.onerror = function() {
-					scope.fail(group);
-				};
-
-				img.src = path;
-			}
-		},
-
-		/**
-		 * Decrement remaining count of assets to be loaded
-		 *
-		 * @private
-		 * @param {string} group
-		 */
-		done: function(group) {
-			groups[group][0]--;
-			this.$public.ready(group, {}, false);
-		},
-
-		/**
-		 * Track failed resources
-		 *
-		 * @private
-		 * @param {string} group
-		 */
-		fail: function(group) {
-			groups[group][2]++;
-			this.done(group);
 		}
 	});
 })(Wee, undefined);

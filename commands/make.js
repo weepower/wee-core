@@ -5,8 +5,8 @@
 
 	module.exports = function(config) {
 		var fs = require('fs-extra'),
-			path = require('path'),
-			glob = require('glob');
+			glob = require('glob'),
+			path = require('path');
 
 		require('../script/wee.view');
 

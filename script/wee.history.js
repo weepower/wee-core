@@ -3,9 +3,6 @@
 (function(W, D, E, H, U) {
 	'use strict';
 
-	/**
-	 * Setup initial variables
-	 */
 	var support = H && H.pushState,
 		entries = [],
 		settings = {},
@@ -62,6 +59,78 @@
 			W.$setVar(sel);
 
 			W.history.bind();
+		},
+
+		/**
+		 * Process the history state of the request
+		 *
+		 * @private
+		 * @param {object} conf
+		 */
+		_process = function(conf) {
+			var key = conf.path.replace(/^\//g, ''),
+				request = conf.request,
+				method = request.method;
+
+			entries[key] = conf;
+
+			if (! method || method == 'get') {
+				conf.path = D._getUrl(request);
+			}
+
+			var obj = {
+				args: [
+					{
+						dir: conf.push ? 1 : -1,
+						path: conf.path,
+						prev: path
+					}
+				]
+			};
+
+			// Add entry to HTML5 history
+			if (conf.push && support) {
+				H.pushState(0, '', conf.path);
+			}
+
+			// Update document title
+			if (conf.title) {
+				W._doc.title = conf.title;
+			}
+
+			if (W.routes) {
+				// Update current path
+				W.routes.uri(conf.path);
+				W.routes.uri({
+					history: true
+				});
+
+				// Evaluate routes against updated path
+				if (conf.run) {
+					W.routes.run({
+						event: 'pop',
+						path: path
+					});
+
+					W.routes.run({
+						path: conf.path
+					});
+				}
+
+				path = conf.path;
+			}
+
+			if (conf.push && conf.pushstate) {
+				W.$exec(conf.pushstate, obj);
+			}
+
+			if (conf.pop && conf.popstate) {
+				W.$exec(conf.popstate, obj);
+			}
+
+			if (conf.end) {
+				W.$exec(conf.end, obj);
+			}
 		};
 
 	W.fn.make('history', {
@@ -350,7 +419,7 @@
 
 				completeEvents.push(function(xhr) {
 					if (xhr.status == 200) {
-						scope.$private.process(conf);
+						_process(conf);
 					}
 				});
 
@@ -362,78 +431,7 @@
 
 				D.request(request);
 			} else {
-				scope.$private.process(conf);
-			}
-		}
-	}, {
-		/**
-		 * Process the history state of the request
-		 *
-		 * @param {object} conf
-		 */
-		process: function(conf) {
-			var key = conf.path.replace(/^\//g, ''),
-				request = conf.request,
-				method = request.method;
-
-			entries[key] = conf;
-
-			if (! method || method == 'get') {
-				conf.path = D.$private.getUrl(request);
-			}
-
-			var obj = {
-				args: [
-					{
-						dir: conf.push ? 1 : -1,
-						path: conf.path,
-						prev: path
-					}
-				]
-			};
-
-			// Add entry to HTML5 history
-			if (conf.push && support) {
-				H.pushState(0, '', conf.path);
-			}
-
-			// Update document title
-			if (conf.title) {
-				W._doc.title = conf.title;
-			}
-
-			if (W.routes) {
-				// Update current path
-				W.routes.uri(conf.path);
-				W.routes.uri({
-					history: true
-				});
-
-				// Evaluate routes against updated path
-				if (conf.run) {
-					W.routes.run({
-						event: 'pop',
-						path: path
-					});
-
-					W.routes.run({
-						path: conf.path
-					});
-				}
-
-				path = conf.path;
-			}
-
-			if (conf.push && conf.pushstate) {
-				W.$exec(conf.pushstate, obj);
-			}
-
-			if (conf.pop && conf.popstate) {
-				W.$exec(conf.popstate, obj);
-			}
-
-			if (conf.end) {
-				W.$exec(conf.end, obj);
+				_process(conf);
 			}
 		}
 	});

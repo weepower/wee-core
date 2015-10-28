@@ -28,13 +28,10 @@ main a:link:after {
 }
 blockquote,
 img,
+p,
 pre,
-tr,
-p {
+tr {
 	page-break-inside: avoid;
-}
-pre {
-	white-space: pre-wrap;
 }
 h2,
 h3 {
@@ -43,4 +40,7 @@ h3 {
 p {
 	orphans: 3;
 	widows: 3;
+}
+pre {
+	white-space: pre-wrap;
 }

@@ -12,12 +12,6 @@
 			str: /^\\?("|')/,
 			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g
 		},
-		_isEmpty = function(val) {
-			return val === '' ||
-				val === false ||
-				val == null ||
-				(typeof val == 'object' && ! Object.keys(val).length);
-		},
 		helpers = {
 			is: function(val) {
 				return this.val === val;
@@ -33,74 +27,31 @@
 			}
 		},
 		partials = {},
-		esc;
+		esc,
 
-	W.app = {
 		/**
-		 * Create an application
+		 * Determine if value is matches empty criteria
 		 *
-		 * @param {string} name
-		 * @param {object} [options] - application configuration
+		 * @private
+		 * @param {*} val
+		 * @returns {boolean}
 		 */
-		make: function(name, options) {
-			var views = W.$(options.view).map(function(el) {
-					return [el, el.outerHTML];
-				}),
-				fn = function(data) {
-					views.forEach(function(view) {
-						W.view.diff(view[0], W.view.render(view[1], data));
-					});
-				};
-
-			W.app[name] = W._make(name, {}, false, options.model);
-			W[name] = new W.app[name]();
-
-			fn(options.model);
-
-			W[name].$observe('*', fn);
-		}
-	};
-
-	W.fn.make('view', {
-		/**
-		 * Parse data into template string
-		 *
-		 * @param {string} template
-		 * @param {object} data
-		 * @returns {string}
-		 */
-		render: function(template, data) {
-			return this.$private.render(template, W.$extend(data));
+		_isEmpty = function(val) {
+			return val === '' ||
+				val === false ||
+				val == null ||
+				(typeof val == 'object' && ! Object.keys(val).length);
 		},
 
-		/**
-		 * Add conditional template handler or tag data modifier
-		 *
-		 * @param {string} name
-		 * @param {function} fn
-		 */
-		addHelper: function(name, fn) {
-			W._extend(helpers, name, fn);
-		},
-
-		/**
-		 * Make partial available for injection into other templates
-		 *
-		 * @param {string} name
-		 * @param {string} value
-		 */
-		addPartial: function(name, value) {
-			W._extend(partials, name, value);
-		}
-	}, {
 		/**
 		 * Render template string
 		 *
+		 * @private
 		 * @param {string} temp
 		 * @param {object} data
 		 * @returns {string}
 		 */
-		render: function(temp, data) {
+		_render = function(temp, data) {
 			var tags = [],
 				depth = [];
 
@@ -152,7 +103,7 @@
 			});
 
 			// Parse template tags
-			temp = this.parse(temp, data, {}, data, 0);
+			temp = _parse(temp, data, {}, data, 0);
 
 			// Reconstitute replacements
 			return esc ?
@@ -165,6 +116,7 @@
 		/**
 		 * Parse template string
 		 *
+		 * @private
 		 * @param {string} temp
 		 * @param {object} data
 		 * @param {object} prev
@@ -172,9 +124,7 @@
 		 * @param {int} index
 		 * @returns {string}
 		 */
-		parse: function(temp, data, prev, init, index) {
-			var scope = this;
-
+		_parse = function(temp, data, prev, init, index) {
 			return temp.replace(reg.pair, function(m, t, helper, inner) {
 				var tag = t.replace(/%\d+/, '');
 
@@ -191,7 +141,7 @@
 				inner = cond[0];
 				esc = false;
 
-				var val = scope.get(data, prev, tag, U, init, index),
+				var val = _get(data, prev, tag, U, init, index),
 					empty = _isEmpty(val),
 					help = [],
 					each;
@@ -236,7 +186,7 @@
 									tag: tag,
 									empty: empty,
 									index: index
-								}, scope.parseArgs(f[1], val));
+								}, _parseArgs(f[1], val));
 
 								if (rv === false) {
 									return rv;
@@ -267,7 +217,7 @@
 						});
 					}
 
-					return scope.parse(inner, val, data, init, index);
+					return _parse(inner, val, data, init, index);
 				}
 
 				if (! empty) {
@@ -293,7 +243,7 @@
 											tag: tag,
 											empty: empty,
 											index: i
-										}, scope.parseArgs(f[1], val));
+										}, _parseArgs(f[1], val));
 
 										if (rv === false) {
 											return rv;
@@ -306,18 +256,18 @@
 										return true;
 									})) {
 									var item = W.$extend({}, W.$isObject(el) ?
-										el :
-										(isPlainObject ? val : {}),
-									{
-										$key: key,
-										'.': el,
-										'#': i,
-										'##': i + 1
-									});
+											el :
+											(isPlainObject ? val : {}),
+										{
+											$key: key,
+											'.': el,
+											'#': i,
+											'##': i + 1
+										});
 
 									i++;
 
-									resp += scope.parse(inner, item, data, init, i);
+									resp += _parse(inner, item, data, init, i);
 								}
 							}
 						}
@@ -332,7 +282,7 @@
 					fb = split[1],
 					segs = split[0].split('|'),
 					tag = segs[0].trim(),
-					val = scope.get(data, prev, tag, fb, init, index),
+					val = _get(data, prev, tag, fb, init, index),
 					helps = segs.length > 1 ? segs.slice(1) : segs;
 
 				// Return empty string if output isn't available
@@ -357,7 +307,7 @@
 								tag: tag,
 								index: index,
 								fallback: fb
-							}, scope.parseArgs(arr[2], data));
+							}, _parseArgs(arr[2], data));
 						}
 					}
 				});
@@ -382,6 +332,7 @@
 		/**
 		 * Get specific object value
 		 *
+		 * @private
 		 * @param {object} data
 		 * @param {object} prev
 		 * @param {string} key
@@ -390,7 +341,7 @@
 		 * @param {int} x
 		 * @returns {*}
 		 */
-		get: function(data, prev, key, fb, init, x) {
+		_get = function(data, prev, key, fb, init, x) {
 			key = key.trim();
 
 			// Alter context
@@ -437,7 +388,7 @@
 						.replace(new RegExp(match[0] + '$'), '');
 				}
 
-				return this.get(orig, prev, fb, '', init, x);
+				return _get(orig, prev, fb, '', init, x);
 			}
 
 			return fb;
@@ -446,10 +397,11 @@
 		/**
 		 * Parse helper arguments
 		 *
+		 * @private
 		 * @param {string} str
 		 * @returns {*}
 		 */
-		parseArgs: function(str, data) {
+		_parseArgs = function(str, data) {
 			var args = str !== U ? str.match(reg.args) || [] : [];
 
 			return args.map(function(arg) {
@@ -468,10 +420,68 @@
 
 				return arg == 'true' ? true :
 					arg == 'false' ? false :
-					arg == 'null' ? null :
-					parseInt(arg).toString() == arg ? parseInt(arg) :
-					'';
+						arg == 'null' ? null :
+							parseInt(arg).toString() == arg ? parseInt(arg) :
+								'';
 			});
+		};
+
+	W.app = {
+		/**
+		 * Create an application
+		 *
+		 * @param {string} name
+		 * @param {object} [options] - application configuration
+		 */
+		make: function(name, options) {
+			var views = W.$(options.view).map(function(el) {
+					return [el, el.outerHTML];
+				}),
+				fn = function(data) {
+					views.forEach(function(view) {
+						W.view.diff(view[0], W.view.render(view[1], data));
+					});
+				};
+
+			W.app[name] = W._make(name, {}, false, options.model);
+			W[name] = new W.app[name]();
+
+			fn(options.model);
+
+			W[name].$observe('*', fn);
+		}
+	};
+
+	W.fn.make('view', {
+		/**
+		 * Parse data into template string
+		 *
+		 * @param {string} template
+		 * @param {object} data
+		 * @returns {string}
+		 */
+		render: function(template, data) {
+			return _render(template, W.$extend(data));
+		},
+
+		/**
+		 * Add conditional template handler or tag data modifier
+		 *
+		 * @param {string} name
+		 * @param {function} fn
+		 */
+		addHelper: function(name, fn) {
+			W._extend(helpers, name, fn);
+		},
+
+		/**
+		 * Make partial available for injection into other templates
+		 *
+		 * @param {string} name
+		 * @param {string} value
+		 */
+		addPartial: function(name, value) {
+			W._extend(partials, name, value);
 		}
 	});
 })(Wee, undefined);

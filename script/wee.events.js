@@ -3,163 +3,18 @@
 (function(W) {
 	'use strict';
 
-	/**
-	 * Setup initial variables
-	 */
 	var bound = [],
-		custom = {};
+		custom = {},
 
-	W.fn.make('events', {
-		/**
-		 * Bind specified function to specified element and event
-		 *
-		 * @param {(HTMLElement|object|string)} target
-		 * @param {(object|string)} a - event name or object of events
-		 * @param {(function|object)} [b] - event callback or options object
-		 * @param {(object|string)} [c] - event options
-		 * @param {Array} [c.args] - callback arguments
-		 * @param {(HTMLElement|string)} [c.context=document]
-		 * @param {(HTMLElement|string)} [c.delegate]
-		 * @param {boolean} [c.once=false] - remove event after first execution
-		 * @param {object} [c.scope]
-		 */
-		on: function(target, a, b, c) {
-			var evts = [];
-
-			if (W.$isObject(target) && ! target._$) {
-				var keys = Object.keys(target),
-					i = 0;
-
-				for (; i < keys.length; i++) {
-					var key = keys[i];
-					evts = target[key];
-
-					this.$private.bind(key, evts, a);
-				}
-			} else {
-				if (typeof a == 'string') {
-					evts[a] = b;
-				} else {
-					evts = a;
-					c = b;
-				}
-
-				this.$private.bind(target, evts, c);
-			}
-		},
-
-		/**
-		 * Remove specified event from specified element
-		 *
-		 * @param {(HTMLElement|string)} [target]
-		 * @param {(object|string)} a - event name or object of events
-		 * @param {function} [b] - specific function to remove
-		 */
-		off: function(target, a, b) {
-			var obj = a;
-
-			if (a) {
-				if (typeof a == 'string') {
-					obj = [];
-					obj[a] = b;
-				}
-
-				for (var key in obj) {
-					var evts = key.split(' '),
-						i = 0;
-
-					for (; i < evts.length; i++) {
-						var evt = evts[i],
-						fn = obj[evt];
-
-						this.$private.off(target, evt, fn);
-					}
-				}
-			} else {
-				this.$private.off(target);
-			}
-		},
-
-		/**
-		 * Get currently bound events to optional specified element and event|function
-		 *
-		 * @param {(false|HTMLElement|string)} [target]
-		 * @param {string} [event] - event name to match
-		 * @param {function} [fn] - specific function to match
-		 * @returns {Array} matches
-		 */
-		bound: function(target, event, fn) {
-			var segs = (event || '').split('.'),
-				matches = [];
-
-			W.$each(target, function(el) {
-				Object.keys(bound).forEach(function(e) {
-					var binding = bound[e],
-						parts = binding.ev.split('.'),
-						match = true;
-
-					if (el !== binding.el) {
-						match = false;
-					}
-
-					if (event &&
-						(
-							segs[0] !== '' &&
-							segs[0] != parts[0]
-						) ||
-						(
-							segs[1] &&
-							segs[1] != parts[1]
-						)) {
-						match = false;
-					}
-
-					if (fn && String(fn) !== String(binding.fn)) {
-						match = false;
-					}
-
-					if (match) {
-						matches.push(binding);
-					}
-				});
-			});
-
-			return target ? matches : bound;
-		},
-
-		/**
-		 * Execute bound event for each matching selection
-		 *
-		 * @param {(HTMLElement|string)} target
-		 * @param {string} name
-		 */
-		trigger: function(target, name) {
-			this.bound(target, name).forEach(function(evt) {
-				evt.cb(false);
-			});
-		},
-
-		/**
-		 * Add a custom event
-		 *
-		 * @param {string} name
-		 * @param {function} on
-		 * @param {function} off
-		 */
-		addEvent: function(name, on, off) {
-			custom[name] = [on, off];
-		}
-	}, {
 		/**
 		 * Attach specific event logic to element
 		 *
+		 * @private
 		 * @param {Array} els
 		 * @param {object} obj
 		 * @param {object} options
 		 */
-		bind: function(els, obj, options) {
-			var scope = this;
-
+		_bind = function(els, obj, options) {
 			// Redefine variables when delegating
 			if (options && options.delegate) {
 				options.targ = els;
@@ -236,14 +91,14 @@
 
 									// Unbind after first execution
 									if (conf.once) {
-										scope.$public.off(el, evt, f);
+										_off(el, evt, f);
 									}
 								}
 							};
 
 							// Ensure the specified element, event, and function
 							// combination hasn't already been bound
-							if (evt != 'init' && ! scope.$public.bound(el, ev, f).length) {
+							if (evt != 'init' && ! W.events.bound(el, ev, f).length) {
 								// Determine if the event is native or custom
 								if ('on' + evt in el) {
 									W._legacy ?
@@ -274,12 +129,13 @@
 		/**
 		 * Detach event(s) from element
 		 *
+		 * @private
 		 * @param {(HTMLElement|string)} [sel]
 		 * @param {string} [evt]
 		 * @param {function} [fn]
 		 */
-		off: function(sel, evt, fn) {
-			W.$each(this.$public.bound(sel, evt, fn), function(e) {
+		_off = function(sel, evt, fn) {
+			W.$each(W.events.bound(sel, evt, fn), function(e) {
 				if ('on' + e.evt in W._doc) {
 					W._legacy ?
 						e.el.detachEvent('on' + e.evt, e.cb) :
@@ -290,6 +146,147 @@
 
 				bound.splice(bound.indexOf(e), 1);
 			});
+		};
+
+	W.fn.make('events', {
+		/**
+		 * Bind event function to element
+		 *
+		 * @param {(HTMLElement|object|string)} target
+		 * @param {(object|string)} a - event name or object of events
+		 * @param {(function|object)} [b] - event callback or options object
+		 * @param {(object|string)} [c] - event options
+		 * @param {Array} [c.args] - callback arguments
+		 * @param {(HTMLElement|string)} [c.context=document]
+		 * @param {(HTMLElement|string)} [c.delegate]
+		 * @param {boolean} [c.once=false] - remove event after first execution
+		 * @param {object} [c.scope]
+		 */
+		on: function(target, a, b, c) {
+			var evts = [];
+
+			if (W.$isObject(target) && ! target._$) {
+				var keys = Object.keys(target),
+					i = 0;
+
+				for (; i < keys.length; i++) {
+					var key = keys[i];
+					evts = target[key];
+
+					_bind(key, evts, a);
+				}
+			} else {
+				if (typeof a == 'string') {
+					evts[a] = b;
+				} else {
+					evts = a;
+					c = b;
+				}
+
+				_bind(target, evts, c);
+			}
+		},
+
+		/**
+		 * Remove specified event from specified element
+		 *
+		 * @param {(HTMLElement|string)} [target]
+		 * @param {(object|string)} a - event name or object of events
+		 * @param {function} [b] - specific function to remove
+		 */
+		off: function(target, a, b) {
+			var obj = a;
+
+			if (a) {
+				if (typeof a == 'string') {
+					obj = [];
+					obj[a] = b;
+				}
+
+				for (var key in obj) {
+					var evts = key.split(' '),
+						i = 0;
+
+					for (; i < evts.length; i++) {
+						var evt = evts[i],
+						fn = obj[evt];
+
+						_off(target, evt, fn);
+					}
+				}
+			} else {
+				_off(target);
+			}
+		},
+
+		/**
+		 * Get currently bound events to optional specified element and event|function
+		 *
+		 * @param {(false|HTMLElement|string)} [target]
+		 * @param {string} [event] - event name to match
+		 * @param {function} [fn] - specific function to match
+		 * @returns {Array} matches
+		 */
+		bound: function(target, event, fn) {
+			var segs = (event || '').split('.'),
+				matches = [];
+
+			W.$each(target, function(el) {
+				Object.keys(bound).forEach(function(e) {
+					var binding = bound[e],
+						parts = binding.ev.split('.'),
+						match = true;
+
+					if (el !== binding.el) {
+						match = false;
+					}
+
+					if (event &&
+						(
+							segs[0] !== '' &&
+							segs[0] != parts[0]
+						) ||
+						(
+							segs[1] &&
+							segs[1] != parts[1]
+						)) {
+						match = false;
+					}
+
+					if (fn && String(fn) !== String(binding.fn)) {
+						match = false;
+					}
+
+					if (match) {
+						matches.push(binding);
+					}
+				});
+			});
+
+			return target ? matches : bound;
+		},
+
+		/**
+		 * Execute bound event for each matching selection
+		 *
+		 * @param {(HTMLElement|string)} target
+		 * @param {string} name
+		 */
+		trigger: function(target, name) {
+			this.bound(target, name).forEach(function(evt) {
+				evt.cb(false);
+			});
+		},
+
+		/**
+		 * Add a custom event
+		 *
+		 * @param {string} name
+		 * @param {function} on
+		 * @param {function} off
+		 */
+		addEvent: function(name, on, off) {
+			custom[name] = [on, off];
 		}
 	});
 })(Wee);

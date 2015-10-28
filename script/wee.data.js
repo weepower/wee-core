@@ -1,16 +1,121 @@
-/* global JSON */
-
 (function(W) {
 	'use strict';
 
-	/**
-	 * Setup initial variables
-	 */
-	var version = 1;
+	var version = 1,
+
+		/**
+		 * Process the readyState change event
+		 *
+		 * @private
+		 * @param {XMLHttpRequest} x
+		 * @param {object} conf
+		 * @returns {*}
+		 */
+		_change = function(x, conf) {
+			if (x.readyState === 4) {
+				var status = x.status,
+					exec = {
+						args: conf.args,
+						scope: conf.scope
+					};
+
+				exec.args.unshift(x);
+
+				if (status >= 200 && status < 400) {
+					if (conf.success) {
+						_success(x, conf);
+					}
+				} else if (conf.error) {
+					W.$exec(conf.error, exec);
+				}
+
+				if (conf.complete) {
+					W.$exec(conf.complete, exec);
+				}
+			}
+		},
+
+		/**
+		 * Execute the request success callback
+		 *
+		 * @private
+		 * @param {XMLHttpRequest} x
+		 * @param {object} conf
+		 * @returns {boolean}
+		 */
+		_success = function(x, conf) {
+			var resp = x.responseText,
+				exec = {
+					args: conf.args.slice(0),
+					scope: conf.scope
+				};
+
+			// Parse JSON response if specified
+			if (conf.json) {
+				try {
+					resp = JSON.parse(resp);
+				} catch (e) {
+					resp = {};
+				}
+			}
+
+			exec.args.unshift(resp);
+
+			// Execute success callback if specified
+			W.$exec(conf.success, exec);
+		},
+
+		/**
+		 * Process JSONP request
+		 *
+		 * @private
+		 * @param {object} conf
+		 */
+		_jsonp = function(conf) {
+			var head = W.$('head')[0],
+				el = W._doc.createElement('script');
+
+			if (conf.success) {
+				var fn = conf.jsonpCallback;
+
+				if (! fn) {
+					fn = 'jsonp' + version;
+					version++;
+				}
+
+				W._win[fn] = function(data) {
+					conf.args.unshift(data);
+
+					W.$exec(conf.success, {
+						args: conf.args,
+						scope: conf.scope
+					});
+				};
+
+				conf.data[
+					conf.jsonp === true ?
+						'callback' :
+						conf.jsonp
+					] = fn;
+			}
+
+			el.src = this._getUrl(conf);
+
+			if (conf.error) {
+				el.onerror = function() {
+					W.$exec(conf.error, {
+						args: conf.args,
+						scope: conf.scope
+					});
+				};
+			}
+
+			head.appendChild(el);
+		};
 
 	W.fn.make('data', {
 		/**
-		 * Make Ajax request based on specified options
+		 * Make request based on specified options
 		 *
 		 * @param {object} options
 		 * @param {string} options.url - endpoint to request
@@ -29,7 +134,8 @@
 		 * @param {object} [options.scope] - callback scope
 		 */
 		request: function(options) {
-			var conf = W.$extend({
+			var scope = this,
+				conf = W.$extend({
 					args: [],
 					data: {},
 					headers: {},
@@ -43,16 +149,15 @@
 
 			// Prefix root path to url
 			if (conf.root) {
-				conf.url = (conf.root + '/' + conf.url).replace(/\/{2,}/, '/');
+				conf.url = (conf.root + '/' + conf.url).replace(/\/{2,}/g, '/');
 			}
 
 			// Process JSONP
 			if (conf.jsonp) {
-				return this.$private.jsonp(conf);
+				return _jsonp(conf);
 			}
 
-			var scope = this,
-				x = new XMLHttpRequest();
+			var x = new XMLHttpRequest();
 
 			if (conf.send) {
 				W.$exec(conf.send, {
@@ -62,7 +167,7 @@
 			}
 
 			x.onreadystatechange = function() {
-				scope.$private.change(x, conf);
+				_change(x, conf);
 			};
 
 			var contentTypeHeader = 'Content-Type',
@@ -72,7 +177,7 @@
 
 			// Format data based on specified verb
 			if (method == 'GET') {
-				conf.url = this.$private.getUrl(conf);
+				conf.url = this._getUrl(conf);
 			} else {
 				if (method == 'POST') {
 					headers[contentTypeHeader] =
@@ -113,121 +218,15 @@
 			}
 
 			x.send(send);
-		}
-	}, {
-		/**
-		 * Process the readyState change event
-		 *
-		 * @param {XMLHttpRequest} x
-		 * @param {object} conf
-		 * @returns {*}
-		 */
-		change: function(x, conf) {
-			if (x.readyState === 4) {
-				var status = x.status,
-					exec = {
-						args: conf.args,
-						scope: conf.scope
-					};
-
-				exec.args.unshift(x);
-
-				if (status >= 200 && status < 400) {
-					if (conf.success) {
-						this.success(x, conf);
-					}
-				} else if (conf.error) {
-					W.$exec(conf.error, exec);
-				}
-
-				if (conf.complete) {
-					W.$exec(conf.complete, exec);
-				}
-			}
-		},
-
-		/**
-		 * Execute the request success callback
-		 *
-		 * @param {XMLHttpRequest} x
-		 * @param {object} conf
-		 * @returns {boolean}
-		 */
-		success: function(x, conf) {
-			var resp = x.responseText,
-				exec = {
-					args: conf.args.slice(0),
-					scope: conf.scope
-				};
-
-			// Parse JSON response if specified
-			if (conf.json) {
-				try {
-					resp = JSON.parse(resp);
-				} catch (e) {
-					resp = {};
-				}
-			}
-
-			exec.args.unshift(resp);
-
-			// Execute success callback if specified
-			W.$exec(conf.success, exec);
-		},
-
-		/**
-		 * Process JSONP request
-		 *
-		 * @param {object} conf
-		 */
-		jsonp: function(conf) {
-			var head = W.$('head')[0];
-
-			if (conf.success) {
-				var fn = conf.jsonpCallback;
-
-				if (! fn) {
-					fn = 'jsonp' + version;
-					version++;
-				}
-
-				W._win[fn] = function(data) {
-					conf.args.unshift(data);
-
-					W.$exec(conf.success, {
-						args: conf.args,
-						scope: conf.scope
-					});
-				};
-
-				conf.data[
-					conf.jsonp === true ?
-						'callback' :
-						conf.jsonp
-				] = fn;
-			}
-
-			var el = W._doc.createElement('script');
-			el.src = this.getUrl(conf);
-
-			if (conf.error) {
-				el.onerror = function() {
-					W.$exec(conf.error, {
-						args: conf.args,
-						scope: conf.scope
-					});
-				};
-			}
-
-			head.appendChild(el);
 		},
 
 		/**
 		 * Generate final URL
 		 *
+		 * @private
 		 * @param {object} conf
 		 */
-		getUrl: function(conf) {
+		_getUrl: function(conf) {
 			var url = conf.url.replace(/[\?&]$/, '');
 
 			if (conf.data && Object.keys(conf.data).length) {

@@ -3,12 +3,13 @@
 
 	W.$chain({
 		/**
-		 * Transition to a specified attribute or property value
+		 * Transition an attribute or property value
 		 *
 		 * @param {object} props
 		 * @param {object} [options]
-		 * @param {number} [options.duration]
-		 * @param {string} [options.ease]
+		 * @param {number} [options.duration=400]
+		 * @param {string} [options.ease='ease']
+		 * @param {(Array|function|string)} [options.complete]
 		 * @returns {$} selection
 		 */
 		tween: function(props, options) {

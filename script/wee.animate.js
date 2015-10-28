@@ -16,13 +16,14 @@
 
 	W.fn.make('animate', {
 		/**
-		 * Transition to a specified attribute or property value
+		 * Transition an attribute or property value
 		 *
 		 * @param {($|HTMLElement|string)} target
 		 * @param {object} props
 		 * @param {object} [options]
 		 * @param {number} [options.duration=400]
 		 * @param {string} [options.ease='ease']
+		 * @param {(Array|function|string)} [options.complete]
 		 */
 		tween: function(target, props, options) {
 			var conf = W.$extend({
@@ -37,7 +38,6 @@
 						scrollTop = prop == 'scrollTop',
 						cssValue;
 
-					// Patch scrollTop in IE9- browsers
 					if (scrollTop) {
 						cssValue = Math.max(
 							W._body.scrollTop,
@@ -52,7 +52,6 @@
 					var	css = cssValue !== undefined,
 						unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
 						val = parseInt(css ? cssValue : el[prop]),
-						start = Date.now(),
 						setValue = function(prop, update) {
 							if (scrollTop) {
 								W._body.scrollTop = update;
@@ -63,6 +62,7 @@
 									el[prop] = update;
 							}
 						},
+						start = Date.now(),
 						fn = (function() {
 							var scope = this,
 								diff = Date.now() - scope.start;
@@ -70,7 +70,8 @@
 							if (scope.dist && diff < conf.duration) {
 								setValue(
 									scope.prop,
-									scope.val + scope.dist * ease(diff / conf.duration) * scope.dir
+									scope.val + scope.dist *
+										ease(diff / conf.duration) * scope.dir
 								);
 							} else {
 								clearInterval(timers[scope.prop + scope.start]);

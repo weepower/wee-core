@@ -4,10 +4,11 @@
 	/**
 	 * Cast selection as Wee object
 	 *
+	 * @private
 	 * @param {($|HTMLElement|string)} sel
 	 * @param {($|HTMLElement|string)} [context=document]
 	 */
-	var Get = function(sel, context) {
+	var _$ = function(sel, context) {
 			if (sel) {
 				var els = Array.isArray(sel) ?
 						sel :
@@ -34,7 +35,7 @@
 	 * @param {object} [context=document]
 	 */
 	$ = W._win[W._$] = function(sel, context) {
-		return new Get(sel, context);
+		return new _$(sel, context);
 	};
 
 	// Extend core with chain registration method
@@ -66,7 +67,7 @@
 	}
 
 	// Bind core chainable methods
-	$.fn = Get.prototype = {
+	$.fn = _$.prototype = {
 		_$: true,
 		length: 0,
 
