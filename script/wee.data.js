@@ -99,7 +99,7 @@
 					] = fn;
 			}
 
-			el.src = this._getUrl(conf);
+			el.src = W.data._getUrl(conf);
 
 			if (conf.error) {
 				el.onerror = function() {
@@ -232,7 +232,7 @@
 					W.$serialize(conf.data);
 			}
 
-			if (url[0] != '/') {
+			if (url[0] != '/' && ! /^(?:[a-z]+:)?\/\//i.test(url)) {
 				url = '/' + url;
 			}
 
