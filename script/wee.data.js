@@ -198,12 +198,11 @@
 			}
 
 			// Add X-Requested-With header for same domain requests
-			var xrw = 'X-Requested-With',
-				a = W._doc.createElement('a');
+			var a = W._doc.createElement('a');
 			a.href = conf.url;
 
 			if (! a.hostname || a.hostname == location.hostname) {
-				headers[xrw] = 'XMLHttpRequest';
+				headers['X-Requested-With'] = 'XMLHttpRequest';
 			}
 
 			headers = W.$extend(headers, conf.headers);
