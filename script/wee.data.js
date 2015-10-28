@@ -134,8 +134,7 @@
 		 * @param {object} [options.scope] - callback scope
 		 */
 		request: function(options) {
-			var scope = this,
-				conf = W.$extend({
+			var conf = W.$extend({
 					args: [],
 					data: {},
 					headers: {},

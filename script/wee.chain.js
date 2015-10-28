@@ -8,7 +8,7 @@
 	 * @param {($|HTMLElement|string)} sel
 	 * @param {($|HTMLElement|string)} [context=document]
 	 */
-	var _$ = function(sel, context) {
+	var Get = function(sel, context) {
 			if (sel) {
 				var els = Array.isArray(sel) ?
 						sel :
@@ -35,7 +35,7 @@
 	 * @param {object} [context=document]
 	 */
 	$ = W._win[W._$] = function(sel, context) {
-		return new _$(sel, context);
+		return new Get(sel, context);
 	};
 
 	// Extend core with chain registration method
@@ -67,7 +67,7 @@
 	}
 
 	// Bind core chainable methods
-	$.fn = _$.prototype = {
+	$.fn = Get.prototype = {
 		_$: true,
 		length: 0,
 
