@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 	grunt.registerTask('sync', function() {
 		var serverConfig = project.server,
-			reloadConfig = project.server.reload;
+			reloadConfig = serverConfig.reload;
 
 		// Configure browser reloading
 		if (reloadConfig.enable === true) {
@@ -15,25 +15,40 @@ module.exports = function(grunt) {
 			}
 
 			// Add user-defined paths
-			reloadWatch.paths.forEach(function(path) {
-				reloadPaths.push('../../' + path + '/**/*.' + reloadExt);
+			reloadWatch.paths.forEach(function(file) {
+				reloadPaths.push(
+					path.join('../../', file, '**/*.' + reloadExt)
+				);
+
+				// TODO: Remove when dependency issue is resolved
+				reloadPaths.unshift(
+					path.join('../../', file, '*/*.' + reloadExt)
+				);
 			});
 
 			// Add root to watchlist
 			if (reloadWatch.root === true) {
-				reloadPaths.unshift(config.paths.root + '/**/*.' + reloadExt);
+				reloadPaths.unshift(
+					path.join(config.paths.root, '**/*.' + reloadExt)
+				);
+
+				// TODO: Remove when dependency issue is resolved
+				reloadPaths.unshift(
+					path.join(config.paths.root, '*.' + reloadExt)
+				);
 			}
 
 			// Bind BrowserSync watchlist
 			reloadPaths.unshift(
-				config.paths.assets +
-				'**/*.{css,js,gif,jpg,png,svg,webp,woff}'
+				path.join(
+					config.paths.assets,
+					'**/*.{css,js,gif,jpg,png,svg,webp,woff}'
+				)
 			);
 
 			server.files = reloadPaths;
 		}
 
-		// Ghost mode
 		if (serverConfig.ghostMode !== true) {
 			server.ghostMode = serverConfig.ghostMode || false;
 		}
