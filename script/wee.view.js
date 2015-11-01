@@ -4,13 +4,13 @@
 	'use strict';
 
 	var reg = {
-			tags: /{{\s*(?:([#\/])([^#{\|\n\s]+)\s*(\|[^{\n]+)?|else)\s*}}/g,
-			partial: /{{\s*> (.+?)}}/g,
-			pair: /{{#(.+?)(?:|\|?([^}]*))}}([\s\S]*?){{\/\1}}/g,
-			single: /{{(.+?)}}/g,
+			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g,
 			ext: /(.[^\(]+)(?:\((.*)\))?/,
+			pair: /{{#(.+?)(?:|\|?([^}]*))}}([\s\S]*?){{\/\1}}/g,
+			partial: /{{\s*> (.+?)}}/g,
+			single: /{{(.+?)}}/g,
 			str: /^\\?("|')/,
-			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g
+			tags: /{{\s*(?:([#\/])([^#{\|\n\s]+)\s*(\|[^{\n]+)?|else)\s*}}/g
 		},
 		helpers = {
 			is: function(val) {
@@ -199,10 +199,10 @@
 
 								return true;
 							})) {
-							return sec;
+							return _parse(sec, data, prev, init, index);
 						}
 					} else if (empty) {
-						return sec;
+						return _parse(sec, data, prev, init, index);
 					}
 				}
 
