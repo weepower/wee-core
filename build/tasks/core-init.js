@@ -7,10 +7,10 @@ module.exports = function(grunt) {
 			rootPath = config.rootPath + project.paths.root,
 			sourcePath = config.rootPath + project.paths.source + '/',
 			assetPath = path.normalize(
-					rootPath !== '' ?
-					rootPath + '/' + project.paths.assets :
-						project.assets
-				) + '/',
+				rootPath !== '' ?
+				rootPath + '/' + project.paths.assets :
+					project.assets
+			) + '/',
 			tempPath = 'temp/';
 
 		global.project = project;

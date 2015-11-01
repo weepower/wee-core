@@ -267,7 +267,7 @@
 				 * @private
 				 * @param {object} target
 				 * @param {object} source
-				 * @param {boolean} deep
+				 * @param {boolean} [deep=false]
 				 * @returns object
 				 */
 				_extend = function(target, object, deep) {
@@ -276,7 +276,7 @@
 							var src = object[key],
 								type = W.$type(src);
 
-							if (deep === true && type == 'object') {
+							if (deep && type == 'object') {
 								target[key] = _extend(target[key] || {}, src, deep);
 							} else if (src !== U) {
 								target[key] = type == 'array' ? src.slice(0) : src;
@@ -767,7 +767,7 @@
 				},
 
 				/**
-				 * Determine if the environment is secured over https
+				 * Determine if the environment is secured over HTTPS
 				 *
 				 * @returns {boolean} secure
 				 */
