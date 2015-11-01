@@ -14,7 +14,7 @@
 		},
 		timers = [];
 
-	W.fn.make('animate', {
+	W.animate = {
 		/**
 		 * Transition an attribute or property value
 		 *
@@ -104,5 +104,5 @@
 		addEasing: function(name, fn) {
 			W._extend(easings, name, fn);
 		}
-	});
+	};
 })(Wee);

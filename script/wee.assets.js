@@ -129,7 +129,7 @@
 			_done(group);
 		};
 
-	W.fn.make('assets', {
+	W.assets = {
 		/**
 		 * Cache existing CSS and JavaScript assets
 		 *
@@ -305,5 +305,5 @@
 				}, 20);
 			}
 		}
-	});
+	};
 })(Wee, undefined);

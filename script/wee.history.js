@@ -133,7 +133,7 @@
 			}
 		};
 
-	W.fn.make('history', {
+	W.history = {
 		/**
 		 * Set the initial state and popstate event, and bind global actions
 		 *
@@ -434,5 +434,5 @@
 				_process(conf);
 			}
 		}
-	});
+	};
 })(Wee, Wee.data, Wee.events, history, undefined);

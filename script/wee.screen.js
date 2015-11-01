@@ -125,7 +125,7 @@
 			}
 		};
 
-	W.fn.make('screen', {
+	W.screen = {
 		/**
 		 * Get current breakpoint value
 		 *
@@ -187,5 +187,5 @@
 		reset: function() {
 			events = [];
 		}
-	});
+	};
 })(Wee);

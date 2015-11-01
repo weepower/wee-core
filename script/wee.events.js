@@ -148,7 +148,7 @@
 			});
 		};
 
-	W.fn.make('events', {
+	W.events = {
 		/**
 		 * Bind event function to element
 		 *
@@ -288,5 +288,5 @@
 		addEvent: function(name, on, off) {
 			custom[name] = [on, off];
 		}
-	});
+	};
 })(Wee);

@@ -113,7 +113,7 @@
 			head.appendChild(el);
 		};
 
-	W.fn.make('data', {
+	W.data = {
 		/**
 		 * Make request based on specified options
 		 *
@@ -238,5 +238,5 @@
 
 			return url;
 		}
-	});
+	};
 })(Wee);

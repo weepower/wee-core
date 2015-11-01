@@ -155,7 +155,7 @@
 			}
 		};
 
-	W.fn.make('routes', {
+	W.routes = {
 		/**
 		 * Get current URI values or set with string or value
 		 *
@@ -277,5 +277,5 @@
 				}
 			}
 		}
-	});
+	};
 })(Wee, undefined);

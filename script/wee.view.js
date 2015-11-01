@@ -452,7 +452,7 @@
 		}
 	};
 
-	W.fn.make('view', {
+	W.view = {
 		/**
 		 * Parse data into template string
 		 *
@@ -483,5 +483,5 @@
 		addPartial: function(name, value) {
 			W._extend(partials, name, value);
 		}
-	});
+	};
 })(Wee, undefined);
