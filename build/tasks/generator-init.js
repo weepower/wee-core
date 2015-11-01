@@ -5,11 +5,11 @@ module.exports = function(grunt) {
 		var build = Wee.$toArray(project.generator.build),
 			configPath = '../../' + build[task],
 			json = fs.readJsonSync(configPath),
-			config = json.config,
+			siteConfig = json.config,
 			staticRoot = path.dirname(configPath);
 
 		// Setup watch configuration
-		if (config.watch === true) {
+		if (siteConfig.watch === true) {
 			var templates = [],
 				targets = [],
 				watchFiles = [],
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 					keys.forEach(function(key) {
 						var block = context[key],
 							root = path.join(
-								config.paths.content || '',
+								siteConfig.paths.content || '',
 								block.contentRoot || ''
 							),
 							content = block.content ?
@@ -32,12 +32,12 @@ module.exports = function(grunt) {
 
 						var template = path.join(
 							staticRoot,
-							config.paths.templates + '/' + block.template
+							siteConfig.paths.templates + '/' + block.template
 						);
 
 						// Push targets to exclude from watch
 						Wee.$toArray(block.target).forEach(function(target) {
-							targets.push(path.join(staticRoot, target));
+							targets.push(path.join(staticRoot, siteConfig.paths.target || '', target));
 						});
 
 						watchFiles.push(template);
@@ -85,8 +85,8 @@ module.exports = function(grunt) {
 			});
 
 			// Watch partials
-			if (config.paths.partials) {
-				var partialPath = config.paths.partials;
+			if (siteConfig.paths.partials) {
+				var partialPath = siteConfig.paths.partials;
 
 				// Watch for partial updates
 				grunt.config.set('watch.cachePartials-' + task, {
@@ -98,12 +98,12 @@ module.exports = function(grunt) {
 				});
 
 				// Exclude partials from watch
-				reloadPaths.push('!' + partialPath);
+				reloadPaths.push('!' + path.join(staticRoot, partialPath));
 			}
 
 			// Watch helpers
-			if (config.paths.helpers) {
-				var helperPath = config.paths.helpers;
+			if (siteConfig.paths.helpers) {
+				var helperPath = siteConfig.paths.helpers;
 
 				// Watch for helper updates
 				grunt.config.set('watch.loadHelpers-' + task, {
@@ -115,17 +115,17 @@ module.exports = function(grunt) {
 				});
 
 				// Exclude helpers from watch
-				reloadPaths.push('!' + helperPath);
+				reloadPaths.push('!' + path.join(staticRoot, helperPath));
 			}
 		}
 
 		// Cache partials
-		if (config.paths.partials) {
+		if (siteConfig.paths.partials) {
 			grunt.task.run('cachePartials:' + task);
 		}
 
 		// Load helpers
-		if (config.paths.helpers) {
+		if (siteConfig.paths.helpers) {
 			grunt.task.run('loadHelpers:' + task);
 		}
 
