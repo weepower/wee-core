@@ -32,8 +32,8 @@
 		 */
 		getMinExtension: function(dest, src, ext) {
 			var dir = src.substring(0, src.lastIndexOf('/')),
-				filename = src.substring(src.lastIndexOf('/'), src.length)
-					.substring(0, filename.lastIndexOf('.'));
+				filename = src.substring(src.lastIndexOf('/'), src.length);
+			filename = filename.substring(0, filename.lastIndexOf('.'));
 
 			return dest + '/' + dir + filename + ext;
 		},
