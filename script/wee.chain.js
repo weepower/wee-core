@@ -83,6 +83,8 @@
 		 */
 		each: function(fn, options) {
 			W.$each(this, fn, options);
+
+			return this;
 		},
 
 		/**
