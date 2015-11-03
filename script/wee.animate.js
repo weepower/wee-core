@@ -19,13 +19,13 @@
 		 * Transition an attribute or property value
 		 *
 		 * @param {($|HTMLElement|string)} target
-		 * @param {object} props
+		 * @param {object} values
 		 * @param {object} [options]
 		 * @param {number} [options.duration=400]
 		 * @param {string} [options.ease='ease']
 		 * @param {(Array|function|string)} [options.complete]
 		 */
-		tween: function(target, props, options) {
+		tween: function(target, values, options) {
 			var conf = W.$extend({
 					duration: 400,
 					ease: 'ease'
@@ -33,8 +33,8 @@
 				ease = easings[conf.ease] || easings.ease;
 
 			W.$each(target, function(el) {
-				for (var prop in props) {
-					var target = parseInt(props[prop]),
+				for (var prop in values) {
+					var target = parseInt(values[prop]),
 						scrollTop = prop == 'scrollTop',
 						cssValue;
 
