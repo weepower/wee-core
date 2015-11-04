@@ -440,6 +440,7 @@
 				fn = function(data) {
 					views.forEach(function(view) {
 						W.view.diff(view[0], W.view.render(view[1], data));
+						W.$setRef(view);
 					});
 				};
 
