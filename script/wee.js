@@ -169,7 +169,9 @@
 							}
 						}
 					} else {
-						delete root[seg];
+						isNaN(seg) ?
+							delete root[seg] :
+							root.splice(seg, 1);
 					}
 
 					_trigger(obj, obs, key, stored[2], root[seg], 'drop');
@@ -363,14 +365,14 @@
 				 */
 				_diff = function(a, b) {
 					if (! (W.$isObject(a) || W.$isObject(b))) {
-						var type = 'update';
+						var type = 'u';
 
 						if (_equals(a, b)) {
 							type = '-';
 						} else if (a === U) {
-							type = 'create';
+							type = 'c';
 						} else if (b === U) {
-							type = 'delete';
+							type = 'd';
 						}
 
 						return {
@@ -398,7 +400,7 @@
 				/**
 				 * Get value from function or directly
 				 *
-				 * @protected
+				 * @private
 				 * @param {*} val
 				 * @param {object} [options]
 				 * @returns {*}
