@@ -449,7 +449,29 @@
 
 			fn(options.model);
 
-			W[name].$observe('*', fn);
+			W.$extend(W[name], {
+				/**
+				 * Pause view updating
+				 */
+				$pause: function() {
+					W[name].$unobserve('*', fn);
+				},
+
+				/**
+				 * Resume view updating and optionally update
+				 *
+				 * @param {boolean} update
+				 */
+				$resume: function(update) {
+					W[name].$observe('*', fn);
+
+					if (update) {
+						fn(options.model);
+					}
+				}
+			});
+
+			W[name].$resume();
 		}
 	};
 
