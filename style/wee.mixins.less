@@ -2522,8 +2522,15 @@
 	transition: ~'@{value}';
 }
 .transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
-		when (default()) {
+		when (@property = all) {
 	.transition('@{arguments}');
+}
+.transition (@property; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
+		when (default()) {
+	.transition('@{property}');
+	.transition-delay(@delay);
+	.transition-duration(@duration);
+	.transition-timing-function(@ease);
 }
 .transition-delay (@delay: 1s) {
 	-webkit-transition-delay: @delay;
