@@ -570,9 +570,19 @@
 				 * @returns {HTMLElement} element
 				 */
 				$parseHTML: function(html) {
-					var el = W._doc.createElement('div');
+					var el;
 
-					el.innerHTML = html;
+					if (! W._range && ! W._legacy) {
+						W._range = D.createRange();
+						W._range.selectNode(W._body);
+					}
+
+					if (W._range && W._range.createContextualFragment) {
+						el = W._range.createContextualFragment(html);
+					} else {
+						el = W._doc.createElement('div');
+						el.innerHTML = html;
+					}
 
 					return W._slice.call(
 						el.children.length ?
