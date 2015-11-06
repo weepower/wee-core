@@ -257,7 +257,7 @@
 
 			if (rules) {
 				segs = conf.path ?
-					conf.path.replace(/^\/|\/$/g, '').split('/') :
+					conf.path.replace(/^\/|\/$/g, '').split(/#|\?/)[0].split('/') :
 					this.segments();
 
 				_process(rules, 0, segs.length, conf.event);
