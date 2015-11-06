@@ -439,7 +439,13 @@
 				}),
 				fn = function(data) {
 					views.forEach(function(view) {
-						W.view.diff(view[0], W.view.render(view[1], data));
+						W.view.diff(
+							view[0],
+							W.$parseHTML(
+								W.view.render(view[1], data)
+							)[0]
+						);
+
 						W.$setRef(view);
 					});
 				};
