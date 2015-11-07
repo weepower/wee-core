@@ -79,11 +79,11 @@
 									}
 
 									cont = W.$toArray(W.$(sel)).some(function(el) {
-										return el.contains(e.target);
+										return el.contains(e.target) && (targ = el);
 									});
 
 									// Ensure element argument is the target
-									conf.args[1] = conf.scope = e.target;
+									conf.args[1] = conf.scope = targ;
 								}
 
 								if (cont) {
@@ -230,6 +230,7 @@
 		bound: function(target, event, fn) {
 			var segs = (event || '').split('.'),
 				matches = [];
+			target = target || [0];
 
 			W.$each(target, function(el) {
 				Object.keys(bound).forEach(function(e) {
@@ -237,7 +238,7 @@
 						parts = binding.ev.split('.'),
 						match = true;
 
-					if (el !== binding.el) {
+					if (el && el !== binding.el) {
 						match = false;
 					}
 
