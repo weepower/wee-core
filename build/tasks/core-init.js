@@ -45,7 +45,8 @@ module.exports = function(grunt) {
 				temp: tempPath
 			},
 			script: {
-				files: []
+				build: [],
+				core: []
 			},
 			style: {
 				concat: [],
@@ -54,7 +55,8 @@ module.exports = function(grunt) {
 				tasks: [],
 				print: '',
 				responsive: ''
-			}
+			},
+			modules: []
 		});
 
 		// Set Grunt configuration

@@ -6,22 +6,30 @@ module.exports = function(grunt) {
 		if (project.script.core.enable === true) {
 			var features = project.script.core.features,
 				weeScriptRoot = config.paths.wee + 'script/',
+				globalScript = [],
 				chained = [];
 
-			config.script.files.push(weeScriptRoot + 'wee.js');
+			config.script.core.push(weeScriptRoot + 'wee.js');
 
 			// Set global data variables
 			if (
 				(project.data && Object.keys(project.data).length) ||
 				(project.script.data && Object.keys(project.script.data).length)
 			) {
-				var weeScriptGlobal = config.paths.temp + 'data.js',
-					configVars = Wee.$extend(project.data, project.script.data || {}),
-					script = 'Wee.$set("global", ' + JSON.stringify(configVars) + ');';
+				var configVars = Wee.$extend(
+					project.data || {},
+					project.script.data || {}
+				);
 
-				fs.writeFileSync(weeScriptGlobal, script);
+				globalScript.push('Wee.$set("global", ' + JSON.stringify(configVars) + ');');
+			}
 
-				config.script.files.push(weeScriptGlobal);
+			// Inject global script
+			if (globalScript.length) {
+				fs.writeFileSync(
+					config.paths.temp + 'global.js',
+					globalScript.join('')
+				);
 			}
 
 			if (features.chain === true) {
@@ -29,7 +37,7 @@ module.exports = function(grunt) {
 			}
 
 			if (features.animate === true) {
-				config.script.files.push(weeScriptRoot + 'wee.animate.js');
+				config.script.core.push(weeScriptRoot + 'wee.animate.js');
 
 				if (features.chain === true) {
 					chained.push(weeScriptRoot + 'chain/wee.chain.animate.js');
@@ -37,15 +45,15 @@ module.exports = function(grunt) {
 			}
 
 			if (features.assets === true) {
-				config.script.files.push(weeScriptRoot + 'wee.assets.js');
+				config.script.core.push(weeScriptRoot + 'wee.assets.js');
 			}
 
 			if (features.data === true) {
-				config.script.files.push(weeScriptRoot + 'wee.data.js');
+				config.script.core.push(weeScriptRoot + 'wee.data.js');
 			}
 
 			if (features.dom === true) {
-				config.script.files.push(weeScriptRoot + 'wee.dom.js');
+				config.script.core.push(weeScriptRoot + 'wee.dom.js');
 
 				if (features.chain === true) {
 					chained.push(weeScriptRoot + 'chain/wee.chain.dom.js');
@@ -53,7 +61,7 @@ module.exports = function(grunt) {
 			}
 
 			if (features.events === true) {
-				config.script.files.push(weeScriptRoot + 'wee.events.js');
+				config.script.core.push(weeScriptRoot + 'wee.events.js');
 
 				if (features.chain === true) {
 					chained.push(weeScriptRoot + 'chain/wee.chain.events.js');
@@ -61,46 +69,46 @@ module.exports = function(grunt) {
 			}
 
 			if (features.history === true) {
-				config.script.files.push(weeScriptRoot + 'wee.history.js');
+				config.script.core.push(weeScriptRoot + 'wee.history.js');
 			}
 
 			if (features.routes === true) {
-				config.script.files.push(weeScriptRoot + 'wee.routes.js');
+				config.script.core.push(weeScriptRoot + 'wee.routes.js');
 			}
 
 			if (features.screen === true) {
-				config.script.files.push(weeScriptRoot + 'wee.screen.js');
+				config.script.core.push(weeScriptRoot + 'wee.screen.js');
 			}
 
 			if (features.touch === true) {
-				config.script.files.push(weeScriptRoot + 'wee.touch.js');
+				config.script.core.push(weeScriptRoot + 'wee.touch.js');
 			}
 
 			if (features.view === true) {
-				config.script.files.push(weeScriptRoot + 'wee.view.js');
-				config.script.files.push(weeScriptRoot + 'wee.view.diff.js');
+				config.script.core.push(weeScriptRoot + 'wee.view.js');
+				config.script.core.push(weeScriptRoot + 'wee.view.diff.js');
 
 				if (features.chain === true) {
 					chained.push(weeScriptRoot + 'chain/wee.chain.view.js');
 				}
 			}
 
-			config.script.files = config.script.files.concat(chained);
+			config.script.core = config.script.core.concat(chained);
 		}
 
 		// Build/vendor directory scripts
-		config.script.files.push(config.paths.jsSource + 'build/vendor/**/*.js');
+		config.script.build.push(config.paths.jsSource + 'build/vendor/**/*.js');
 
 		// Remaining build directory scripts
-		config.script.files.push(config.paths.jsSource + 'build/**/*.js');
+		config.script.build.push(config.paths.jsSource + 'build/**/*.js');
 
 		// Project.config file build files
 		project.script.build.forEach(function(name) {
-			config.script.files.push(Wee.buildPath(config.paths.jsSource, name));
+			config.script.build.push(Wee.buildPath(config.paths.jsSource, name));
 		});
 
 		// Custom/script.js file
-		config.script.files.push(config.paths.jsSource + 'custom/script.js');
+		config.script.build.push(config.paths.jsSource + 'custom/script.js');
 
 		// Compile custom
 		for (var target in project.script.compile) {

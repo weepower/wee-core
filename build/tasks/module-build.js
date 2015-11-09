@@ -18,15 +18,19 @@ module.exports = function(grunt) {
 				if (fs.existsSync(configFile)) {
 					// Get module config
 					var module = fs.readJsonSync(configFile),
-						scriptRoot = modulePath + '/module/script/',
+						scriptRoot = modulePath + '/core/js/',
 						moduleScript = [
 							scriptRoot + 'script.js',
 							scriptRoot + '*.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = fs.readFileSync(config.paths.wee + 'style/wee.module.less', 'utf8'),
+						globalScript = [],
 						namespaceOpen = '',
 						namespaceClose = '';
+
+					// Push into model list
+					config.modules.push(name);
 
 					// Set module variables
 					vars.moduleName = name;
@@ -35,7 +39,7 @@ module.exports = function(grunt) {
 					// Template variables
 					var inject = '@import (optional) "' +
 							config.paths.modulesSource + name +
-							'/module/style/screen.less";\n',
+							'/core/css/screen.less";\n',
 						responsive = '';
 
 					// Reference core Less and inherit namespace if extension
@@ -114,13 +118,24 @@ module.exports = function(grunt) {
 							(module.data && Object.keys(module.data).length) ||
 							(module.script && module.script.data && Object.keys(module.script.data).length)
 						) {
-							var weeScriptGlobal = config.paths.temp + name + '.data.js',
-								configScriptVars = Wee.$extend(module.data || {}, module.script.data || {}),
-								script = 'Wee.$set("' + name + ':global", ' + JSON.stringify(configScriptVars) + ');';
+							var configScriptVars = Wee.$extend(
+								module.data || {},
+								module.script.data || {}
+							);
 
-							fs.writeFileSync(weeScriptGlobal, script);
+							globalScript.push('Wee.$set("' + name + '.global", ' + JSON.stringify(configScriptVars) + ');');
+						}
 
-							moduleScript.unshift(weeScriptGlobal);
+						// Inject global script
+						if (globalScript.length) {
+							var tempPath = config.paths.temp + name + '.global.js';
+
+							fs.writeFileSync(
+								tempPath,
+								globalScript.join('')
+							);
+
+							moduleScript.unshift(tempPath);
 						}
 
 						// Build additional script
@@ -171,24 +186,24 @@ module.exports = function(grunt) {
 
 					// Determine if module is responsive
 					if (project.style.core.responsive.enable) {
-						if (fs.existsSync(modulePath + '/module/style/breakpoints')) {
+						if (fs.existsSync(modulePath + '/core/css/breakpoints')) {
 							vars.responsive = true;
 
 							responsive +=
 								'.wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/module/style/breakpoints/mobile-landscape.less";\n' +
+								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/mobile-landscape.less";\n' +
 								'}\n' +
 								'.wee-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/module/style/breakpoints/tablet-portrait.less";\n' +
+								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/tablet-portrait.less";\n' +
 								'}\n' +
 								'.wee-desktop-small () when not (@desktopSmallWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/module/style/breakpoints/desktop-small.less";\n' +
+								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-small.less";\n' +
 								'}\n' +
 								'.wee-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/module/style/breakpoints/desktop-medium.less";\n' +
+								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-medium.less";\n' +
 								'}\n' +
 								'.wee-desktop-large () when not (@desktopLargeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/module/style/breakpoints/desktop-large.less";\n' +
+								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-large.less";\n' +
 								'}\n';
 						}
 
@@ -293,7 +308,7 @@ module.exports = function(grunt) {
 						config.style.concat.push(dest);
 
 						// Add script paths to uglify
-						config.script.files = config.script.files.concat(moduleScript);
+						config.script.build = config.script.build.concat(moduleScript);
 
 						// Append legacy style
 						if (project.style.legacy.enable) {

@@ -35,10 +35,8 @@ module.exports = function(grunt) {
 			});
 
 			// Sync module files
-			var directories = glob.sync(config.paths.modulesSource + modulePath);
-
-			directories.forEach(function(directory) {
-				fs.removeSync(directory);
+			config.modules.forEach(function(name) {
+				fs.removeSync(config.paths.modulesSource + name + '/' + modulePath);
 			});
 
 			files = glob.sync(

@@ -77,7 +77,12 @@
 				core: {
 					files: [{
 						dest: '<%= config.paths.js %>script.min.js',
-						src: '<%= config.script.files %>'
+						src: [
+							'<%= config.script.core %>',
+							'<%= config.paths.temp %>global.js',
+							'<%= config.paths.temp %>views.js',
+							'<%= config.script.build %>'
+						]
 					}]
 				},
 				lib: {
@@ -149,7 +154,10 @@
 					]
 				},
 				scriptCore: {
-					files: '<%= config.script.files %>',
+					files: [
+						'<%= config.script.build %>',
+						'<%= config.script.core %>'
+					],
 					tasks: [
 						'uglify:core',
 						'notify:script'
@@ -244,6 +252,24 @@
 						'notify:images'
 					]
 				},
+				viewLoad: {
+					files: [
+						'<%= config.paths.source %>**/views/load/*.html'
+					],
+					tasks: [
+						'loadViews',
+						'uglify:core',
+						'notify:script'
+					]
+				},
+				viewMake: {
+					files: [
+						'<%= config.paths.source %>**/views/*.html'
+					],
+					tasks: [
+						'makeViews'
+					]
+				},
 				assetRemove: {
 					files: [
 						'<%= config.paths.source %>**/*.{css,less,js,gif,jpg,png,svg}'
@@ -287,6 +313,8 @@
 			'buildStyle',
 			'buildModules',
 			'buildLegacy',
+			'loadViews',
+			'makeViews',
 			'uglify:core',
 			'uglify:lib',
 			'imagemin',
@@ -303,6 +331,8 @@
 			'buildStyle',
 			'buildModules',
 			'buildLegacy',
+			'loadViews',
+			'makeViews',
 			'uglify:core',
 			'uglify:lib',
 			'imagemin',
