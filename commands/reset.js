@@ -5,7 +5,6 @@
 		var fs = require('fs-extra'),
 			path = require('path'),
 			files = [
-				'bower.json',
 				'LICENSE',
 				'README.md',
 				'source/modules/welcome'
