@@ -27,6 +27,7 @@
 			}
 		},
 		partials = {},
+		views = {},
 		esc,
 
 		/**
@@ -54,6 +55,10 @@
 		_render = function(temp, data) {
 			var tags = [],
 				depth = [];
+
+			if (views[temp]) {
+				temp = views[temp];
+			}
 
 			// Make partial replacements and match tag pairs
 			temp = temp.replace(reg.partial, function(match, tag) {
@@ -420,9 +425,9 @@
 
 				return arg == 'true' ? true :
 					arg == 'false' ? false :
-						arg == 'null' ? null :
-							parseInt(arg).toString() == arg ? parseInt(arg) :
-								'';
+					arg == 'null' ? null :
+					parseInt(arg).toString() == arg ? parseInt(arg) :
+					'';
 			});
 		};
 
@@ -434,26 +439,26 @@
 		 * @param {object} [options] - application configuration
 		 */
 		make: function(name, options) {
-			var views = W.$(options.view).map(function(el) {
-					return [el, el.outerHTML];
+			var sel = options.view,
+				targ = options.target,
+				views = W.$(targ || sel).map(function(el) {
+					return [el, targ ? sel : el.innerHTML];
 				}),
-				fn = function(data) {
+				fn = function() {
 					views.forEach(function(view) {
-						W.view.diff(
-							view[0],
-							W.$parseHTML(
-								W.view.render(view[1], data)
-							)[0]
+						W.$setRef(
+							W.view.diff(view[0], W.$parseHTML(
+								W.view.render(view[1], options.model)
+							))
 						);
-
-						W.$setRef(view);
 					});
 				};
 
+			fn();
+
+			// Create a new application controller
 			W.app[name] = W._make(name, {}, false, options.model);
 			W[name] = new W.app[name]();
-
-			fn(options.model);
 
 			W.$extend(W[name], {
 				/**
@@ -466,17 +471,18 @@
 				/**
 				 * Resume view updating and optionally update
 				 *
-				 * @param {boolean} update
+				 * @param {boolean} [update=false]
 				 */
 				$resume: function(update) {
 					W[name].$observe('*', fn);
 
 					if (update) {
-						fn(options.model);
+						fn();
 					}
 				}
 			});
 
+			// Initialize the app observation
 			W[name].$resume();
 		}
 	};
@@ -486,7 +492,7 @@
 		 * Parse data into template string
 		 *
 		 * @param {string} template
-		 * @param {object} data
+		 * @param {object} [data]
 		 * @returns {string}
 		 */
 		render: function(template, data) {
@@ -496,8 +502,8 @@
 		/**
 		 * Add conditional template handler or tag data modifier
 		 *
-		 * @param {string} name
-		 * @param {function} fn
+		 * @param {object|string} name
+		 * @param {function} [fn]
 		 */
 		addHelper: function(name, fn) {
 			W._extend(helpers, name, fn);
@@ -506,11 +512,21 @@
 		/**
 		 * Make partial available for injection into other templates
 		 *
-		 * @param {string} name
-		 * @param {string} value
+		 * @param {object|string} name
+		 * @param {string} [value]
 		 */
 		addPartial: function(name, value) {
 			W._extend(partials, name, value);
+		},
+
+		/**
+		 * Add view to store for on-demand reference
+		 *
+		 * @param {object|string} name
+		 * @param {string} [value]
+		 */
+		addView: function(name, value) {
+			W._extend(views, name, value);
 		}
 	};
 })(Wee, undefined);
