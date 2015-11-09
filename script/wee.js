@@ -546,7 +546,7 @@
 							try {
 								el = context.querySelectorAll(selector);
 							} catch (e) {
-								return W.$parseHTML(selector);
+								el = W.$parseHTML(selector).childNodes;
 							}
 						}
 					}
@@ -556,7 +556,7 @@
 					} else if (el.nodeType !== U || el === N) {
 						el = [el];
 					} else {
-						el = W._slice.call(el, 0);
+						el = W._slice.call(el);
 					}
 
 					// Join references if available
@@ -564,7 +564,7 @@
 				},
 
 				/**
-				 * Create a DOM object from an HTML string
+				 * Create document fragment from an HTML string
 				 *
 				 * @param {string} html
 				 * @returns {HTMLElement} element
@@ -580,15 +580,18 @@
 					if (W._range && W._range.createContextualFragment) {
 						el = W._range.createContextualFragment(html);
 					} else {
-						el = W._doc.createElement('div');
-						el.innerHTML = html;
+						var div = D.createElement('div'),
+							child;
+						el = D.createDocumentFragment();
+
+						div.innerHTML = html;
+
+						while (child = div.firstChild) {
+							el.appendChild(child);
+						}
 					}
 
-					return W._slice.call(
-						el.children.length ?
-							el.children :
-							el.childNodes
-					);
+					return el;
 				},
 
 				/**
