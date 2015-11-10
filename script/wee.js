@@ -685,8 +685,8 @@
 				 * @param {string} key
 				 * @param {function} fn
 				 * @param {object} [options]
-				 * @param {boolean} [options.once=false]
 				 * @param {boolean} [options.diff=false]
+				 * @param {boolean} [options.once=false]
 				 * @param {boolean} [options.recursive=false]
 				 * @param {*} [options.value]
 				 */
@@ -719,8 +719,8 @@
 				 * @param {function} fn
 				 * @param {object} [options]
 				 * @param {Array} [options.args]
-				 * @param {boolean} [options.reverse=false]
 				 * @param {($|HTMLElement|string)} [options.context=document]
+				 * @param {boolean} [options.reverse=false]
 				 * @param {object} [options.scope]
 				 */
 				$each: function(target, fn, options) {
@@ -783,7 +783,7 @@
 				},
 
 				/**
-				 * Determine if the environment is secured over HTTPS
+				 * Determine if the environment is secured
 				 *
 				 * @returns {boolean} secure
 				 */

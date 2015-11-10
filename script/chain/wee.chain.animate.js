@@ -7,9 +7,9 @@
 		 *
 		 * @param {object} values
 		 * @param {object} [options]
+		 * @param {(Array|function|string)} [options.complete]
 		 * @param {number} [options.duration=400]
 		 * @param {string} [options.ease='ease']
-		 * @param {(Array|function|string)} [options.complete]
 		 * @returns {$} selection
 		 */
 		tween: function(values, options) {

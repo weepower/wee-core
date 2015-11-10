@@ -21,9 +21,9 @@
 		 * @param {($|HTMLElement|string)} target
 		 * @param {object} values
 		 * @param {object} [options]
+		 * @param {(Array|function|string)} [options.complete]
 		 * @param {number} [options.duration=400]
 		 * @param {string} [options.ease='ease']
-		 * @param {(Array|function|string)} [options.complete]
 		 */
 		tween: function(target, values, options) {
 			var conf = W.$extend({

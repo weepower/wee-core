@@ -77,8 +77,8 @@
 		 * @param fn
 		 * @param {object} [options]
 		 * @param {Array} [options.args]
-		 * @param {bool} [options.reverse=false]
 		 * @param {context} [options.context=document]
+		 * @param {bool} [options.reverse=false]
 		 * @param {Array} [options.scope]
 		 */
 		each: function(fn, options) {

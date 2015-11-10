@@ -118,20 +118,20 @@
 		 * Make request based on specified options
 		 *
 		 * @param {object} options
-		 * @param {string} options.url - endpoint to request
-		 * @param {string} [options.root=''] - prepended request path
-		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
-		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
-		 * @param {(Array|function|string)} [options.error] - callback if request fails
-		 * @param {(Array|function|string)} [options.complete] - callback on request completion
 		 * @param {Array} [options.args] - callback arguments appended after default values
+		 * @param {(Array|function|string)} [options.complete] - callback on request completion
 		 * @param {object} [options.data] - object to serialize and pass along with request
+		 * @param {(Array|function|string)} [options.error] - callback if request fails
 		 * @param {object} [options.headers] - request headers
 		 * @param {boolean} [options.json=false] - evaluate the response as JSON and return object
 		 * @param {(boolean|string)} [options.jsonp=false] - boolean or callback query parameter override
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
 		 * @param {string} [options.method=get] - request verb
+		 * @param {string} [options.root=''] - prepended request path
 		 * @param {object} [options.scope] - callback scope
+		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
+		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
+		 * @param {string} options.url - endpoint to request
 		 */
 		request: function(options) {
 			var conf = W.$extend({

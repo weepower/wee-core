@@ -138,12 +138,12 @@
 		 * Set the initial state and popstate event, and bind global actions
 		 *
 		 * @param {object} [options]
-		 * @param {boolean] [options.push=true]
-		 * @param {string] [options.partials='title,main']
-		 * @param {boolean} [options.run=true]
 		 * @param {($|HTMLElement|string)} [options.bind]
-		 * @param {object} [options.request]
 		 * @param {array} [options.extensions]
+		 * @param {string] [options.partials='title,main']
+		 * @param {boolean] [options.push=true]
+		 * @param {object} [options.request]
+		 * @param {boolean} [options.run=true]
 		 */
 		init: function(options) {
 			if (! this.request) {

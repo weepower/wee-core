@@ -159,15 +159,15 @@
 		 * Load specified assets with set options
 		 *
 		 * @param {object} options
-		 * @param {(Array|string)} [options.files]
+		 * @param {boolean} [options.cache=false]
 		 * @param {(Array|string)} [options.css]
+		 * @param {(Array|function|string)} [options.error]
+		 * @param {(Array|string)} [options.files]
+		 * @param {string} [options.group]
 		 * @param {(Array|string)} [options.img]
 		 * @param {(Array|string)} [options.js]
 		 * @param {string} [options.root]
-		 * @param {boolean} [options.cache=false]
-		 * @param {string} [options.group]
 		 * @param {(Array|function|string)} [options.success]
-		 * @param {(Array|function|string)} [options.error]
 		 */
 		load: function(options) {
 			var files = W.$toArray(options.files),
@@ -273,9 +273,9 @@
 		 * @param {string} group
 		 * @param {object} [options]
 		 * @param {Array} [options.args]
+		 * @param {(Array|function|string)} [options.error]
 		 * @param {object} [options.scope]
 		 * @param {(Array|function|string)} [options.success]
-		 * @param {(Array|function|string)} [options.error]
 		 * @param {boolean} [poll=false]
 		 * @returns {boolean} ready
 		 */

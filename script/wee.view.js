@@ -436,7 +436,7 @@
 		 * Create an application
 		 *
 		 * @param {string} name
-		 * @param {object} [options] - application configuration
+		 * @param {object} [options]
 		 */
 		make: function(name, options) {
 			var sel = options.view,
@@ -469,7 +469,7 @@
 				},
 
 				/**
-				 * Resume view updating and optionally update
+				 * Resume view updating
 				 *
 				 * @param {boolean} [update=false]
 				 */
@@ -482,7 +482,7 @@
 				}
 			});
 
-			// Initialize the app observation
+			// Initialize app observation
 			W[name].$resume();
 		}
 	};
