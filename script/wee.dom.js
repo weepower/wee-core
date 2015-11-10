@@ -571,18 +571,19 @@
 				}
 			}
 
-			if (typeof value == 'number') {
-				value = value + 'px';
-			}
-
 			W.$each(target, function(el, i) {
-				W.$css(el, 'height', func ?
+				value = func ?
 					W.$exec(value, {
 						args: [i, height],
 						scope: el
 					}) :
-					value
-				);
+					value;
+
+				if (typeof value == 'number') {
+					value += 'px';
+				}
+
+				W.$css(el, 'height', value);
 			});
 		},
 
@@ -730,7 +731,8 @@
 
 				return matches ?
 					matches.call(el, filter) :
-					W._slice.call(el.parentNode.querySelectorAll(filter)).indexOf(el) > -1;
+					W._slice.call(el.parentNode.querySelectorAll(filter))
+						.indexOf(el) > -1;
 			}).length > 0;
 		},
 
@@ -781,7 +783,7 @@
 		},
 
 		/**
-		 * Get the offset position of a matching selection relative to the document
+		 * Get the position of a matching selection relative to the document
 		 *
 		 * @param {($|HTMLElement|string)} target
 		 * @param {(function|number)} value
@@ -1340,18 +1342,19 @@
 				}
 			}
 
-			if (typeof value == 'number') {
-				value = value + 'px';
-			}
-
 			W.$each(target, function(el, i) {
-				W.$css(el, 'width', func ?
+				value = func ?
 					W.$exec(value, {
 						args: [i, width],
 						scope: el
 					}) :
-					value
-				);
+					value;
+
+				if (typeof value == 'number') {
+					value += 'px';
+				}
+
+				W.$css(el, 'width', value);
 			});
 		},
 
