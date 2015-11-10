@@ -14,6 +14,7 @@
 				observe = {},
 				refs = {},
 				env,
+				range,
 
 				/**
 				 * Determine data storage root and key
@@ -534,7 +535,7 @@
 							var pre = selector[0];
 
 							if (pre == '#') {
-								el = context.getElementById(selector.substr(1));
+								el = D.getElementById(selector.substr(1));
 							} else if (pre == '.') {
 								el = W._legacy ?
 									context.querySelectorAll(selector) :
@@ -572,13 +573,13 @@
 				$parseHTML: function(html) {
 					var el;
 
-					if (! W._range && ! W._legacy) {
-						W._range = D.createRange();
-						W._range.selectNode(W._body);
+					if (! range && ! W._legacy) {
+						range = D.createRange();
+						range.selectNode(W._body);
 					}
 
-					if (W._range && W._range.createContextualFragment) {
-						el = W._range.createContextualFragment(html);
+					if (range && range.createContextualFragment) {
+						el = range.createContextualFragment(html);
 					} else {
 						var div = D.createElement('div'),
 							child;
