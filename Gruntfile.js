@@ -130,8 +130,8 @@
 						},
 						{
 							expand: true,
-							cwd: '<%= config.paths.modulesSource %>',
-							dest: '<%= config.paths.modules %>',
+							cwd: '<%= config.paths.moduleSource %>',
+							dest: '<%= config.paths.module %>',
 							src: [
 								'**/*.{gif,jpg,png,svg}'
 							]
@@ -146,7 +146,7 @@
 				imgCore: {
 					files: [
 						'<%= config.paths.imgSource %>**/*.{gif,jpg,png,svg}',
-						'<%= config.paths.modulesSource %>**/*.{gif,jpg,png,svg}'
+						'<%= config.paths.moduleSource %>**/*.{gif,jpg,png,svg}'
 					],
 					tasks: [
 						'newer:imagemin',
@@ -254,7 +254,7 @@
 				},
 				viewLoad: {
 					files: [
-						'<%= config.paths.source %>**/views/load/*.html'
+						'<%= config.paths.source %>**/views/load/**/*.html'
 					],
 					tasks: [
 						'loadViews',
@@ -264,7 +264,7 @@
 				},
 				viewMake: {
 					files: [
-						'<%= config.paths.source %>**/views/*.html'
+						'<%= config.paths.source %>**/views/**/*.html'
 					],
 					tasks: [
 						'makeViews'
@@ -286,7 +286,7 @@
 				project: {
 					files: [
 						'<%= config.path %>',
-						'<%= config.paths.modulesSource %>*/module.json'
+						'<%= config.paths.moduleSource %>*/module.json'
 					],
 					tasks: [
 						'default',
