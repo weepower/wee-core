@@ -348,29 +348,14 @@
 				}
 			},
 			morphedNode = fromNode,
-			morphedNodeType = morphedNode.nodeType,
-			toNodeType = toNode.nodeType;
+			div = fromNode.cloneNode();
 
-		// Handle the case where we are given two DOM nodes that are not
-		// compatible (e.g. <div> --> <span> or <div> --> TEXT)
-		if (morphedNodeType === 1) {
-			if (toNodeType === 1) {
-				if (fromNode.tagName !== toNode.tagName) {
-					morphedNode = _moveChildren(fromNode, D.createElement(toNode.tagName));
-				}
-			} else {
-				// Going from an element node to a text node
-				morphedNode = toNode;
-			}
-		} else if (morphedNodeType === 3) {
-			// Text node
-			if (toNodeType === 3) {
-				morphedNode.nodeValue = toNode.nodeValue;
-				return morphedNode;
-			} else {
-				// Text node to something else
-				morphedNode = toNode;
-			}
+		// Place fragment in container
+		div.appendChild(toNode);
+		toNode = div;
+
+		if (fromNode.tagName !== toNode.tagName) {
+			morphedNode = _moveChildren(fromNode, D.createElement(toNode.tagName));
 		}
 
 		if (morphedNode !== toNode) {
