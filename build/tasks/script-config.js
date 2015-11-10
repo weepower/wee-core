@@ -150,7 +150,7 @@ module.exports = function(grunt) {
 			grunt.config.set('uglify.options.sourceMapIncludeSources', true);
 			grunt.config.set('uglify.options.sourceMapName', function(dest) {
 				var scriptRoot = path.normalize(config.paths.js),
-					moduleRoot = path.normalize(config.paths.modules);
+					moduleRoot = path.normalize(config.paths.module);
 				dest = path.normalize(dest)
 					.replace(scriptRoot, '')
 					.replace(moduleRoot, '/')

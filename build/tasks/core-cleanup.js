@@ -7,8 +7,9 @@ module.exports = function(grunt) {
 
 		// Remove all public assets
 		fs.removeSync(config.paths.css);
-		fs.removeSync(config.paths.js);
 		fs.removeSync(config.paths.img);
-		fs.removeSync(config.paths.modules);
+		fs.removeSync(config.paths.js);
+		fs.removeSync(config.paths.module);
+		fs.removeSync(config.paths.view);
 	});
 };

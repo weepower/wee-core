@@ -4,11 +4,11 @@
 module.exports = function(grunt) {
 	grunt.registerTask('buildModules', function() {
 		// Loop through module directories
-		var children = fs.readdirSync(config.paths.modulesSource);
+		var children = fs.readdirSync(config.paths.moduleSource);
 
 		for (var directory in children) {
 			var name = children[directory],
-				modulePath = config.paths.modulesSource + children[directory];
+				modulePath = config.paths.moduleSource + children[directory];
 
 			// Ensure the child is a directory
 			if (fs.statSync(modulePath).isDirectory()) {
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 
 					// Template variables
 					var inject = '@import (optional) "' +
-							config.paths.modulesSource + name +
+							config.paths.moduleSource + name +
 							'/core/css/screen.less";\n',
 						responsive = '';
 
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
 
 							buildStyleSources.forEach(function(filepath) {
 								inject += '@import "' +
-									config.paths.modulesSource + name +
+									config.paths.moduleSource + name +
 									'/' + filepath + '";\n';
 							});
 						}
@@ -90,7 +90,7 @@ module.exports = function(grunt) {
 								// Create Less task
 								grunt.config.set('less.' + compileStyleTaskName, {
 									files: [{
-										dest: Wee.buildPath(config.paths.modules + name, compileStyleTarget),
+										dest: Wee.buildPath(config.paths.module + name, compileStyleTarget),
 										src: files
 									}],
 									options: {
@@ -173,7 +173,7 @@ module.exports = function(grunt) {
 								// Create uglify task
 								grunt.config.set('uglify.' + compileScriptTaskName, {
 									files: [{
-										dest: Wee.buildPath(config.paths.modules + name, compileScriptTarget),
+										dest: Wee.buildPath(config.paths.module + name, compileScriptTarget),
 										src: src
 									}]
 								});
@@ -191,19 +191,19 @@ module.exports = function(grunt) {
 
 							responsive +=
 								'.wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/mobile-landscape.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/mobile-landscape.less";\n' +
 								'}\n' +
 								'.wee-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/tablet-portrait.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/tablet-portrait.less";\n' +
 								'}\n' +
 								'.wee-desktop-small () when not (@desktopSmallWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-small.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-small.less";\n' +
 								'}\n' +
 								'.wee-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-medium.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-medium.less";\n' +
 								'}\n' +
 								'.wee-desktop-large () when not (@desktopLargeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/core/css/breakpoints/desktop-large.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-large.less";\n' +
 								'}\n';
 						}
 
@@ -212,19 +212,19 @@ module.exports = function(grunt) {
 
 							responsive +=
 								'.wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/css/breakpoints/mobile-landscape.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/mobile-landscape.less";\n' +
 								'}\n' +
 								'.wee-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/css/breakpoints/tablet-portrait.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/tablet-portrait.less";\n' +
 								'}\n' +
 								'.wee-desktop-small () when not (@desktopSmallWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/css/breakpoints/desktop-small.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-small.less";\n' +
 								'}\n' +
 								'.wee-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/css/breakpoints/desktop-medium.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-medium.less";\n' +
 								'}\n' +
 								'.wee-desktop-large () when not (@desktopLargeWidth = false) {\n' +
-								'	@import (optional) "' + config.paths.modulesSource + name + '/css/breakpoints/desktop-large.less";\n' +
+								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-large.less";\n' +
 								'}\n';
 						}
 					}
@@ -267,7 +267,7 @@ module.exports = function(grunt) {
 					// Create module style compile task
 					var dest = (module.autoload === true) ?
 							config.paths.temp + name + '.css' :
-							config.paths.modules + name + '/style.min.css',
+							config.paths.module + name + '/style.min.css',
 						obj = {};
 
 					obj[name] = {
@@ -330,7 +330,7 @@ module.exports = function(grunt) {
 						// Create module style compile task
 						obj[name] = {
 							files: [{
-								dest: config.paths.modules + name + '/script.min.js',
+								dest: config.paths.module + name + '/script.min.js',
 								src: moduleScript
 							}]
 						};
@@ -356,7 +356,7 @@ module.exports = function(grunt) {
 						var legacyTaskName = name + '-legacy';
 						dest = module.autoload ?
 							config.paths.temp + legacyTaskName + '.css' :
-							config.paths.modules + name + '/legacy.min.css';
+							config.paths.module + name + '/legacy.min.css';
 
 						// Create legacy task
 						grunt.config.set('less.' + legacyTaskName, {

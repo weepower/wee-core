@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		// Core style features
 		config.style.vars = {
 			sourcePath: '"' + config.paths.cssSource + '"',
-			modulePath: '"' + config.paths.modulesSource + '"',
+			modulePath: '"' + config.paths.moduleSource + '"',
 			buttonEnabled: features.buttons === true,
 			codeEnabled: features.code === true,
 			formEnabled: features.forms === true,

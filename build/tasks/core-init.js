@@ -23,11 +23,13 @@ module.exports = function(grunt) {
 
 				cssSource: sourcePath + 'css/',
 				css: assetPath + 'css/',
-				cssMaps: assetPath + 'js/maps/',
 
 				jsSource: sourcePath + 'js/',
 				js: assetPath + 'js/',
 				jsMaps: assetPath + 'js/maps/',
+
+				viewSource: sourcePath + 'js/views/',
+				view: assetPath + 'js/views/',
 
 				fontSource: sourcePath + 'fonts/',
 				font: assetPath + 'fonts/',
@@ -35,8 +37,8 @@ module.exports = function(grunt) {
 				imgSource: sourcePath + 'img/',
 				img: assetPath + 'img/',
 
-				modulesSource: sourcePath + 'modules/',
-				modules: assetPath + 'modules/',
+				moduleSource: sourcePath + 'modules/',
+				module: assetPath + 'modules/',
 
 				wee: '',
 				weeTemp: tempPath + 'wee.less',

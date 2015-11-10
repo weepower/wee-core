@@ -36,18 +36,18 @@ module.exports = function(grunt) {
 
 			// Sync module files
 			config.modules.forEach(function(name) {
-				fs.removeSync(config.paths.modulesSource + name + '/' + modulePath);
+				fs.removeSync(config.paths.moduleSource + name + '/' + modulePath);
 			});
 
 			files = glob.sync(
-				config.paths.modulesSource +
+				config.paths.moduleSource +
 				'*/' + modulePath + '/**/*.{' + extensions + '}'
 			);
 
 			files.forEach(function(file) {
-				var name = file.replace(config.paths.modulesSource, '');
+				var name = file.replace(config.paths.moduleSource, '');
 
-				fs.copySync(file, config.paths.modules + name);
+				fs.copySync(file, config.paths.module + name);
 			});
 
 			if (task === 'images') {
