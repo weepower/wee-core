@@ -341,7 +341,7 @@
 					}
 
 					if (partials) {
-						html = W.$parseHTML('<i>' + html + '</i>');
+						html = W.$parseHTML('<i>' + html + '</i>').firstChild;
 
 						// Make partial replacements from response
 						W.$each(partials.split(','), function(sel) {
