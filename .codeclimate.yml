@@ -1,6 +1,6 @@
 languages:
   JavaScript: true
 exclude_paths:
-- "templates/*"
-- "script/lib/*"
-- "script/tests/*"
+- "commands/templates/*"
+- "js/lib/*"
+- "js/tests/*"
