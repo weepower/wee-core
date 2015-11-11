@@ -433,6 +433,11 @@
 
 	W.app = {
 		/**
+		 * Application instance storage
+		 */
+		fn: {},
+
+		/**
 		 * Create an application
 		 *
 		 * @param {string} name
@@ -442,14 +447,14 @@
 			var sel = options.view,
 				targ = options.target,
 				views = W.$(targ || sel).map(function(el) {
-					return [el, targ ? sel : el.innerHTML];
+					return [el, targ ? sel : el.outerHTML];
 				}),
 				fn = function() {
 					views.forEach(function(view) {
 						W.$setRef(
 							W.view.diff(view[0], W.$parseHTML(
 								W.view.render(view[1], options.model)
-							))
+							), targ)
 						);
 					});
 				};
@@ -457,15 +462,15 @@
 			fn();
 
 			// Create a new application controller
-			W.app[name] = W._make(name, {}, false, options.model);
-			W[name] = new W.app[name]();
+			W.app.fn[name] = W._make(name, {}, false, options.model);
+			W.app[name] = new W.app.fn[name]();
 
-			W.$extend(W[name], {
+			W.$extend(W.app[name], {
 				/**
 				 * Pause view updating
 				 */
 				$pause: function() {
-					W[name].$unobserve('*', fn);
+					W.app[name].$unobserve('*', fn);
 				},
 
 				/**
@@ -474,7 +479,7 @@
 				 * @param {boolean} [update=false]
 				 */
 				$resume: function(update) {
-					W[name].$observe('*', fn);
+					W.app[name].$observe('*', fn);
 
 					if (update) {
 						fn();
@@ -483,7 +488,9 @@
 			});
 
 			// Initialize app observation
-			W[name].$resume();
+			W.app[name].$resume();
+
+			return W.app[name];
 		}
 	};
 

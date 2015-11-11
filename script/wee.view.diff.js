@@ -139,7 +139,7 @@
 		return toEl;
 	};
 
-	W.view.diff = function(fromNode, toNode) {
+	W.view.diff = function(fromNode, toNode, replace) {
 		// Used to store DOM elements with IDs
 		var savedEls = {},
 			unmatchedEls = {},
@@ -347,12 +347,17 @@
 					specialElHandler(fromEl, toEl);
 				}
 			},
-			morphedNode = fromNode,
-			div = fromNode.cloneNode();
+			morphedNode = fromNode;
 
-		// Place fragment in container
-		div.appendChild(toNode);
-		toNode = div;
+		if (replace) {
+			var el = fromNode.cloneNode();
+
+			// Place fragment in container
+			el.appendChild(toNode);
+			toNode = el;
+		} else {
+			toNode = toNode.firstChild;
+		}
 
 		if (fromNode.tagName !== toNode.tagName) {
 			morphedNode = _moveChildren(fromNode, D.createElement(toNode.tagName));
