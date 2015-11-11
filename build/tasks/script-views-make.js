@@ -6,6 +6,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('makeViews', function(task) {
 		var data = {};
 
+		// Remove core files
+		fs.removeSync(config.paths.view);
+
 		// Find core view templates
 		var matches = glob.sync(config.paths.viewSource + '**/*.html', {
 			ignore: config.paths.viewSource + 'load/**/*'
@@ -21,9 +24,8 @@ module.exports = function(grunt) {
 						.replace(/\s*\n+\t*/g, '');
 
 				fs.outputFileSync(
-					config.paths.js + 'views/' + dir + '/' + file + '.min.js',
-					'Wee.view.addView("' + key + '",' +
-						JSON.stringify(script) + ');'
+					config.paths.view + dir + '/' + file + '.html',
+					script
 				);
 			});
 		}
@@ -35,6 +37,9 @@ module.exports = function(grunt) {
 				ignore: root + '/core/js/views/load/**/*'
 			});
 
+			// Remove module files
+			fs.removeSync(config.paths.module + name + '/views');
+
 			if (matches.length) {
 				matches.forEach(function(view) {
 					var rel = view.replace(root + '/core/js/views/', ''),
@@ -45,9 +50,8 @@ module.exports = function(grunt) {
 							.replace(/\s*\n+\t*/g, '');
 
 					fs.outputFileSync(
-						config.paths.js + name + '/views/' + dir + '/' + file + '.min.js',
-						'Wee.view.addView("' + name + '.' + key + '",' +
-							JSON.stringify(script) + ');'
+						config.paths.module + name + '/views/' + dir + '/' + file + '.html',
+						script
 					);
 				});
 			}
