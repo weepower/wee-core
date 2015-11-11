@@ -23,24 +23,24 @@ module.exports = function(grunt) {
 		};
 
 		if (config.style.vars.buttonEnabled) {
-			config.style.coreImports.push('../style/components/wee.buttons.less');
+			config.style.coreImports.push('../css/components/wee.buttons.less');
 		}
 
 		if (config.style.vars.codeEnabled) {
-			config.style.coreImports.push('../style/components/wee.code.less');
+			config.style.coreImports.push('../css/components/wee.code.less');
 		}
 
 		if (config.style.vars.formEnabled) {
-			config.style.coreImports.push('../style/components/wee.forms.less');
+			config.style.coreImports.push('../css/components/wee.forms.less');
 		}
 
 		if (config.style.vars.tableEnabled) {
-			config.style.coreImports.push('../style/components/wee.tables.less');
+			config.style.coreImports.push('../css/components/wee.tables.less');
 		}
 
 		if (config.style.vars.printEnabled) {
 			config.style.print = '@media print {\n' +
-				'@import "../style/wee.print.less";\n' +
+				'@import "../css/wee.print.less";\n' +
 				'@import (optional) "@{sourcePath}/custom/print.less";\n' +
 				'}';
 		}
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 				delete breakpoints[key];
 			});
 
-			config.style.responsive = '@import "../style/wee.responsive.less";';
+			config.style.responsive = '@import "../css/wee.responsive.less";';
 		} else {
 			config.style.vars.responsiveEnabled = false;
 			config.style.vars.ieBreakpoint = 1;

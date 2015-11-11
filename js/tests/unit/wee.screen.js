@@ -1,35 +1,38 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		Wee = require('Wee'),
+		el;
 
-	require('script/wee.screen.js');
+	require('js/wee.screen.js');
 
 	registerSuite({
 		name: 'Screen',
 
 		setup: function() {
-			Wee.$html('head',
-				'<style id="style"> html { font-family: "5"; } </style>'
-			);
+			el = document.createElement('style');
+			el.innerText = 'html {font-family: "5"}';
+
+			document.getElementsByTagName('head')[0].appendChild(el);
 		},
 
 		teardown: function() {
-			Wee.$remove('#style');
+			document.getElementsByTagName('head')[0].removeChild(el);
 		},
 
 		size: function() {
 			assert.strictEqual(Wee.screen.size(), 5,
-				'Screen size was not returned 5 successfully.'
+				'Screen size should return 5'
 			);
 		},
 
 		map: function() {
+			// TODO: Complete
 			assert.strictEqual(Wee.screen.map({
 					size: 1,
 					callback: function() {}
 				}), undefined,
-				'Single event was not mapped successfully.'
+				'Single event was not mapped successfully'
 			);
 
 			assert.strictEqual(Wee.screen.map([{
@@ -39,7 +42,7 @@ define(function(require) {
 					size: 2,
 					callback: function() {}
 				}]), undefined,
-				'Multiple events were not mapped successfully.'
+				'Multiple events were not mapped successfully'
 			);
 		}
 	});

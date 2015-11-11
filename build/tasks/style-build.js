@@ -2,7 +2,7 @@
 
 module.exports = function(grunt) {
 	grunt.registerTask('buildStyle', function() {
-		var less = fs.readFileSync(config.paths.wee + 'style/wee.less', 'utf8'),
+		var less = fs.readFileSync(config.paths.wee + 'css/wee.less', 'utf8'),
 			buildFiles = grunt.file.expand({
 				cwd: config.paths.cssSource + 'build'
 			}, [

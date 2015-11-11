@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-	require('script/wee.assets.js');
+	require('js/wee.assets.js');
 
 	registerSuite({
 		name: 'Assets',
@@ -11,19 +11,19 @@ define(function(require) {
 		root: {
 			set: function() {
 				Wee.assets.root(
-					'/$root/node_modules/wee-core/script/tests/sample-files/'
+					'/$root/node_modules/wee-core/js/tests/sample-files/'
 				);
 
 				assert.strictEqual(Wee.assets.root(),
-					'/$root/node_modules/wee-core/script/tests/sample-files/',
-					'Asset root set successfully.'
+					'/$root/node_modules/wee-core/js/tests/sample-files/',
+					'Asset root not set successfully'
 				);
 			},
 
 			get: function() {
 				assert.strictEqual(Wee.assets.root(),
-					'/$root/node_modules/wee-core/script/tests/sample-files/',
-					'Asset root retreived successfully.'
+					'/$root/node_modules/wee-core/js/tests/sample-files/',
+					'Asset root not retrieved successfully'
 				);
 			}
 		},
@@ -33,14 +33,14 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
+					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
-							'Sample file was not loaded successfully'
+							'Sample file not loaded successfully'
 						);
 
-						Wee.assets.remove('/$root/node_modules/wee-core/script/' +
+						Wee.assets.remove('/$root/node_modules/wee-core/js/' +
 							'tests/sample-files/sample.js'
 						);
 					})
@@ -51,24 +51,24 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
+					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
 					files: [
 						'sample.js',
 						'sample-2.js'
 					],
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
-							'Multiple files were not loaded successfully'
+							'Multiple files not loaded successfully'
 						);
 
 						assert.isTrue(Wee.$get('sampleJsLoadedAgain'),
-							'Multiple files were not loaded successfully'
+							'Multiple files not loaded successfully'
 						);
 
 						Wee.assets.remove([
-							'/$root/node_modules/wee-core/script/' +
+							'/$root/node_modules/wee-core/js/' +
 							'tests/sample-files/sample.js',
-							'/$root/node_modules/wee-core/script/' +
+							'/$root/node_modules/wee-core/js/' +
 							'tests/sample-files/sample-2.js'
 						]);
 					})
@@ -79,16 +79,16 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
+					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
 						assert.ok(Wee.assets.ready('assetsGroup'),
-							'Asset group was created successfully'
+							'Asset group not created successfully'
 						);
 
 						Wee.assets.remove(
-							'/$root/node_modules/wee-core/script/tests/' +
+							'/$root/node_modules/wee-core/js/tests/' +
 							'sample-files/sample.js'
 						);
 
@@ -102,15 +102,15 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
+					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
-							'Asset was set successfully'
+							'Asset was not set successfully'
 						);
 
 						Wee.assets.remove(
-							'/$root/node_modules/wee-core/script/' +
+							'/$root/node_modules/wee-core/js/' +
 							'tests/sample-files/sample.js'
 						);
 					})
@@ -121,18 +121,18 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/script/tests/sample-files/',
+					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
 						Wee.assets.ready('assetsGroup', {
 							success: promise.callback(function() {
 								assert.ok(Wee.assets.ready('assetsGroup'),
-									'Asset group was created successfully'
+									'Asset group was not created successfully'
 								);
 
 								Wee.assets.remove(
-									'/$root/node_modules/wee-core/script/' +
+									'/$root/node_modules/wee-core/js/' +
 									'tests/sample-files/sample.js'
 								);
 							})

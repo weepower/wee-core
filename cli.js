@@ -4,7 +4,7 @@
 	'use strict';
 
 	global.chalk = require('chalk');
-	global.Wee = require('./script/wee').Wee;
+	global.Wee = require('./js/wee').Wee;
 
 	module.exports = function(rootPath) {
 		var fs = require('fs-extra'),

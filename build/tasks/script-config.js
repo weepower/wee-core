@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 		// Core scripts
 		if (project.script.core.enable === true) {
 			var features = project.script.core.features,
-				weeScriptRoot = config.paths.wee + 'script/',
+				weeScriptRoot = config.paths.wee + 'js/',
 				globalScript = [],
 				chained = [];
 

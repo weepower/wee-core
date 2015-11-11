@@ -1,37 +1,38 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		Wee = require('Wee'),
+		el;
 
-	require('script/wee.dom.js');
-	require('script/wee.animate.js');
+	require('js/wee.dom.js');
+	require('js/wee.animate.js');
 
 	registerSuite({
 		name: 'Animate',
 
 		beforeEach: function() {
-			var container = document.createElement('div');
+			el = document.createElement('div');
 
-			container.id = 'container';
-			container.className = 'js-container';
+			el.id = 'container';
+			el.className = 'js-container';
 
-			document.body.appendChild(container);
+			document.body.appendChild(el);
 		},
 
 		afterEach: function() {
-			Wee.$remove('#container');
+			el.parentNode.removeChild(el);
 		},
 
 		tween: function() {
 			var promise = this.async(1000),
-				$el = Wee.$('#container');
+				$el = Wee.$(el);
 
 			Wee.animate.tween($el, {
 				height: 100
 			}, {
 				complete: promise.callback(function() {
 					assert.equal(Wee.$height($el), 100,
-						'The container height is equal to 100.'
+						'The container height should equal 100.'
 					);
 				})
 			});
@@ -39,19 +40,19 @@ define(function(require) {
 
 		addEasing: function() {
 			var promise = this.async(1000),
-				$el = Wee.$('#container');
+				$el = Wee.$(el);
 
 			Wee.animate.addEasing('custom', function(t) {
 				return t / 2;
 			});
 
-			Wee.animate.tween('#container', {
+			Wee.animate.tween($el, {
 				height: 200
 			}, {
 				easing: 'custom',
 				complete: promise.callback(function() {
 					assert.equal(Wee.$height($el), 200,
-						'The container height is equal to 200.'
+						'The container height should equal 200.'
 					);
 				})
 			});

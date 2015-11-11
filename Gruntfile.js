@@ -12,7 +12,7 @@
 		global.browserSync = require('browser-sync');
 		global.fs = require('fs-extra');
 		global.path = require('path');
-		global.Wee = require('./script/wee').Wee;
+		global.Wee = require('./js/wee').Wee;
 
 		require('./utils');
 
@@ -175,7 +175,7 @@
 				},
 				styleCore: {
 					files: [
-						'wee/style/**/*.less',
+						'wee/css/**/*.less',
 						'<%= config.paths.cssSource %>custom/**/*.less',
 						'!<%= config.paths.temp %>wee.legacy.less'
 					],

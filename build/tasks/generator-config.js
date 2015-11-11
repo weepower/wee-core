@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('configGenerator', function() {
 		if (project.generator.enable === true) {
 			// Import view library
-			require('../../script/wee.view');
+			require('../../js/wee.view');
 
 			var build = project.generator.build;
 

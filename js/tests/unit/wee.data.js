@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-	require('script/wee.data.js');
+	require('js/wee.data.js');
 
 	registerSuite({
 		name: 'Data',
@@ -13,7 +13,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.data.request({
-					url: '/$root/node_modules/wee-core/script/tests/sample-files/sample.json',
+					url: '/$root/node_modules/wee-core/js/tests/sample-files/sample.json',
 					json: true,
 					success: promise.callback(function(data) {
 						console.log(data);

@@ -136,7 +136,7 @@
 			if (total > 0) {
 				console.log(
 					chalk.bgRed('JSCS error' +
-						((total > 1) ? 's' : '') + ' in ' + file + '.')
+					((total > 1) ? 's' : '') + ' in ' + file + '.')
 				);
 
 				errorList.forEach(function(error) {
@@ -173,7 +173,7 @@
 		},
 
 		/**
-		 * Notify through a naitvely available notification option
+		 * Notify through a natively available notification option
 		 *
 		 * @param {object} options
 		 * @param {string} [type=notice]

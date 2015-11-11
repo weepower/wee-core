@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-	require('script/wee.view.js');
+	require('js/wee.view.js');
 
 	registerSuite({
 		name: 'View',

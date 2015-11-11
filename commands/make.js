@@ -8,11 +8,11 @@
 			glob = require('glob'),
 			path = require('path');
 
-		require('../script/wee.view');
+		require('../js/wee.view');
 
 		var error = false,
 			message = false,
-			templatePath = __dirname + '/../templates/',
+			templatePath = __dirname + '/templates/',
 			sourcePath = path.join(config.rootPath, config.project.paths.source),
 			commands = {
 				controller: function() {

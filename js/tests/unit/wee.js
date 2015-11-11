@@ -275,15 +275,11 @@ define(function(require) {
 			);
 		},
 		'$parseHTML': function() {
-			var newElem = Wee.$parseHTML(
-				'<span class="testing">Testing</span>'
+			var el = Wee.$parseHTML(
+				'<ul><li class="child">1</li><li class="child">2</li></ul>'
 			);
 
-			assert.strictEqual(newElem.length, 1,
-				'HTML was not parsed successfully'
-			);
-
-			assert.ok(Wee.$hasClass(newElem, 'testing'),
+			assert.strictEqual(el.querySelectorAll('.child').length, 2,
 				'HTML was not parsed successfully'
 			);
 		},

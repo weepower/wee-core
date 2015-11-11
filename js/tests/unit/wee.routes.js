@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		Wee = require('Wee');
 
-	require('script/wee.routes.js');
+	require('js/wee.routes.js');
 
 	registerSuite({
 		name: 'Routes',
@@ -30,7 +30,7 @@ define(function(require) {
 			'set object': function() {
 				Wee.routes.uri({
 				    hash: 'uri',
-				    path: '/script/routes',
+				    path: '/js/routes',
 				    history: true,
 				    query: {
 				        success: 'yes'
@@ -41,7 +41,7 @@ define(function(require) {
 					'URI object was not set successfully'
 				);
 
-				assert.strictEqual(Wee.routes.uri().path, '/script/routes',
+				assert.strictEqual(Wee.routes.uri().path, '/js/routes',
 					'URI object was not set successfully'
 				);
 
@@ -74,13 +74,13 @@ define(function(require) {
 
 			'get single': function() {
 				assert.strictEqual(Wee.routes.segments(0), 'test',
-					'Single segment retrieved successfully'
+					'Single segment not retrieved successfully'
 				);
 				assert.strictEqual(Wee.routes.segments(1), 'page',
-					'Single segment retrieved successfully'
+					'Single segment not retrieved successfully'
 				);
 				assert.strictEqual(Wee.routes.segments(2), '',
-					'Single segment retrieved successfully'
+					'Single segment not retrieved successfully'
 				);
 			}
 		},
@@ -102,6 +102,7 @@ define(function(require) {
 
 		run: {
 			simple: function() {
+				// TODO: Complete
 				Wee.routes.map({
 					'$any': function() {
 						return 'any';
@@ -114,13 +115,14 @@ define(function(require) {
 			},
 
 			advanced: function() {
+				// TODO: Complete
 				Wee.routes.run({
 					path: '/test/route',
 					routes: {
-						'test': {
-							'route': function() {
+						test: {
+							route: function() {
 								assert.ok(true, true,
-									'Specific route executed successfully.'
+									'Specific route not executed successfully.'
 								);
 							}
 						}

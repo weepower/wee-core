@@ -1,55 +1,52 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		Wee = require('Wee'),
+		el;
 
-	require('script/wee.dom.js');
-	require('script/wee.events.js');
+	require('js/wee.dom.js');
+	require('js/wee.events.js');
 
 	registerSuite({
 		name: 'Events',
 
 		beforeEach: function() {
-			var container = document.createElement('div');
+			el = document.createElement('div');
 
-			container.id = 'container';
-			container.className = 'js-container';
+			el.id = 'wee';
+			el.className = 'js-wee';
 
-			document.body.appendChild(container);
+			document.body.appendChild(el);
 		},
 
 		afterEach: function() {
-			Wee.$remove('#container');
+			el.parentNode.removeChild(el);
 		},
 
 		on: {
 			simple: function() {
-				var $el = Wee.$('#container');
-
-				Wee.events.on($el, 'click', function() {
-					Wee.$addClass($el, 'click-class');
+				Wee.events.on(el, 'click', function() {
+					Wee.$addClass(el, 'test');
 				});
 
-				Wee.events.trigger($el, 'click');
+				Wee.events.trigger(el, 'click');
 
-				assert.ok(Wee.$hasClass($el, 'click-class'),
+				assert.ok(Wee.$hasClass$el, 'test'),
 					'Event was not bound successfully'
 				);
 			},
 
 			once: function() {
-				var $el = Wee.$('#container');
-
-				Wee.events.on($el, 'click', function() {
-					Wee.$append($el, '<span class="test"></span>');
+				Wee.events.on(el, 'click', function() {
+					Wee.$append(el, '<div class="test"></div>');
 				}, {
 					once: true
 				});
 
-				Wee.events.trigger($el, 'click');
-				Wee.events.trigger($el, 'click');
+				Wee.events.trigger(el, 'click');
+				Wee.events.trigger(el, 'click');
 
-				assert.strictEqual(Wee.$children($el).length, 1,
+				assert.strictEqual(Wee.$children(el).length, 1,
 					'Event was triggered more than once'
 				);
 			},
@@ -60,51 +57,48 @@ define(function(require) {
 			},
 
 			'multiple events': function() {
-				var $el = Wee.$('#container');
-
-				Wee.events.on($el, {
+				Wee.events.on(el, {
 					click: function() {
-						Wee.$addClass($el, 'test-class');
+						Wee.$addClass(el, 'test');
 					},
 					blur: function() {
-						Wee.$removeClass($el, 'test-class');
-						Wee.$addClass($el, 'test-class-2');
+						Wee.$removeClass(el, 'test');
+						Wee.$addClass(el, 'test-2');
 					}
 				});
 
-				Wee.events.trigger($el, 'click');
-				Wee.events.trigger($el, 'blur');
+				Wee.events.trigger(el, 'click');
+				Wee.events.trigger(el, 'blur');
 
-				assert.ok(Wee.$hasClass($el, 'test-class-2'),
+				assert.ok(Wee.$hasClass($el, 'test-2'),
 					'Multple events were not triggered successfully'
 				);
 			},
 
 			'multiple selections': function() {
-				var $el = Wee.$('#container');
-
-				Wee.$append($el, '<div id="wee-inner">inner</div>');
+				Wee.$append(el, '<div id="test">inner</div>');
 
 				Wee.events.on({
-					'#container': {
+					'#wee': {
 						click: function() {
-							Wee.$addClass($el, 'test-class');
+							Wee.$addClass(this, 'test');
 						}
 					},
-					'#wee-inner': {
+					'#test': {
 						click: function() {
-							Wee.$addClass('#wee-inner', 'test-class-inner');
+							Wee.$addClass(this, 'test-inner');
 						}
 					}
 				});
 
-				Wee.events.trigger($el, 'click');
-				Wee.events.trigger('#wee-inner', 'click');
+				Wee.events.trigger(el, 'click');
+				Wee.events.trigger('#test', 'click');
 
-				assert.ok(Wee.$hasClass($el, 'test-class'),
+				assert.ok(Wee.$hasClass(el, 'test'),
 					'Multiple selections not selected successfully'
 				);
-				assert.ok(Wee.$hasClass('#wee-inner', 'test-class-inner'),
+
+				assert.ok(Wee.$hasClass('#test', 'test-inner'),
 					'Multiple selections not selected successfully'
 				);
 			}
@@ -112,10 +106,10 @@ define(function(require) {
 
 		off: {
 			target: function() {
-				var $el = Wee.$('#container');
+				var $el = Wee.$('#wee');
 
 				Wee.events.on({
-					'#container': {
+					'#wee': {
 						click: function() {
 							Wee.$addClass($el, 'test-class');
 						},
@@ -139,10 +133,10 @@ define(function(require) {
 			},
 
 			'selection event': function() {
-				var $el = Wee.$('#container');
+				var $el = Wee.$('#wee');
 
 				Wee.events.on({
-					'#container': {
+					'#wee': {
 						click: function() {
 							Wee.$addClass($el, 'test-class');
 						},
@@ -166,7 +160,7 @@ define(function(require) {
 			},
 
 			'selection event callback': function() {
-				var $el = Wee.$('#container');
+				var $el = Wee.$('#wee');
 
 				var callbackFunction = function() {
 					Wee.$removeClass($el, 'test-class');
@@ -186,7 +180,7 @@ define(function(require) {
 			},
 
 			'multiple selections': function() {
-				var $el = Wee.$('#container');
+				var $el = Wee.$('#wee');
 
 				Wee.$append($el, '<div id="wee-inner"></div>');
 
@@ -211,7 +205,7 @@ define(function(require) {
 				Wee.events.trigger('#wee-inner', 'blur');
 
 				Wee.events.off({
-				    '#container': {
+				    '#wee': {
 				        click: callbackFunctionOne()
 				    },
 				    '#wee-inner': {
@@ -229,7 +223,7 @@ define(function(require) {
 		},
 
 		bound: function() {
-			var $el = Wee.$('#container');
+			var $el = Wee.$('#wee');
 
 			Wee.events.on($el, 'click', function() {
 				Wee.$addClass($el, 'test-class');
@@ -239,7 +233,7 @@ define(function(require) {
 		},
 
 		trigger: function() {
-			var $el = Wee.$('#container');
+			var $el = Wee.$('#wee');
 
 			Wee.events.on($el, 'click', function() {
 				Wee.$addClass($el, 'test-class');

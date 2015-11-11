@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 							scriptRoot + '*.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
-						less = fs.readFileSync(config.paths.wee + 'style/wee.module.less', 'utf8'),
+						less = fs.readFileSync(config.paths.wee + 'css/wee.module.less', 'utf8'),
 						globalScript = [],
 						namespaceOpen = '',
 						namespaceClose = '';
@@ -362,7 +362,7 @@ module.exports = function(grunt) {
 						grunt.config.set('less.' + legacyTaskName, {
 							files: [{
 								dest: dest,
-								src: config.paths.wee + 'style/wee.module-legacy.less'
+								src: config.paths.wee + 'css/wee.module-legacy.less'
 							}],
 							options: {
 								modifyVars: vars,

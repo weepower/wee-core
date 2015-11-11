@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 		// Ensure legacy support is enabled
 		if (legacy.enable === true) {
 			var legacyTemp = config.paths.temp + 'wee.legacy.less',
-				less = fs.readFileSync(config.paths.wee + 'style/wee.legacy.less', 'utf8'),
+				less = fs.readFileSync(config.paths.wee + 'css/wee.legacy.less', 'utf8'),
 				dest = Wee.buildPath(config.paths.css, legacy.dest),
 				imports = [];
 
