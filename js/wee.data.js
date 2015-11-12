@@ -127,6 +127,7 @@
 		 * @param {(boolean|string)} [options.jsonp=false] - boolean or callback query parameter override
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
 		 * @param {string} [options.method=get] - request verb
+		 * @param {boolean} [options.processData=true] - post data in the body
 		 * @param {string} [options.root=''] - prepended request path
 		 * @param {object} [options.scope] - callback scope
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
@@ -178,12 +179,7 @@
 			if (method == 'GET') {
 				conf.url = this._getUrl(conf);
 			} else {
-				if (method == 'POST') {
-					headers[contentTypeHeader] =
-						'application/x-www-form-urlencoded; charset=UTF-8';
-				}
-
-				send = typeof conf.data == 'string' ?
+				send = typeof conf.data == 'string' || ! conf.processData ?
 					conf.data :
 					JSON.stringify(conf.data);
 			}
@@ -194,6 +190,12 @@
 			if (conf.json) {
 				headers[contentTypeHeader] = 'application/json';
 				headers.Accept = 'application/json, text/javascript, */*; q=0.01';
+			}
+
+			// Add POST content type
+			if (method == 'POST') {
+				headers[contentTypeHeader] =
+					'application/x-www-form-urlencoded; charset=UTF-8';
 			}
 
 			// Add X-Requested-With header for same domain requests
