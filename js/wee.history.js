@@ -32,7 +32,8 @@
 				path = el.pathname,
 				loc = location;
 
-			if ((host && host != loc.hostname) ||
+			if (! el.href ||
+				(host && host != loc.hostname) ||
 				(el.hash && path == loc.pathname)) {
 				return false;
 			}
@@ -220,7 +221,7 @@
 							loc = el.getAttribute('data-url'),
 							l = el;
 
-						if (loc || a.action) {
+						if (loc || el.action) {
 							l = W._doc.createElement('a');
 							l.href = loc || el.action;
 						}
