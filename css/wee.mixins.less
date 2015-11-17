@@ -355,7 +355,7 @@
 		and not (@value = dark) {
 	border: ~'@{value}';
 }
-.border (@color: @baseColor; @value: 1px; @style: solid) when (iscolor(@color)) {
+.border (@color: @lighterGray; @value: 1px; @style: solid) when (iscolor(@color)) {
 	.check () when (isunit(@value, '')) {
 		@temp: unit(@value, @defaultUnit);
 	}
@@ -393,7 +393,7 @@
 	}
 	.check();
 }
-.border (top; @color: @baseColor; @value: 1px; @style: solid) {
+.border (top; @color: @lighterGray; @value: 1px; @style: solid) {
 	.check () when (@color = 0), (iskeyword(@color)) {
 		border-top: 0;
 	}
@@ -444,7 +444,7 @@
 	}
 	.check();
 }
-.border (right; @color: @baseColor; @value: 1px; @style: solid) {
+.border (right; @color: @lighterGray; @value: 1px; @style: solid) {
 	.check () when (@color = 0), (iskeyword(@color)) {
 		border-right: 0;
 	}
@@ -495,7 +495,7 @@
 	}
 	.check();
 }
-.border (bottom; @color: @baseColor; @value: 1px; @style: solid) {
+.border (bottom; @color: @lighterGray; @value: 1px; @style: solid) {
 	.check () when (@color = 0), (iskeyword(@color)) {
 		border-bottom: 0;
 	}
@@ -546,7 +546,7 @@
 	}
 	.check();
 }
-.border (left; @color: @baseColor; @value: 1px; @style: solid) {
+.border (left; @color: @lighterGray; @value: 1px; @style: solid) {
 	.check () when (@color = 0), (iskeyword(@color)) {
 		border-left: 0;
 	}
@@ -601,7 +601,7 @@
 	.border(left; @value);
 	.border(right; @value);
 }
-.border (horizontal; @color: @baseColor; @value: 1px; @style: solid) when (iscolor(@color)) {
+.border (horizontal; @color: @lighterGray; @value: 1px; @style: solid) when (iscolor(@color)) {
 	.border(left; @color; @value; @style);
 	.border(right; @color; @value; @style);
 }
@@ -681,11 +681,11 @@
 	}
 	.check();
 }
-.border (vertical; @color: @baseColor; @value: 1px; @style: solid) when (iscolor(@color)) {
+.border (vertical; @color: @lighterGray; @value: 1px; @style: solid) when (iscolor(@color)) {
 	.border(top; @color; @value; @style);
 	.border(bottom; @color; @value; @style);
 }
-.border (@top; @right; @bottom; @left; @color: @baseColor; @style: solid) when not (iskeyword(@top))
+.border (@top; @right; @bottom; @left; @color: @lighterGray; @style: solid) when not (iskeyword(@top))
 		and (isnumber(@bottom)) {
 	.border(top; @color; @top; @style);
 	.border(right; @color; @right; @style);
@@ -1039,6 +1039,12 @@
 	# Display
 \*------------------------------------*/
 
+.hide () {
+	display: none;
+}
+.show () {
+	display: inherit;
+}
 .hidden () {
 	visibility: hidden;
 }
@@ -1347,8 +1353,9 @@
 	# Inline Grid
 \*------------------------------------*/
 
-.inline-row (@margin: @gridMargin; ...) {
-	.row(@margin);
+.inline-row (@margin: @gridMargin; ...) when (ispercentage(@margin)) {
+	margin-left: (@margin * -1);
+	max-width: (100% + @margin);
 }
 .inline-row (@margin: @gridMargin; @spaceless: @gridSpaceless) when not (@spaceless = true) {
 	letter-spacing: -.32em;
@@ -1428,11 +1435,6 @@
 				display: none;
 			}
 		}
-	}
-}
-.floated-list () {
-	> li {
-		float: left;
 	}
 }
 .list-style (@value) {
@@ -2569,17 +2571,6 @@
 	text-indent: 110%;
 	white-space: nowrap;
 }
-.hide () {
-	display: none;
-}
-.hide (text) {
-	overflow: hidden;
-	text-indent: 100%;
-	white-space: nowrap;
-}
-.show () {
-	display: inherit;
-}
 .selection (@color: @selectionColor; @background: @selectionBackground) {
 	&::-moz-selection {
 		background: @background;
@@ -2669,4 +2660,5 @@
 		display: none !important;
 	}
 }
+
 .wee-helpers();
