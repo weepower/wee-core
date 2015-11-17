@@ -76,8 +76,11 @@
 }
 
 .wee-table-striped () when (@tableStriped = true) {
-	tbody tr:nth-child(@{tableStripedPosition}) td {
-		.background(@tableStripedBackground);
+	tbody tr:nth-child(@{tableStripedPosition}) {
+		td,
+		th {
+			.background(@tableStripedBackground);
+		}
 	}
 }
 
