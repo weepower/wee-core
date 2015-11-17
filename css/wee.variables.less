@@ -24,9 +24,9 @@
 @secondary: #70c1b3;
 @tertiary: #f18f01;
 
-@info: blue;
-@success: green;
-@warning: red;
+@info: #00f;
+@success: #008000;
+@warning: #f00;
 
 
 /*------------------------------------*\
@@ -34,13 +34,13 @@
 \*------------------------------------*/
 
 @white: #fff;
-@lightestGray: lighten(#000, 96%);
-@lighterGray: lighten(#000, 90%);
-@lightGray: lighten(#000, 75%);
-@gray: lighten(#000, 65%);
-@darkGray: lighten(#000, 45%);
-@darkerGray: lighten(#000, 35%);
-@darkestGray: lighten(#000, 25%);
+@lightestGray: darken(#fff, 4%);
+@lighterGray: darken(#fff, 10%);
+@lightGray: darken(#fff, 25%);
+@gray: darken(#fff, 35%);
+@darkGray: darken(#fff, 55%);
+@darkerGray: darken(#fff, 65%);
+@darkestGray: darken(#fff, 75%);
 @black: #000;
 
 
@@ -130,7 +130,7 @@
 
 // Figures
 
-@figureBorderColor: @lighterGray; // false to disable
+@figureBorderColor: false; // false to disable
 @figureRounded: false;
 
 @figurePadding: @blockMarginBottom;
@@ -451,9 +451,9 @@
 	# Tables
 \*------------------------------------*/
 
-@tableStyled: true;   // apply base styling by default
-@tableBordered: true; // apply outer border by default
-@tableStriped: true;  // apply striping by default
+@tableStyled: true;    // apply base styling by default
+@tableBordered: false; // apply outer border by default
+@tableStriped: true;   // apply striping by default
 
 @tableFontSize: @baseFontSize;
 
