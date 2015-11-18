@@ -159,6 +159,7 @@
 		 * Load specified assets with set options
 		 *
 		 * @param {object} options
+		 * @param {boolean} [options.async=false]
 		 * @param {boolean} [options.cache=false]
 		 * @param {(Array|string)} [options.css]
 		 * @param {(Array|function|string)} [options.error]

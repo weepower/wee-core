@@ -236,11 +236,11 @@
 		/**
 		 * Add conditional route filter
 		 *
-		 * @param {(object|string)} name or filter object
+		 * @param {(object|string}} name or filter object
 		 * @param {function} [fn]
 		 */
-		addFilter: function(name, fn) {
-			W._extend(filters, name, fn);
+		addFilter: function(a, b) {
+			W._extend(filters, a, b);
 		},
 
 		/**
