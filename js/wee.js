@@ -120,7 +120,7 @@
 
 					if (type == 1) {
 						root[seg] = prepend ?
-							val.concat(root[seg]) :
+							W.$toArray(val).concat(root[seg]) :
 							root[seg].concat(val);
 					} else {
 						prepend ?
@@ -176,6 +176,8 @@
 					}
 
 					_trigger(obj, obs, key, stored[2], root[seg], 'drop');
+
+					return val !== U ? root[seg] : root;
 				},
 
 				/**
@@ -197,7 +199,10 @@
 				 * @private
 				 */
 				_trigger = function(obj, obs, key, orig, upd, type) {
-					if (Object.keys(obs).length && ! _equals(upd, orig)) {
+					if (Object.keys(obs).length && (
+						type == 'trigger' ||
+						! _equals(upd, orig)
+					)) {
 						var arr = [],
 							opts = key.split('.').map(function(seg) {
 								arr.push(seg);
@@ -211,7 +216,12 @@
 								obs[val].forEach(function(el, i) {
 									if (val === key || val == '*' || el.recursive) {
 										if (! el.value || _equals(el.value, data)) {
-											var args = [data, type];
+											var args = [
+												el.recursive ?
+													_get(obj, false, val) :
+													data,
+												type
+											];
 
 											if (el.diff) {
 												args.push(_diff(orig, data));
@@ -365,7 +375,10 @@
 				 * @returns {object}
 				 */
 				_diff = function(a, b) {
-					if (! (W.$isObject(a) || W.$isObject(b))) {
+					var aObj = W.$isObject(a),
+						bObj = W.$isObject(b);
+
+					if (! (aObj || bObj)) {
 						var type = 'u';
 
 						if (_equals(a, b)) {
@@ -385,15 +398,22 @@
 
 					var diff = {};
 
-					Object.keys(a).forEach(function(key) {
-						diff[key] = _diff(a[key], b[key]);
-					});
+					if (aObj) {
+						Object.keys(a).forEach(function(key) {
+							diff[key] = _diff(
+								a[key],
+								b && bObj ? b[key] : U
+							);
+						});
+					}
 
-					Object.keys(b).forEach(function(key) {
-						if (! diff[key]) {
-							diff[key] = _diff(U, b[key]);
-						}
-					});
+					if (bObj) {
+						Object.keys(b).forEach(function(key) {
+							if (! diff[key]) {
+								diff[key] = _diff(U, b[key]);
+							}
+						});
+					}
 
 					return diff;
 				},
@@ -445,7 +465,7 @@
 					/**
 					 * Extend controller with additional methods and properties
 					 *
-					 * @param {(object|string)} a - method name or core methods
+					 * @param {(object|string)} a - controller name or core methods
 					 * @param {object} [b] - public methods and properties
 					 * @param {object} [c] - private methods and properties
 					 */
@@ -467,7 +487,7 @@
 				},
 
 				/**
-				 * Get matches to specified selector
+				 * Get matches to specified selector or return parsed HTML
 				 *
 				 * @param {($|HTMLElement|string)} selector
 				 * @param {($|HTMLElement|string)} [context=document]
@@ -637,7 +657,7 @@
 				},
 
 				/**
-				 * Concatenate values into global array
+				 * Concatenate values into global storage
 				 *
 				 * @param {string} key
 				 * @param {*} value
@@ -649,9 +669,11 @@
 				},
 
 				/**
-				 * Extend object into controller storage
+				 * Extend object into global storage
 				 *
-				 * @returns {Array}
+				 * @param {string} key
+				 * @param {object} obj
+				 * @returns {object} value
 				 */
 				$merge: function(key, obj) {
 					return _merge(store, observe, key, obj);
@@ -697,19 +719,23 @@
 				/**
 				 * Remove callback from data storage change
 				 *
-				 * @param {string} key
+				 * @param {string} [key]
 				 */
 				$unobserve: function(key) {
-					delete observe[key];
+					key === U ?
+						delete observe[key] :
+						observe = [];
 				},
 
 				/**
-				 * Execute any matching observed callbacks
+				 * Execute matching observed callbacks
 				 *
 				 * @param {string} key
 				 */
 				$trigger: function(key) {
-					_trigger(store, observe, key);
+					var val = _get(store, false, key);
+
+					_trigger(store, observe, key, val, val, 'trigger');
 				},
 
 				/**
@@ -783,7 +809,7 @@
 				},
 
 				/**
-				 * Determine if the environment is secured
+				 * Determine if the current environment is secured
 				 *
 				 * @returns {boolean} secure
 				 */
@@ -875,7 +901,7 @@
 				},
 
 				/**
-				 * Compare two values for equality
+				 * Compare two values for strict equality
 				 *
 				 * @param {*} a
 				 * @param {*} b
@@ -926,7 +952,7 @@
 				},
 
 				/**
-				 * Translate items in an array|selection to new array
+				 * Translate items in an array or selection to new array
 				 *
 				 * @param {($|Array|HTMLElement|string)} target - array or selector
 				 * @param {function} fn
@@ -1000,7 +1026,7 @@
 						.split('&').forEach(function(el) {
 							var split = el.split('='),
 								key = split[0],
-								val = split[1] || '';
+								val = split[1].replace('+', ' ') || '';
 
 							if (obj[key]) {
 								obj[key] = W.$toArray(obj[key]);
@@ -1279,10 +1305,12 @@
 									},
 
 									/**
-									 * Attach callback to data storage change
+									 * Execute matching observed callbacks
 									 */
 									$trigger: function(key) {
-										_trigger(store, observe, key);
+										var val = _get(store, false, key);
+
+										_trigger(store, observe, key, val, val, 'trigger');
 									},
 
 									/**
