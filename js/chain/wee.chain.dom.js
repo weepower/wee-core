@@ -120,10 +120,11 @@
 		 * Get unique closest ancestors of each matching selection
 		 *
 		 * @param filter
+		 * @param context
 		 * @returns {$}
 		 */
-		closest: function(filter) {
-			return $(W.$closest(this, filter));
+		closest: function(filter, context) {
+			return $(W.$closest(this, filter, context));
 		},
 
 		/**
@@ -188,20 +189,22 @@
 		 * Get indexed node of matching selection
 		 *
 		 * @param index
+		 * @param {($|HTMLElement|string)} [context=document]
 		 * @returns {$}
 		 */
-		eq: function(index) {
-			return $(W.$eq(this, index));
+		eq: function(index, context) {
+			return $(W.$eq(this, index, context));
 		},
 
 		/**
 		 * Return a filtered subset of elements from a matching selection
 		 *
 		 * @param filter
+		 * @param [options]
 		 * @returns {$}
 		 */
-		filter: function(filter) {
-			return $(W.$filter(this, filter));
+		filter: function(filter, options) {
+			return $(W.$filter(this, filter, options));
 		},
 
 		/**
@@ -235,11 +238,11 @@
 		/**
 		 * Determine if the matching selection has a class
 		 *
-		 * @param value
+		 * @param className
 		 * @returns {boolean}
 		 */
-		hasClass: function(value) {
-			return W.$hasClass(this, value);
+		hasClass: function(className) {
+			return W.$hasClass(this, className);
 		},
 
 		/**
@@ -291,11 +294,11 @@
 		 * Insert each matching source selection element after
 		 * each matching target selection
 		 *
-		 * @param {($|HTMLElement|string)} source
+		 * @param {($|HTMLElement|string)} target
 		 * @returns {$}
 		 */
-		insertAfter: function(source) {
-			W.$insertAfter(this, source);
+		insertAfter: function(target) {
+			W.$insertAfter(this, target);
 
 			return this;
 		},
@@ -304,11 +307,11 @@
 		 * Insert each matching source selection element before
 		 * each matching target selection
 		 *
-		 * @param {($|HTMLElement|string)} source
+		 * @param {($|HTMLElement|string)} target
 		 * @returns {$}
 		 */
-		insertBefore: function(source) {
-			W.$insertBefore(this, source);
+		insertBefore: function(target) {
+			W.$insertBefore(this, target);
 
 			return this;
 		},
