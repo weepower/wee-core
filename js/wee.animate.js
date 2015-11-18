@@ -36,12 +36,14 @@
 				for (var prop in values) {
 					var target = parseInt(values[prop]),
 						scrollTop = prop == 'scrollTop',
-						cssValue;
+						cssValue,
+						isBody;
 
 					if (scrollTop) {
+						isBody = el === W._body;
 						cssValue = Math.max(
-							W._body.scrollTop,
-							W._doc.documentElement.scrollTop
+							el.scrollTop,
+							isBody ? W._doc.documentElement.scrollTop : 0
 						).toString();
 					} else {
 						cssValue = W._legacy ?
@@ -54,8 +56,11 @@
 						val = parseInt(css ? cssValue : el[prop]),
 						setValue = function(prop, update) {
 							if (scrollTop) {
-								W._body.scrollTop = update;
-								W._doc.documentElement.scrollTop = update;
+								el.scrollTop = update;
+
+								if (isBody) {
+									W._doc.documentElement.scrollTop = update;
+								}
 							} else {
 								css ?
 									el.style[prop] = update + unit :
@@ -101,8 +106,8 @@
 		 * @param {(object|string}} name or easing object
 		 * @param {function} [fn]
 		 */
-		addEasing: function(name, fn) {
-			W._extend(easings, name, fn);
+		addEasing: function(a, b) {
+			W._extend(easings, a, b);
 		}
 	};
 })(Wee);
