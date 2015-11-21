@@ -64,12 +64,16 @@
 					title: 'Command Error',
 					message: 'Command not found'
 				}, 'error');
+
+				process.exit();
 			}
 		} else {
 			Wee.notify({
 				title: 'Command Error',
 				message: 'Command option is required'
 			}, 'error');
+
+			process.exit();
 		}
 	};
 })();
