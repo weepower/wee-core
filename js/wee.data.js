@@ -193,7 +193,7 @@
 			}
 
 			// Add POST content type
-			if (method == 'POST') {
+			if (method == 'POST' && ! conf.json) {
 				headers[contentTypeHeader] =
 					'application/x-www-form-urlencoded; charset=UTF-8';
 			}
