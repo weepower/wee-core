@@ -723,8 +723,8 @@
 				 */
 				$unobserve: function(key) {
 					key === U ?
-						delete observe[key] :
-						observe = [];
+						observe = [] :
+						delete observe[key];
 				},
 
 				/**
@@ -809,7 +809,7 @@
 				},
 
 				/**
-				 * Determine if the current environment is secured
+				 * Determine if the current environment is SSL encrypted
 				 *
 				 * @returns {boolean} secure
 				 */
@@ -1013,7 +1013,7 @@
 				},
 
 				/**
-				 * Unserialize string into object
+				 * Convert serialized string back into an object
 				 *
 				 * @param {string} str
 				 * @returns {object} value
