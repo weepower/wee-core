@@ -1,3 +1,5 @@
+/* global process */
+
 (function() {
 	'use strict';
 
@@ -20,5 +22,7 @@
 				path.join(config.project.paths.source, file)
 			);
 		});
+
+		process.exit();
 	};
 })();

@@ -3,22 +3,28 @@
 (function() {
 	'use strict';
 
+	var gruntPath = __dirname + '/../Gruntfile.js',
+		grunt = require('grunt'),
+		build = require(gruntPath);
+
 	module.exports = function(config) {
-		var cp = require('child_process'),
-			task = 'default',
-			args = '';
+		var options = {
+				b: __dirname,
+				gruntfile: gruntPath
+			},
+			task = config.options.length ?
+				config.options[0] :
+				'default';
 
-		if (config.options.length) {
-			task = config.options[0];
-		}
-
+		// Pass through additional flags
 		Object.keys(config.args).forEach(function(key) {
-			args += ' --' + key + '=' + config.args[key];
+			options[key] = config.args[key];
 		});
 
-		cp.execSync('grunt ' + task + ' --b ' + __dirname +
-			'/../ --gruntfile ' + __dirname + '/../Gruntfile.js' + args, {
-			stdio: [0, 1, 2]
-		});
+		build(grunt);
+
+		grunt.tasks([
+			task
+		], options);
 	};
 })();

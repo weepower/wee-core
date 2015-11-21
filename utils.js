@@ -1,4 +1,4 @@
-/* global config, reloadPaths */
+/* global __dirname, config, reloadPaths */
 
 (function(W) {
 	'use strict';
@@ -180,7 +180,7 @@
 		 * @param {boolean} [log=true]
 		 */
 		notify: function(options, type, log) {
-			options.icon = 'build/img/' + (type || 'notice') + '.png';
+			options.icon = __dirname + '/build/img/' + (type || 'notice') + '.png';
 			options.group = 1;
 
 			if (type == 'error') {

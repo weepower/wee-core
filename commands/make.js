@@ -1,4 +1,4 @@
-/* global __dirname */
+/* global __dirname, process */
 
 (function() {
 	'use strict';
@@ -116,6 +116,8 @@
 				title: 'Generator Error',
 				message: error
 			}, 'error');
+
+			process.exit();
 		} else {
 			Wee.notify({
 				title: 'Generation Successful',

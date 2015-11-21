@@ -1,4 +1,4 @@
-/* global __dirname, global, path */
+/* global __dirname, global, path, process */
 
 (function() {
 	'use strict';
@@ -30,6 +30,8 @@
 		global.moduleLegacy = [];
 		global.reloadPaths = [];
 		global.server = {};
+
+		process.chdir(__dirname);
 
 		grunt.loadTasks('./build/tasks');
 
