@@ -20,8 +20,9 @@ module.exports = function(grunt) {
 					var module = fs.readJsonSync(configFile),
 						scriptRoot = modulePath + '/core/js/',
 						moduleScript = [
-							scriptRoot + 'script.js',
-							scriptRoot + '*.js'
+							scriptRoot + 'vendor/**/*.js',
+							scriptRoot + '**/*.js',
+							'!' + scriptRoot + 'script.js',
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = fs.readFileSync(config.paths.wee + 'css/wee.module.less', 'utf8'),
@@ -37,9 +38,7 @@ module.exports = function(grunt) {
 					vars.responsive = false;
 
 					// Template variables
-					var inject = '@import (optional) "' +
-							config.paths.moduleSource + name +
-							'/core/css/screen.less";\n',
+					var inject = '',
 						responsive = '';
 
 					// Reference core Less and inherit namespace if extension
@@ -108,6 +107,11 @@ module.exports = function(grunt) {
 							}
 						}
 					}
+
+					// Append core style
+					inject += '@import (optional) "' +
+						config.paths.moduleSource + name +
+						'/core/css/screen.less";\n',
 
 					module.style = module.style || {};
 					module.script = module.script || {};
@@ -183,6 +187,9 @@ module.exports = function(grunt) {
 							}
 						}
 					}
+
+					// Append primary script
+					moduleScript.push(scriptRoot + 'script.js');
 
 					// Determine if module is responsive
 					if (project.style.core.responsive.enable) {
