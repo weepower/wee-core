@@ -5,6 +5,7 @@
 	"homepage": "{{ website }}",
 	"author": "{{ author }}",
 	"autoload": {{ autoload }},
+	"extension": {{ extension }},
 	"data": {
 
 	},

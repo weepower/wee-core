@@ -52,6 +52,7 @@
 							args = Wee.$extend({
 								author: '',
 								autoload: 'true',
+								extension: 'false',
 								website: '',
 								description: ''
 							}, config.args);
