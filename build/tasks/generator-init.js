@@ -24,15 +24,16 @@ module.exports = function(grunt) {
 							),
 							content = block.content ?
 								Wee.$toArray(block.content) :
-								[];
+								[],
+							template = block.template || siteConfig.defaultTemplate;
 
-						if (block.template.indexOf('.') === -1) {
-							block.template += '.html';
+						if (template.indexOf('.') === -1) {
+							template += '.html';
 						}
 
-						var template = path.join(
+						template = path.join(
 							staticRoot,
-							siteConfig.paths.templates + '/' + block.template
+							siteConfig.paths.templates + '/' + template
 						);
 
 						// Push targets to exclude from watch

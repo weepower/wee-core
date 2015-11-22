@@ -60,16 +60,17 @@ module.exports = function(grunt) {
 						content: [],
 						site: site
 					},
-					single = false;
+					single = false,
+					template = block.template || siteConfig.defaultTemplate;
 
-				if (block.template.indexOf('.') === -1) {
-					block.template += '.html';
+				if (template.indexOf('.') === -1) {
+					template += '.html';
 				}
 
-				var template = fs.readFileSync(
+				template = fs.readFileSync(
 					Wee.buildPath(
 						staticRoot,
-						siteConfig.paths.templates + '/' + block.template
+						siteConfig.paths.templates + '/' + template
 					), 'utf8'
 				);
 
