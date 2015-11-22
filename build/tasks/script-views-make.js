@@ -3,9 +3,7 @@
 module.exports = function(grunt) {
 	var glob = require('glob');
 
-	grunt.registerTask('makeViews', function(task) {
-		var data = {};
-
+	grunt.registerTask('makeViews', function() {
 		// Remove core files
 		fs.removeSync(config.paths.view);
 

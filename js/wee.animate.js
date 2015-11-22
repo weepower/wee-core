@@ -101,7 +101,7 @@
 		},
 
 		/**
-		 * Add additional easing function
+		 * Add additional easing function(s)
 		 *
 		 * @param {(object|string}} name or easing object
 		 * @param {function} [fn]

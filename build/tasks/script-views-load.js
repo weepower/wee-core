@@ -1,9 +1,9 @@
-/* global config, fs, path */
+/* global config, fs */
 
 module.exports = function(grunt) {
 	var glob = require('glob');
 
-	grunt.registerTask('loadViews', function(task) {
+	grunt.registerTask('loadViews', function() {
 		var data = {};
 
 		// Find core view templates
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 				matches.forEach(function(view) {
 					var key = name + '.' +
 						view.replace(root + '/core/js/views/load/', '')
-							.replace('/', '.').slice(0, -5);;
+							.replace('/', '.').slice(0, -5);
 
 					data[key] = fs.readFileSync(view, 'utf8')
 						.replace(/\s*\n+\t*/g, '');

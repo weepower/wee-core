@@ -607,7 +607,7 @@
 
 						div.innerHTML = html;
 
-						while (child = div.firstChild) {
+						while (child = div.firstChild) { // jshint ignore:line
 							el.appendChild(child);
 						}
 					}

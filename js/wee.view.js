@@ -441,7 +441,11 @@
 		 * Create an application
 		 *
 		 * @param {string} name
-		 * @param {object} [options]
+		 * @param {object} options
+		 * @param {object} options.model
+		 * @param {($|HTMLElement|string)} [options.target]
+		 * @param {($|HTMLElement|string)} options.view
+		 *
 		 */
 		make: function(name, options) {
 			var sel = options.view,
