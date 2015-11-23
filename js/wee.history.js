@@ -168,20 +168,22 @@
 					// Listen for browser navigation
 					E.on(W._win, 'popstate.history', function(e) {
 						if (e.state !== null) {
-							var path = _path(),
-								conf = entries[path.replace(/^\//g, '')];
-
-							W.history.go(W.$extend(
-								conf || {
-									request: {
-										root: ''
+							var url = _path(),
+								prevConf = entries[path.replace(/^\//g, '')],
+								conf = W.$extend(
+									entries[url.replace(/^\//g, '')] || {
+										request: {
+											root: ''
+										}
+									}, {
+										path: url,
+										push: false,
+										pop: true
 									}
-								}, {
-									path: path,
-									push: false,
-									pop: true
-								}
-							));
+								);
+							conf.partials = prevConf.partials;
+
+							W.history.go(conf);
 						}
 					});
 				}
@@ -194,21 +196,28 @@
 		/**
 		 * Bind element events and form submit events to PJAX
 		 *
-		 * @param {object} [events]
+		 * @param {(boolean|object)} [events]
 		 * @param {($|HTMLElement|Object|string)} [a] - settings or context
 		 * @param {($|HTMLElement|string)} [context=document]
 		 */
 		bind: function(events, a, context) {
 			events = events || settings.bind;
 
-			if (typeof a !== 'object') {
-				context = a;
-				a = {};
+			if (events === true) {
+				events = {
+					click: 'a',
+					submit: 'form'
+				};
 			}
 
 			if (support && typeof events == 'object') {
 				var keys = Object.keys(events),
 					i = 0;
+
+				if (typeof a !== 'object') {
+					context = a;
+					a = {};
+				}
 
 				for (; i < keys.length; i++) {
 					var event = keys[i],
@@ -229,10 +238,14 @@
 						// Ensure the path exists and is local
 						if (evt && _isValid(l)) {
 							var options = W.$extend(true, {}, a);
-							options.path = _path(l);
 
-							E.on(el, evt, function(e) {
-								if (! e.metaKey) {
+							// Remove existing history events
+							E.off(el, evt);
+
+							E.on(el, evt, function(e, el) {
+								if (! e.metaKey && ! el.hasAttribute('data-static')) {
+									options.path = _path(l);
+
 									W.history.go(options);
 									e.preventDefault();
 								}
@@ -249,13 +262,15 @@
 		 * Navigate to a new path or within the browser history
 		 *
 		 * @param {object} options
+		 * @param {string} [options.action='replace']
+		 * @param {array} [options.extensions]
+		 * @param {string] [options.partials='title,main']
 		 * @param {string} [options.path=current path]
 		 * @param {boolean} [options.push=true]
-		 * @param {boolean} [options.run=true]
-		 * @param {string} [options.title='']
 		 * @param {object} [options.request]
-		 * @param {string} [options.action='replace']
-		 * @param {($|HTMLElement|string)} [options.scrollTop]
+		 * @param {boolean} [options.run=true]
+		 * @param {($|HTMLElement|number|string)} [options.scrollTop]
+		 * @param {string} [options.title]
 		 */
 		go: function(options) {
 			var scope = this;
@@ -272,13 +287,8 @@
 				),
 				request = conf.request || {};
 
-			request.root = request.root !== U ?
-				request.root :
-				root;
-
-			request.url = request.url !== U ?
-				request.url :
-				conf.path;
+			request.root = request.root !== U ? request.root : root;
+			request.url = request.url !== U ? request.url : conf.path;
 
 			// Navigate to external URL or if history isn't supported
 			var a = W._doc.createElement('a');
@@ -328,9 +338,9 @@
 				// Compile success events
 				successEvents.push(function(html) {
 					if (conf.replace) {
-						W.$exec(conf.replace, {
+						html = W.$exec(conf.replace, {
 							args: [html]
-						});
+						}) || html;
 					}
 
 					// Evaluate unload routes against updated path
@@ -378,13 +388,19 @@
 				}
 
 				successEvents.push(function() {
+					var st = conf.scrollTop;
+
 					// Scroll vertically to target
-					if (conf.scrollTop !== false) {
-						var top = typeof conf.scrollTop == 'number' ?
-								conf.scrollTop :
-								W.$(conf.scrollTop)[0].getBoundingClientRect().top +
-									W._win.pageYOffset,
+					if (st !== false) {
+						var top = a.hash ? W.$offset(a.hash).top : 0,
 							anim = W.animate;
+
+						if (! top) {
+							top = typeof st == 'number' ?
+								st :
+								W.$(st)[0].getBoundingClientRect().top +
+									W._win.pageYOffset;
+						}
 
 						if (anim) {
 							anim.tween(W._body, {
