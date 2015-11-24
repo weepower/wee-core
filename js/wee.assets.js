@@ -71,6 +71,7 @@
 
 								if (sheet.id == id) {
 									text = sheet.cssText;
+									loaded[link.href] = link;
 									_done(group);
 									return;
 								}
@@ -83,6 +84,7 @@
 					});
 				} else {
 					link.addEventListener('load', function() {
+						loaded[link.href] = link;
 						_done(group);
 					}, false);
 
@@ -130,17 +132,6 @@
 		};
 
 	W.assets = {
-		/**
-		 * Cache existing CSS and JavaScript assets
-		 *
-		 * @constructor
-		 */
-		_construct: function() {
-			W.$each('link[rel="stylesheet"], script[src]', function(el) {
-				loaded[el.src || el.href] = el;
-			});
-		},
-
 		/**
 		 * Get current asset root or set with specified value
 		 *
@@ -219,7 +210,8 @@
 
 			// Request each specified file
 			for (var file in assets) {
-				var noCache = options.cache === false;
+				var noCache = options.cache === false,
+					a = W._doc.createElement('a');
 
 				// Reset root if the URL is absolute
 				if (root && /^(https?:)?\/\//i.test(file)) {
@@ -227,7 +219,8 @@
 				}
 
 				type = assets[file];
-				file = root + file;
+				a.href = root + file;
+				file = a.href;
 
 				if (! loaded[file] || noCache) {
 					if (noCache) {
@@ -307,4 +300,11 @@
 			}
 		}
 	};
+
+	/**
+	 * Cache existing CSS and JavaScript assets
+	 */
+	W.$each('link[rel="stylesheet"], script[src]', function(el) {
+		loaded[el.src || el.href] = el;
+	});
 })(Wee, undefined);
