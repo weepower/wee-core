@@ -179,7 +179,7 @@
 			if (method == 'GET') {
 				conf.url = this._getUrl(conf);
 			} else {
-				send = typeof conf.data == 'string' || ! conf.processData ?
+				send = typeof conf.data == 'string' || conf.processData === false ?
 					conf.data :
 					JSON.stringify(conf.data);
 			}
