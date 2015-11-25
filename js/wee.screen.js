@@ -34,9 +34,7 @@
 						events = [conf];
 
 						// Attach resize event
-						W._legacy ?
-							W._win.attachEvent('onresize', run) :
-							W._win.addEventListener('resize', run);
+						W._win.addEventListener('resize', run);
 					}
 				}
 
@@ -133,13 +131,8 @@
 		 */
 		size: function() {
 			var style = W._html.currentStyle,
-				size = W._legacy ?
-					(style ?
-						style.fontFamily :
-						null
-					) :
-					getComputedStyle(W._html, null)
-						.getPropertyValue('font-family');
+				size = getComputedStyle(W._html, null)
+					.getPropertyValue('font-family');
 
 			return parseFloat(
 				size.replace(/[^0-9\.]+/g, ''),
@@ -167,11 +160,9 @@
 				i = 0;
 
 			// Delay check to prevent incorrect IE value
-			setTimeout(function() {
-				for (; i < sets.length; i++) {
-					_addRule(sets[i]);
-				}
-			}, W._legacy ? 100 : 0);
+			for (; i < sets.length; i++) {
+				_addRule(sets[i]);
+			}
 		},
 
 		/**

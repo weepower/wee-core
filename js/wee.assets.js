@@ -28,24 +28,12 @@
 						_done(group);
 					};
 
-				if (W._legacy) {
-					js.onreadystatechange = function() {
-						var rs = js.readyState;
+				js.async = conf.async === true;
+				js.onload = fn;
 
-						if (rs != 'complete' && rs != 'loaded') {
-							return;
-						}
-
-						fn();
-					};
-				} else {
-					js.async = conf.async === true;
-					js.onload = fn;
-
-					js.onerror = function() {
-						_fail(group);
-					};
-				}
+				js.onerror = function() {
+					_fail(group);
+				};
 
 				js.src = path;
 				head.appendChild(js);
@@ -55,43 +43,14 @@
 				link.rel = 'stylesheet';
 				link.href = path;
 
-				if (W._legacy) {
-					index++;
-					var id = 'a' + index;
-					link.id = id;
+				link.addEventListener('load', function() {
+					loaded[link.href] = link;
+					_done(group);
+				}, false);
 
-					link.attachEvent('onload', function() {
-						var sheets = W._doc.styleSheets,
-							i = sheets.length,
-							text;
-
-						try {
-							while (i--) {
-								var sheet = sheets[i];
-
-								if (sheet.id == id) {
-									text = sheet.cssText;
-									loaded[link.href] = link;
-									_done(group);
-									return;
-								}
-							}
-						} catch (e) {}
-
-						if (! text) {
-							_fail(group);
-						}
-					});
-				} else {
-					link.addEventListener('load', function() {
-						loaded[link.href] = link;
-						_done(group);
-					}, false);
-
-					link.addEventListener('error', function() {
-						_fail(group);
-					}, false);
-				}
+				link.addEventListener('error', function() {
+					_fail(group);
+				}, false);
 
 				head.appendChild(link);
 			} else if (type == 'img') {

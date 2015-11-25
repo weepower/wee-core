@@ -394,9 +394,7 @@
 			} else {
 				var el = W.$first(target);
 
-				return W._legacy ?
-					el.currentStyle[a] :
-					getComputedStyle(el, null)[a];
+				return getComputedStyle(el, null)[a];
 			}
 		},
 
@@ -790,19 +788,10 @@
 		 * @returns {{top: number, left: number}}
 		 */
 		$offset: function(target, value) {
-			var top = W._legacy ? W._html : W._win,
-				rect = W.$first(target).getBoundingClientRect(),
+			var rect = W.$first(target).getBoundingClientRect(),
 				offset = {
-					top: rect.top + (
-						W._legacy ?
-							top.scrollTop :
-							top.pageYOffset
-					),
-					left: rect.left + (
-						W._legacy ?
-							top.scrollLeft :
-							top.pageXOffset
-					)
+					top: rect.top + W._win.pageYOffset,
+					left: rect.left + W._win.pageXOffset
 				};
 
 			if (value) {
@@ -1046,15 +1035,9 @@
 			if (value === U) {
 				var el = target ? W.$first(target) : W._win;
 
-				if (el === W._win) {
-					if (! W._legacy) {
-						return el.pageXOffset;
-					}
-
-					el = W._html;
-				}
-
-				return el.scrollLeft;
+				return el === W._win ?
+					el.pageXOffset :
+					el.scrollLeft;
 			}
 
 			W.$each(target, function(el) {
@@ -1073,15 +1056,9 @@
 			if (value === U) {
 				var el = target ? W.$first(target) : W._win;
 
-				if (el === W._win) {
-					if (! W._legacy) {
-						return el.pageYOffset;
-					}
-
-					el = W._html;
-				}
-
-				return el.scrollTop;
+				return el === W._win ?
+					el.pageYOffset :
+					el.scrollTop;
 			}
 
 			W.$each(target, function(el) {
@@ -1201,7 +1178,7 @@
 		$text: function(target, value) {
 			if (value === U) {
 				return W.$map(target, function(el) {
-					return (W._legacy ? el.innerText : el.textContent).trim();
+					return el.textContent.trim();
 				}).join('');
 			}
 
@@ -1210,14 +1187,12 @@
 			W.$each(target, function(el, i) {
 				var text = func ?
 					W.$exec(value, {
-						args: [i, (W._legacy ? el.innerText : el.textContent).trim()],
+						args: [i, el.textContent.trim()],
 						scope: el
 					}) :
 					value;
 
-				W._legacy ?
-					el.innerText = text :
-					el.textContent = text;
+				el.textContent = text;
 			});
 		},
 

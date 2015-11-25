@@ -46,9 +46,7 @@
 							isBody ? W._doc.documentElement.scrollTop : 0
 						).toString();
 					} else {
-						cssValue = W._legacy ?
-							el.currentStyle[prop] :
-							getComputedStyle(el, null)[prop];
+						cssValue = getComputedStyle(el, null)[prop];
 					}
 
 					var	css = cssValue !== undefined,

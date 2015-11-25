@@ -51,8 +51,8 @@
 									trig = e === false;
 
 								// Patch core event functionality
-								if (W._legacy || trig) {
-									e = trig ? {} : W._win.event;
+								if (trig) {
+									e = {};
 									e.target = e.srcElement;
 
 									e.preventDefault = function() {
@@ -101,9 +101,7 @@
 							if (evt != 'init' && ! W.events.bound(el, ev, f).length) {
 								// Determine if the event is native or custom
 								if ('on' + evt in el) {
-									W._legacy ?
-										el.attachEvent('on' + evt, cb) :
-										el.addEventListener(evt, cb, false);
+									el.addEventListener(evt, cb, false);
 								} else if (custom[evt]) {
 									custom[evt][0](el, fn, conf);
 								}
@@ -137,9 +135,7 @@
 		_off = function(sel, evt, fn) {
 			W.$each(W.events.bound(sel, evt, fn), function(e) {
 				if ('on' + e.evt in W._doc) {
-					W._legacy ?
-						e.el.detachEvent('on' + e.evt, e.cb) :
-						e.el.removeEventListener(e.evt, e.cb);
+					e.el.removeEventListener(e.evt, e.cb);
 				} else if (custom[e.evt]) {
 					custom[e.evt][1](e.el, e.cb);
 				}

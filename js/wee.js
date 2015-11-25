@@ -437,7 +437,6 @@
 				_body: D.body,
 				_doc: D,
 				_html: D.documentElement,
-				_legacy: D.addEventListener === U,
 				_slice: [].slice,
 				_win: N,
 				fn: {
@@ -557,9 +556,7 @@
 							if (pre == '#') {
 								el = D.getElementById(selector.substr(1));
 							} else if (pre == '.') {
-								el = W._legacy ?
-									context.querySelectorAll(selector) :
-									context.getElementsByClassName(selector.substr(1));
+								el = context.getElementsByClassName(selector.substr(1));
 							} else {
 								el = context.getElementsByTagName(selector);
 							}
@@ -593,7 +590,7 @@
 				$parseHTML: function(html) {
 					var el;
 
-					if (! range && ! W._legacy) {
+					if (! range) {
 						range = D.createRange();
 						range.selectNode(W._body);
 					}
@@ -1362,15 +1359,9 @@
 				ready: function(fn) {
 					D.readyState == 'complete' ?
 						W.$exec(fn) :
-						W._legacy ?
-							D.attachEvent('onreadystatechange', function() {
-								if (D.readyState == 'complete') {
-									W.$exec(fn);
-								}
-							}) :
-							D.addEventListener('DOMContentLoaded', function() {
-								W.$exec(fn);
-							});
+						D.addEventListener('DOMContentLoaded', function() {
+							W.$exec(fn);
+						});
 				}
 			};
 		})();
