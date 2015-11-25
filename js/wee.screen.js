@@ -138,7 +138,7 @@
 						style.fontFamily :
 						null
 					) :
-					W._win.getComputedStyle(W._html, null)
+					getComputedStyle(W._html, null)
 						.getPropertyValue('font-family');
 
 			return parseFloat(
