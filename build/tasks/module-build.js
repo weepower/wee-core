@@ -1,4 +1,4 @@
-/* global config, fs, legacyConvert, moduleLegacy, path, project */
+/* global config, fs, path, project */
 /* jshint maxdepth: 8 */
 
 module.exports = function(grunt) {
@@ -316,23 +316,6 @@ module.exports = function(grunt) {
 
 						// Add script paths to uglify
 						config.script.build = config.script.build.concat(moduleScript);
-
-						// Append legacy style
-						if (project.style.legacy.enable) {
-							moduleLegacy.push('@import (inline) "' + config.paths.temp + name + '-legacy.css";');
-						}
-
-						if (project.style.legacy.watch === true) {
-							// Configure legacy watch task
-							grunt.config.set('watch.' + name + '-legacy', {
-								files: config.paths.temp + name + '.css',
-								tasks: [
-									'less:legacy',
-									'convertLegacy:core',
-									'notify:legacy'
-								]
-							});
-						}
 					} else {
 						// Create module style compile task
 						obj[name] = {
@@ -356,45 +339,6 @@ module.exports = function(grunt) {
 
 						// Execute script task
 						grunt.task.run('uglify:' + name);
-					}
-
-					// Legacy processing
-					if (project.style.legacy.enable) {
-						var legacyTaskName = name + '-legacy';
-						dest = module.autoload ?
-							config.paths.temp + legacyTaskName + '.css' :
-							config.paths.module + name + '/legacy.min.css';
-
-						// Create legacy task
-						grunt.config.set('less.' + legacyTaskName, {
-							files: [{
-								dest: dest,
-								src: config.paths.wee + 'css/wee.module-legacy.less'
-							}],
-							options: {
-								modifyVars: vars,
-								globalVars: {
-									weePath: '"' + config.paths.weeTemp + '"'
-								}
-							}
-						});
-
-						if (project.style.legacy.watch === true) {
-							// Configure legacy watch task
-							grunt.config.set('watch.' + legacyTaskName, {
-								files: modulePath + '/**/*.less',
-								tasks: [
-									'less:' + legacyTaskName,
-									'convertLegacy:' + legacyTaskName
-								]
-							});
-						}
-
-						// Push to conversion array
-						legacyConvert[legacyTaskName] = dest;
-
-						grunt.task.run('less:' + legacyTaskName);
-						grunt.task.run('convertLegacy:' + legacyTaskName);
 					}
 				} else {
 					Wee.notify({

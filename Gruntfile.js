@@ -24,10 +24,6 @@
 			rootPath: rootPath
 		};
 
-		global.legacy = {};
-		global.legacyBuild = [];
-		global.legacyConvert = [];
-		global.moduleLegacy = [];
 		global.reloadPaths = [];
 		global.server = {};
 
@@ -178,8 +174,7 @@
 				styleCore: {
 					files: [
 						'wee/css/**/*.less',
-						'<%= config.paths.cssSource %>custom/**/*.less',
-						'!<%= config.paths.temp %>wee.legacy.less'
+						'<%= config.paths.cssSource %>custom/**/*.less'
 					],
 					tasks: [
 						'less:core',
@@ -314,7 +309,6 @@
 			'configGenerator',
 			'buildStyle',
 			'buildModules',
-			'buildLegacy',
 			'loadViews',
 			'makeViews',
 			'uglify:core',
@@ -332,7 +326,6 @@
 			'setup',
 			'buildStyle',
 			'buildModules',
-			'buildLegacy',
 			'loadViews',
 			'makeViews',
 			'uglify:core',

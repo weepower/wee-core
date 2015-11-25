@@ -48,7 +48,6 @@ module.exports = function(grunt) {
 		// Responsive
 		if (core.responsive && core.responsive.enable === true) {
 			config.style.vars.responsiveEnabled = true;
-			config.style.vars.ieBreakpoint = project.style.legacy.breakpoint || 4;
 
 			// Breakpoints
 			var offset = core.responsive.offset || 0,
