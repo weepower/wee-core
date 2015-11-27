@@ -47,23 +47,7 @@
 
 						(function(el, evt, fn, f, conf) {
 							var cb = function(e) {
-								var cont = true,
-									trig = e === false;
-
-								// Patch core event functionality
-								if (trig) {
-									e = {};
-									e.target = e.srcElement;
-
-									e.preventDefault = function() {
-										e.returnValue = false;
-									};
-
-									e.stopPropagation = function() {
-										e.cancelBubble = true;
-									};
-								}
-
+								var cont = true;
 								conf.args[0] = e;
 
 								// If watch within ancestor make sure the target
@@ -270,8 +254,14 @@
 		 * @param {string} name
 		 */
 		trigger: function(target, name) {
-			this.bound(target, name).forEach(function(evt) {
-				evt.cb(false);
+			var fn = function() {};
+
+			this.bound(target, name).forEach(function(e) {
+				e.cb({
+					target: e.el,
+					preventDefault: fn,
+					stopPropagation: fn
+				});
 			});
 		},
 
