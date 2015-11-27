@@ -130,12 +130,10 @@
 		 * @returns {number} size
 		 */
 		size: function() {
-			var style = W._html.currentStyle,
-				size = getComputedStyle(W._html, null)
-					.getPropertyValue('font-family');
-
 			return parseFloat(
-				size.replace(/[^0-9\.]+/g, ''),
+				getComputedStyle(W._html, null)
+					.getPropertyValue('font-family')
+					.replace(/[^0-9\.]+/g, ''),
 				10
 			);
 		},

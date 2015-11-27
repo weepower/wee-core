@@ -19,7 +19,7 @@
 		// Pass through additional flags
 		Object.keys(config.args).forEach(function(key) {
 			var val = config.args[key];
-			options[key] = val == '' ? true : val;
+			options[key] = val === '' ? true : val;
 		});
 
 		build(grunt);

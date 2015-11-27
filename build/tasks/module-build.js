@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 						moduleScript = [
 							scriptRoot + 'vendor/**/*.js',
 							scriptRoot + '**/*.js',
-							'!' + scriptRoot + 'script.js',
+							'!' + scriptRoot + 'script.js'
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = fs.readFileSync(config.paths.wee + 'css/wee.module.less', 'utf8'),

@@ -3,7 +3,6 @@
 
 	var groups = {},
 		loaded = {},
-		index = 0,
 		root = '',
 
 		/**
