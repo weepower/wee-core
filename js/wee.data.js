@@ -132,6 +132,7 @@
 		 * @param {object} [options.scope] - callback scope
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
 		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
+		 * @param {string} [options.type] - form, html, json, or xml
 		 * @param {string} options.url - endpoint to request
 		 */
 		request: function(options) {
@@ -179,23 +180,32 @@
 			if (method == 'GET') {
 				conf.url = this._getUrl(conf);
 			} else {
-				send = typeof conf.data == 'string' || conf.processData === false ?
+				var str = typeof conf.data == 'string';
+
+				if (! str && ! conf.type) {
+					conf.type = 'json';
+				}
+
+				send = str || conf.processData === false ?
 					conf.data :
 					JSON.stringify(conf.data);
 			}
 
 			x.open(method, conf.url, true);
 
-			// Add JSON headers
-			if (conf.json) {
+			// Add content type header
+			if (conf.type == 'json') {
 				headers[contentTypeHeader] = 'application/json';
-				headers.Accept = 'application/json, text/javascript, */*; q=0.01';
+			} else if (conf.type == 'xml') {
+				headers[contentTypeHeader] = 'text/xml';
+			} else if (method == 'POST' || conf.type == 'form') {
+				headers[contentTypeHeader] =
+					'application/x-www-form-urlencoded';
 			}
 
-			// Add POST content type
-			if (method == 'POST' && ! conf.json) {
-				headers[contentTypeHeader] =
-					'application/x-www-form-urlencoded; charset=UTF-8';
+			// Accept JSON header
+			if (conf.json) {
+				headers.Accept = 'application/json, text/javascript, */*; q=0.01';
 			}
 
 			// Add X-Requested-With header for same domain requests
@@ -207,6 +217,9 @@
 			}
 
 			headers = W.$extend(headers, conf.headers);
+
+			// Append character set to content type header
+			headers[contentTypeHeader] += '; charset=UTF-8';
 
 			// Set request headers
 			for (var key in headers) {
