@@ -11,7 +11,7 @@ define(function(require) {
 
 		setup: function() {
 			el = document.createElement('style');
-			el.innerText = 'html {font-family: "5"}';
+			el.textContent = 'html {font-family: "5"}';
 
 			document.getElementsByTagName('head')[0].appendChild(el);
 		},

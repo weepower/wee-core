@@ -16,7 +16,6 @@ define(function(require) {
 					url: '/$root/node_modules/wee-core/js/tests/sample-files/sample.json',
 					json: true,
 					success: promise.callback(function(data) {
-						console.log(data);
 						assert.strictEqual(data.person.firstName, 'Don',
 							'Sample file was not loaded successfully'
 						);
