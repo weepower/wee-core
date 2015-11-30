@@ -384,6 +384,7 @@ module.exports = function(grunt) {
 
 						if (single === true) {
 							var dest = Wee.view.render(target, obj);
+							Wee.$extend(data, data.section.data);
 
 							writeTarget(dest, Wee.$extend(data, {
 								content: [obj]
