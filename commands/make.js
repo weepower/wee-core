@@ -14,15 +14,23 @@
 			message = false,
 			templatePath = __dirname + '/templates/',
 			sourcePath = path.join(config.rootPath, config.project.paths.source),
+			slugify = function(val) {
+				return val.toLowerCase()
+					.replace(/\s+/g, '-')
+					.replace(/[^\w\-]+/g, '')
+					.replace(/\-\-+/g, '-')
+					.replace(/^-+/, '')
+					.replace(/-+$/, '');
+			},
 			commands = {
 				controller: function() {
 					var name = config.args.name || '',
-						target = path.join(sourcePath, 'js/build/' + name + '.js');
+						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
 
 					if (! name) {
 						error = 'Missing argument "--name=controllerName"';
 					} else if (fs.existsSync(target)) {
-						error = 'Controller "' + target + '" already exists';
+						error = 'Controller "' + name + '" already exists';
 					}
 
 					if (! error) {
@@ -36,9 +44,7 @@
 				},
 				module: function() {
 					var name = config.args.name || '',
-						slug = (name[0].toLowerCase() + name.slice(1))
-							.replace(' ', ''),
-						target = path.join(sourcePath, 'modules/' + slug);
+						target = path.join(sourcePath, 'modules/' + slugify(name));
 
 					if (! name) {
 						error = 'Missing argument "--name=Module"';
@@ -78,7 +84,7 @@
 							'unit',
 							'functional'
 						],
-						target = path.join(sourcePath,';js/tests/' + type + '/' + name + '.js');
+						target = path.join(sourcePath, 'js/tests/' + type + '/' + slugify(name) + '.js');
 
 					if (! name) {
 						error = 'Missing argument "--name=testName"';
