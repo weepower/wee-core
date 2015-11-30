@@ -154,7 +154,7 @@ module.exports = function(grunt) {
 				dest = path.normalize(dest)
 					.replace(scriptRoot, '')
 					.replace(moduleRoot, '/')
-					.replace(/^\\|\//, '')
+					.replace(/^[\\\/]/, '')
 					.replace(/\\|\//g, '.')
 					.replace('.min.js', '');
 
