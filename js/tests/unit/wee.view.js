@@ -92,9 +92,9 @@ define(function(require) {
 			);
 		},
 
-		addPartial: function() {
-			Wee.view.addPartial('partial', '123');
-			Wee.view.addPartial('partial2', '456');
+		addView: function() {
+			Wee.view.addView('partial', '123');
+			Wee.view.addView('partial2', '456');
 
 			assert.strictEqual(Wee.view.render('{{> partial }}{{> partial }}{{> partial2 }}', {}), '123123456',
 				'Template parsed successfully.'

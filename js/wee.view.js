@@ -26,7 +26,6 @@
 				return ! this.empty;
 			}
 		},
-		partials = {},
 		views = {},
 		esc,
 
@@ -54,25 +53,21 @@
 		 */
 		_render = function(temp, data) {
 			var tags = [],
-				depth = [];
-
-			if (views[temp]) {
-				temp = views[temp];
-			}
+				depth = [],
+				skip = false;
 
 			// Make partial replacements and match tag pairs
 			temp = temp.replace(reg.partial, function(match, tag) {
-				var partial = partials[tag.trim()];
-
-				return partial ? (
-					W.$isFunction(partial) ?
-						partial() :
-						partial
-				) : '';
+				return views[tag.trim()] || '';
 			}).replace(reg.tags, function(m, pre, tag, helper) {
 				var resp = '{{';
 
-				if (pre) {
+				if (tag == '!') {
+					skip = pre == '#';
+					resp += pre + tag;
+				} else if (skip) {
+					return m;
+				} else if (pre) {
 					var segs = tag.split('('),
 						root = segs[0],
 						exists = tags.hasOwnProperty(tag);
@@ -99,7 +94,7 @@
 					} else if (exists) {
 						resp += tags[root].o.pop();
 					}
-				} else {
+				} else if (depth.length) {
 					tag = depth.pop();
 					resp += ':' + tag + '%' + tags[tag].i;
 				}
@@ -108,14 +103,7 @@
 			});
 
 			// Parse template tags
-			temp = _parse(temp, data, {}, data, 0);
-
-			// Reconstitute replacements
-			return esc ?
-				temp.replace(/{~/g, '{{')
-					.replace(/~}/g, '}}')
-					.replace(/%\d+/g, '') :
-				temp;
+			return _parse(temp, data, {}, data, 0);
 		},
 
 		/**
@@ -131,20 +119,17 @@
 		 */
 		_parse = function(temp, data, prev, init, index) {
 			return temp.replace(reg.pair, function(m, t, helper, inner) {
-				var tag = t.replace(/%\d+/, '');
-
-				// Escape child template tags
-				if (tag == '!') {
+				if (t == '!') {
 					esc = true;
 
 					return inner.replace(/{{:[^{\s]+}}/g, '{{ else }}')
-						.replace(/{{/g, '{~ ')
-						.replace(/}}/g, ' ~}');
+						.replace(/{{/g, '{~')
+						.replace(/}}/g, '~}');
 				}
 
-				var cond = inner.split('{{:' + t + '}}');
+				var tag = t.replace(/%\d+/, ''),
+					cond = inner.split('{{:' + t + '}}');
 				inner = cond[0];
-				esc = false;
 
 				var val = _get(data, prev, tag, U, init, index),
 					empty = _isEmpty(val),
@@ -269,7 +254,6 @@
 											'#': i,
 											'##': i + 1
 										});
-
 									i++;
 
 									resp += _parse(inner, item, data, init, i);
@@ -321,6 +305,12 @@
 				if (val === U) {
 					val = '';
 				} else if (typeof val == 'string') {
+					// Recursively process injected tags
+					if (val.indexOf('{{') > -1) {
+						val = _render(val, data);
+					}
+
+					// Encode HTML characters
 					if (helps.indexOf('raw') < 0) {
 						val = val.replace(/&amp;/g, '&')
 							.replace(/&/g, '&amp;')
@@ -507,7 +497,14 @@
 		 * @returns {string}
 		 */
 		render: function(template, data) {
-			return _render(template, W.$extend(data));
+			esc = false;
+			template = _render(views[template] || template, W.$extend(data));
+
+			return esc ?
+				template.replace(/{~/g, '{{')
+					.replace(/~}/g, '}}')
+					.replace(/%\d+/g, '') :
+				template;
 		},
 
 		/**
@@ -521,17 +518,7 @@
 		},
 
 		/**
-		 * Make partial available for injection into other templates
-		 *
-		 * @param {object|string} name
-		 * @param {string} [value]
-		 */
-		addPartial: function(name, value) {
-			W._extend(partials, name, value);
-		},
-
-		/**
-		 * Add view to store for on-demand reference
+		 * Add views to store for on-demand reference
 		 *
 		 * @param {object|string} name
 		 * @param {string} [value]

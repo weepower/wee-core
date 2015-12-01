@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			var partial = path.join(partialRoot, name),
 				content = fs.readFileSync(partial, 'utf8');
 
-			Wee.view.addPartial(path.basename(name, path.extname(name)), content);
+			Wee.view.addView(path.basename(name, path.extname(name)), content);
 		});
 	});
 };
