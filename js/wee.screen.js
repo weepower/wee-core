@@ -10,16 +10,16 @@
 		 *
 		 * @private
 		 * @param {object} conf - breakpoint rules
-		 * @param {function} conf.callback
-		 * @param {number} [conf.min] - minimum breakpoint value
-		 * @param {number} [conf.max] - maximum breakpoint value
-		 * @param {number} [conf.size] - specific breakpoint value
-		 * @param {Array} [conf.args] - callback arguments
+		 * @param {Array} [rules.args] - callback arguments
+		 * @param {function} rules.callback
 		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
-		 * @param {boolean} [conf.init=true] - check event on load
+		 * @param {boolean} [rules.init=true] - check event on load
+		 * @param {int} [rules.max] - maximum breakpoint value
+		 * @param {int} [rules.min] - minimum breakpoint value
 		 * @param {boolean} [conf.once=false] - only execute the callback once
-		 * @param {object} [conf.scope] - callback scope
-		 * @param {boolean} [conf.watch=true] - check event on screen resize
+		 * @param {object} [rules.scope] - callback scope
+		 * @param {int} [rules.size] - specific breakpoint value
+		 * @param {boolean} [rules.watch=true] - check event on screen resize
 		 */
 		_addRule = function(conf) {
 			if (conf.callback) {
@@ -142,16 +142,16 @@
 		 * Map conditional events to breakpoint values
 		 *
 		 * @param {(Array|object)} rules - breakpoint rules
-		 * @param {int} [rules.size] - specific breakpoint value
-		 * @param {int} [rules.min] - minimum breakpoint value
-		 * @param {int} [rules.max] - maximum breakpoint value
-		 * @param {boolean} [rules.watch=true] - check event on screen resize
-		 * @param {boolean} [rules.init=true] - check event on load
-		 * @param {boolean} [conf.once=false] - only execute the callback once
-		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
-		 * @param {object} [rules.scope] - callback scope
 		 * @param {Array} [rules.args] - callback arguments
 		 * @param {function} rules.callback
+		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
+		 * @param {boolean} [rules.init=true] - check event on load
+		 * @param {int} [rules.max] - maximum breakpoint value
+		 * @param {int} [rules.min] - minimum breakpoint value
+		 * @param {boolean} [conf.once=false] - only execute the callback once
+		 * @param {object} [rules.scope] - callback scope
+		 * @param {int} [rules.size] - specific breakpoint value
+		 * @param {boolean} [rules.watch=true] - check event on screen resize
 		 */
 		map: function(rules) {
 			var sets = W.$toArray(rules),
