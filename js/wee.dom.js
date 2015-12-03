@@ -548,13 +548,7 @@
 				if (el === W._win) {
 					height = el.innerHeight;
 				} else if (el === W._doc) {
-					height = Math.max(
-						W._body.offsetHeight,
-						W._body.scrollHeight,
-						W._html.clientHeight,
-						W._html.offsetHeight,
-						W._html.scrollHeight
-					);
+					height = el.documentElement.scrollHeight;
 				} else {
 					height = el.offsetHeight;
 
@@ -727,10 +721,7 @@
 					el.msMatchesSelector || el.mozMatchesSelector ||
 					el.webkitMatchesSelector || el.oMatchesSelector;
 
-				return matches ?
-					matches.call(el, filter) :
-					W._slice.call(el.parentNode.querySelectorAll(filter))
-						.indexOf(el) > -1;
+				return matches.call(el, filter);
 			}).length > 0;
 		},
 
@@ -1295,13 +1286,7 @@
 				if (el === W._win) {
 					width = el.innerWidth;
 				} else if (el === W._doc) {
-					width = Math.max(
-						W._body.offsetWidth,
-						W._body.scrollWidth,
-						W._html.clientWidth,
-						W._html.offsetWidth,
-						W._html.scrollWidth
-					);
+					width = el.documentElement.scrollWidth;
 				} else {
 					width = el.offsetWidth;
 
