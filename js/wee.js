@@ -279,7 +279,7 @@
 				 *
 				 * @private
 				 * @param {object} target
-				 * @param {object} source
+				 * @param {object} object
 				 * @param {boolean} [deep=false]
 				 * @returns object
 				 */
@@ -868,9 +868,9 @@
 				/**
 				 * Extend target object with source object(s)
 				 *
-				 * @param {(boolean|object)} - extend nested properties else target object
-				 * @param {object} - target object
-				 * @param {...object} - merged objects
+				 * @param {(boolean|object)} deep - extend nested properties else target object
+				 * @param {object} obj - target object
+				 * @param {...object} obj - merged objects
 				 * @returns {object}
 				 */
 				$extend: function(deep) {
