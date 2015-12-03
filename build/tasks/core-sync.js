@@ -36,7 +36,7 @@ module.exports = function(grunt) {
 
 			// Sync module files
 			config.modules.forEach(function(name) {
-				fs.removeSync(config.paths.moduleSource + name + '/' + modulePath);
+				fs.removeSync(config.paths.module + name + '/' + modulePath);
 			});
 
 			files = glob.sync(
