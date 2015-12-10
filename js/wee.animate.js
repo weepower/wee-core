@@ -35,16 +35,12 @@
 			W.$each(target, function(el) {
 				for (var prop in values) {
 					var target = parseInt(values[prop]),
-						scrollTop = prop == 'scrollTop',
-						cssValue,
-						isBody;
+						cssValue;
 
-					if (scrollTop) {
-						isBody = el === W._body;
-						cssValue = Math.max(
-							el.scrollTop,
-							isBody ? W._doc.documentElement.scrollTop : 0
-						).toString();
+					if ((prop == 'scrollTop' || prop == 'scrollLeft') &&
+						el === W._body && ! W._win.atob
+					) {
+						el = W._html;
 					} else {
 						cssValue = getComputedStyle(el, null)[prop];
 					}
@@ -53,17 +49,9 @@
 						unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
 						val = parseInt(css ? cssValue : el[prop]),
 						setValue = function(prop, update) {
-							if (scrollTop) {
-								el.scrollTop = update;
-
-								if (isBody) {
-									W._doc.documentElement.scrollTop = update;
-								}
-							} else {
-								css ?
-									el.style[prop] = update + unit :
-									el[prop] = update;
-							}
+							css ?
+								el.style[prop] = update + unit :
+								el[prop] = update;
 						},
 						start = Date.now(),
 						fn = (function() {
@@ -93,7 +81,7 @@
 							val: val
 						});
 
-					timers[prop + start] = setInterval(fn, 5);
+					timers[prop + start] = setInterval(fn, 10);
 				}
 			});
 		},
@@ -101,8 +89,8 @@
 		/**
 		 * Add additional easing function(s)
 		 *
-		 * @param {(object|string}} name or easing object
-		 * @param {function} [fn]
+		 * @param {(object|string)} a - name or easing object
+		 * @param {function} [b] - easing function
 		 */
 		addEasing: function(a, b) {
 			W._extend(easings, a, b);
