@@ -10,16 +10,16 @@
 		 *
 		 * @private
 		 * @param {object} conf - breakpoint rules
-		 * @param {Array} [rules.args] - callback arguments
-		 * @param {function} rules.callback
+		 * @param {Array} [conf.args] - callback arguments
+		 * @param {function} conf.callback
 		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
-		 * @param {boolean} [rules.init=true] - check event on load
-		 * @param {int} [rules.max] - maximum breakpoint value
-		 * @param {int} [rules.min] - minimum breakpoint value
+		 * @param {boolean} [conf.init=true] - check event on load
+		 * @param {int} [conf.max] - maximum breakpoint value
+		 * @param {int} [conf.min] - minimum breakpoint value
 		 * @param {boolean} [conf.once=false] - only execute the callback once
-		 * @param {object} [rules.scope] - callback scope
-		 * @param {int} [rules.size] - specific breakpoint value
-		 * @param {boolean} [rules.watch=true] - check event on screen resize
+		 * @param {object} [conf.scope] - callback scope
+		 * @param {int} [conf.size] - specific breakpoint value
+		 * @param {boolean} [conf.watch=true] - check event on screen resize
 		 */
 		_addRule = function(conf) {
 			if (conf.callback) {
@@ -133,8 +133,7 @@
 			return parseFloat(
 				getComputedStyle(W._html, null)
 					.getPropertyValue('font-family')
-					.replace(/[^0-9\.]+/g, ''),
-				10
+					.replace(/[^0-9\.]+/g, '')
 			);
 		},
 
@@ -144,11 +143,11 @@
 		 * @param {(Array|object)} rules - breakpoint rules
 		 * @param {Array} [rules.args] - callback arguments
 		 * @param {function} rules.callback
-		 * @param {boolean} [conf.each=false] - execute for each matching breakpoint
+		 * @param {boolean} [rules.each=false] - execute for each matching breakpoint
 		 * @param {boolean} [rules.init=true] - check event on load
 		 * @param {int} [rules.max] - maximum breakpoint value
 		 * @param {int} [rules.min] - minimum breakpoint value
-		 * @param {boolean} [conf.once=false] - only execute the callback once
+		 * @param {boolean} [rules.once=false] - only execute the callback once
 		 * @param {object} [rules.scope] - callback scope
 		 * @param {int} [rules.size] - specific breakpoint value
 		 * @param {boolean} [rules.watch=true] - check event on screen resize

@@ -341,7 +341,7 @@
 			W.$each(parent, function(el) {
 				if (W.$(descendant, el).length) {
 					b = true;
-					return;
+					return false;
 				}
 			});
 
@@ -405,7 +405,7 @@
 		 * @param {($|HTMLElement|string)} target
 		 * @param a
 		 * @param [b]
-		 * @returns {(string|undefined)}
+		 * @returns {(object|string|undefined)}
 		 */
 		$data: function(target, a, b) {
 			if (a === U) {
@@ -1176,14 +1176,12 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				var text = func ?
+				el.textContent = func ?
 					W.$exec(value, {
 						args: [i, el.textContent.trim()],
 						scope: el
 					}) :
 					value;
-
-				el.textContent = text;
 			});
 		},
 

@@ -140,9 +140,9 @@
 		 *
 		 * @param {object} [options]
 		 * @param {($|HTMLElement|string)} [options.bind]
-		 * @param {array} [options.extensions]
-		 * @param {string] [options.partials='title,main']
-		 * @param {boolean] [options.push=true]
+		 * @param {Array} [options.extensions]
+		 * @param {string} [options.partials='title,main']
+		 * @param {boolean} [options.push=true]
 		 * @param {object} [options.request]
 		 * @param {boolean} [options.run=true]
 		 */
@@ -263,8 +263,8 @@
 		 *
 		 * @param {object} options
 		 * @param {string} [options.action='replace']
-		 * @param {array} [options.extensions]
-		 * @param {string] [options.partials='title,main']
+		 * @param {Array} [options.extensions]
+		 * @param {string} [options.partials='title,main']
 		 * @param {string} [options.path=current path]
 		 * @param {boolean} [options.push=true]
 		 * @param {object} [options.request]

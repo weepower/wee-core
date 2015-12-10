@@ -165,7 +165,7 @@
 		 * @param {boolean} [value.history]
 		 * @param {string} [value.path]
 		 * @param {object} [value.query]
-		 * @param {array} [value.segments]
+		 * @param {Array} [value.segments]
 		 * @param {string} [value.url]
 		 * @returns {object} data
 		 */
@@ -236,8 +236,8 @@
 		/**
 		 * Add conditional route filter
 		 *
-		 * @param {(object|string}} name or filter object
-		 * @param {function} [fn]
+		 * @param {(object|string)} a - name or filter object
+		 * @param {function} [b]
 		 */
 		addFilter: function(a, b) {
 			W._extend(filters, a, b);
@@ -247,7 +247,7 @@
 		 * Evaluate routes against URI
 		 *
 		 * @param {object} [conf]
-		 * @param {string} [cong.event='load']
+		 * @param {string} [conf.event='load']
 		 * @param {string} [conf.path]
 		 * @param {object} [conf.rules]
 		 */

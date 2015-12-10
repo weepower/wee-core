@@ -338,8 +338,8 @@
 				 * Compare two arrays for equality
 				 *
 				 * @private
-				 * @param {array} a
-				 * @param {array} b
+				 * @param {Array} a
+				 * @param {Array} b
 				 * @returns {boolean}
 				 */
 				_arrEquals = function(a, b) {
@@ -645,7 +645,7 @@
 				 * Push value into global array
 				 *
 				 * @param {string} key
-				 * @param {*} value
+				 * @param {*} val
 				 * @param {boolean} [prepend=false]
 				 * @returns {Array|object} value
 				 */
@@ -657,7 +657,7 @@
 				 * Concatenate values into global storage
 				 *
 				 * @param {string} key
-				 * @param {*} value
+				 * @param {*} val
 				 * @param {boolean} [prepend=false]
 				 * @returns {Array|object} value
 				 */
@@ -680,7 +680,7 @@
 				 * Check if storage criteria is set
 				 *
 				 * @param {string} key
-				 * @param {*} [value]
+				 * @param {*} [val]
 				 * @returns {boolean}
 				 */
 				$has: function(key, val) {
@@ -691,7 +691,7 @@
 				 * Remove key or value from global array
 				 *
 				 * @param {string} key
-				 * @param {*} [value]
+				 * @param {*} [val]
 				 * @returns {Array|object} value
 				 */
 				$drop: function(key, val) {
@@ -869,8 +869,8 @@
 				 * Extend target object with source object(s)
 				 *
 				 * @param {(boolean|object)} deep - extend nested properties else target object
-				 * @param {object} obj - target object
-				 * @param {...object} obj - merged objects
+				 * @param {object} [obj] - target object
+				 * @param {...object} [obj] - merged objects
 				 * @returns {object}
 				 */
 				$extend: function(deep) {
@@ -1128,7 +1128,7 @@
 				 * Determine if value can be executed as a function
 				 *
 				 * @protected
-				 * @param {*} value
+				 * @param {*} fn
 				 * @returns {boolean} is executable
 				 */
 				_canExec: function(fn) {
@@ -1212,6 +1212,10 @@
 				 * Return a new controller method
 				 *
 				 * @protected
+				 * @param {string} name
+				 * @param {object} pub
+				 * @param {object} [priv]
+				 * @param {bool} [model=false]
 				 * @returns {Function}
 				 */
 				_make: function(name, pub, priv, model) {
