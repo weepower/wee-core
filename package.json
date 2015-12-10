@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Core Wee library and build scripts",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
@@ -31,10 +31,10 @@
 		"grunt-newer": "~1.1.1",
 		"html-minifier": "~1.0.0",
 		"js-yaml": "~3.4.6",
-		"jscs": "~2.6.0",
+		"jscs": "~2.7.0",
 		"jshint": "~2.8.0",
 		"less-plugin-clean-css": "~1.5.1",
-		"node-notifier": "~4.3.1",
+		"node-notifier": "~4.4.0",
 		"remarkable": "~1.6.1"
 	},
 	"devDependencies": {
