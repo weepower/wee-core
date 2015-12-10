@@ -274,11 +274,6 @@
 					val = _get(data, prev, tag, fb, init, index),
 					helps = segs.length > 1 ? segs.slice(1) : segs;
 
-				// Return empty string if output isn't available
-				if (val === U || typeof val == 'object') {
-					val = '';
-				}
-
 				// Process helpers
 				helps.forEach(function(el, i) {
 					var arr = el.match(reg.ext);
@@ -302,7 +297,7 @@
 				});
 
 				// Encode output by default
-				if (val === U) {
+				if (val === U || typeof val == 'object') {
 					val = '';
 				} else if (typeof val == 'string') {
 					// Recursively process injected tags
@@ -394,6 +389,7 @@
 		 *
 		 * @private
 		 * @param {string} str
+		 * @param {object} data
 		 * @returns {*}
 		 */
 		_parseArgs = function(str, data) {
@@ -404,13 +400,13 @@
 
 				if (data && data.hasOwnProperty(arg) && isNaN(arg)) {
 					return data[arg];
-				} else {
-					var match = arg.match(reg.str);
+				}
 
-					if (match) {
-						return arg.replace(reg.str, '')
-							.replace(new RegExp(match[0] + '$'), '');
-					}
+				var match = arg.match(reg.str);
+
+				if (match) {
+					return arg.replace(reg.str, '')
+						.replace(new RegExp(match[0] + '$'), '');
 				}
 
 				return arg == 'true' ? true :
