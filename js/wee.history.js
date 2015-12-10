@@ -162,8 +162,10 @@
 				delete settings.request;
 
 				if (support) {
+					H.scrollRestoration = 'manual';
+
 					// Set current state
-					H.replaceState(0, '', path);
+					H.replaceState(0, '');
 
 					// Listen for browser navigation
 					E.on(W._win, 'popstate.history', function(e) {
@@ -182,6 +184,11 @@
 									}
 								);
 							conf.partials = prevConf.partials;
+
+							// Restore previous scroll position
+							if (e.state.top) {
+								conf.scrollTop = e.state.top;
+							}
 
 							W.history.go(conf);
 						}
@@ -304,6 +311,11 @@
 				}) === false) {
 				return;
 			}
+
+			// Set current scroll position
+			H.replaceState({
+				top: W._body.scrollTop
+			}, '');
 
 			// Reset URL to exclude root
 			a.href = request.url;
