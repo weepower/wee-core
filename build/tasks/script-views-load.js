@@ -31,7 +31,9 @@ module.exports = function(grunt) {
 							.replace('/', '.').slice(0, -5);
 
 					data[key] = fs.readFileSync(view, 'utf8')
-						.replace(/\s*\n+\t*/g, '');
+						.replace(/[\s][\s]*/g, ' ')
+						.replace(/[\s]*>[\s]*/g, '>')
+						.replace(/[\s]*<[\s]*/g, '<');
 				});
 			}
 		});
