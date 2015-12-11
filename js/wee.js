@@ -589,6 +589,7 @@
 				 */
 				$parseHTML: function(html) {
 					var el;
+					html = html.trim();
 
 					if (! range) {
 						range = D.createRange();
