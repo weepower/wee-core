@@ -399,7 +399,7 @@ module.exports = function(grunt) {
 			});
 		};
 
-		var tempPath = config.paths.temp,
+		var tempPath = config.paths.temp + 'remote',
 			remoteUrls = [],
 			remotesDownloaded = 0,
 			remoteIndex = 1,
@@ -451,7 +451,7 @@ module.exports = function(grunt) {
 			done = this.async();
 
 			// Create remote cache directory
-			fs.mkdirSync(path.normalize(tempPath));
+			fs.mkdirSync(tempPath);
 
 			var cacheRemote = function(i) {
 				var arr = remoteUrls[i],
