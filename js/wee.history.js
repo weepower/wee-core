@@ -13,7 +13,7 @@
 		 * Return current path
 		 *
 		 * @private
-		 * @param {object} loc
+		 * @param {object} [loc]
 		 * @returns {string}
 		 */
 		_path = function(loc) {

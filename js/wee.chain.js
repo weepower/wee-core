@@ -90,7 +90,6 @@
 		/**
 		 * Translate object elements to a new array
 		 *
-		 * @param fn
 		 * @param {function} fn
 		 * @param {object} [options]
 		 * @param {Array} [options.args]

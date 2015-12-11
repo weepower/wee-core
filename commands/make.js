@@ -131,7 +131,5 @@
 				message: message || 'Generator successfully executed'
 			});
 		}
-
-		return;
 	};
 })();

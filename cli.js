@@ -3,16 +3,17 @@
 (function() {
 	'use strict';
 
+	var fs = require('fs-extra'),
+		glob = require('glob'),
+		path = require('path');
+
 	global.chalk = require('chalk');
 	global.Wee = require('./js/wee').Wee;
 
-	module.exports = function(rootPath) {
-		var fs = require('fs-extra'),
-			glob = require('glob'),
-			path = require('path'),
-			keywords = process.argv.slice(2);
+	require('./utils');
 
-		require('./utils');
+	module.exports = function(rootPath) {
+		var keywords = process.argv.slice(2);
 
 		if (keywords.length) {
 			var args = {},
