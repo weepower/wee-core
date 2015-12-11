@@ -717,11 +717,11 @@
 					}, options));
 				}
 
-				var matches = el.matches || el.matchesSelector ||
+				return (
+					el.matches || el.matchesSelector ||
 					el.msMatchesSelector || el.mozMatchesSelector ||
-					el.webkitMatchesSelector || el.oMatchesSelector;
-
-				return matches.call(el, filter);
+					el.webkitMatchesSelector || el.oMatchesSelector
+				).call(el, filter);
 			}).length > 0;
 		},
 
