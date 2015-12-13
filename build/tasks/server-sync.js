@@ -19,11 +19,6 @@ module.exports = function(grunt) {
 				reloadPaths.push(
 					path.join('../../', file, '**/*.' + reloadExt)
 				);
-
-				// TODO: Remove when dependency issue is resolved
-				reloadPaths.unshift(
-					path.join('../../', file, '*/*.' + reloadExt)
-				);
 			});
 
 			// Add root to watchlist
@@ -31,18 +26,13 @@ module.exports = function(grunt) {
 				reloadPaths.unshift(
 					path.join(config.paths.root, '**/*.' + reloadExt)
 				);
-
-				// TODO: Remove when dependency issue is resolved
-				reloadPaths.unshift(
-					path.join(config.paths.root, '*.' + reloadExt)
-				);
 			}
 
 			// Bind BrowserSync watchlist
 			reloadPaths.unshift(
 				path.join(
 					config.paths.assets,
-					'**/*.{css,js,gif,jpg,png,svg,webp,woff}'
+					'**/*.{css,gif,jpg,js,png,svg,webp,woff}'
 				)
 			);
 
