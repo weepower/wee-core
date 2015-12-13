@@ -4,10 +4,9 @@ module.exports = function(grunt) {
 	var glob = require('glob');
 
 	grunt.registerTask('loadViews', function() {
-		var data = {};
-
 		// Find core view templates
-		var matches = glob.sync(config.paths.viewSource + 'load/**/*.html');
+		var matches = glob.sync(config.paths.viewSource + 'load/**/*.html'),
+			data = {};
 
 		if (matches.length) {
 			matches.forEach(function(view) {
@@ -31,9 +30,10 @@ module.exports = function(grunt) {
 							.replace('/', '.').slice(0, -5);
 
 					data[key] = fs.readFileSync(view, 'utf8')
-						.replace(/[\s][\s]*/g, ' ')
-						.replace(/[\s]*>[\s]*/g, '>')
-						.replace(/[\s]*<[\s]*/g, '<');
+						.replace(/(}}|>)\n+\s*({{|<)/g, '$1$2')
+						.replace(/\s\s*/g, ' ')
+						.replace(/({{|<)\s*/g, '$1')
+						.replace(/\s*(}}|>)/g, '$1');
 				});
 			}
 		});
