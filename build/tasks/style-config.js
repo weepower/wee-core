@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 		if (config.style.vars.printEnabled) {
 			config.style.print = '@media print {\n' +
 				'@import "../css/wee.print.less";\n' +
-				'@import (optional) "@{sourcePath}/custom/print.less";\n' +
+				'@import (optional) "@{sourcePath}custom/print.less";\n' +
 				'}';
 		}
 

@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 			inject = '';
 
 		buildFiles.forEach(function(name) {
-			name = '@{sourcePath}/build/' +
+			name = '@{sourcePath}build/' +
 				name.replace(path.normalize(config.paths.assets), '');
 
 			if (name.indexOf('/vendor/') !== -1) {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 
 			buildArray.push(name);
 
-			name = '@{sourcePath}/' +
+			name = '@{sourcePath}' +
 				name.replace(path.normalize(config.paths.assets), '');
 
 			config.style.imports.push(name);
