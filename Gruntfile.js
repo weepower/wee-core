@@ -68,9 +68,7 @@
 			},
 			uglify: {
 				options: {
-					compress: {
-						drop_debugger: false // jshint ignore:line
-					}
+					screwIE8: true
 				},
 				core: {
 					files: [{
