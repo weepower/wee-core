@@ -96,7 +96,9 @@
 					if (val !== U) {
 						if (W.$isObject(resp)) {
 							return resp.hasOwnProperty(val);
-						} else if (Array.isArray(resp)) {
+						}
+
+						if (Array.isArray(resp)) {
 							return resp.indexOf(val) > -1;
 						}
 
@@ -243,7 +245,7 @@
 				},
 
 				/**
-				 * Copy value to a new instance
+				 * Clone value to a new instance
 				 *
 				 * @private
 				 * @param {*} val
@@ -281,19 +283,40 @@
 				 * @param {object} target
 				 * @param {object} object
 				 * @param {boolean} [deep=false]
+				 * @param {Array} [_set=[]]
 				 * @returns object
 				 */
-				_extend = function(target, object, deep) {
-					if (object) {
-						for (var key in object) {
-							var src = object[key],
-								type = W.$type(src);
+				_extend = function(target, object, deep, _set) {
+					if (! object) {
+						return target;
+					}
 
-							if (deep && type == 'object') {
-								target[key] = _extend(target[key] || {}, src, deep);
-							} else if (src !== U) {
-								target[key] = type == 'array' ? src.slice(0) : src;
+					_set = _set || [];
+
+					for (var key in object) {
+						var src = object[key],
+							type = W.$type(src);
+
+						if (deep && type == 'object') {
+							var len = _set.length,
+								i = 0,
+								val;
+
+							for (; i < len; i++) {
+								if (_set[i] === src) {
+									val = src;
+									break;
+								}
 							}
+
+							if (val) {
+								target[key] = val;
+							} else {
+								_set.push(src);
+								target[key] = _extend(target[key] || {}, src, deep, _set);
+							}
+						} else if (src !== U) {
+							target[key] = type == 'array' ? src.slice(0) : src;
 						}
 					}
 
@@ -448,15 +471,48 @@
 					 * @param {object} [priv] - private methods and properties
 					 */
 					make: function(name, pub, priv) {
+						var base;
+
+						// Check for base controller
+						if (name.indexOf(':') > 0) {
+							var segs = name.split(':');
+							base = W[segs[1]];
+							name = segs[0];
+						}
+
+						// Create new controller instance
 						W.fn[name] = W._make(name, pub, priv);
 						W[name] = new W.fn[name]();
 
-						// Execute constructors
-						if (W[name].$private._construct !== U) {
+						if (base) {
+							// Clone base and store construct references
+							var copy = _copy(base),
+								basePubConst = copy._construct,
+								basePrivConst = copy.$private._construct;
+
+							// Delete base constructors
+							delete copy.$private._construct;
+							delete copy._construct;
+
+							// Extend controller methods into base
+							W[name] = _extend(copy, W[name], true);
+
+							// Execute base constructors
+							if (basePubConst) {
+								basePubConst();
+							}
+
+							if (basePrivConst) {
+								basePrivConst();
+							}
+						}
+
+						// Execute controller constructors
+						if (W[name].$private._construct) {
 							W[name].$private._construct();
 						}
 
-						if (W[name]._construct !== U) {
+						if (W[name]._construct) {
 							W[name]._construct();
 						}
 					},
@@ -605,7 +661,7 @@
 
 						div.innerHTML = html;
 
-						while (child = div.firstChild) { // jshint ignore:line
+						while (child = div.firstChild) {
 							el.appendChild(child);
 						}
 					}
@@ -1340,8 +1396,8 @@
 
 						if (priv !== false) {
 							// Clone public and private objects
-							Public = _extend({}, Public);
-							Private = _extend({}, Private);
+							Public = _copy(Public);
+							Private = _copy(Private);
 
 							// Interface $public and $private
 							Public.$private = Private;
