@@ -216,10 +216,11 @@
 				headers['X-Requested-With'] = 'XMLHttpRequest';
 			}
 
-			headers = W.$extend(headers, conf.headers);
-
 			// Append character set to content type header
 			headers[contentTypeHeader] += '; charset=UTF-8';
+
+			// Extend configured headers into defaults
+			headers = W.$extend(headers, conf.headers);
 
 			// Set request headers
 			for (var key in headers) {
