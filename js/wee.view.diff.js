@@ -221,7 +221,7 @@
 					delete savedEls[toEl.id];
 				}
 
-				// Don't process elements specifically exluded
+				// Don't process elements specifically excluded
 				if (fromEl.hasAttribute('data-ignore')) {
 					return;
 				}
