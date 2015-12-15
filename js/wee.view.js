@@ -53,19 +53,18 @@
 		 */
 		_render = function(temp, data) {
 			var tags = [],
-				depth = [],
-				skip = false;
+				depth = [];
 
 			// Make partial replacements and match tag pairs
-			temp = temp.replace(reg.partial, function(match, tag) {
+			temp = temp.replace(reg.partial, function(m, tag) {
 				return views[tag.trim()] || '';
 			}).replace(reg.tags, function(m, pre, tag, helper) {
 				var resp = '{{';
 
 				if (tag == '!') {
-					skip = pre == '#';
+					esc = pre == '#';
 					resp += pre + tag;
-				} else if (skip) {
+				} else if (esc) {
 					return m;
 				} else if (pre) {
 					var segs = tag.split('('),
@@ -119,11 +118,11 @@
 		 */
 		_parse = function(temp, data, prev, init, index) {
 			return temp.replace(reg.pair, function(m, t, helper, inner) {
+				// Return escaped template tag pairs
 				if (t == '!') {
 					esc = true;
 
-					return inner.replace(/{{:[^{\s]+}}/g, '{{ else }}')
-						.replace(/{{/g, '{~')
+					return inner.replace(/{{/g, '{~')
 						.replace(/}}/g, '~}');
 				}
 
@@ -169,26 +168,26 @@
 					// Process aggregates
 					if (agg.length) {
 						if (! agg.every(function(f) {
-								var rv = f[0].apply({
-									val: val,
-									data: data,
-									root: init,
-									tag: tag,
-									empty: empty,
-									index: index
-								}, _parseArgs(f[1], val));
+							var rv = f[0].apply({
+								val: val,
+								data: data,
+								root: init,
+								tag: tag,
+								empty: empty,
+								index: index
+							}, _parseArgs(f[1], val));
 
-								if (rv === false) {
-									return rv;
-								}
+							if (rv === false) {
+								return rv;
+							}
 
-								if (rv !== true) {
-									val = rv;
-									empty = _isEmpty(val);
-								}
+							if (rv !== true) {
+								val = rv;
+								empty = _isEmpty(val);
+							}
 
-								return true;
-							})) {
+							return true;
+						})) {
 							return _parse(sec, data, prev, init, index);
 						}
 					} else if (empty) {
@@ -498,8 +497,7 @@
 
 			return esc ?
 				template.replace(/{~/g, '{{')
-					.replace(/~}/g, '}}')
-					.replace(/%\d+/g, '') :
+					.replace(/~}/g, '}}') :
 				template;
 		},
 
