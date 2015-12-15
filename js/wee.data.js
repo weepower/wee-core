@@ -160,6 +160,9 @@
 
 			var x = new XMLHttpRequest();
 
+			// Make xhr object accessible to send method
+			conf.args.push(x);
+
 			if (conf.send) {
 				W.$exec(conf.send, {
 					args: conf.args,
