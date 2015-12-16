@@ -19,8 +19,6 @@
 						scope: conf.scope
 					};
 
-				exec.args.unshift(x);
-
 				if (status >= 200 && status < 400) {
 					if (conf.success) {
 						_success(x, conf);
@@ -160,8 +158,8 @@
 
 			var x = new XMLHttpRequest();
 
-			// Make xhr object accessible to send method
-			conf.args.push(x);
+			// Inject XHR object as first callback argument
+			conf.args.unshift(x);
 
 			if (conf.send) {
 				W.$exec(conf.send, {
