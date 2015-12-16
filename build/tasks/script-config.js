@@ -99,6 +99,9 @@ module.exports = function(grunt) {
 		// Build/vendor directory scripts
 		config.script.build.push(config.paths.jsSource + 'build/vendor/**/*.js');
 
+		// Custom/init.js file
+		config.script.build.push(config.paths.jsSource + 'custom/init.js');
+
 		// Remaining build directory scripts
 		config.script.build.push(config.paths.jsSource + 'build/**/*.js');
 

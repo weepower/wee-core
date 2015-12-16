@@ -21,6 +21,7 @@ module.exports = function(grunt) {
 						scriptRoot = modulePath + '/core/js/',
 						moduleScript = [
 							scriptRoot + 'vendor/**/*.js',
+							scriptRoot + 'init.js',
 							scriptRoot + '**/*.js',
 							'!' + scriptRoot + 'script.js'
 						],
