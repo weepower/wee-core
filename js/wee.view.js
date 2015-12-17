@@ -6,7 +6,7 @@
 	var reg = {
 			args: /(\\?['"][^'"]+\\?['"]|[^,]+)/g,
 			ext: /(.[^\(]+)(?:\((.*)\))?/,
-			pair: /{{#(.+?)(?:|\|?([^}]*))}}([\s\S]*?){{\/\1}}/g,
+			pair: /{{#(\S+?)(?:\|(.+?))?}}([\s\S]+?){{\/\1}}/g,
 			partial: /{{\s*>(.+?)}}/g,
 			single: /{{(.+?)}}/g,
 			str: /^\\?("|')/,
@@ -30,16 +30,14 @@
 		esc,
 
 		/**
-		 * Determine if value is matches empty criteria
+		 * Determine if value matches empty criteria
 		 *
 		 * @private
 		 * @param {*} val
 		 * @returns {boolean}
 		 */
 		_isEmpty = function(val) {
-			return val === '' ||
-				val === false ||
-				val == null ||
+			return val === '' || val === false || val == null ||
 				(typeof val == 'object' && ! Object.keys(val).length);
 		},
 
@@ -121,9 +119,7 @@
 				// Return escaped template tag pairs
 				if (t == '!') {
 					esc = true;
-
-					return inner.replace(/{{/g, '{~')
-						.replace(/}}/g, '~}');
+					return inner.replace(/{{/g, '{~');
 				}
 
 				var tag = t.replace(/%\d+/, ''),
@@ -243,16 +239,17 @@
 										}
 
 										return true;
-									})) {
+									})
+								) {
 									var item = W.$extend({}, W.$isObject(el) ?
-											el :
-											(isPlainObject ? val : {}),
-										{
-											$key: key,
-											'.': el,
-											'#': i,
-											'##': i + 1
-										});
+										el :
+										(isPlainObject ? val : {}),
+									{
+										$key: key,
+										'.': el,
+										'#': i,
+										'##': i + 1
+									});
 									i++;
 
 									resp += _parse(inner, item, data, init, i);
@@ -496,8 +493,7 @@
 			template = _render(views[template] || template, W.$extend(data));
 
 			return esc ?
-				template.replace(/{~/g, '{{')
-					.replace(/~}/g, '}}') :
+				template.replace(/{~/g, '{{') :
 				template;
 		},
 
