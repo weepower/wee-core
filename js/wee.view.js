@@ -453,6 +453,13 @@
 
 			W.$extend(W.app[name], {
 				/**
+				 * Destroy current application
+				 */
+				$destroy: function() {
+					delete W.app[name];
+				},
+
+				/**
 				 * Pause view updating
 				 */
 				$pause: function() {
