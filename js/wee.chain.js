@@ -61,7 +61,7 @@
 	for (var key in W) {
 		var val = W[key];
 
-		$[key.replace(/^\$/, '')] = W.$isFunction(val) ?
+		$[key.replace(/^\$/, '')] = typeof val == 'function' ?
 			val.bind(W) :
 			val;
 	}
