@@ -496,6 +496,7 @@
 
 							// Extend controller methods into base
 							W[name] = _extend(copy, W[name], true);
+							W[name].$private.$public = W[name];
 
 							// Execute base constructors
 							if (basePubConst) {
@@ -909,7 +910,7 @@
 							}
 						}
 
-						if (W.$isFunction(fn)) {
+						if (typeof fn == 'function') {
 							var response = fn.apply(
 								conf.scope,
 								W.$toArray(conf.args)
@@ -1199,7 +1200,7 @@
 						}
 					}
 
-					return W.$isFunction(fn);
+					return typeof fn == 'function';
 				},
 
 				/**
@@ -1384,8 +1385,6 @@
 										}
 
 										delete W[name];
-
-										W.$drop(name);
 									}
 								};
 
