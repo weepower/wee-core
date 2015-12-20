@@ -1383,14 +1383,14 @@
 							Private = _extend(Private, core);
 						}
 
+						// Clone controller object for instance support
+						Public = _copy(Public);
+
 						// Interface $public and $private
 						if (priv !== false) {
 							Public.$private = Private;
 							Private.$public = Public;
 						}
-
-						// Clone controller object for instance support
-						Public = _copy(Public);
 
 						if (base) {
 							var baseDest = base.$destroy,
