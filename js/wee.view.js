@@ -448,7 +448,7 @@
 			fn();
 
 			// Create a new application controller
-			W.app.fn[name] = W._make(name, {}, false, options.model);
+			W.app.fn[name] = W._make(name, {}, {}, false, options.model);
 			W.app[name] = new W.app.fn[name]();
 
 			W.$extend(W.app[name], {

@@ -471,41 +471,30 @@
 					 * @param {object} [priv] - private methods and properties
 					 */
 					make: function(name, pub, priv) {
-						var base;
+						var base,
+							basePubConst,
+							basePrivConst;
 
 						// Check for base controller
 						if (name.indexOf(':') > 0) {
 							var segs = name.split(':');
-							base = W[segs[1]];
+							base = _copy(W[segs[1]]);
+							basePubConst = base._construct;
+							basePrivConst = base.$private._construct;
 							name = segs[0];
 						}
 
 						// Create new controller instance
-						W.fn[name] = W._make(name, pub, priv);
+						W.fn[name] = W._make(name, pub, priv, base);
 						W[name] = new W.fn[name]();
 
-						if (base) {
-							// Clone base and store construct references
-							var copy = _copy(base),
-								basePubConst = copy._construct,
-								basePrivConst = copy.$private._construct;
+						// Execute base constructors
+						if (basePubConst) {
+							basePubConst();
+						}
 
-							// Delete base constructors
-							delete copy.$private._construct;
-							delete copy._construct;
-
-							// Extend controller methods into base
-							W[name] = _extend(copy, W[name], true);
-							W[name].$private.$public = W[name];
-
-							// Execute base constructors
-							if (basePubConst) {
-								basePubConst();
-							}
-
-							if (basePrivConst) {
-								basePrivConst();
-							}
+						if (basePrivConst) {
+							basePrivConst();
 						}
 
 						// Execute controller constructors
@@ -1273,10 +1262,11 @@
 				 * @param {string} name
 				 * @param {object} pub
 				 * @param {object} [priv]
-				 * @param {bool} [model=false]
+				 * @param {(boolean|object)} base
+				 * @param {object} [model]
 				 * @returns {Function}
 				 */
-				_make: function(name, pub, priv, model) {
+				_make: function(name, pub, priv, base, model) {
 					return function() {
 						var Public = pub || {},
 							Private = priv || {};
@@ -1388,23 +1378,32 @@
 									}
 								};
 
-							// Extend public and private objects with data
+							// Extend public and private objects with core methods
 							Public = _extend(Public, core);
 							Private = _extend(Private, core);
 						}
 
+						// Interface $public and $private
 						if (priv !== false) {
-							// Clone public and private objects
-							Public = _copy(Public);
-							Private = _copy(Private);
-
-							// Interface $public and $private
 							Public.$private = Private;
 							Private.$public = Public;
+						}
 
-							for (var fn in Private) {
-								Public.$private[fn] = Private[fn];
-							}
+						// Clone controller object for instance support
+						Public = _copy(Public);
+
+						if (base) {
+							var baseDest = base.$destroy,
+								pubDest = Public.$destroy;
+
+							// Extend controller methods into base
+							Public = _extend(base, Public, true);
+							Public.$private.$public = Public;
+
+							Public.$destroy = function() {
+								pubDest();
+								baseDest();
+							};
 						}
 
 						return Public;
