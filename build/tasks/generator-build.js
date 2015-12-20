@@ -40,6 +40,38 @@ module.exports = function(grunt) {
 			site.env = env;
 		}
 
+		var generatePaths = function(data, target) {
+			var uri = target.replace(config.paths.root, ''),
+				loc = path.parse(uri),
+				ext = loc.ext,
+				name = loc.name + ext;
+
+			if (loc.name == 'index' && siteConfig.removeIndex) {
+				name = '/';
+			} else if (siteConfig.removeExtensions) {
+				var extConfig = siteConfig.removeExtensions;
+
+				if (Array.isArray(extConfig)) {
+					if (extConfig.indexOf(ext.substr(1)) > -1) {
+						name = loc.name;
+					}
+				} else if (extConfig === true) {
+					name = loc.name;
+				}
+			}
+
+			uri = path.join(loc.dir, name);
+
+			if (siteConfig.removeTrailingSlashes === true) {
+				uri = uri.replace(/\/$/, '');
+			}
+
+			data.path = uri;
+			data.url = path.join(site.domain || '', uri);
+
+			return data;
+		};
+
 		// Recursive function for processing site sections
 		var processSection = function(context, parent) {
 			var keys = Object.keys(context);
@@ -348,20 +380,7 @@ module.exports = function(grunt) {
 						// Push current content object in to content array
 						data.content.push(obj);
 
-						// Set current target, path, and URL
-						var uri = target.replace(config.paths.root, '');
-
-						if (siteConfig.removeIndex) {
-							uri = uri.replace('index.html', '');
-						}
-
-						if (siteConfig.removeTrailingSlashes === true) {
-							uri = uri.replace(/\/$/, '');
-						}
-
 						data.target = block.target;
-						data.path = uri;
-						data.url = path.join(site.domain || '', uri);
 
 						// Handle block ordering and sorting
 						if (block.order) {
@@ -384,11 +403,14 @@ module.exports = function(grunt) {
 
 						if (single === true) {
 							var dest = Wee.view.render(target, obj);
+							data = generatePaths(data, dest);
 							Wee.$extend(data, data.section.data);
 
 							writeTarget(dest, Wee.$extend(data, {
 								content: [obj]
 							}));
+						} else {
+							data = generatePaths(data, target);
 						}
 					});
 
