@@ -1402,9 +1402,7 @@
 
 							Public.$destroy = function() {
 								// Execute controller destructor
-								if (pubDest) {
-									pubDest.call(this);
-								}
+								pubDest.call(this);
 
 								// Execute base destructors
 								if (basePrivDest) {
