@@ -1366,12 +1366,12 @@
 									 * Destroy current controller
 									 */
 									$destroy: function() {
-										if (Private._destruct) {
-											Private._destruct();
+										if (this.$private._destruct) {
+											this.$private._destruct();
 										}
 
-										if (Public._destruct) {
-											Public._destruct();
+										if (this._destruct) {
+											this._destruct();
 										}
 
 										delete W[name];
@@ -1383,26 +1383,37 @@
 							Private = _extend(Private, core);
 						}
 
-						// Clone controller object for instance support
+						// Clone controller objects for instance support
 						Public = _copy(Public);
+						Private = _copy(Private);
 
 						// Interface $public and $private
-						if (priv !== false) {
-							Public.$private = Private;
-							Private.$public = Public;
-						}
+						Public.$private = Private;
+						Private.$public = Public;
 
 						if (base) {
-							var baseDest = base.$destroy,
-								pubDest = Public.$destroy;
+							var pubDest = Public.$destroy,
+								basePubDest = base._destruct,
+								basePrivDest = base.$private._destruct;
 
 							// Extend controller methods into base
 							Public = _extend(base, Public, true);
 							Public.$private.$public = Public;
 
 							Public.$destroy = function() {
-								pubDest();
-								baseDest();
+								// Execute controller destructor
+								if (pubDest) {
+									pubDest.call(this);
+								}
+
+								// Execute base destructors
+								if (basePrivDest) {
+									basePrivDest.call(this.$private);
+								}
+
+								if (basePubDest) {
+									basePubDest.call(this);
+								}
 							};
 						}
 
