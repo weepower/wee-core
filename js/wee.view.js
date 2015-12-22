@@ -456,8 +456,8 @@
 				 * Destroy current application
 				 */
 				$destroy: function() {
-					if (config._destruct) {
-						config._destruct();
+					if (options._destruct) {
+						options._destruct();
 					}
 
 					delete W.app[name];
