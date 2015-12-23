@@ -486,7 +486,7 @@
 
 						// Create new controller instance
 						W.fn[name] = W._make(name, pub, priv, base);
-						W[name] = new W.fn[name]();
+						W[name] = new W.fn[name](name);
 
 						// Execute base constructors
 						if (basePubConst) {
@@ -1267,7 +1267,7 @@
 				 * @returns {Function}
 				 */
 				_make: function(name, pub, priv, base, model) {
-					return function() {
+					return function(id) {
 						var Public = pub || {},
 							Private = priv || {};
 
@@ -1374,7 +1374,17 @@
 											this._destruct();
 										}
 
-										delete W[name];
+										// Delete all controller properties
+										for (var prop in this) {
+											if (this.hasOwnProperty(prop)) {
+												delete this[prop];
+											}
+										}
+
+										// If namespaced delete root property
+										if (id) {
+											delete W[id];
+										}
 									}
 								};
 
