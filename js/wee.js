@@ -1374,13 +1374,6 @@
 											this._destruct();
 										}
 
-										// Delete all controller properties
-										for (var prop in this) {
-											if (this.hasOwnProperty(prop)) {
-												delete this[prop];
-											}
-										}
-
 										// If namespaced delete root property
 										if (id) {
 											delete W[id];
