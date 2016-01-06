@@ -69,25 +69,24 @@
 		 * @param {object} conf
 		 */
 		_process = function(conf) {
-			var key = conf.path.replace(/^\//g, ''),
-				request = conf.request,
+			var request = conf.request,
 				method = request.method;
-
-			entries[key] = conf;
 
 			if (! method || method == 'get') {
 				conf.path = D._getUrl(request);
 			}
 
-			var obj = {
-				args: [
-					{
-						dir: conf.push ? 1 : -1,
-						path: conf.path,
-						prev: path
-					}
-				]
-			};
+			var key = conf.path.replace(/^\//g, ''),
+				obj = {
+					args: [
+						{
+							dir: conf.push ? 1 : -1,
+							path: conf.path,
+							prev: path
+						}
+					]
+				};
+			entries[key] = conf;
 
 			// Add entry to HTML5 history
 			if (conf.push && support) {
