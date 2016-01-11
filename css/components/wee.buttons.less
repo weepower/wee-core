@@ -1,7 +1,6 @@
 .wee-button () when (@buttonEnabled = true) {
 	.rules () {
 		color: @buttonColor;
-		cursor: pointer;
 		display: inline-block;
 		line-height: 1em;
 		text-align: center;
@@ -12,6 +11,10 @@
 		.padding(@buttonPaddingVertical; @buttonPaddingHorizontal);
 		.rounded(@buttonRounded);
 		.spaced(@buttonMarginBottom);
+		.check () when not (@formEnabled = true) {
+			cursor: pointer;
+		}
+		.check();
 		&:hover {
 			color: @buttonColor;
 			.background-color(@buttonBackgroundHover);
@@ -28,9 +31,14 @@
 		.transition(background-color);
 	}
 	.colored-rules () {
-		color: @coloredButtonColor;
 		.background(@coloredButtonBackground);
-		.border-color(@coloredButtonBorderColor);
+		.check () when not (@coloredButtonColor = @buttonColor) {
+			color: @coloredButtonColor;
+		}
+		.check () when not (@coloredButtonBorderColor = @buttonBorderColor) {
+			.border-color(@coloredButtonBorderColor);
+		}
+		.check();
 		&:hover {
 			color: @coloredButtonColor;
 			.background-color(@coloredButtonBackgroundHover);
@@ -59,13 +67,23 @@
 		input[type='submit'],
 		.button {
 			.rules();
-			&.@{coloredButtonClassModifier} {
-				.colored-rules();
+			.check () when not (@coloredButtonClassModifier = false) {
+				&.@{coloredButtonClassModifier} {
+					.colored-rules();
+				}
 			}
-			&[disabled],
-			&.@{disabledButtonClassModifier} {
-				.disabled-rules();
+			.check () when (@disabledButtonClassModifier = false) {
+				&[disabled] {
+					.disabled-rules();
+				}
 			}
+			.check () when not (@disabledButtonClassModifier = false) {
+				&[disabled],
+				&.@{disabledButtonClassModifier} {
+					.disabled-rules();
+				}
+			}
+			.check();
 		}
 	}
 	.check () when not (@buttonStyled = true) {
@@ -75,10 +93,18 @@
 		.@{coloredButtonClassModifier} {
 			.colored-rules();
 		}
-		.button[disabled],
-		.@{disabledButtonClassModifier} {
-			.disabled-rules();
+		.check () when (@disabledButtonClassModifier = false) {
+			.button[disabled] {
+				.disabled-rules();
+			}
 		}
+		.check () when (default()) {
+			.button[disabled],
+			.@{disabledButtonClassModifier} {
+				.disabled-rules();
+			}
+		}
+		.check();
 	}
 	.check();
 	button[disabled] {

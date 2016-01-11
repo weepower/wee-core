@@ -674,7 +674,7 @@
 	-webkit-border-image: url('@{imagePath}@{filename}') @slice @width @outset @repeat;
 	border-image: url('@{imagePath}@{filename}') @slice @width @outset @repeat;
 }
-.border-color (@color) {
+.border-color (@color) when (iscolor(@color)) {
 	border-color: @color;
 }
 .border-color (top; @color) {
@@ -2624,17 +2624,22 @@
 	.container {
 		.wee-container();
 	}
-	.@{imageLeftClass} {
-		float: left;
-		.margin(.32em; @imageMarginSide; @imageMarginBottom; false);
-	}
-	.@{imageRightClass} {
-		float: right;
-		.margin(.32em; false; @imageMarginBottom; @imageMarginSide);
-	}
 	.js-hide {
 		display: none !important;
 	}
+	.check () when not (@imageLeftClass = false) {
+		.@{imageLeftClass} {
+			float: left;
+			.margin(.32em; @imageMarginSide; @imageMarginBottom; false);
+		}
+	}
+	.check () when not (@imageRightClass = false) {
+		.@{imageRightClass} {
+			float: right;
+			.margin(.32em; false; @imageMarginBottom; @imageMarginSide);
+		}
+	}
+	.check();
 }
 
 .wee-helpers();

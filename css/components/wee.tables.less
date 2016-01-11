@@ -45,21 +45,23 @@
 			.rules();
 		}
 	}
-	.check () when not (@tableBordered = true) {
+	.check () when not (@tableBordered = true)
+			and not (@tableBorderedClassModifier = false) {
 		.@{tableBorderedClassModifier} {
-			.wee-table-bordered();
+			.wee-table-bordered(true);
 		}
 	}
 	.check () when not (@tableStriped = true)
-			and not (@tableStripedBackground = false) {
+			and not (@tableStripedBackground = false)
+			and not (@tableStripedClassModifier = false) {
 		.@{tableStripedClassModifier} {
-			.wee-table-striped();
+			.wee-table-striped(true);
 		}
 	}
 	.check();
 }
 
-.wee-table-bordered () when (@tableBordered = true) {
+.wee-table-bordered (@output: @tableBordered) when (@output = true) {
 	.border(bottom; @tableCellBorderColor);
 	caption {
 		.border(@tableCellBorderColor);
@@ -75,7 +77,7 @@
 	}
 }
 
-.wee-table-striped () when (@tableStriped = true) {
+.wee-table-striped (@output: @tableStriped) when (@output = true) {
 	tbody tr:nth-child(@{tableStripedPosition}) {
 		td,
 		th {
