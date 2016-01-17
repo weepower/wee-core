@@ -403,14 +403,22 @@
 
 					// Scroll vertically to target
 					if (st !== false) {
-						var top = a.hash ? W.$offset(a.hash).top : 0,
+						var top = 0,
 							anim = W.animate;
 
-						if (! top) {
-							top = typeof st == 'number' ?
-								st :
-								W.$(st)[0].getBoundingClientRect().top +
+						if (a.hash) {
+							st = a.hash;
+						}
+
+						if (typeof st == 'number') {
+							top = st;
+						} else {
+							var el = W.$(st)[0];
+
+							if (el) {
+								top = el.getBoundingClientRect().top +
 									W._win.pageYOffset;
+							}
 						}
 
 						if (anim) {
