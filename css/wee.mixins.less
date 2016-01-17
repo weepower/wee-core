@@ -1240,7 +1240,7 @@
 \*------------------------------------*/
 
 .input-placeholder (@color: @inputPlaceholderColor) {
-	&:-moz-placeholder {
+	&::-webkit-input-placeholder {
 		color: @color;
 	}
 	&::-moz-placeholder {
@@ -1249,7 +1249,7 @@
 	&:-ms-input-placeholder {
 		color: @color;
 	}
-	&::-webkit-input-placeholder {
+	&::-ms-input-placeholder {
 		color: @color;
 	}
 }
@@ -2313,10 +2313,11 @@
 .no-wrap () {
 	white-space: nowrap;
 }
-.ellipsis () {
+.ellipsis (@maxWidth: false) {
 	overflow-x: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	.max-width(@maxWidth);
 }
 .underline () {
 	text-decoration: underline;
