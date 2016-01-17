@@ -5,38 +5,43 @@
 		loaded = {},
 		root = '',
 
-		/**
-		 * Request specific file
-		 *
-		 * @private
-		 * @param {string} path
-		 * @param {string} type
-		 * @param {object} [conf]
-		 * @param {string} [conf.group]
-		 * @param {boolean} [conf.async=false]
-		 */
-		_load = function(path, type, conf) {
-			var head = W._doc.getElementsByTagName('head')[0],
-				group = conf.group;
-
-			// Load file based on extension
-			if (type == 'js') {
+		_load = {
+			/**
+			 * Request JavaScript
+			 *
+			 * @private
+			 * @param {string} path
+			 * @param {object} conf
+			 * @param {string} conf.group
+			 * @param {boolean} [conf.async=false]
+			 */
+			js: function(path, conf) {
 				var js = W._doc.createElement('script'),
 					fn = function() {
 						loaded[js.src] = js;
-						_done(group);
+						_done(conf.group);
 					};
 
 				js.async = conf.async === true;
 				js.onload = fn;
 
 				js.onerror = function() {
-					_fail(group);
+					_fail(conf.group);
 				};
 
 				js.src = path;
-				head.appendChild(js);
-			} else if (type == 'css') {
+				W.$('head')[0].appendChild(js);
+			},
+
+			/**
+			 * Request stylesheet
+			 *
+			 * @private
+			 * @param {string} path
+			 * @param {object} conf
+			 * @param {string} conf.group
+			 */
+			css: function(path, conf) {
 				var link = W._doc.createElement('link');
 
 				link.rel = 'stylesheet';
@@ -44,23 +49,33 @@
 
 				link.addEventListener('load', function() {
 					loaded[link.href] = link;
-					_done(group);
+					_done(conf.group);
 				}, false);
 
 				link.addEventListener('error', function() {
-					_fail(group);
+					_fail(conf.group);
 				}, false);
 
-				head.appendChild(link);
-			} else if (type == 'img') {
+				W.$('head')[0].appendChild(link);
+			},
+
+			/**
+			 * Request image
+			 *
+			 * @private
+			 * @param {string} path
+			 * @param {object} conf
+			 * @param {string} conf.group
+			 */
+			img: function(path, conf) {
 				var img = new Image();
 
 				img.onload = function() {
-					_done(group);
+					_done(conf.group);
 				};
 
 				img.onerror = function() {
-					_fail(group);
+					_fail(conf.group);
 				};
 
 				img.src = path;
@@ -185,7 +200,7 @@
 						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
 					}
 
-					_load(file, type, options);
+					_load[type](file, options);
 				} else {
 					_done(options.group);
 				}
