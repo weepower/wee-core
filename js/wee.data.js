@@ -70,8 +70,7 @@
 		 * @param {object} conf
 		 */
 		_jsonp = function(conf) {
-			var head = W.$('head')[0],
-				el = W._doc.createElement('script');
+			var el = W._doc.createElement('script');
 
 			if (conf.success) {
 				var fn = conf.jsonpCallback;
@@ -108,7 +107,7 @@
 				};
 			}
 
-			head.appendChild(el);
+			W.$('head')[0].appendChild(el);
 		};
 
 	W.data = {
