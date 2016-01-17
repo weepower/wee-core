@@ -95,7 +95,7 @@
 						} else if (opt[0] == '/') {
 							var split = opt.split('/');
 
-							if (new RegExp(split[1], split[2]).test(seg)) {
+							if (new RegExp(split[1], split[2] || U).test(seg)) {
 								eq = true;
 							}
 						} else {
