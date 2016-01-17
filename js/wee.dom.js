@@ -215,7 +215,7 @@
 						);
 				});
 			} else {
-				return W.$first(target).getAttribute(a);
+				return W.$(target)[0].getAttribute(a);
 			}
 		},
 
@@ -392,7 +392,7 @@
 							b;
 				});
 			} else {
-				var el = W.$first(target);
+				var el = W.$(target)[0];
 
 				return getComputedStyle(el, null)[a];
 			}
@@ -409,7 +409,7 @@
 		 */
 		$data: function(target, a, b) {
 			if (a === U) {
-				var el = W.$first(target),
+				var el = W.$(target)[0],
 					arr = {};
 
 				W._slice.call(el.attributes).forEach(function(attr) {
@@ -514,7 +514,7 @@
 		 * @returns {HTMLElement}
 		 */
 		$first: function(target, context) {
-			return W.$eq(target, 0, context);
+			return W.$(target, context)[0];
 		},
 
 		/**
@@ -543,7 +543,7 @@
 				height;
 
 			if (value === U || value === true || func) {
-				var el = W.$first(target);
+				var el = W.$(target)[0];
 
 				if (el === W._win) {
 					height = el.innerHeight;
@@ -597,7 +597,7 @@
 		 */
 		$html: function(target, value) {
 			if (value === U) {
-				return W.$first(target).innerHTML;
+				return W.$(target)[0].innerHTML;
 			}
 
 			var func = W._canExec(value);
@@ -630,7 +630,7 @@
 		 * @returns {int}
 		 */
 		$index: function(target) {
-			var el = W.$first(target),
+			var el = W.$(target)[0],
 				children = W.$children(W.$parent(el)),
 				i = 0;
 
@@ -779,7 +779,7 @@
 		 * @returns {{top: number, left: number}}
 		 */
 		$offset: function(target, value) {
-			var rect = W.$first(target).getBoundingClientRect(),
+			var rect = W.$(target)[0].getBoundingClientRect(),
 				offset = {
 					top: rect.top + W._win.pageYOffset,
 					left: rect.left + W._win.pageXOffset
@@ -860,7 +860,7 @@
 		 * @returns {{top: number, left: number}}
 		 */
 		$position: function(target) {
-			var el = W.$first(target);
+			var el = W.$(target)[0];
 
 			return {
 				top: el.offsetTop,
@@ -939,7 +939,7 @@
 							b;
 				});
 			} else {
-				var el = W.$first(target);
+				var el = W.$(target)[0];
 
 				return el[a];
 			}
@@ -1024,7 +1024,7 @@
 		 */
 		$scrollLeft: function(target, value) {
 			if (value === U) {
-				var el = target ? W.$first(target) : W._win;
+				var el = target ? W.$(target)[0] : W._win;
 
 				return el === W._win ?
 					el.pageXOffset :
@@ -1045,7 +1045,7 @@
 		 */
 		$scrollTop: function(target, value) {
 			if (value === U) {
-				var el = target ? W.$first(target) : W._win;
+				var el = target ? W.$(target)[0] : W._win;
 
 				return el === W._win ?
 					el.pageYOffset :
@@ -1065,7 +1065,7 @@
 		 * @returns {string}
 		 */
 		$serializeForm: function(target, json) {
-			var el = W.$first(target),
+			var el = W.$(target)[0],
 				obj = {},
 				i = 0;
 
@@ -1235,7 +1235,7 @@
 		 */
 		$val: function(target, value) {
 			if (value === U) {
-				var el = W.$first(target);
+				var el = W.$(target)[0];
 
 				if (el.type == 'select-multiple') {
 					return _getSelected(el);
@@ -1279,7 +1279,7 @@
 				width;
 
 			if (value === U || value === true || func) {
-				var el = W.$first(target);
+				var el = W.$(target)[0];
 
 				if (el === W._win) {
 					width = el.innerWidth;
