@@ -186,13 +186,9 @@
 				var noCache = options.cache === false,
 					a = W._doc.createElement('a');
 
-				// Reset root if the URL is absolute
-				if (root && /^(https?:)?\/\//i.test(file)) {
-					root = '';
-				}
-
 				type = assets[file];
-				a.href = root + file;
+				a.href = (root && /^(https?:)?\/\//i.test(file) ? '' : root) +
+					file;
 				file = a.href;
 
 				if (! loaded[file] || noCache) {
