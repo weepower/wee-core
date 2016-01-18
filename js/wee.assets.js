@@ -243,15 +243,16 @@
 		 * @returns {boolean} ready
 		 */
 		ready: function(group, options, poll) {
-			var complete = ! groups[group][0];
+			var set = groups[group],
+				complete = set && ! set[0];
 
 			if (options === U) {
 				return complete;
 			}
 
 			if (complete) {
-				var conf = W.$extend(groups[group][1], options),
-					hasErrors = groups[group][2];
+				var conf = W.$extend(set[1], options),
+					hasErrors = set[2];
 				options = {
 					args: conf.args,
 					scope: conf.scope
