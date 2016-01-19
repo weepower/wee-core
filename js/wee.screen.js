@@ -175,13 +175,11 @@
 		 * Reset all bound events
 		 */
 		reset: function(namespace) {
-			if (namespace) {
-				events = events.filter(function(el) {
+			events = namespace ?
+				events.filter(function(el) {
 					return el['namespace'] !== namespace;
-				});
-			} else {
-				events = [];
-			}
+				}) :
+				[];
 		}
 	};
 })(Wee);
