@@ -20,6 +20,7 @@
 		 * @param {object} [conf.scope] - callback scope
 		 * @param {int} [conf.size] - specific breakpoint value
 		 * @param {boolean} [conf.watch=true] - check event on screen resize
+		 * @param {string} [conf.namespace] - namespace the event
 		 */
 		_addRule = function(conf) {
 			if (conf.callback) {
@@ -151,6 +152,7 @@
 		 * @param {object} [rules.scope] - callback scope
 		 * @param {int} [rules.size] - specific breakpoint value
 		 * @param {boolean} [rules.watch=true] - check event on screen resize
+		 * @param {string} [rules.namespace] - namespace the event
 		 */
 		map: function(rules) {
 			var sets = W.$toArray(rules),
@@ -172,8 +174,14 @@
 		/**
 		 * Reset all bound events
 		 */
-		reset: function() {
-			events = [];
+		reset: function(namespace) {
+			if (namespace) {
+				events = events.filter(function(el) {
+					return el['namespace'] !== namespace;
+				});
+			} else {
+				events = [];
+			}
 		}
 	};
 })(Wee);
