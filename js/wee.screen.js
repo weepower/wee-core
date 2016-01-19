@@ -173,6 +173,8 @@
 
 		/**
 		 * Reset all bound events
+		 *
+		 * @param {string} [namespace] - remove screen events in this namespace
 		 */
 		reset: function(namespace) {
 			events = namespace ?
