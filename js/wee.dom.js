@@ -208,7 +208,7 @@
 						}) :
 						el.setAttribute(a, func ?
 							W.$exec(b, {
-								args: [i, el[a]],
+								args: [i, el],
 								scope: el
 							}) :
 							b
@@ -933,7 +933,7 @@
 						}) :
 						el[a] = func ?
 							W.$exec(b, {
-								args: [i, el[a]],
+								args: [i, el],
 								scope: el
 							}) :
 							b;
