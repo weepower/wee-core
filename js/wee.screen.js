@@ -118,9 +118,7 @@
 
 			// Disable future execution if once
 			if (evt.once) {
-				events = events.filter(function(el) {
-					return el !== evt;
-				});
+				events.splice(events.indexOf(evt), 1);
 			}
 		};
 
@@ -148,11 +146,11 @@
 		 * @param {boolean} [rules.init=true] - check event on load
 		 * @param {int} [rules.max] - maximum breakpoint value
 		 * @param {int} [rules.min] - minimum breakpoint value
+		 * @param {string} [rules.namespace] - namespace the event
 		 * @param {boolean} [rules.once=false] - only execute the callback once
 		 * @param {object} [rules.scope] - callback scope
 		 * @param {int} [rules.size] - specific breakpoint value
 		 * @param {boolean} [rules.watch=true] - check event on screen resize
-		 * @param {string} [rules.namespace] - namespace the event
 		 */
 		map: function(rules) {
 			var sets = W.$toArray(rules),
@@ -172,14 +170,14 @@
 		},
 
 		/**
-		 * Reset all bound events
+		 * Remove events from bound rules
 		 *
 		 * @param {string} [namespace] - remove screen events in this namespace
 		 */
 		reset: function(namespace) {
 			events = namespace ?
 				events.filter(function(el) {
-					return el['namespace'] !== namespace;
+					return el.namespace !== namespace;
 				}) :
 				[];
 		}
