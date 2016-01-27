@@ -188,7 +188,9 @@
 
 				send = str || conf.processData === false ?
 					conf.data :
-					JSON.stringify(conf.data);
+					conf.type == 'json' ?
+						JSON.stringify(conf.data) :
+						$.serialize(conf.data);
 			}
 
 			x.open(method, conf.url, true);
