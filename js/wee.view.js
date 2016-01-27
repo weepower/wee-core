@@ -432,6 +432,7 @@
 		make: function(name, options) {
 			var sel = options.view,
 				targ = options.target,
+				model = options.model || {},
 				views = W.$(targ || sel).map(function(el) {
 					return [el, targ ? sel : el.outerHTML];
 				}),
@@ -439,7 +440,7 @@
 					views.forEach(function(view) {
 						W.$setRef(
 							W.view.diff(view[0], W.$parseHTML(
-								W.view.render(view[1], options.model)
+								W.view.render(view[1], model)
 							), targ)
 						);
 					});
@@ -448,7 +449,7 @@
 			fn();
 
 			// Create a new application controller
-			W.app.fn[name] = W._make(name, {}, {}, false, options.model);
+			W.app.fn[name] = W._make(name, {}, {}, false, model);
 			W.app[name] = new W.app.fn[name]();
 
 			W.$extend(W.app[name], {
