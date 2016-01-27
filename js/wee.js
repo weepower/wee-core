@@ -164,7 +164,7 @@
 							} else if (typeof resp == 'string' && resp === val) {
 								delete root[seg];
 							} else {
-								var i = resp.indexOf(val) > -1;
+								var i = resp.indexOf(val);
 
 								if (i > -1) {
 									resp.splice(i, 1);
