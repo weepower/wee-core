@@ -43,7 +43,8 @@
 			var index = W.$index(el) + dir;
 
 			W.$children(W.$parent(el)).forEach(function(el, i) {
-				if (i === index && (! filter || filter && W.$is(el, filter, options))) {
+				if (i === index &&
+					(! filter || filter && W.$is(el, filter, options))) {
 					match = el;
 				}
 			});
@@ -329,7 +330,7 @@
 		},
 
 		/**
-		 * Determine if any matching parent selection contains descendant selection
+		 * Determine if any matching parent contains descendant selection
 		 *
 		 * @param {($|HTMLElement|string)} parent
 		 * @param descendant
@@ -553,8 +554,9 @@
 					height = el.offsetHeight;
 
 					if (value === true) {
-						var style = el.currentStyle || getComputedStyle(el);
-						height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+						var style = getComputedStyle(el);
+						height += parseInt(style.marginTop) +
+							parseInt(style.marginBottom);
 					}
 				}
 
@@ -589,7 +591,7 @@
 		},
 
 		/**
-		 * Get inner HTML of first selection or set each matching selection's HTML
+		 * Get inner HTML of first selection or set each matching selection HTML
 		 *
 		 * @param {($|HTMLElement|string)} target
 		 * @param {(function|string)} value
@@ -720,7 +722,7 @@
 				return (
 					el.matches || el.matchesSelector ||
 					el.msMatchesSelector || el.mozMatchesSelector ||
-					el.webkitMatchesSelector || el.oMatchesSelector
+					el.webkitMatchesSelector
 				).call(el, filter);
 			}).length > 0;
 		},
@@ -1089,7 +1091,8 @@
 						obj[name] = _getSelected(child);
 					} else if (
 						type != 'submit' && type != 'button' &&
-						((type != 'checkbox' && type != 'radio') || child.checked)) {
+						((type != 'checkbox' && type != 'radio') ||
+						child.checked)) {
 						if (arr || (type == 'checkbox' && obj[name])) {
 							obj[name] = W.$toArray(obj[name]);
 							obj[name].push(child.value);
@@ -1160,7 +1163,7 @@
 		},
 
 		/**
-		 * Get inner text of first selection or set each matching selection's text
+		 * Get inner text of first selection or set each matching selection text
 		 *
 		 * @param {($|HTMLElement|string)} target
 		 * @param {(function|string)} value
@@ -1218,7 +1221,8 @@
 
 				if (className) {
 					className.split(/\s+/).forEach(function(value) {
-						state === false || (state === U && W.$hasClass(el, value)) ?
+						state === false ||
+						(state === U && W.$hasClass(el, value)) ?
 							W.$removeClass(el, value) :
 							W.$addClass(el, value);
 					});
@@ -1289,7 +1293,7 @@
 					width = el.offsetWidth;
 
 					if (value === true) {
-						var style = el.currentStyle || getComputedStyle(el);
+						var style = getComputedStyle(el);
 						width += parseInt(style.marginLeft) +
 							parseInt(style.marginRight);
 					}
@@ -1341,8 +1345,8 @@
 					W.$each(wrap, function(cel) {
 						cel = cel.cloneNode(true);
 
-						cel.appendChild(el.cloneNode(true));
-						par.replaceChild(cel, el);
+						par.insertBefore(cel, el);
+						cel.appendChild(el);
 
 						W.$setRef(par);
 					});
