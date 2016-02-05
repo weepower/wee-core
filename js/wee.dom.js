@@ -27,6 +27,32 @@
 	},
 
 	/**
+	 * Get class value of element
+	 *
+	 * @private
+	 * @param {HTMLElement} el
+	 * @returns {string}
+	 */
+	_getClass = function(el) {
+		return el instanceof SVGElement ?
+			el.getAttribute('class') :
+			el.className;
+	},
+
+	/**
+	 * Set class value of element
+	 *
+	 * @private
+	 * @param {HTMLElement} el
+	 * @param {string} className
+	 */
+	_setClass = function(el, className) {
+		el instanceof SVGElement ?
+			el.setAttribute('class', className) :
+			el.className = className;
+	},
+
+	/**
 	 * Return either direct previous or next sibling
 	 *
 	 * @private
@@ -91,7 +117,7 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				var cn = el.className,
+				var cn = _getClass(el),
 					name = func ?
 						W.$exec(value, {
 							args: [i, cn],
@@ -107,7 +133,7 @@
 
 					upd.unshift(cn);
 
-					el.className = upd.join(' ');
+					_setClass(el, upd.join(' '));
 				}
 			});
 		},
@@ -528,7 +554,7 @@
 		$hasClass: function(target, className) {
 			return W.$(target).some(function(el) {
 				return new RegExp('(^| )' + className + '($| )', 'gim')
-					.test(el.className);
+					.test(_getClass(el));
 			});
 		},
 
@@ -989,7 +1015,7 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				var cn = el.className,
+				var cn = _getClass(el),
 					name = func ?
 						W.$exec(value, {
 							args: [i, cn],
@@ -1000,9 +1026,9 @@
 				if (name) {
 					var names = name.split(' ');
 
-					el.className = cn.split(' ').filter(function(val) {
+					_setClass(el, cn.split(' ').filter(function(val) {
 						return names.indexOf(val) < 0;
-					}).join(' ');
+					}).join(' '));
 				}
 			});
 		},
@@ -1214,7 +1240,7 @@
 			W.$each(target, function(el, i) {
 				if (func) {
 					className = W.$exec(className, {
-						args: [i, el.className, state],
+						args: [i, _getClass(el), state],
 						scope: el
 					});
 				}
