@@ -10,7 +10,9 @@
 	var web = typeof window != 'undefined',
 		W = (function() {
 			var D = web ? document : {},
-				store = {},
+				store = {
+					$: {}
+				},
 				observe = {},
 				refs = {},
 				env,
@@ -28,15 +30,18 @@
 				_storage = function(obj, key, create) {
 					var data = obj;
 
-					if (key) {
+					if (typeof key == 'string') {
 						var segs = key.split('.');
 						key = segs.pop();
+						data = data.$;
 
 						segs.forEach(function(key) {
 							data = data.hasOwnProperty(key) ?
 								data[key] :
 								(create ? data[key] = {} : []);
 						});
+					} else {
+						key = '$';
 					}
 
 					return [data, key, _copy(data[key])];
@@ -49,9 +54,12 @@
 				 */
 				_set = function(obj, obs, key, val, options) {
 					var stored = _storage(obj, key, true),
-						data = _val(val, options);
+						seg = stored[1],
+						data = seg == '$' ?
+							_val(key, val) :
+							_val(val, options);
 
-					stored[0][stored[1]] = data;
+					stored[0][seg] = data;
 
 					_trigger(obj, obs, key, stored[2], data, 'set');
 
@@ -81,7 +89,7 @@
 						return null;
 					}
 
-					return data;
+					return data.$;
 				},
 
 				/**
@@ -117,8 +125,16 @@
 					var stored = _storage(obj, key, true),
 						root = stored[0],
 						seg = stored[1];
-
 					root[seg] = root[seg] || [];
+
+					if (seg == '$') {
+						prepend = val;
+						val = key;
+					}
+
+					if (! Array.isArray(root[seg])) {
+						root[seg] = [];
+					}
 
 					if (type == 1) {
 						root[seg] = prepend ?
@@ -142,8 +158,11 @@
 				 * @private
 				 */
 				_merge = function(obj, obs, key, val) {
-					return _set(obj, obs, key,
-						W.$extend(true, {}, _get(obj, obs, key, {}), val));
+					val === U ?
+						key = W.$extend(true, {}, obj.$, key) :
+						val = W.$extend(true, {}, _get(obj, obs, key, {}), val);
+
+					return _set(obj, obs, key, val);
 				},
 
 				/**
@@ -205,6 +224,10 @@
 						type == 'trigger' ||
 						! _equals(upd, orig)
 					)) {
+						if (typeof key != 'string') {
+							key = '';
+						}
+
 						var arr = [],
 							opts = key.split('.').map(function(seg) {
 								arr.push(seg);
@@ -213,7 +236,7 @@
 
 						for (var val in obs) {
 							if (opts.indexOf(val) > -1 || val == '*') {
-								var data = val == '*' ? obj : upd;
+								var data = val == '*' ? obj.$ : upd;
 
 								obs[val].forEach(function(el, i) {
 									if (val === key || val == '*' || el.recursive) {
@@ -1273,7 +1296,9 @@
 
 						// Ensure the current controller is not being extended
 						if (name != '_tmp') {
-							var store = model || {},
+							var store = {
+									$: model || {}
+								},
 								observe = {},
 								core = {
 									/**
