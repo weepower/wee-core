@@ -2313,6 +2313,9 @@
 .no-wrap () {
 	white-space: nowrap;
 }
+.wrap () {
+	white-space: initial;
+}
 .ellipsis (@maxWidth: false) {
 	overflow-x: hidden;
 	text-overflow: ellipsis;
@@ -2340,6 +2343,12 @@
 }
 .outline (@value: 'thin dotted') {
 	outline: ~'@{value}';
+}
+.text-overflow (@value) {
+	.text-overflow(@value);
+}
+.white-space (@value) {
+	.white-space(@value);
 }
 .letter-spacing (@value) {
 	.check () when (isunit(@value, '')) {
