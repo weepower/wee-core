@@ -436,17 +436,17 @@
 				views = W.$(targ || sel).map(function(el) {
 					return [el, targ ? sel : el.outerHTML];
 				}),
-				fn = function() {
+				fn = function(data) {
 					views.forEach(function(view) {
 						W.$setRef(
 							W.view.diff(view[0], W.$parseHTML(
-								W.view.render(view[1], model)
+								W.view.render(view[1], data)
 							), targ)
 						);
 					});
 				};
 
-			fn();
+			fn(model);
 
 			// Create a new application controller
 			W.app.fn[name] = W._make(name, {}, {}, false, model);
