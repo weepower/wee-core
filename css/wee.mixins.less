@@ -29,8 +29,8 @@
 .clearfix () {
 	&:after {
 		clear: both;
-		content : ' ';
-		display: table;
+		content : '';
+		display: block;
 	}
 }
 .clear (@value: both) {
@@ -919,7 +919,7 @@
 	# Content
 \*------------------------------------*/
 
-.content (@value: ' '; ...) {
+.content (@value: ''; ...) {
 	content: ~"'@{value}'";
 }
 .content (@value; @font) {
