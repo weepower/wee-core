@@ -4,6 +4,7 @@
 	var groups = {},
 		loaded = {},
 		root = '',
+		groupId = 1,
 
 		_load = {
 			/**
@@ -16,14 +17,13 @@
 			 * @param {boolean} [conf.async=false]
 			 */
 			js: function(path, conf) {
-				var js = W._doc.createElement('script'),
-					fn = function() {
-						loaded[js.src] = js;
-						_done(conf.group);
-					};
+				var js = W._doc.createElement('script');
 
 				js.async = conf.async === true;
-				js.onload = fn;
+				js.onload = function() {
+					loaded[js.src] = js;
+					_done(conf.group);
+				};
 
 				js.onerror = function() {
 					_fail(conf.group);
@@ -140,14 +140,13 @@
 				css = W.$toArray(options.css),
 				img = W.$toArray(options.img),
 				root = options.root !== U ? options.root : this.root(),
-				now = Date.now(),
 				assets = [],
 				i = 0,
 				type;
 
 			// Create group name if not specified
 			if (! options.group) {
-				options.group = 'a' + now;
+				options.group = 'g' + groupId++;
 			}
 
 			// Determine file type
@@ -193,7 +192,7 @@
 
 				if (! loaded[file] || noCache) {
 					if (noCache) {
-						file += (file.indexOf('?') < 0 ? '?' : '&') + now;
+						file += (file.indexOf('?') < 0 ? '?' : '&') + Date.now();
 					}
 
 					_load[type](file, options);
@@ -265,7 +264,7 @@
 				}
 			} else if (poll) {
 				setTimeout(function() {
-					W.assets.ready(group, {}, true);
+					W.assets.ready(group, options, true);
 				}, 20);
 			}
 		}
