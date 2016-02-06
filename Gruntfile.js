@@ -291,12 +291,21 @@
 			}
 		});
 
-		grunt.loadNpmTasks('grunt-contrib-concat');
-		grunt.loadNpmTasks('grunt-contrib-imagemin');
-		grunt.loadNpmTasks('grunt-contrib-less');
-		grunt.loadNpmTasks('grunt-contrib-uglify');
-		grunt.loadNpmTasks('grunt-contrib-watch');
-		grunt.loadNpmTasks('grunt-newer');
+		var tasks = [
+				'grunt-contrib-concat',
+				'grunt-contrib-imagemin',
+				'grunt-contrib-less',
+				'grunt-contrib-uglify',
+				'grunt-contrib-watch',
+				'grunt-newer'
+			],
+			taskRoot = fs.existsSync('node_modules/' + tasks[0]) ?
+				'node_modules/' :
+				'../';
+
+		tasks.forEach(function(task) {
+			grunt.loadTasks(taskRoot + task + '/tasks');
+		});
 
 		grunt.registerTask('default', [
 			'init',
