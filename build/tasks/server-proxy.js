@@ -9,6 +9,10 @@ module.exports = function(grunt) {
 			if (project.server.host !== 'auto') {
 				server.host = project.server.host;
 			}
+		} else {
+			server.socket = {
+				domain: 'localhost:' + project.server.port
+			}
 		}
 
 		// Server asset injection
