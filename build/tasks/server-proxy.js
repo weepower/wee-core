@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 		} else {
 			server.socket = {
 				domain: 'localhost:' + project.server.port
-			}
+			};
 		}
 
 		// Server asset injection
