@@ -444,15 +444,16 @@
 							), targ)
 						);
 					});
-				};
+				},
+				app = W.app;
 
 			fn(model);
 
 			// Create a new application controller
-			W.app.fn[name] = W._make(name, {}, {}, false, model);
-			W.app[name] = new W.app.fn[name]();
+			app.fn[name] = W._make(name, {}, {}, false, model);
+			app[name] = new app.fn[name]();
 
-			W.$extend(W.app[name], {
+			W.$extend(app[name], {
 				/**
 				 * Destroy current application
 				 */
@@ -461,14 +462,14 @@
 						options._destruct();
 					}
 
-					delete W.app[name];
+					delete app[name];
 				},
 
 				/**
 				 * Pause view updating
 				 */
 				$pause: function() {
-					W.app[name].$unobserve('*', fn);
+					app[name].$unobserve('*', fn);
 				},
 
 				/**
@@ -477,18 +478,18 @@
 				 * @param {boolean} [update=false]
 				 */
 				$resume: function(update) {
-					W.app[name].$observe('*', fn);
+					app[name].$observe('*', fn);
 
 					if (update) {
-						fn();
+						fn(app[name].$get());
 					}
 				}
 			});
 
 			// Initialize app observation
-			W.app[name].$resume();
+			app[name].$resume();
 
-			return W.app[name];
+			return app[name];
 		}
 	};
 
