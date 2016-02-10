@@ -249,7 +249,7 @@
 		 * @param {object} [conf]
 		 * @param {string} [conf.event='load']
 		 * @param {string} [conf.path]
-		 * @param {object} [conf.rules]
+		 * @param {object} [conf.routes]
 		 */
 		run: function(conf) {
 			conf = conf || {};
