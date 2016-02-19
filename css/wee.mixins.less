@@ -1104,10 +1104,10 @@
 	.filter('drop-shadow(@{x} @{y} @{blur} @{color})');
 }
 .drop-shadow (light; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0) {
-	.filter('drop-shadow(@{x} @{y} @{blur} rgba(255, 255, 255, @{opacity})');
+	.filter('drop-shadow(@{x} @{y} @{blur} rgba(255, 255, 255, @{opacity}))');
 }
 .drop-shadow (dark; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0) {
-	.filter('drop-shadow(@{x} @{y} @{blur} rgba(0, 0, 0, @{opacity})');
+	.filter('drop-shadow(@{x} @{y} @{blur} rgba(0, 0, 0, @{opacity}))');
 }
 
 
