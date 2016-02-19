@@ -161,7 +161,7 @@ module.exports = function(grunt) {
 
 								if (compileScriptSources instanceof Array) {
 									for (var source in compileScriptSources) {
-										src.push(Wee.buildPath(config.paths.js, compileScriptSources[source]));
+										src.push(Wee.buildPath(modulePath, compileScriptSources[source]));
 									}
 								} else {
 									src = Wee.buildPath(modulePath, compileScriptSources);
