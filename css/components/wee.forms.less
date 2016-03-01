@@ -2,13 +2,15 @@
 	form {
 		.spaced();
 	}
-	button,
 	input,
 	select,
 	textarea {
-		margin: 0;
 		outline: 0;
 		.font(@inputFont; @inputFontSize; @inputFontWeight);
+	}
+	button {
+		outline: 0;
+		.font(@buttonFont; @buttonFontSize; @buttonFontWeight);
 	}
 	button::-moz-focus-inner,
 	input::-moz-focus-inner {
