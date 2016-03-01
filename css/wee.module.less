@@ -11,7 +11,7 @@
 {{imports}}
 {{responsive}}
 
-.wee-responsive () when (@responsive = true) and (@responsiveEnabled = true) and not (@legacyMode = true) {
+.wee-responsive () when (@responsive = true) and (@responsiveEnabled = true) {
 	.check () when not (@mobileLandscapeWidth = false) {
 		@media (min-width: (@mobileLandscapeWidth)) {
 			.wee-mobile-landscape();
@@ -46,6 +46,3 @@
 }
 
 .wee-responsive();
-
-// Framework
-@legacyMode: false;
