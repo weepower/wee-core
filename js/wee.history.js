@@ -170,8 +170,10 @@
 					E.on(W._win, 'popstate.history', function(e) {
 						if (e.state !== null) {
 							var url = _path(),
-								prevConf = entries[path.replace(/^\//g, '')],
-								conf = W.$extend(
+								prevConf = entries[path.replace(/^\//g, '')];
+
+							if (prevConf) {
+								var conf = W.$extend(
 									entries[url.replace(/^\//g, '')] || {
 										request: {
 											root: ''
@@ -182,14 +184,17 @@
 										pop: true
 									}
 								);
-							conf.partials = prevConf.partials;
+								conf.partials = prevConf.partials;
 
-							// Restore previous scroll position
-							if (e.state.top) {
-								conf.scrollTop = e.state.top;
+								// Restore previous scroll position
+								if (e.state.top) {
+									conf.scrollTop = e.state.top;
+								}
+
+								W.history.go(conf);
+							} else {
+								W._win.location = url;
 							}
-
-							W.history.go(conf);
 						}
 					});
 				}
@@ -234,11 +239,13 @@
 								return val + '.history';
 							}).join(' '),
 							loc = el.getAttribute('data-url'),
+							form = el.nodeName == 'FORM',
 							l = el;
 
-						if (loc || el.action) {
+						if (loc || form) {
 							l = W._doc.createElement('a');
-							l.href = loc || el.action;
+							l.href = loc || el.getAttribute('action') ||
+								W.routes.uri().full;
 						}
 
 						// Ensure the path exists and is local
@@ -246,11 +253,23 @@
 							var options = W.$extend(true, {}, a);
 
 							// Remove existing history events
-							E.off(el, evt);
+							E.off(el, '.history');
 
 							E.on(el, evt, function(e, el) {
 								if (! e.metaKey && ! el.hasAttribute('data-static')) {
 									options.path = _path(l);
+
+									if (form) {
+										if (el.method.toLowerCase() == 'post') {
+											options.request = W.$extend(options.request, {
+												data: W.$serializeForm(el, true),
+												type: 'form',
+												method: 'post'
+											});
+										} else {
+											options.path += '?' + W.$serializeForm(el);
+										}
+									}
 
 									W.history.go(options);
 									e.preventDefault();
@@ -323,7 +342,7 @@
 			conf.request = request;
 
 			// Request partial Ajax
-			if (request.url) {
+			if (request.url !== U) {
 				var sendEvents = [],
 					successEvents = [],
 					errorEvents = [],
@@ -331,9 +350,11 @@
 					partials = conf.partials,
 					targets = W.$(partials);
 
-				// Set Pjax header
-				request.headers = request.headers || {};
-				request.headers['X-PJAX'] = 'true';
+				// Setup PJAX headers
+				request.headers = W.$extend({
+					'X-PJAX': 'true',
+					'X-Requested-With': false
+				}, request.headers);
 
 				// Process send events
 				if (request.send) {
