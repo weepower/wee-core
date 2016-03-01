@@ -65,14 +65,24 @@
 					var evt = evts[i];
 
 					if (_eq(evt, size, init)) {
-						var f = init && ! current;
+						var f = init && ! current,
+							data = {
+								dir: f ? 0 : (size > current ? 1 : -1),
+								init: f,
+								prev: current,
+								size: size
+							};
 
-						_exec(evt, {
-							dir: f ? 0 : (size > current ? 1 : -1),
-							init: f,
-							prev: current,
-							size: size
+						W.$exec(evt.callback, {
+							args: evt.args ? [data].concat(evt.args) : [data],
+							scope: evt.scope
 						});
+
+						// Disable future execution if once
+						if (evt.once) {
+							events.splice(events.indexOf(evt), 1);
+							i--;
+						}
 					}
 				}
 
@@ -101,25 +111,6 @@
 				(sz && sz === size) ||
 				(mn && size >= mn && (ex || current < mn) && (! mx || size <= mx)) ||
 				(mx && size <= mx && (ex || current > mx) && (! mn || size >= mn));
-		},
-
-		/**
-		 * Execute matching breakpoint callback
-		 *
-		 * @private
-		 * @param {object} evt
-		 * @param {object} data
-		 */
-		_exec = function(evt, data) {
-			W.$exec(evt.callback, {
-				args: evt.args ? [data].concat(evt.args) : [data],
-				scope: evt.scope
-			});
-
-			// Disable future execution if once
-			if (evt.once) {
-				events.splice(events.indexOf(evt), 1);
-			}
 		};
 
 	W.screen = {
