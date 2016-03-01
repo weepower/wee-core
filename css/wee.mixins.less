@@ -922,8 +922,11 @@
 .content (@value: ''; ...) {
 	content: ~"'@{value}'";
 }
-.content (@value; @font) {
+.content (@value; @font; ...) {
 	font-family: @font;
+}
+.content (@value; @font; @size) {
+	.font-size(@size);
 }
 .prefix (@value: '-'; @margin: .5em; @font: false; @color: false) {
 	&:before {
@@ -2422,8 +2425,14 @@
 .rotate (@angle: 45) {
 	.transform(rotate(unit(@angle, deg)));
 }
-.scale (@deg: 1) {
-	.transform(scale(@deg));
+.scale (x; @value: 1) {
+	.transform(scaleX(@value));
+}
+.scale (y; @value: 1) {
+	.transform(scaleY(@value));
+}
+.scale (@value: 1) when (default()) {
+	.transform(scale(@value));
 }
 .skew (x; @x: 45) {
 	.transform(skewX(unit(@x, deg)));
