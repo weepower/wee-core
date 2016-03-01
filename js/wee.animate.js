@@ -35,23 +35,29 @@
 			W.$each(target, function(el) {
 				for (var prop in values) {
 					var target = parseInt(values[prop]),
+						scroll = prop == 'scrollTop' || prop == 'scrollLeft',
+						bodyScroll = scroll && el === W._body,
 						cssValue;
 
-					if ((prop == 'scrollTop' || prop == 'scrollLeft') &&
-						el === W._body && ! W._win.atob
-					) {
-						el = W._html;
-					} else {
+					if (! scroll) {
 						cssValue = getComputedStyle(el, null)[prop];
 					}
 
-					var	css = cssValue !== undefined,
+					var css = cssValue !== undefined,
 						unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
-						val = parseInt(css ? cssValue : el[prop]),
+						val = parseInt(
+							css ?
+								cssValue :
+								bodyScroll ? (el[prop] || W._html[prop]) : el[prop]
+						),
 						setValue = function(prop, update) {
 							css ?
 								el.style[prop] = update + unit :
 								el[prop] = update;
+
+							if (bodyScroll) {
+								W._html[prop] = update;
+							}
 						},
 						start = Date.now(),
 						fn = (function() {
