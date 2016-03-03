@@ -1,3 +1,5 @@
+/* jshint maxparams: 5 */
+
 (function(W) {
 	'use strict';
 
@@ -12,7 +14,63 @@
 				return t;
 			}
 		},
-		timers = [];
+
+		/**
+		 * Process a specific animation property
+		 *
+		 * @param {HTMLElement} el
+		 * @param {string} prop
+		 * @param {number} target
+		 * @param {object} conf
+		 * @param {function} ease
+		 */
+		process = function(el, prop, target, conf, ease) {
+			var scroll = prop == 'scrollTop' || prop == 'scrollLeft',
+				bodyScroll = scroll && el === W._body,
+				cssValue;
+
+			if (! scroll) {
+				cssValue = getComputedStyle(el, null)[prop];
+			}
+
+			var css = cssValue !== undefined,
+				unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
+				val = parseInt(
+					css ?
+						cssValue :
+						bodyScroll ? (el[prop] || W._html[prop]) : el[prop]
+				),
+				setValue = function(prop, update) {
+					css ?
+						el.style[prop] = update + unit :
+						el[prop] = update;
+
+					if (bodyScroll) {
+						W._html[prop] = update;
+					}
+				},
+				dir = target > val ? 1 : -1,
+				dist = Math.abs(target - val),
+				start = Date.now(),
+				fn = function() {
+					var diff = Date.now() - start;
+
+					if (dist && diff < conf.duration) {
+						setValue(prop, val + dist * ease(diff / conf.duration) * dir);
+						raf(fn);
+					} else {
+						setValue(prop, target);
+						conf.i--;
+
+						if (conf.complete && ! conf.i) {
+							W.$exec(conf.complete);
+						}
+					}
+				};
+
+			fn();
+		},
+		raf;
 
 	W.animate = {
 		/**
@@ -27,67 +85,21 @@
 		 */
 		tween: function(target, values, options) {
 			var conf = W.$extend({
-					duration: 400,
-					ease: 'ease'
+					duration: 400
 				}, options),
 				ease = easings[conf.ease] || easings.ease;
+			conf.i = 0;
+
+			if (! raf) {
+				raf = W._win.requestAnimationFrame || function(cb) {
+					setTimeout(cb, 15);
+				};
+			}
 
 			W.$each(target, function(el) {
 				for (var prop in values) {
-					var target = parseInt(values[prop]),
-						scroll = prop == 'scrollTop' || prop == 'scrollLeft',
-						bodyScroll = scroll && el === W._body,
-						cssValue;
-
-					if (! scroll) {
-						cssValue = getComputedStyle(el, null)[prop];
-					}
-
-					var css = cssValue !== undefined,
-						unit = css && cssValue.slice(-2) == 'px' ? 'px' : '',
-						val = parseInt(
-							css ?
-								cssValue :
-								bodyScroll ? (el[prop] || W._html[prop]) : el[prop]
-						),
-						setValue = function(prop, update) {
-							css ?
-								el.style[prop] = update + unit :
-								el[prop] = update;
-
-							if (bodyScroll) {
-								W._html[prop] = update;
-							}
-						},
-						start = Date.now(),
-						fn = (function() {
-							var scope = this,
-								diff = Date.now() - scope.start;
-
-							if (scope.dist && diff < conf.duration) {
-								setValue(
-									scope.prop,
-									scope.val + scope.dist *
-										ease(diff / conf.duration) * scope.dir
-								);
-							} else {
-								clearInterval(timers[scope.prop + scope.start]);
-								setValue(scope.prop, scope.target);
-
-								if (conf.complete) {
-									W.$exec(conf.complete);
-								}
-							}
-						}).bind({
-							dir: target > val ? 1 : -1,
-							dist: Math.abs(target - val),
-							prop: prop,
-							start: start,
-							target: target,
-							val: val
-						});
-
-					timers[prop + start] = setInterval(fn, 10);
+					conf.i++;
+					process(el, prop, parseInt(values[prop]), conf, ease);
 				}
 			});
 		},
