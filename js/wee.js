@@ -1265,7 +1265,7 @@
 				 * @returns {($|Array)} nodes
 				 */
 				_selArray: function(selector, options) {
-					if (selector._$) {
+					if (selector && selector._$) {
 						return selector;
 					}
 
