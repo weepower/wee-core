@@ -29,7 +29,7 @@
 		"grunt-contrib-uglify": "~0.11.1",
 		"grunt-contrib-watch": "~0.6.1",
 		"grunt-newer": "~1.1.2",
-		"html-minifier": "~1.1.1",
+		"html-minifier": "~1.2.0",
 		"js-yaml": "~3.5.3",
 		"jscs": "~2.10.1",
 		"jshint": "~2.9.1",
