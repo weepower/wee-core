@@ -161,7 +161,7 @@
 		/**
 		 * Log an error to the console
 		 *
-		 * @param {number} position
+		 * @param {string} position
 		 * @param {string} message
 		 * @param {string} [details]
 		 */
