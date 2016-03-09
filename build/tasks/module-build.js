@@ -20,6 +20,7 @@ module.exports = function(grunt) {
 					var module = fs.readJsonSync(configFile),
 						scriptRoot = modulePath + '/core/js/',
 						moduleScript = [
+							config.paths.temp + 'moduleView-' + name + '.js',
 							scriptRoot + 'vendor/**/*.js',
 							scriptRoot + 'init.js',
 							scriptRoot + '**/*.js',
@@ -33,6 +34,10 @@ module.exports = function(grunt) {
 
 					// Push into model list
 					config.modules.push(name);
+
+					if (module.autoload) {
+						config.autoload.push(name);
+					}
 
 					// Set module variables
 					vars.moduleName = name;

@@ -58,7 +58,8 @@ module.exports = function(grunt) {
 				print: '',
 				responsive: ''
 			},
-			modules: []
+			modules: [],
+			autoload: []
 		});
 
 		// Set Grunt configuration
