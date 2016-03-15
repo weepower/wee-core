@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 							var buildStyleSources = Wee.$toArray(module.style.build);
 
 							buildStyleSources.forEach(function(filepath) {
-								inject += '@import "' +
+								inject += '@import (less) "' +
 									config.paths.moduleSource + name +
 									'/' + filepath + '";\n';
 							});
