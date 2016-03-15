@@ -42,6 +42,25 @@
 		},
 
 		/**
+		 * Make recursive partial replacements
+		 *
+		 * @private
+		 * @param {string} temp
+		 * @returns {string}
+		 */
+		_embed = function(temp) {
+			temp = temp.replace(reg.partial, function(m, tag) {
+				return views[tag.trim()] || '';
+			});
+
+			if (reg.partial.test(temp)) {
+				temp = _embed(temp);
+			}
+
+			return temp;
+		},
+
+		/**
 		 * Render template string
 		 *
 		 * @private
@@ -53,10 +72,11 @@
 			var tags = [],
 				depth = [];
 
-			// Make partial replacements and match tag pairs
-			temp = temp.replace(reg.partial, function(m, tag) {
-				return views[tag.trim()] || '';
-			}).replace(reg.tags, function(m, pre, tag, helper) {
+			// Make partial replacements
+			temp = _embed(temp);
+
+			// Match tag pairs
+			temp = temp.replace(reg.tags, function(m, pre, tag, helper) {
 				var resp = '{{';
 
 				if (tag == '!') {
