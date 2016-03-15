@@ -59,9 +59,9 @@
 			// If breakpoint has been hit or resize logic initialized
 			if (size && (init || size !== current)) {
 				var evts = rules || events,
-					i = 0;
+					i = evts.length;
 
-				for (; i < evts.length; i++) {
+				while (i--) {
 					var evt = evts[i];
 
 					if (_eq(evt, size, init)) {
@@ -80,8 +80,7 @@
 
 						// Disable future execution if once
 						if (evt.once) {
-							events.splice(events.indexOf(evt), 1);
-							i--;
+							events.splice(i, 1);
 						}
 					}
 				}
