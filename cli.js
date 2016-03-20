@@ -5,38 +5,38 @@
 
 	var fs = require('fs-extra'),
 		glob = require('glob'),
-		path = require('path');
+		path = require('path'),
 
-	global.chalk = require('chalk');
-	global.Wee = require('./js/wee').Wee;
+		/**
+		 * Parse arguments from command array
+		 *
+		 * @param {Array} keywords
+		 * @returns {object}
+		 */
+		getArgs = function(keywords) {
+			var args = {};
 
-	require('./utils');
-
-	module.exports = function(rootPath) {
-		var keywords = process.argv.slice(2);
-
-		if (keywords.length) {
-			var args = {},
-				split = keywords[0].split(':'),
-				options = split.slice(1);
-
-			keywords.slice(1).forEach(function(arg) {
+			keywords.forEach(function(arg) {
 				if (arg.slice(0, 2) == '--') {
 					var segs = arg.slice(2).split('=');
 					args[segs[0]] = segs.length > 1 ? segs[1] : '';
 				}
 			});
 
-			var configPath = path.join(rootPath, args.config || 'wee.json'),
-				project = JSON.parse(fs.readFileSync(configPath, 'utf8')),
-				commandPaths = [
-					'node_modules/wee-core/commands/',
-					path.join(project.paths.source, 'commands/')
-				],
-				commands = {};
+			return args;
+		},
 
-			// Register commands
-			commandPaths.forEach(function(commandPath) {
+		/**
+		 * Register all available commands
+		 *
+		 * @param {string} rootPath
+		 * @param {Array} paths
+		 * @returns {object}
+		 */
+		registerCommands = function(rootPath, paths) {
+			var commands = {};
+
+			paths.forEach(function(commandPath) {
 				var files = glob.sync(commandPath + '*.js');
 
 				files.forEach(function(file) {
@@ -49,29 +49,52 @@
 				});
 			});
 
-			var command = commands[split[0]];
+			return commands;
+		};
 
-			if (command) {
-				delete args.config;
+	global.chalk = require('chalk');
+	global.Wee = require('./js/wee').Wee;
 
-				command({
-					options: options,
-					args: args,
-					rootPath: rootPath,
-					project: project
-				});
-			} else {
-				Wee.notify({
-					title: 'Command Error',
-					message: 'Command not found'
-				}, 'error');
+	require('./utils');
 
-				process.exit();
-			}
+	module.exports = function(rootPath) {
+		var keywords = process.argv.slice(2),
+			keyCount = keywords.length,
+			args = getArgs(
+				keyCount === 1 ?
+					keywords.slice(0) :
+					keywords.slice(1)
+			),
+			configPath = path.join(rootPath, args.config || 'wee.json'),
+			project = JSON.parse(fs.readFileSync(configPath, 'utf8')),
+			cmd = project.defaultCommand || 'run';
+
+		// Process fallback command
+		if (keyCount > 1 || (keyCount && ! Object.keys(args).length)) {
+			cmd = keywords[0];
+		}
+
+		var parts = cmd.split(':'),
+			options = parts.slice(1),
+			commands = registerCommands(rootPath, [
+				'node_modules/wee-core/commands/',
+				path.join(project.paths.source, 'commands/')
+			]),
+			command = commands[parts[0]];
+
+		if (command) {
+			delete args.config;
+
+			command({
+				options: options,
+				args: args,
+				rootPath: rootPath,
+				project: project
+			});
 		} else {
 			Wee.notify({
 				title: 'Command Error',
-				message: 'Command option is required'
+				message: 'Command not found'
 			}, 'error');
 
 			process.exit();
