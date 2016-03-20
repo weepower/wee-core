@@ -887,7 +887,7 @@
 				/**
 				 * Execute specified function or controller method
 				 *
-				 * @param {function} fn
+				 * @param {Array|function} fn
 				 * @param {object} [options]
 				 * @param {Array} [options.args]
 				 * @param {object} [options.scope]

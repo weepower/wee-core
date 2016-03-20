@@ -13,13 +13,13 @@
 		 */
 		_change = function(x, conf) {
 			if (x.readyState === 4) {
-				var status = x.status,
+				var code = x.status,
 					exec = {
 						args: conf.args,
 						scope: conf.scope
 					};
 
-				if (status >= 200 && status < 400) {
+				if (code >= 200 && code < 400) {
 					if (conf.success) {
 						_success(x, conf);
 					}
@@ -134,12 +134,12 @@
 		 */
 		request: function(options) {
 			var conf = W.$extend({
-					args: [],
-					data: {},
-					headers: {},
-					method: 'get',
-					root: ''
-				}, options);
+				args: [],
+				data: {},
+				headers: {},
+				method: 'get',
+				root: ''
+			}, options);
 
 			if (conf.cache === false) {
 				conf.data.dt = Date.now();
