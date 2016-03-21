@@ -141,6 +141,7 @@
 		 * @param {($|HTMLElement|string)} [options.bind]
 		 * @param {Array} [options.extensions]
 		 * @param {string} [options.partials='title,main']
+		 * @param {boolean} [options.processErrors=false]
 		 * @param {boolean} [options.push=true]
 		 * @param {object} [options.request]
 		 * @param {boolean} [options.run=true]
@@ -304,13 +305,17 @@
 				scope.init();
 			}
 
-			var globalRequest = scope.request,
+			var req = scope.request,
 				conf = W.$extend(
 					{},
 					settings,
 					options
 				),
-				request = conf.request || {};
+				request = W.$extend(
+					{},
+					req,
+					conf.request || {}
+				);
 
 			request.root = request.root !== U ? request.root : root;
 			request.url = request.url !== U ? request.url : conf.path;
@@ -361,14 +366,16 @@
 					sendEvents.push(request.send);
 				}
 
-				if (globalRequest.send) {
-					sendEvents.push(globalRequest.send);
+				if (req.send) {
+					sendEvents.push(req.send);
 				}
 
 				request.send = sendEvents;
 
 				// Compile success events
-				successEvents.push(function(html) {
+				var replaceEvent = function(x) {
+					var html = typeof x == 'string' ? x : x.responseText;
+
 					if (conf.replace) {
 						html = W.$exec(conf.replace, {
 							args: [html]
@@ -409,17 +416,19 @@
 
 						_reset(targets);
 					}
-				});
+				};
+
+				successEvents.push(replaceEvent);
 
 				if (request.success) {
 					successEvents.push(request.success);
 				}
 
-				if (globalRequest.success) {
-					successEvents.push(globalRequest.success);
+				if (req.success) {
+					successEvents.push(req.success);
 				}
 
-				successEvents.push(function() {
+				var scrollEvent = function() {
 					var st = conf.scrollTop;
 
 					// Scroll vertically to target
@@ -450,7 +459,9 @@
 							W._body.scrollTop = top;
 						}
 					}
-				});
+				};
+
+				successEvents.push(scrollEvent);
 
 				request.success = successEvents;
 
@@ -459,8 +470,14 @@
 					errorEvents.push(request.error);
 				}
 
-				if (globalRequest.error) {
-					errorEvents.push(globalRequest.error);
+				if (req.error) {
+					errorEvents.push(req.error);
+				}
+
+				// Optionally process error events
+				if (conf.processErrors) {
+					errorEvents.push(replaceEvent);
+					errorEvents.push(scrollEvent);
 				}
 
 				request.error = errorEvents;
@@ -470,12 +487,14 @@
 					completeEvents.push(request.complete);
 				}
 
-				if (globalRequest.complete) {
-					completeEvents.push(globalRequest.complete);
+				if (req.complete) {
+					completeEvents.push(req.complete);
 				}
 
-				completeEvents.push(function(xhr) {
-					if (xhr.status == 200) {
+				completeEvents.push(function(x) {
+					var code = x.status;
+
+					if (conf.processErrors || (code >= 200 && code < 400)) {
 						_process(conf);
 					}
 				});
