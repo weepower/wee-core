@@ -30,9 +30,7 @@ module.exports = function(grunt) {
 			config.style.coreImports.push('../css/components/wee.code.less');
 		}
 
-		if (config.style.vars.formEnabled) {
-			config.style.coreImports.push('../css/components/wee.forms.less');
-		}
+		config.style.coreImports.push('../css/components/wee.forms.less');
 
 		if (config.style.vars.tableEnabled) {
 			config.style.coreImports.push('../css/components/wee.tables.less');
