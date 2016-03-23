@@ -53,8 +53,7 @@
 		};
 
 	global.chalk = require('chalk');
-	global.Wee = require('./js/wee').Wee;
-
+	global.Wee = require('./js/wee');
 	require('./utils');
 
 	module.exports = function(rootPath) {

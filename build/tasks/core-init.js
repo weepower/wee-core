@@ -48,7 +48,8 @@ module.exports = function(grunt) {
 			},
 			script: {
 				build: [],
-				core: []
+				core: [],
+				namespace: project.script.core.namespace || 'Wee'
 			},
 			style: {
 				concat: [],

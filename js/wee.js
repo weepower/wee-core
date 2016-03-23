@@ -2,12 +2,16 @@
 // Licensed under Apache 2 (http://www.apache.org/licenses/LICENSE-2.0)
 // DO NOT MODIFY
 
+/* global exports */
 /* jshint maxdepth: 4, maxparams: 6 */
 
-(function(N, U) {
+var Wee;
+
+(function(W, U) {
 	'use strict';
 
 	var web = typeof window != 'undefined',
+		scope = web ? window : global,
 		W = (function() {
 			var D = web ? document : {},
 				store = {
@@ -479,12 +483,12 @@
 				};
 
 			return {
-				_$: N.WeeAlias || '$',
+				_$: scope.WeeAlias || '$',
 				_body: D.body,
 				_doc: D,
 				_html: D.documentElement,
 				_slice: [].slice,
-				_win: N,
+				_win: scope,
 				fn: {
 					/**
 					 * Create a namespaced controller
@@ -569,7 +573,7 @@
 						el = selector;
 					} else {
 						if (selector == 'window') {
-							return [N];
+							return [scope];
 						}
 
 						if (selector == 'document') {
@@ -617,8 +621,8 @@
 						}
 
 						// Use third-party selector engine if defined
-						if (N.WeeSelector !== U) {
-							el = N.WeeSelector(selector, context);
+						if (scope.WeeSelector !== U) {
+							el = scope.WeeSelector(selector, context);
 						} else if (/^[#.]?[\w-]+$/.test(selector)) {
 							var pre = selector[0];
 
@@ -640,7 +644,7 @@
 
 					if (! el) {
 						el = ref;
-					} else if (el.nodeType !== U || el === N) {
+					} else if (el.nodeType !== U || el === scope) {
 						el = [el];
 					} else {
 						el = W._slice.call(el);
@@ -1462,18 +1466,15 @@
 			};
 		})();
 
-	N.Wee = W;
-
 	// Set data variables and bind elements
 	if (web) {
 		W.$setRef();
 		W.$setVar();
 	}
 
-	// AMD setup
-	if (typeof define == 'function' && define.amd) {
-		define('wee', [], function() {
-			return W;
-		});
+	exports = Wee = W;
+
+	if (typeof module == 'object' && module.exports) {
+		module.exports = W;
 	}
-})(this, undefined);
+})(Wee, undefined);

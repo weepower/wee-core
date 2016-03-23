@@ -12,8 +12,7 @@
 		global.browserSync = require('browser-sync');
 		global.fs = require('fs-extra');
 		global.path = require('path');
-		global.Wee = require('./js/wee').Wee;
-
+		global.Wee = require('./js/wee');
 		require('./utils');
 
 		global.config = {
@@ -67,10 +66,11 @@
 				}
 			},
 			uglify: {
-				options: {
-					screwIE8: true
-				},
 				core: {
+					options: {
+						screwIE8: true,
+						wrap: '<%= config.script.namespace %>'
+					},
 					files: [{
 						dest: '<%= config.paths.js %>script.min.js',
 						src: [
