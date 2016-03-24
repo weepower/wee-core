@@ -203,19 +203,19 @@ module.exports = function(grunt) {
 							vars.responsive = true;
 
 							responsive +=
-								'.wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
+								'.wee-' + name + '-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/mobile-landscape.less";\n' +
 								'}\n' +
-								'.wee-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
+								'.wee-' + name + '-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/tablet-portrait.less";\n' +
 								'}\n' +
-								'.wee-desktop-small () when not (@desktopSmallWidth = false) {\n' +
+								'.wee-' + name + '-desktop-small () when not (@desktopSmallWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-small.less";\n' +
 								'}\n' +
-								'.wee-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
+								'.wee-' + name + '-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-medium.less";\n' +
 								'}\n' +
-								'.wee-desktop-large () when not (@desktopLargeWidth = false) {\n' +
+								'.wee-' + name + '-desktop-large () when not (@desktopLargeWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/core/css/breakpoints/desktop-large.less";\n' +
 								'}\n';
 						}
@@ -224,19 +224,19 @@ module.exports = function(grunt) {
 							vars.responsive = true;
 
 							responsive +=
-								'.wee-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
+								'.wee-' + name + '-mobile-landscape () when not (@mobileLandscapeWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/mobile-landscape.less";\n' +
 								'}\n' +
-								'.wee-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
+								'.wee-' + name + '-tablet-portrait () when not (@tabletPortraitWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/tablet-portrait.less";\n' +
 								'}\n' +
-								'.wee-desktop-small () when not (@desktopSmallWidth = false) {\n' +
+								'.wee-' + name + '-desktop-small () when not (@desktopSmallWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-small.less";\n' +
 								'}\n' +
-								'.wee-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
+								'.wee-' + name + '-desktop-medium () when not (@desktopMediumWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-medium.less";\n' +
 								'}\n' +
-								'.wee-desktop-large () when not (@desktopLargeWidth = false) {\n' +
+								'.wee-' + name + '-desktop-large () when not (@desktopLargeWidth = false) {\n' +
 								'	@import (optional) "' + config.paths.moduleSource + name + '/css/breakpoints/desktop-large.less";\n' +
 								'}\n';
 						}
@@ -245,15 +245,16 @@ module.exports = function(grunt) {
 					// Inject empty mixins if no breakpoints exist
 					if (! vars.responsive) {
 						responsive +=
-							'.wee-mobile-landscape () {}\n' +
-							'.wee-tablet-portrait () {}\n' +
-							'.wee-desktop-small () {}\n' +
-							'.wee-desktop-medium () {}\n' +
-							'.wee-desktop-large () {}\n';
+							'.wee-' + name + '-mobile-landscape () {}\n' +
+							'.wee-' + name + '-tablet-portrait () {}\n' +
+							'.wee-' + name + '-desktop-small () {}\n' +
+							'.wee-' + name + '-desktop-medium () {}\n' +
+							'.wee-' + name + '-desktop-large () {}\n';
 					}
 
 					// Process import injection
-					less = less.replace('{{namespaceOpen}}', namespaceOpen)
+					less = less.replace(/{{moduleName}}/g, name)
+						.replace('{{namespaceOpen}}', namespaceOpen)
 						.replace('{{namespaceClose}}', namespaceClose)
 						.replace('{{imports}}', inject)
 						.replace('{{responsive}}', responsive);

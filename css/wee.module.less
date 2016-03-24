@@ -1,4 +1,4 @@
-@import (reference) '../css/wee.variables.less';                  // Core configuration
+@import (reference) '../css/wee.variables.less';                    // Core configuration
 @import (optional, reference) '@{sourcePath}custom/variables.less'; // Custom configuration
 
 {{namespaceOpen}}
@@ -6,43 +6,43 @@
 @import (reference) '../css/wee.reset.less';  // Baseline
 {{namespaceClose}}
 
-@import (optional, reference) '@{modulePath}@{moduleName}/core/css/variables.less'; // Module configuration
+@import (optional, reference) '@{modulePath}{{moduleName}}/core/css/variables.less'; // Module configuration
 
 {{imports}}
 {{responsive}}
 
-.wee-responsive () when (@responsive = true) and (@responsiveEnabled = true) {
+.wee-{{moduleName}}-responsive () when (@responsive = true) and (@responsiveEnabled = true) {
 	.check () when not (@mobileLandscapeWidth = false) {
 		@media (min-width: (@mobileLandscapeWidth)) {
-			.wee-mobile-landscape();
+			.wee-{{moduleName}}-mobile-landscape();
 		}
 	}
 
 	.check () when not (@tabletPortraitWidth = false) {
 		@media (min-width: (@tabletPortraitWidth)) {
-			.wee-tablet-portrait();
+			.wee-{{moduleName}}-tablet-portrait();
 		}
 	}
 
 	.check () when not (@desktopSmallWidth = false) {
 		@media (min-width: (@desktopSmallWidth)) {
-			.wee-desktop-small();
+			.wee-{{moduleName}}-desktop-small();
 		}
 	}
 
 	.check () when not (@desktopMediumWidth = false) {
 		@media (min-width: (@desktopMediumWidth)) {
-			.wee-desktop-medium();
+			.wee-{{moduleName}}-desktop-medium();
 		}
 	}
 
 	.check () when not (@desktopLargeWidth = false) {
 		@media (min-width: (@desktopLargeWidth)) {
-			.wee-desktop-large();
+			.wee-{{moduleName}}-desktop-large();
 		}
 	}
 
 	.check();
 }
 
-.wee-responsive();
+.wee-{{moduleName}}-responsive();
