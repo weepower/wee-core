@@ -28,13 +28,18 @@
 		 * @param {HTMLElement} el
 		 */
 		_isValid = function(el) {
-			var host = el.hostname,
+			var host = el.host,
 				path = el.pathname,
 				loc = location;
 
 			if (! el.href ||
-				(host && host != loc.hostname) ||
-				(el.hash && path == loc.pathname)) {
+				el.target == '_blank' ||
+				! /https?:/.test(el.protocol) ||
+				el.hasAttribute('download') ||
+				el.hasAttribute('data-static') ||
+				(host && host != loc.host) ||
+				(el.hash && path == loc.pathname)
+			) {
 				return false;
 			}
 
@@ -138,7 +143,7 @@
 		 * Set the initial state and popstate event, and bind global actions
 		 *
 		 * @param {object} [options]
-		 * @param {($|HTMLElement|string)} [options.bind]
+		 * @param {($|boolean|HTMLElement|string)} [options.bind]
 		 * @param {Array} [options.extensions]
 		 * @param {string} [options.partials='title,main']
 		 * @param {boolean} [options.processErrors=false]
@@ -250,33 +255,35 @@
 						}
 
 						// Ensure the path exists and is local
-						if (evt && _isValid(l)) {
-							var options = W.$extend(true, {}, a);
-
-							// Remove existing history events
-							E.off(el, '.history');
-
-							E.on(el, evt, function(e, el) {
-								if (! e.metaKey && ! el.hasAttribute('data-static')) {
-									options.path = _path(l);
-
-									if (form) {
-										if (el.method.toLowerCase() == 'post') {
-											options.request = W.$extend(options.request, {
-												data: W.$serializeForm(el, true),
-												type: 'form',
-												method: 'post'
-											});
-										} else {
-											options.path += '?' + W.$serializeForm(el);
-										}
-									}
-
-									W.history.go(options);
-									e.preventDefault();
-								}
-							});
+						if (! evt || ! _isValid(l)) {
+							return;
 						}
+
+						var options = W.$extend(true, {}, a);
+
+						// Remove existing history events
+						E.off(el, '.history');
+
+						E.on(el, evt, function(e, el) {
+							if (! e.metaKey) {
+								options.path = _path(l);
+
+								if (form) {
+									if (el.method.toLowerCase() == 'post') {
+										options.request = W.$extend(options.request, {
+											data: W.$serializeForm(el, true),
+											type: 'form',
+											method: 'post'
+										});
+									} else {
+										options.path += '?' + W.$serializeForm(el);
+									}
+								}
+
+								W.history.go(options);
+								e.preventDefault();
+							}
+						});
 					}, {
 						context: context
 					});
