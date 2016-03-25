@@ -214,7 +214,7 @@
 			var a = W._doc.createElement('a');
 			a.href = conf.url;
 
-			if (! a.hostname || a.hostname == location.hostname) {
+			if (! a.host || a.host == location.host) {
 				headers['X-Requested-With'] = 'XMLHttpRequest';
 			}
 
