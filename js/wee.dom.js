@@ -746,9 +746,10 @@
 				}
 
 				return (
-					el.matches || el.matchesSelector ||
-					el.msMatchesSelector || el.mozMatchesSelector ||
-					el.webkitMatchesSelector
+					el.matches ||
+					el.msMatchesSelector ||
+					el.webkitMatchesSelector ||
+					el.mozMatchesSelector
 				).call(el, filter);
 			}).length > 0;
 		},
