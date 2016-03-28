@@ -1138,27 +1138,16 @@
 		font-family: ~'@{name}';
 		font-style: @style;
 		font-weight: @weight;
-		src: url('@{fontPath}@{file}.eot');
 		.check () when (@woff2Enabled = true) {
-			src: url('@{fontPath}@{file}.eot?#iefix') format('embedded-opentype'),
-				 url('@{fontPath}@{file}.woff2') format('woff2'),
+			src: url('@{fontPath}@{file}.woff2') format('woff2'),
 				 url('@{fontPath}@{file}.woff') format('woff'),
 				 url('@{fontPath}@{file}.ttf') format('truetype');
 		}
 		.check () when (default()) {
-			src: url('@{fontPath}@{file}.eot?#iefix') format('embedded-opentype'),
-				 url('@{fontPath}@{file}.woff') format('woff'),
+			src: url('@{fontPath}@{file}.woff') format('woff'),
 				 url('@{fontPath}@{file}.ttf') format('truetype');
 		}
 		.check();
-	}
-
-	// Window Chrome fix
-	@media screen and (-webkit-min-device-pixel-ratio: 0) {
-		@font-face {
-			font-family: ~'@{name}';
-			src: url('@{fontPath}@{file}.svg#@{name}') format('svg');
-		}
 	}
 }
 
