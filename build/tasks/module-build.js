@@ -253,9 +253,13 @@ module.exports = function(grunt) {
 					}
 
 					// Process import injection
+					var fontPath = '/' + project.paths.assets +
+						'/modules/'+ name + '/fonts/';
+
 					less = less.replace(/{{moduleName}}/g, name)
 						.replace('{{namespaceOpen}}', namespaceOpen)
 						.replace('{{namespaceClose}}', namespaceClose)
+						.replace('{{fontPath}}', fontPath)
 						.replace('{{imports}}', inject)
 						.replace('{{responsive}}', responsive);
 
