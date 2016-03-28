@@ -157,6 +157,84 @@ module.exports = function(grunt) {
 							});
 						}
 
+						// Include Core if needed
+						if (! module.autoload && module.script.core && module.script.core.enable) {
+							var features = project.script.core.features,
+								weeScriptRoot = config.paths.wee + 'js/',
+								core = [],
+								chained = [];
+
+							module.namespace = module.script.core.namespace ?
+								module.script.core.namespace :
+								'Wee';
+
+							core.push(weeScriptRoot + 'wee.js');
+
+							if (features.chain === true) {
+								chained.push(weeScriptRoot + 'wee.chain.js');
+							}
+
+							if (features.animate === true) {
+								core.push(weeScriptRoot + 'wee.animate.js');
+
+								if (features.chain === true) {
+									chained.push(weeScriptRoot + 'chain/wee.chain.animate.js');
+								}
+							}
+
+							if (features.assets === true) {
+								core.push(weeScriptRoot + 'wee.assets.js');
+							}
+
+							if (features.data === true) {
+								core.push(weeScriptRoot + 'wee.data.js');
+							}
+
+							if (features.dom === true) {
+								core.push(weeScriptRoot + 'wee.dom.js');
+
+								if (features.chain === true) {
+									chained.push(weeScriptRoot + 'chain/wee.chain.dom.js');
+								}
+							}
+
+							if (features.events === true) {
+								core.push(weeScriptRoot + 'wee.events.js');
+
+								if (features.chain === true) {
+									chained.push(weeScriptRoot + 'chain/wee.chain.events.js');
+								}
+							}
+
+							if (features.history === true) {
+								core.push(weeScriptRoot + 'wee.history.js');
+							}
+
+							if (features.routes === true) {
+								core.push(weeScriptRoot + 'wee.routes.js');
+							}
+
+							if (features.screen === true) {
+								core.push(weeScriptRoot + 'wee.screen.js');
+							}
+
+							if (features.touch === true) {
+								core.push(weeScriptRoot + 'wee.touch.js');
+							}
+
+							if (features.view === true) {
+								core.push(weeScriptRoot + 'wee.view.js');
+								core.push(weeScriptRoot + 'wee.view.diff.js');
+
+								if (features.chain === true) {
+									chained.push(weeScriptRoot + 'chain/wee.chain.view.js');
+								}
+							}
+
+							moduleScript = core.concat(chained)
+								.concat(moduleScript);
+						}
+						
 						// Compile additional script
 						if (module.script.compile) {
 							for (var compileScriptTarget in module.script.compile) {
@@ -328,13 +406,19 @@ module.exports = function(grunt) {
 						// Add script paths to uglify
 						config.script.build = config.script.build.concat(moduleScript);
 					} else {
-						// Create module style compile task
+						// Create module script compile task
 						obj[name] = {
 							files: [{
 								dest: config.paths.module + name + '/script.min.js',
 								src: moduleScript
 							}]
 						};
+
+						if (module.namespace) {
+							obj[name].options = {
+								wrap: module.namespace
+							};
+						}
 
 						grunt.config.merge({
 							uglify: obj
