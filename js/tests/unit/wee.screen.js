@@ -13,11 +13,11 @@ define(function(require) {
 			el = document.createElement('style');
 			el.textContent = 'html {font-family: "5"}';
 
-			document.getElementsByTagName('head')[0].appendChild(el);
+			document.head.appendChild(el);
 		},
 
 		teardown: function() {
-			document.getElementsByTagName('head')[0].removeChild(el);
+			document.head.removeChild(el);
 		},
 
 		size: function() {

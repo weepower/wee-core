@@ -30,7 +30,7 @@
 				};
 
 				js.src = path;
-				W.$('head')[0].appendChild(js);
+				W._doc.head.appendChild(js);
 			},
 
 			/**
@@ -56,7 +56,7 @@
 					_fail(conf.group);
 				}, false);
 
-				W.$('head')[0].appendChild(link);
+				W._doc.head.appendChild(link);
 			},
 
 			/**

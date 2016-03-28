@@ -107,7 +107,7 @@
 				};
 			}
 
-			W.$('head')[0].appendChild(el);
+			W._doc.head.appendChild(el);
 		};
 
 	W.data = {
