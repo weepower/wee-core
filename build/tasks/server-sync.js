@@ -1,4 +1,4 @@
-/* global browserSync, config, path, project, reloadPaths, server */
+/* global bs, config, path, project, reloadPaths, server */
 
 module.exports = function(grunt) {
 	grunt.registerTask('sync', function() {
@@ -37,16 +37,25 @@ module.exports = function(grunt) {
 			);
 
 			server.files = reloadPaths;
+
+			// Define exclusion patterns
+			if (reloadConfig.ignore) {
+				server.snippetOptions = {
+					blacklist: reloadConfig.ignore
+				};
+			}
 		}
 
 		if (serverConfig.ghostMode !== true) {
 			server.ghostMode = serverConfig.ghostMode || false;
 		}
 
-		server.port = serverConfig.port;
+		// Override defaults
 		server.logPrefix = 'Wee';
-		server.open = 'external';
+		server.logFileChanges = false;
 		server.notify = false;
+		server.open = 'external';
+		server.port = serverConfig.port;
 
 		server.ui = {
 			port: serverConfig.port + 1,
@@ -55,6 +64,6 @@ module.exports = function(grunt) {
 			}
 		};
 
-		browserSync(server);
+		bs.init(server);
 	});
 };

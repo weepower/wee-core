@@ -9,7 +9,7 @@
 
 		global.version = '3.3.0';
 
-		global.browserSync = require('browser-sync');
+		global.bs = require('browser-sync').create();
 		global.fs = require('fs-extra');
 		global.path = require('path');
 		global.Wee = require('./js/wee');
@@ -39,7 +39,9 @@
 						'<%= config.paths.root %>'
 					],
 					plugins: [
-						new LessCssClean()
+						new LessCssClean({
+							restructuring: false
+						})
 					]
 				},
 				core: {

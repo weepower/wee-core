@@ -1,4 +1,4 @@
-/* global browserSync, config, fs, path, project */
+/* global bs, config, fs, path, project */
 /* jshint maxdepth: 4 */
 
 module.exports = function(grunt) {
@@ -14,11 +14,11 @@ module.exports = function(grunt) {
 			staticRoot = path.dirname(configPath),
 			site = Wee.$extend(json.data, {
 				config: config,
-				name: json.name,
 				description: json.description,
 				env: 'default',
-				time: new Date(),
-				sections: json.sections
+				name: json.name,
+				sections: json.sections,
+				time: new Date()
 			}),
 			errors = 0;
 
@@ -515,7 +515,7 @@ module.exports = function(grunt) {
 		}
 
 		// Reload browsers
-		browserSync.reload();
+		bs.reload();
 
 		if (errors < 1) {
 			Wee.notify({
