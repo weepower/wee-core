@@ -234,7 +234,7 @@ module.exports = function(grunt) {
 							moduleScript = core.concat(chained)
 								.concat(moduleScript);
 						}
-						
+
 						// Compile additional script
 						if (module.script.compile) {
 							for (var compileScriptTarget in module.script.compile) {
