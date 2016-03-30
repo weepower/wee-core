@@ -1,9 +1,9 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
-		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		assert = require('intern/chai!assert');
 
-	require('js/wee.assets.js');
+	require('js/wee');
+	require('js/wee.assets');
 
 	registerSuite({
 		name: 'Assets',

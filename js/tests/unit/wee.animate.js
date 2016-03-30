@@ -1,11 +1,11 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee'),
 		el;
 
-	require('js/wee.dom.js');
-	require('js/wee.animate.js');
+	require('js/wee');
+	require('js/wee.dom');
+	require('js/wee.animate');
 
 	registerSuite({
 		name: 'Animate',

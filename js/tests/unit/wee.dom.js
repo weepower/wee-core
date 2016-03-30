@@ -1,9 +1,9 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
-		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		assert = require('intern/chai!assert');
 
-	require('js/wee.dom.js');
+	require('js/wee');
+	require('js/wee.dom');
 
 	registerSuite({
 		name: 'DOM',
@@ -858,9 +858,9 @@ define(function(require) {
 		},
 		'$position': function() {
 			var positionValue = {
-					top: -10000,
-					left: -10000
-				};
+				top: -10000,
+				left: -10000
+			};
 
 			Wee.$css('#container', {
 				position: 'absolute',
@@ -1265,13 +1265,13 @@ define(function(require) {
 				);
 			},
 			'function': function() {
-				Wee.$val('.testing', function(i, value, html) {
+				Wee.$val('.testing', function(i, value) {
 					if (value.length > 3) {
-						return Wee.$html('#container', '<p>' + value + '</p>');
+						return 'success';
 					}
 				});
 
-				assert.ok(Wee.$html('#container p'), 'test',
+				assert.strictEqual(Wee.$val('.testing'), 'success',
 					'Function was not executed successfully'
 				);
 			}

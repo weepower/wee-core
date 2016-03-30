@@ -1,19 +1,19 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee'),
 		$el,
 		el;
 
-	require('js/wee.chain.js');
-	require('js/wee.animate.js');
-	require('js/wee.dom.js');
-	require('js/wee.events.js');
-	require('js/wee.view.js');
-	require('js/chain/wee.chain.animate.js');
-	require('js/chain/wee.chain.dom.js');
-	require('js/chain/wee.chain.events.js');
-	require('js/chain/wee.chain.view.js');
+	require('js/wee');
+	require('js/wee.chain');
+	require('js/wee.animate');
+	require('js/wee.dom');
+	require('js/wee.events');
+	require('js/wee.view');
+	require('js/chain/wee.chain.animate');
+	require('js/chain/wee.chain.dom');
+	require('js/chain/wee.chain.events');
+	require('js/chain/wee.chain.view');
 
 	registerSuite({
 		name: 'Chain',
@@ -828,14 +828,18 @@ define(function(require) {
 			//},
 
 			position: function() {
-				var obj = {
+				var positionValue = {
 					top: -10000,
 					left: -10000
 				};
 
-				$el.css(obj);
+				$el.css({
+					position: 'absolute',
+					top: '-10000px',
+					left: '-10000px'
+				});
 
-				assert.deepEqual($el.position(), obj,
+				assert.deepEqual($el.position(), positionValue,
 					'Position not returned successfully'
 				);
 			},
@@ -937,7 +941,7 @@ define(function(require) {
 			remove: function() {
 				$el.remove();
 
-				assert.strictEqual($el.length, 0,
+				assert.strictEqual($('#wee').length, 0,
 					'Element was not removed successfully'
 				);
 			},
@@ -981,7 +985,7 @@ define(function(require) {
 
 				$('#test').replaceWith('<span id="test2"></span>');
 
-				assert.ok($el.contains('#test2'),,
+				assert.ok($el.contains('#test2'),
 					'Element was not replaced successfully'
 				);
 			},
@@ -1189,29 +1193,31 @@ define(function(require) {
 
 			val: {
 				beforeEach: function() {
-					$el.html('<input type="text" class="test" value="1">');
+					$el.html('<input type="text" class="testing" value="test">');
 				},
 
 				get: function() {
-					assert.strictEqual($('.test').val(), '1',
+					assert.strictEqual($('.testing').val(), 'test',
 						'Value was not retrieved successfully'
 					);
 				},
 
 				set: function() {
-					$('.test').val('2');
+					$('.testing').val('2');
 
-					assert.strictEqual($('.test').val(), '2',
+					assert.strictEqual($('.testing').val(), '2',
 						'Value was not set successfully'
 					);
 				},
 
 				fn: function() {
-					$('.test').val(function(i, value) {
-						return i;
+					$('.testing').val(function(i, value) {
+						if (value.length > 3) {
+							return 'success';
+						}
 					});
 
-					assert.ok($('.test').val(), '0',
+					assert.ok($('.testing').val(), 'success',
 						'Function was not executed successfully'
 					);
 				}

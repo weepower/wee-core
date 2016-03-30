@@ -1,7 +1,8 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
-		assert = require('intern/chai!assert'),
-		Wee = require('Wee');
+		assert = require('intern/chai!assert');
+
+	require('js/wee');
 
 	registerSuite({
 		name: 'Core',
@@ -644,35 +645,35 @@ define(function(require) {
 				nul = null;
 
 			assert.strictEqual(Wee.$type(obj), 'object',
-				'Type of "object" was not successfully identifed'
+				'Type of "object" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(arr), 'array',
-				'Type of "array" was not successfully identifed'
+				'Type of "array" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(fun), 'function',
-				'Type of "function" was not successfully identifed'
+				'Type of "function" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(bool), 'boolean',
-				'Type of "boolean" was not successfully identifed'
+				'Type of "boolean" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(num), 'number',
-				'Type of "number" was not successfully identifed'
+				'Type of "number" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(string), 'string',
-				'Type of "string" was not successfully identifed'
+				'Type of "string" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(und), 'undefined',
-				'Type of "undefined" was not successfully identifed'
+				'Type of "undefined" was not successfully identified'
 			);
 
 			assert.strictEqual(Wee.$type(nul), 'null',
-				'Type of "null" was not successfully identifed'
+				'Type of "null" was not successfully identified'
 			);
 		},
 		'$unique': function() {

@@ -1,11 +1,11 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee'),
 		el;
 
-	require('js/wee.dom.js');
-	require('js/wee.events.js');
+	require('js/wee');
+	require('js/wee.dom');
+	require('js/wee.events');
 
 	registerSuite({
 		name: 'Events',
@@ -31,7 +31,7 @@ define(function(require) {
 
 				Wee.events.trigger(el, 'click');
 
-				assert.ok(Wee.$hasClass$el, 'test'),
+				assert.ok(Wee.$hasClass(el, 'test'),
 					'Event was not bound successfully'
 				);
 			},
@@ -70,7 +70,7 @@ define(function(require) {
 				Wee.events.trigger(el, 'click');
 				Wee.events.trigger(el, 'blur');
 
-				assert.ok(Wee.$hasClass($el, 'test-2'),
+				assert.ok(Wee.$hasClass(el, 'test-2'),
 					'Multple events were not triggered successfully'
 				);
 			},

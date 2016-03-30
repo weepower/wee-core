@@ -4,15 +4,6 @@ define({
 	initialBaseUrl: '../../',
 	excludeInstrumentation: /^(?:node_modules|js\/tests)\//,
 	tunnel: 'NullTunnel',
-	loaderOptions: {
-		packages: [
-			{
-				name: 'Wee',
-				location: 'js',
-				main: 'wee.js'
-			}
-		]
-	},
 	suites: [
 		'js/tests/unit/wee',
 		'js/tests/unit/wee.animate',

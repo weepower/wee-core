@@ -1,10 +1,10 @@
 define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert'),
-		Wee = require('Wee'),
 		el;
 
-	require('js/wee.screen.js');
+	require('js/wee');
+	require('js/wee.screen');
 
 	registerSuite({
 		name: 'Screen',
