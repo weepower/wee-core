@@ -149,6 +149,21 @@ module.exports = function(grunt) {
 
 		// Configure source maps
 		if (project.script.sourceMaps === true) {
+			grunt.config.set('uglify.options.sourceMap', true);
+			grunt.config.set('uglify.options.sourceMapIncludeSources', true);
+			grunt.config.set('uglify.options.sourceMapName', function(dest) {
+				var scriptRoot = path.normalize(config.paths.js),
+					moduleRoot = path.normalize(config.paths.module);
+				dest = path.normalize(dest)
+					.replace(scriptRoot, '')
+					.replace(moduleRoot, '/')
+					.replace(/^[\\\/]/, '')
+					.replace(/\\|\//g, '.')
+					.replace('.min.js', '');
+
+				return path.join(config.paths.jsMaps, dest + '.js.map');
+			});
+
 			grunt.config.set('uglify.core.options.sourceMap', true);
 			grunt.config.set('uglify.core.options.sourceMapIncludeSources', true);
 			grunt.config.set(
@@ -162,21 +177,6 @@ module.exports = function(grunt) {
 				'uglify.build.options.sourceMapName',
 				path.join(config.paths.temp, 'build.js.map')
 			);
-
-			grunt.config.set('uglify.lib.options.sourceMap', true);
-			grunt.config.set('uglify.lib.options.sourceMapIncludeSources', true);
-			grunt.config.set('uglify.lib.options.sourceMapName', function(dest) {
-				var scriptRoot = path.normalize(config.paths.js),
-					moduleRoot = path.normalize(config.paths.module);
-				dest = path.normalize(dest)
-					.replace(scriptRoot, '')
-					.replace(moduleRoot, '/')
-					.replace(/^[\\\/]/, '')
-					.replace(/\\|\//g, '.')
-					.replace('.min.js', '');
-
-				return path.join(config.paths.jsMaps, dest + '.js.map');
-			});
 
 			grunt.config.set('concat.script.options.sourceMap', true);
 			grunt.config.set(
