@@ -28,6 +28,7 @@ module.exports = function(grunt) {
 						],
 						vars = JSON.parse(JSON.stringify(config.style.vars)),
 						less = fs.readFileSync(config.paths.wee + 'css/wee.module.less', 'utf8'),
+						coreScript = [],
 						globalScript = [],
 						namespaceOpen = '',
 						namespaceClose = '';
@@ -159,23 +160,22 @@ module.exports = function(grunt) {
 
 						// Include Core if needed
 						if (! module.autoload && module.script.core && module.script.core.enable) {
-							var features = project.script.core.features,
+							var features = module.script.core.features,
 								weeScriptRoot = config.paths.wee + 'js/',
-								core = [],
 								chained = [];
 
 							module.namespace = module.script.core.namespace ?
 								module.script.core.namespace :
 								'Wee';
 
-							core.push(weeScriptRoot + 'wee.js');
+							coreScript.push(weeScriptRoot + 'wee.js');
 
 							if (features.chain === true) {
 								chained.push(weeScriptRoot + 'wee.chain.js');
 							}
 
 							if (features.animate === true) {
-								core.push(weeScriptRoot + 'wee.animate.js');
+								coreScript.push(weeScriptRoot + 'wee.animate.js');
 
 								if (features.chain === true) {
 									chained.push(weeScriptRoot + 'chain/wee.chain.animate.js');
@@ -183,15 +183,15 @@ module.exports = function(grunt) {
 							}
 
 							if (features.assets === true) {
-								core.push(weeScriptRoot + 'wee.assets.js');
+								coreScript.push(weeScriptRoot + 'wee.assets.js');
 							}
 
 							if (features.data === true) {
-								core.push(weeScriptRoot + 'wee.data.js');
+								coreScript.push(weeScriptRoot + 'wee.data.js');
 							}
 
 							if (features.dom === true) {
-								core.push(weeScriptRoot + 'wee.dom.js');
+								coreScript.push(weeScriptRoot + 'wee.dom.js');
 
 								if (features.chain === true) {
 									chained.push(weeScriptRoot + 'chain/wee.chain.dom.js');
@@ -199,7 +199,7 @@ module.exports = function(grunt) {
 							}
 
 							if (features.events === true) {
-								core.push(weeScriptRoot + 'wee.events.js');
+								coreScript.push(weeScriptRoot + 'wee.events.js');
 
 								if (features.chain === true) {
 									chained.push(weeScriptRoot + 'chain/wee.chain.events.js');
@@ -207,32 +207,31 @@ module.exports = function(grunt) {
 							}
 
 							if (features.history === true) {
-								core.push(weeScriptRoot + 'wee.history.js');
+								coreScript.push(weeScriptRoot + 'wee.history.js');
 							}
 
 							if (features.routes === true) {
-								core.push(weeScriptRoot + 'wee.routes.js');
+								coreScript.push(weeScriptRoot + 'wee.routes.js');
 							}
 
 							if (features.screen === true) {
-								core.push(weeScriptRoot + 'wee.screen.js');
+								coreScript.push(weeScriptRoot + 'wee.screen.js');
 							}
 
 							if (features.touch === true) {
-								core.push(weeScriptRoot + 'wee.touch.js');
+								coreScript.push(weeScriptRoot + 'wee.touch.js');
 							}
 
 							if (features.view === true) {
-								core.push(weeScriptRoot + 'wee.view.js');
-								core.push(weeScriptRoot + 'wee.view.diff.js');
+								coreScript.push(weeScriptRoot + 'wee.view.js');
+								coreScript.push(weeScriptRoot + 'wee.view.diff.js');
 
 								if (features.chain === true) {
 									chained.push(weeScriptRoot + 'chain/wee.chain.view.js');
 								}
 							}
 
-							moduleScript = core.concat(chained)
-								.concat(moduleScript);
+							coreScript = coreScript.concat(chained);
 						}
 
 						// Compile additional script
@@ -406,18 +405,87 @@ module.exports = function(grunt) {
 						// Add script paths to uglify
 						config.script.build = config.script.build.concat(moduleScript);
 					} else {
-						// Create module script compile task
-						obj[name] = {
-							files: [{
-								dest: config.paths.module + name + '/script.min.js',
-								src: moduleScript
-							}]
-						};
+						var tasks = [];
 
-						if (module.namespace) {
-							obj[name].options = {
-								wrap: module.namespace
+						// Process core script compilation
+						if (coreScript.length) {
+							obj[name + '-core'] = {
+								files: [{
+									dest: config.paths.temp + name + '-core.min.js',
+									src: coreScript
+								}]
 							};
+
+							if (module.namespace) {
+								obj[name + '-core'].options = {
+									wrap: module.namespace
+								};
+							}
+
+							grunt.task.run('uglify:' + name + '-core');
+
+							obj[name + '-build'] = {
+								files: [{
+									dest: config.paths.temp + name + '-build.min.js',
+									src: moduleScript
+								}]
+							};
+
+							tasks.push('uglify:' + name + '-build');
+
+							// Concatenate module core and build
+							grunt.config.set('concat.' + name + '-concat', {
+								files: [{
+									dest: config.paths.module + name + '/script.min.js',
+									src: [
+										'<%= config.paths.temp %>' + name + '-core.min.js',
+										'<%= config.paths.temp %>' + name + '-build.min.js'
+									]
+								}]
+							});
+
+							tasks.push('concat:' + name + '-concat');
+
+							if (project.script.sourceMaps === true) {
+								grunt.config.set('uglify.' + name + '-core.options.sourceMap', true);
+								grunt.config.set('uglify.' + name + '-core.options.sourceMapIncludeSources', true);
+								grunt.config.set(
+									'uglify.' + name + '-core.options.sourceMapName',
+									path.join(config.paths.temp, name + '-core.js.map')
+								);
+
+								grunt.config.set('uglify.' + name + '-build.options.sourceMap', true);
+								grunt.config.set('uglify.' + name + '-build.options.sourceMapIncludeSources', true);
+								grunt.config.set(
+									'uglify.' + name + '-build.options.sourceMapName',
+									path.join(config.paths.temp, name + '-build.js.map')
+								);
+
+								grunt.config.set('concat.' + name + '-concat.options.sourceMap', true);
+								grunt.config.set(
+									'concat.' + name + '-concat.options.sourceMapName',
+									path.join(config.paths.jsMaps, name + '.script.js.map')
+								);
+							}
+						} else {
+							// Create module script compile task
+							obj[name] = {
+								files: [{
+									dest: config.paths.module + name + '/script.min.js',
+									src: moduleScript
+								}]
+							};
+
+							tasks.push('uglify:' + name);
+
+							if (project.script.sourceMaps === true) {
+								grunt.config.set('uglify.' + name + '.options.sourceMap', true);
+								grunt.config.set('uglify.' + name + '.options.sourceMapIncludeSources', true);
+								grunt.config.set(
+									'uglify.' + name + '.options.sourceMapName',
+									path.join(config.paths.jsMaps, name + '.script.js.map')
+								);
+							}
 						}
 
 						grunt.config.merge({
@@ -427,21 +495,21 @@ module.exports = function(grunt) {
 						// Configure script watch task
 						grunt.config.set('watch.' + name + '-script', {
 							files: moduleScript,
-							tasks: [
-								'uglify:' + name
-							]
+							tasks: tasks
 						});
 
 						// Execute script task
-						grunt.task.run('uglify:' + name);
+						grunt.task.run(tasks);
 					}
 				} else {
+					var msg = 'Missing module.json for "' + name + '" module.';
+
 					Wee.notify({
 						title: 'Module Error',
-						message: 'Missing module.json for "' + name + '" module.'
+						message: msg
 					}, 'error');
 
-					grunt.fail.fatal('Missing module.json for "' + name + '" module.');
+					grunt.fail.fatal(msg);
 				}
 			}
 		}
