@@ -149,9 +149,23 @@ module.exports = function(grunt) {
 
 		// Configure source maps
 		if (project.script.sourceMaps === true) {
-			grunt.config.set('uglify.options.sourceMap', true);
-			grunt.config.set('uglify.options.sourceMapIncludeSources', true);
-			grunt.config.set('uglify.options.sourceMapName', function(dest) {
+			grunt.config.set('uglify.core.options.sourceMap', true);
+			grunt.config.set('uglify.core.options.sourceMapIncludeSources', true);
+			grunt.config.set(
+				'uglify.core.options.sourceMapName',
+				path.join(config.paths.temp, 'core.js.map')
+			);
+
+			grunt.config.set('uglify.build.options.sourceMap', true);
+			grunt.config.set('uglify.build.options.sourceMapIncludeSources', true);
+			grunt.config.set(
+				'uglify.build.options.sourceMapName',
+				path.join(config.paths.temp, 'build.js.map')
+			);
+
+			grunt.config.set('uglify.lib.options.sourceMap', true);
+			grunt.config.set('uglify.lib.options.sourceMapIncludeSources', true);
+			grunt.config.set('uglify.lib.options.sourceMapName', function(dest) {
 				var scriptRoot = path.normalize(config.paths.js),
 					moduleRoot = path.normalize(config.paths.module);
 				dest = path.normalize(dest)
@@ -163,6 +177,12 @@ module.exports = function(grunt) {
 
 				return path.join(config.paths.jsMaps, dest + '.js.map');
 			});
+
+			grunt.config.set('concat.script.options.sourceMap', true);
+			grunt.config.set(
+				'concat.script.options.sourceMapName',
+				path.join(config.paths.jsMaps, 'script.js.map')
+			);
 		}
 	});
 };

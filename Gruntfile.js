@@ -7,7 +7,7 @@
 		var LessCssClean = require('less-plugin-clean-css'),
 			rootPath = '../../';
 
-		global.version = '3.3.0';
+		global.version = '3.3.1';
 
 		global.bs = require('browser-sync').create();
 		global.fs = require('fs-extra');
@@ -74,13 +74,18 @@
 						wrap: '<%= config.script.namespace %>'
 					},
 					files: [{
-						dest: '<%= config.paths.js %>script.min.js',
+						dest: '<%= config.paths.temp %>core.min.js',
 						src: [
 							'<%= config.script.core %>',
 							'<%= config.paths.temp %>global.js',
-							'<%= config.paths.temp %>views.js',
-							'<%= config.script.build %>'
+							'<%= config.paths.temp %>views.js'
 						]
+					}]
+				},
+				build: {
+					files: [{
+						dest: '<%= config.paths.temp %>build.min.js',
+						src: '<%= config.script.build %>'
 					}]
 				},
 				lib: {
@@ -99,6 +104,15 @@
 				}
 			},
 			concat: {
+				script: {
+					files: [{
+						dest: '<%= config.paths.js %>script.min.js',
+						src: [
+							'<%= config.paths.temp %>core.min.js',
+							'<%= config.paths.temp %>build.min.js'
+						]
+					}]
+				},
 				style: {
 					dest: '<%= config.paths.css %>style.min.css',
 					src: '<%= config.style.concat %>'
@@ -151,13 +165,13 @@
 						'notify:images'
 					]
 				},
-				scriptCore: {
+				scriptBuild: {
 					files: [
-						'<%= config.script.build %>',
-						'<%= config.script.core %>'
+						'<%= config.script.build %>'
 					],
 					tasks: [
-						'uglify:core',
+						'uglify:build',
+						'concat:script',
 						'notify:script'
 					]
 				},
@@ -256,6 +270,7 @@
 					tasks: [
 						'loadViews',
 						'uglify:core',
+						'concat:script',
 						'notify:script'
 					]
 				},
@@ -321,6 +336,8 @@
 			'loadViews',
 			'makeViews',
 			'uglify:core',
+			'uglify:build',
+			'concat:script',
 			'uglify:lib',
 			'imagemin',
 			'syncDirectory:fonts',
@@ -338,6 +355,8 @@
 			'loadViews',
 			'makeViews',
 			'uglify:core',
+			'uglify:build',
+			'concat:script',
 			'uglify:lib',
 			'imagemin',
 			'syncDirectory:fonts',
