@@ -20,9 +20,9 @@ module.exports = function(grunt) {
 		}
 
 		// Find module view templates
-		config.modules.forEach(function(name) {
-			var autoload = config.autoload.indexOf(name) !== -1,
-				namespace = config.namespaces[name];
+		for (var name in config.modules) {
+			var autoload = config.modules[name].autoload,
+				namespace = config.modules[name].namespace;
 
 			if (autoload) {
 				// Autoloading, so point to the main data object
@@ -54,10 +54,11 @@ module.exports = function(grunt) {
 				);
 
 				// Trigger the module build
-				grunt.task.run('uglify:' + name + '-build');
-				grunt.task.run('concat:' + name + '-concat');
+				config.modules[name].tasks.forEach(function(task) {
+					grunt.task.run(task);
+				});
 			}
-		});
+		};
 
 		if (Object.keys(data).length) {
 			// JSON encode and inject templates

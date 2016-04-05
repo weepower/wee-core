@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 		}
 
 		// Find module view templates
-		config.modules.forEach(function(name) {
+		for (var name in config.modules) {
 			var root = config.paths.moduleSource + name;
 			matches = glob.sync(root + '/core/js/views/**/*.html', {
 				ignore: root + '/core/js/views/load/**/*'
@@ -53,6 +53,6 @@ module.exports = function(grunt) {
 					);
 				});
 			}
-		});
+		};
 	});
 };

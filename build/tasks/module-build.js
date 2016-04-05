@@ -34,11 +34,11 @@ module.exports = function(grunt) {
 						namespaceClose = '';
 
 					// Push into model list
-					config.modules.push(name);
-
-					if (module.autoload) {
-						config.autoload.push(name);
-					}
+					config.modules[name] = {
+						autoload: module.autoload === true,
+						namespace: false,
+						tasks: false
+					};
 
 					// Set module variables
 					vars.moduleName = name;
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
 							module.namespace = module.script.core.namespace;
 						}
 
-						config.namespaces[name] = module.namespace;
+						config.modules[name].namespace = module.namespace;
 
 						// Include Core if needed
 						if (! module.autoload && module.script.core && module.script.core.enable) {
@@ -451,6 +451,11 @@ module.exports = function(grunt) {
 
 							tasks.push('concat:' + name + '-concat');
 
+							config.modules[name].tasks = [
+								'uglify:' + name + '-build',
+								'concat:' + name + '-concat'
+							];
+
 							if (project.script.sourceMaps === true) {
 								grunt.config.set('uglify.' + name + '-core.options.sourceMap', true);
 								grunt.config.set('uglify.' + name + '-core.options.sourceMapIncludeSources', true);
@@ -482,6 +487,10 @@ module.exports = function(grunt) {
 							};
 
 							tasks.push('uglify:' + name);
+
+							config.modules[name].tasks = [
+								'uglify:' + name
+							];
 
 							if (project.script.sourceMaps === true) {
 								grunt.config.set('uglify.' + name + '.options.sourceMap', true);

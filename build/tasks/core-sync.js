@@ -35,9 +35,9 @@ module.exports = function(grunt) {
 			});
 
 			// Sync module files
-			config.modules.forEach(function(name) {
+			for (var name in config.modules) {
 				fs.removeSync(config.paths.module + name + '/' + modulePath);
-			});
+			}
 
 			files = glob.sync(
 				config.paths.moduleSource +
