@@ -122,6 +122,7 @@ module.exports = function(grunt) {
 
 					module.style = module.style || {};
 					module.script = module.script || {};
+					module.namespace = 'Wee';
 
 					if (module.script) {
 						// Set global data variables
@@ -158,15 +159,18 @@ module.exports = function(grunt) {
 							});
 						}
 
+						// Set module namespace
+						if (module.script.core && module.script.core.namespace) {
+							module.namespace = module.script.core.namespace;
+						}
+
+						config.namespaces[name] = module.namespace;
+
 						// Include Core if needed
 						if (! module.autoload && module.script.core && module.script.core.enable) {
 							var features = module.script.core.features,
 								weeScriptRoot = config.paths.wee + 'js/',
 								chained = [];
-
-							module.namespace = module.script.core.namespace ?
-								module.script.core.namespace :
-								'Wee';
 
 							coreScript.push(weeScriptRoot + 'wee.js');
 

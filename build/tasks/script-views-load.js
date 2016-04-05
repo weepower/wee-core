@@ -21,7 +21,8 @@ module.exports = function(grunt) {
 
 		// Find module view templates
 		config.modules.forEach(function(name) {
-			var autoload = config.autoload.indexOf(name) !== -1;
+			var autoload = config.autoload.indexOf(name) !== -1,
+				namespace = config.namespaces[name];
 
 			if (autoload) {
 				// Autoloading, so point to the main data object
@@ -49,7 +50,7 @@ module.exports = function(grunt) {
 				// JSON encode and create module view temp file
 				fs.writeFileSync(
 					config.paths.temp + 'moduleView-' + name + '.js',
-					'Wee.view.addView(' + JSON.stringify(moduleData) + ');'
+					namespace + '.view.addView(' + JSON.stringify(moduleData) + ');'
 				);
 
 				// Trigger the module build
