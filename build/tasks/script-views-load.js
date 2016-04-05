@@ -54,7 +54,8 @@ module.exports = function(grunt) {
 				);
 
 				// Trigger the module build
-				grunt.task.run('uglify:' + name);
+				grunt.task.run('uglify:' + name + '-build');
+				grunt.task.run('concat:' + name + '-concat');
 			}
 		});
 
