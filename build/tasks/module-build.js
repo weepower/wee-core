@@ -409,11 +409,12 @@ module.exports = function(grunt) {
 						// Add script paths to uglify
 						config.script.build = config.script.build.concat(moduleScript);
 					} else {
-						var tasks = [];
+						var tasks = [],
+							scriptObj = {};
 
 						// Process core script compilation
 						if (coreScript.length) {
-							obj[name + '-core'] = {
+							scriptObj[name + '-core'] = {
 								files: [{
 									dest: config.paths.temp + name + '-core.min.js',
 									src: coreScript
@@ -421,14 +422,14 @@ module.exports = function(grunt) {
 							};
 
 							if (module.namespace) {
-								obj[name + '-core'].options = {
+								scriptObj[name + '-core'].options = {
 									wrap: module.namespace
 								};
 							}
 
 							grunt.task.run('uglify:' + name + '-core');
 
-							obj[name + '-build'] = {
+							scriptObj[name + '-build'] = {
 								files: [{
 									dest: config.paths.temp + name + '-build.min.js',
 									src: moduleScript
@@ -473,7 +474,7 @@ module.exports = function(grunt) {
 							}
 						} else {
 							// Create module script compile task
-							obj[name] = {
+							scriptObj[name] = {
 								files: [{
 									dest: config.paths.module + name + '/script.min.js',
 									src: moduleScript
@@ -493,7 +494,7 @@ module.exports = function(grunt) {
 						}
 
 						grunt.config.merge({
-							uglify: obj
+							uglify: scriptObj
 						});
 
 						// Configure script watch task
