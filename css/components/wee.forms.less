@@ -1,4 +1,4 @@
-.wee-form () when (@formEnabled = true) {
+.wee-form (@formEnabled: true) when (@formEnabled = true) {
 	form {
 		.spaced();
 	}
@@ -166,4 +166,4 @@
 	.input-placeholder();
 }
 
-.wee-form();
+.wee-form(@formEnabled);

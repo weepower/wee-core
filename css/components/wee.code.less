@@ -1,4 +1,4 @@
-.wee-code () when (@codeEnabled = true) {
+.wee-code (@codeEnabled: true) when (@codeEnabled = true) {
 	code,
 	kbd,
 	samp {
@@ -12,9 +12,9 @@
 	}
 }
 
-.wee-code();
+.wee-code(@codeEnabled);
 
-.wee-code-block () when (@codeEnabled = true) {
+.wee-code-block (@codeEnabled: true) when (@codeEnabled = true) {
 	pre {
 		.background(@codeBlockBackground);
 		.border(@codeBlockBorderColor);
@@ -44,4 +44,4 @@
 	}
 }
 
-.wee-code-block();
+.wee-code-block(@codeEnabled);

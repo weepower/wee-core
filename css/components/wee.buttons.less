@@ -1,4 +1,4 @@
-.wee-button () when (@buttonEnabled = true) {
+.wee-button (@buttonEnabled: true) when (@buttonEnabled = true) {
 	.rules () {
 		color: @buttonColor;
 		display: inline-block;
@@ -112,4 +112,4 @@
 	}
 }
 
-.wee-button();
+.wee-button(@buttonEnabled);

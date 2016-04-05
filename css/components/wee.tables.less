@@ -1,4 +1,4 @@
-.wee-table () when (@tableEnabled = true) {
+.wee-table (@tableEnabled: true) when (@tableEnabled = true) {
 	.rules () {
 		border-collapse: collapse;
 		border-spacing: 0;
@@ -86,4 +86,4 @@
 	}
 }
 
-.wee-table();
+.wee-table(@tableEnabled);
