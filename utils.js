@@ -183,7 +183,7 @@
 			options.icon = __dirname + '/build/img/' + (type || 'notice') + '.png';
 			options.group = 1;
 
-			if (type == 'error') {
+			if (type == 'error' || type == 'fail') {
 				options.group = 2;
 				options.sound = true;
 				options.wait = true;
@@ -194,6 +194,10 @@
 			}
 
 			notifier.notify(options);
+
+			if (type == 'fail') {
+				process.exit(1);
+			}
 		},
 
 		/**
@@ -206,6 +210,20 @@
 				reloadPaths.push(
 					path.join(config.paths.root, url)
 				);
+			}
+		},
+
+		/**
+		 * Bind additional sourcemap configs
+		 *
+		 * @param {object} grunt
+		 * @param {object} obj
+		 */
+		addMaps: function(grunt, obj) {
+			for (var key in obj) {
+				grunt.config.set(key + '.options.sourceMap', true);
+				grunt.config.set(key + '.options.sourceMapIncludeSources', true);
+				grunt.config.set(key + '.options.sourceMapName', obj[key]);
 			}
 		}
 	});
