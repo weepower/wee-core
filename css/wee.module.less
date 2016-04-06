@@ -7,39 +7,63 @@
 {{namespaceClose}}
 
 @fontPath: '{{fontPath}}';
-@import (optional, reference) '@{modulePath}{{moduleName}}/core/css/variables.less'; // Module configuration
+@import (optional, reference) '{{modulePath}}/core/css/variables.less'; // Module configuration
 
 {{imports}}
-{{responsive}}
 
-.wee-{{moduleName}}-responsive () when (@responsive = true) and (@responsiveEnabled = true) {
+.wee-{{moduleName}}-responsive () when (@responsiveEnabled = true) {
 	.check () when not (@mobileLandscapeWidth = false) {
 		@media (min-width: (@mobileLandscapeWidth)) {
-			.wee-{{moduleName}}-mobile-landscape();
+			html {
+				font-family: '"2"';
+			}
+
+			@import (optional) '{{modulePath}}/core/css/breakpoints/mobile-landscape.less';
+			@import (optional) '{{modulePath}}/css/breakpoints/mobile-landscape.less';
 		}
 	}
 
 	.check () when not (@tabletPortraitWidth = false) {
 		@media (min-width: (@tabletPortraitWidth)) {
-			.wee-{{moduleName}}-tablet-portrait();
+			html {
+				font-family: '"3"';
+			}
+
+			@import (optional) '{{modulePath}}/core/css/breakpoints/tablet-portrait.less';
+			@import (optional) '{{modulePath}}/css/breakpoints/tablet-portrait.less';
 		}
 	}
 
 	.check () when not (@desktopSmallWidth = false) {
 		@media (min-width: (@desktopSmallWidth)) {
-			.wee-{{moduleName}}-desktop-small();
+			html {
+				font-family: '"4"';
+			}
+
+			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-small.less';
+			@import (optional) '{{modulePath}}/css/breakpoints/desktop-small.less';
 		}
 	}
 
 	.check () when not (@desktopMediumWidth = false) {
 		@media (min-width: (@desktopMediumWidth)) {
-			.wee-{{moduleName}}-desktop-medium();
+			html {
+				font-family: '"5"';
+			}
+
+			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-medium.less';
+			@import (optional) '{{modulePath}}/css/breakpoints/desktop-medium.less';
 		}
 	}
 
 	.check () when not (@desktopLargeWidth = false) {
 		@media (min-width: (@desktopLargeWidth)) {
-			.wee-{{moduleName}}-desktop-large();
+			html {
+				font-family: '"6"';
+			}
+
+			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-large.less';
+			@import (optional) '{{modulePath}}/css/breakpoints/desktop-large.less';
 		}
 	}
 
