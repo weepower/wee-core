@@ -175,6 +175,16 @@
 						'notify:script'
 					]
 				},
+				scriptCore: {
+					files: [
+						'js/**/*.js'
+					],
+					tasks: [
+						'uglify:core',
+						'concat:script',
+						'notify:script'
+					]
+				},
 				scriptLib: {
 					files: [
 						'<%= config.paths.jsSource %>lib**/*.js',
@@ -187,7 +197,7 @@
 				},
 				styleCore: {
 					files: [
-						'wee/css/**/*.less',
+						'css/**/*.less',
 						'<%= config.paths.cssSource %>custom/**/*.less'
 					],
 					tasks: [
