@@ -110,9 +110,11 @@
 						resp += tags[root].i + (helper || '');
 					} else if (exists) {
 						resp += tags[root].o.pop();
+						tags[root].i--;
+						depth.pop();
 					}
 				} else if (depth.length) {
-					tag = depth.pop();
+					tag = depth.slice(-1)[0];
 					resp += ':' + tag + '%' + tags[tag].i;
 				}
 
