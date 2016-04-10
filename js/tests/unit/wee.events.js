@@ -3,9 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('js/wee');
-	require('js/wee.dom');
-	require('js/wee.events');
+	require('temp/core.min.js');
 
 	registerSuite({
 		name: 'Events',

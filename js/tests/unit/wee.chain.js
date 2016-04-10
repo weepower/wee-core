@@ -4,16 +4,7 @@ define(function(require) {
 		$el,
 		el;
 
-	require('js/wee');
-	require('js/wee.chain');
-	require('js/wee.animate');
-	require('js/wee.dom');
-	require('js/wee.events');
-	require('js/wee.view');
-	require('js/chain/wee.chain.animate');
-	require('js/chain/wee.chain.dom');
-	require('js/chain/wee.chain.events');
-	require('js/chain/wee.chain.view');
+	require('temp/core.min.js');
 
 	registerSuite({
 		name: 'Chain',
@@ -937,15 +928,15 @@ define(function(require) {
 			//		);
 			//	}
 			//},
-
-			remove: function() {
-				$el.remove();
-
-				assert.strictEqual($('#wee').length, 0,
-					'Element was not removed successfully'
-				);
-			},
-
+			//
+			// remove: function() {
+			// 	$el.remove();
+			//
+			// 	assert.strictEqual($('#wee').length, 0,
+			// 		'Element was not removed successfully'
+			// 	);
+			// },
+			//
 			//'removeAttr': function() {
 			//	$el.attr('data-test', 'value');
 			//
@@ -977,7 +968,7 @@ define(function(require) {
 					assert.strictEqual($el.attr('class'), 'js-wee',
 						'Multiple classes were not removed successfully'
 					);
-				},
+				}
 			},
 
 			replaceWith: function() {
@@ -1253,13 +1244,13 @@ define(function(require) {
 				}
 			},
 
-			//wrap: function() {
-			//	$el.wrap('<div id="test"></div>');
+			// wrap: function() {
+			// 	$el.wrap('<div id="test"></div>');
 			//
-			//	assert.strictEqual($el.parent('#test').length, 1,
-			//		'Element was not wrapped successfully'
-			//	);
-			//},
+			// 	assert.strictEqual($el.parent('#test').length, 1,
+			// 		'Element was not wrapped successfully'
+			// 	);
+			// },
 
 			wrapInner: function() {
 				$el.wrapInner('<div id="test"></div>');

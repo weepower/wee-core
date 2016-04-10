@@ -18,9 +18,7 @@ define({
 		'js/tests/unit/wee.touch',
 		'js/tests/unit/wee.view'
 	],
-	environments: [
-		{
-			browserName: 'chrome'
-		}
-	]
+	environments: [{
+		browserName: 'chrome'
+	}]
 });

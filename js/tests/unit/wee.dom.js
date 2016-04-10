@@ -2,8 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('js/wee');
-	require('js/wee.dom');
+	require('temp/core.min.js');
 
 	registerSuite({
 		name: 'DOM',
@@ -232,14 +231,12 @@ define(function(require) {
 		},
 
 		'$clone': function() {
-			Wee.$html('#container',
-				'<h1></h1>'
-			);
+			Wee.$html('#container', '<h1 id="inner"></h1>');
 
-			Wee.$append('#container', Wee.$clone('h1'));
+			Wee.$append('#container', Wee.$clone('#inner'));
 
 			assert.strictEqual(Wee.$html('#container'),
-				'<h1></h1><h1></h1>',
+				'<h1 id="inner"></h1><h1 id="inner"></h1>',
 				'Element was not cloned successfully'
 			);
 		},

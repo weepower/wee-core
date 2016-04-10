@@ -2,8 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('js/wee');
-	require('js/wee.data');
+	require('temp/core.min.js');
 
 	registerSuite({
 		name: 'Data',

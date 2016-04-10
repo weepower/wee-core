@@ -3,8 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('js/wee');
-	require('js/wee.screen');
+	require('temp/core.min.js');
 
 	registerSuite({
 		name: 'Screen',
