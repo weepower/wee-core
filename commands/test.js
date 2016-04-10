@@ -37,7 +37,7 @@
 					console.log('Execute "chromedriver --port=4444 --url-base=wd/hub" to start the process.\n');
 
 					console.log(
-						chalk.bgRed('To view the browser client run "grunt static" and open the following:')
+						chalk.bgRed('To view the browser client run "wee run:static" and open the following:')
 					);
 					console.log(protocol + '://localhost:' + port + '/$root/node_modules/intern/client.html?config=' + testPath + '&initialBaseUrl=/$root');
 				} else {
