@@ -2,6 +2,7 @@
 	'use strict';
 
 	var events = [],
+		id = 0,
 		bound,
 		current,
 
@@ -23,26 +24,27 @@
 		 * @param {string} [conf.namespace] - namespace the event
 		 */
 		_addRule = function(conf) {
-			if (conf.callback) {
-				// Only setup watching when enabled
-				if (conf.watch !== false) {
-					events.push(conf);
+			// Attach unique identifier
+			conf.i = id++;
 
-					// Only attach event once
-					if (! bound) {
-						var run = _run.bind(this, false, 0);
-						bound = 1;
-						events = [conf];
+			// Only setup watching when enabled
+			if (conf.watch !== false) {
+				events.push(conf);
 
-						// Attach resize event
-						W._win.addEventListener('resize', run);
-					}
+				// Only attach event once
+				if (! bound) {
+					var run = _run.bind(this, false, 0);
+					bound = 1;
+					events = [conf];
+
+					// Attach resize event
+					W._win.addEventListener('resize', run);
 				}
+			}
 
-				// Evaluate rule immediately if not disabled
-				if (conf.init !== false) {
-					_run(true, [conf]);
-				}
+			// Evaluate rule immediately if not disabled
+			if (conf.init !== false) {
+				_run(true, [conf]);
 			}
 		},
 
@@ -80,7 +82,9 @@
 
 						// Disable future execution if once
 						if (evt.once) {
-							events.splice(i, 1);
+							events = events.filter(function(obj) {
+								return obj.i !== evt.i;
+							});
 						}
 					}
 				}
@@ -144,10 +148,9 @@
 		 */
 		map: function(rules) {
 			var sets = W.$toArray(rules),
-				i = 0;
+				i = sets.length;
 
-			// Delay check to prevent incorrect IE value
-			for (; i < sets.length; i++) {
+			while (i--) {
 				_addRule(sets[i]);
 			}
 		},
@@ -165,11 +168,9 @@
 		 * @param {string} [namespace] - remove screen events in this namespace
 		 */
 		reset: function(namespace) {
-			events = namespace ?
-				events.filter(function(el) {
-					return el.namespace !== namespace;
-				}) :
-				[];
+			events = events.filter(function(obj) {
+				return obj.namespace !== namespace;
+			});
 		}
 	};
 })(Wee);
