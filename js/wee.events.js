@@ -37,8 +37,13 @@
 							fn = obj[key],
 							evt = evts[i],
 							ev = evt,
+							parts = ev.split('.'),
 							f = fn;
-						evt = evt.split('.')[0];
+						evt = parts[0];
+
+						if (parts.length == 1 && conf.namespace) {
+							ev += '.' + conf.namespace;
+						}
 
 						// Prepend element to callback arguments if necessary
 						if (conf.args[1] !== el) {
