@@ -193,7 +193,7 @@
 								tag: tag,
 								empty: empty,
 								index: index
-							}, _parseArgs(f[1], val));
+							}, _parseArgs(f[1], data));
 
 							if (rv === false) {
 								return rv;
