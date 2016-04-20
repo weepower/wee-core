@@ -7,7 +7,7 @@
 		var LessCssClean = require('less-plugin-clean-css'),
 			rootPath = '../../';
 
-		global.version = '3.3.1';
+		global.version = '3.4.0';
 
 		global.bs = require('browser-sync').create();
 		global.fs = require('fs-extra');
@@ -187,8 +187,8 @@
 				},
 				scriptLib: {
 					files: [
-						'<%= config.paths.jsSource %>lib**/*.js',
-						'!<%= config.paths.jsSource %>lib**/*.min.js'
+						'<%= config.paths.jsSource %>lib/**/*.js',
+						'!<%= config.paths.jsSource %>lib/**/*.min.js'
 					],
 					tasks: [
 						'uglify:lib',
