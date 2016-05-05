@@ -56,6 +56,9 @@ module.exports = function(grunt) {
 				namespaceClose = config.style.namespaceClose || '';
 			}
 
+			// Add core styling
+			imports.push('@import (optional) "' + modulePath + '/core/css/screen.less";');
+
 			if (module.style) {
 				// Namespace mixins and reset
 				if (module.style.core && typeof module.style.core.namespace === 'string') {
@@ -103,9 +106,6 @@ module.exports = function(grunt) {
 					}
 				}
 			}
-
-			// Append core styling
-			imports.push('@import (optional) "' + modulePath + '/core/css/screen.less";');
 
 			module.style = module.style || {};
 			module.script = module.script || {};
@@ -259,6 +259,7 @@ module.exports = function(grunt) {
 					.replace('{{namespaceOpen}}', namespaceOpen)
 					.replace('{{namespaceClose}}', namespaceClose)
 					.replace('{{fontPath}}', '/' + project.paths.assets + '/modules/' + name + '/fonts/')
+					.replace('{{imgPath}}', '/' + project.paths.assets + '/modules/' + name + '/img/')
 					.replace('{{imports}}', imports.join('\n'))
 			);
 
