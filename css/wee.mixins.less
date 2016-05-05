@@ -920,7 +920,13 @@
 \*------------------------------------*/
 
 .content (@value: ''; ...) {
-	content: ~"'@{value}'";
+	.check () when (@value = none) {
+		content: none;
+	}
+	.check () when not (@value = false) {
+		content: ~"'@{value}'";
+	}
+	.check();
 }
 .content (@value; @font; ...) {
 	font-family: @font;
