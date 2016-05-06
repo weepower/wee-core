@@ -23,7 +23,7 @@ var Wee;
 				range,
 
 				/**
-				 * Determine data storage root and key
+				 * Determine data storage root, key, and value
 				 *
 				 * @private
 				 * @param {object} obj
@@ -32,23 +32,41 @@ var Wee;
 				 * @returns {Array} value
 				 */
 				_storage = function(obj, key, create) {
-					var data = obj;
+					var data = obj,
+						val = U;
 
-					if (typeof key == 'string') {
-						var segs = key.split('.');
-						key = segs.pop();
+					if (key !== U) {
 						data = data.$;
 
-						segs.forEach(function(key) {
-							data = data.hasOwnProperty(key) ?
-								data[key] :
-								(create ? data[key] = {} : []);
-						});
+						if (typeof key == 'string') {
+							var segs = key.split('.');
+							key = segs.pop();
+
+							segs.forEach(function(key) {
+								data = data.hasOwnProperty(key) ?
+									data[key] :
+									(create ? data[key] = {} : []);
+							});
+						}
 					} else {
 						key = '$';
 					}
 
-					return [data, key, _copy(data[key])];
+					if (typeof key == 'number' && Array.isArray(data)) {
+						var arr = data.slice(key);
+
+						if (arr.length) {
+							val = arr[0];
+						}
+					} else {
+						key = key.toString();
+
+						if (data.hasOwnProperty(key)) {
+							val = data[key];
+						}
+					}
+
+					return [data, key, _copy(val)];
 				},
 
 				/**
@@ -77,23 +95,19 @@ var Wee;
 				 */
 				_get = function(obj, obs, key, fallback, set, options) {
 					var stored = _storage(obj, key),
-						data = stored[0];
+						resp = stored[2];
 
-					if (key) {
-						if (data.hasOwnProperty(stored[1])) {
-							return data[stored[1]];
-						}
-
-						if (fallback !== U) {
-							return set ?
-								_set(obj, obs, key, fallback, options) :
-								_val(fallback, options);
-						}
-
-						return null;
+					if (resp !== U) {
+						return resp;
 					}
 
-					return data.$;
+					if (fallback !== U) {
+						return set ?
+							_set(obj, obs, key, fallback, options) :
+							_val(fallback, options);
+					}
+
+					return null;
 				},
 
 				/**
@@ -102,8 +116,8 @@ var Wee;
 				 * @private
 				 */
 				_has = function(obj, key, val) {
-					var data = _storage(obj, key),
-						resp = data[0][data[1]];
+					var stored = _storage(obj, key),
+						resp = stored[2];
 
 					if (val !== U) {
 						if (W.$isObject(resp)) {
@@ -128,32 +142,34 @@ var Wee;
 				_add = function(type, obj, obs, key, val, prepend) {
 					var stored = _storage(obj, key, true),
 						root = stored[0],
-						seg = stored[1];
-					root[seg] = root[seg] || [];
+						seg = stored[1],
+						resp = stored[2];
 
 					if (seg == '$') {
 						prepend = val;
 						val = key;
 					}
 
-					if (! Array.isArray(root[seg])) {
-						root[seg] = [];
+					if (! Array.isArray(resp)) {
+						resp = [];
 					}
 
 					if (type == 1) {
-						root[seg] = prepend ?
-							W.$toArray(val).concat(root[seg]) :
-							root[seg].concat(val);
+						resp = prepend ?
+							W.$toArray(val).concat(resp) :
+							resp.concat(val);
 					} else {
 						prepend ?
-							root[seg].unshift(val) :
-							root[seg].push(val);
+							resp.unshift(val) :
+							resp.push(val);
 					}
 
-					_trigger(obj, obs, key, stored[2], root[seg],
+					_trigger(obj, obs, key, resp, root[seg],
 						type == 1 ? 'concat' : 'push');
 
-					return root[seg];
+					root[seg] = resp;
+
+					return resp;
 				},
 
 				/**
@@ -178,14 +194,14 @@ var Wee;
 					var stored = _storage(obj, key),
 						root = stored[0],
 						seg = stored[1],
-						resp = root[seg];
+						resp = stored[2];
 
 					if (val !== U) {
 						if (resp !== U) {
 							if (W.$isObject(resp)) {
-								delete root[key];
+								delete resp[key];
 							} else if (typeof resp == 'string' && resp === val) {
-								delete root[seg];
+								resp = null;
 							} else {
 								var i = resp.indexOf(val);
 
@@ -195,12 +211,14 @@ var Wee;
 							}
 						}
 					} else {
-						isNaN(seg) ?
-							delete root[seg] :
-							root.splice(seg, 1);
+						W.$isObject(resp) ?
+							delete resp[seg] :
+							resp.splice(seg, 1);
 					}
 
-					_trigger(obj, obs, key, stored[2], root[seg], 'drop');
+					_trigger(obj, obs, key, resp, root[seg], 'drop');
+
+					root[seg] = resp;
 
 					return val !== U ? root[seg] : root;
 				},
