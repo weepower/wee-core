@@ -31,21 +31,25 @@ module.exports = function(grunt) {
 
 			server.middleware = function(req, res, next) {
 				if (req.headers && req.headers.accept && req.headers.accept.match(/^text\/html/)) {
-					var _write = res.write;
+					var write = res.write,
+						injected = false;
 
 					res.setHeader(
 						'Cache-Control',
 						'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0'
 					);
 
-					res.write = function(data) {
-						_write.call(
-							res,
-							data.toString().replace(
+					res.write = function(data, encoding) {
+						if (! injected) {
+							data = data.toString(encoding).replace(
 								/<\/body>/i,
 								inject.join('') + '</body>'
-							)
-						);
+							);
+
+							injected = true;
+						}
+
+						write.call(res, data, encoding);
 					};
 				}
 
