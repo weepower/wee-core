@@ -34,7 +34,7 @@
 
 			if (! el.href ||
 				el.target == '_blank' ||
-				! /https?:/.test(el.protocol) ||
+				! /https?:/.test(el.href) ||
 				el.hasAttribute('download') ||
 				el.hasAttribute('data-static') ||
 				(host && host != loc.host) ||
@@ -302,7 +302,7 @@
 		 * @param {boolean} [options.push=true]
 		 * @param {object} [options.request]
 		 * @param {boolean} [options.run=true]
-		 * @param {($|HTMLElement|number|string)} [options.scrollTop]
+		 * @param {($|boolean|HTMLElement|number|string)} [options.scrollTop]
 		 * @param {string} [options.title]
 		 */
 		go: function(options) {
