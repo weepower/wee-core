@@ -33,26 +33,25 @@ var Wee;
 				 */
 				_storage = function(obj, key, create) {
 					var data = obj,
-						val = U;
+						type = W.$type(key),
+						num = type == 'number',
+						val;
 
-					if (key !== U) {
+					if (num || type == 'string') {
+						var segs = key.toString().split('.');
+						key = segs.pop();
 						data = data.$;
 
-						if (typeof key == 'string') {
-							var segs = key.split('.');
-							key = segs.pop();
-
-							segs.forEach(function(key) {
-								data = data.hasOwnProperty(key) ?
-									data[key] :
-									(create ? data[key] = {} : []);
-							});
-						}
+						segs.forEach(function(key) {
+							data = data.hasOwnProperty(key) ?
+								data[key] :
+								(create ? data[key] = {} : []);
+						});
 					} else {
 						key = '$';
 					}
 
-					if (typeof key == 'number' && Array.isArray(data)) {
+					if (num && Array.isArray(data)) {
 						var arr = data.slice(key);
 
 						if (arr.length) {
@@ -151,25 +150,23 @@ var Wee;
 					}
 
 					if (! Array.isArray(resp)) {
-						resp = [];
+						root[seg] = [];
 					}
 
 					if (type == 1) {
-						resp = prepend ?
-							W.$toArray(val).concat(resp) :
-							resp.concat(val);
+						root[seg] = prepend ?
+							W.$toArray(val).concat(root[seg]) :
+							root[seg].concat(val);
 					} else {
 						prepend ?
-							resp.unshift(val) :
-							resp.push(val);
+							root[seg].unshift(val) :
+							root[seg].push(val);
 					}
 
 					_trigger(obj, obs, key, resp, root[seg],
 						type == 1 ? 'concat' : 'push');
 
-					root[seg] = resp;
-
-					return resp;
+					return root[seg];
 				},
 
 				/**
@@ -194,31 +191,30 @@ var Wee;
 					var stored = _storage(obj, key),
 						root = stored[0],
 						seg = stored[1],
-						resp = stored[2];
+						resp = stored[2],
+						arr = Array.isArray(root);
 
 					if (val !== U) {
 						if (resp !== U) {
-							if (W.$isObject(resp)) {
-								delete resp[key];
-							} else if (typeof resp == 'string' && resp === val) {
-								resp = null;
-							} else {
+							if (arr) {
 								var i = resp.indexOf(val);
 
 								if (i > -1) {
-									resp.splice(i, 1);
+									root[seg].splice(i, 1);
 								}
+							} else if (resp === val) {
+								delete root[seg];
+							} else {
+								delete root[seg][val];
 							}
 						}
 					} else {
-						W.$isObject(resp) ?
-							delete resp[seg] :
-							resp.splice(seg, 1);
+						arr ?
+							root.splice(seg, 1) :
+							delete root[seg];
 					}
 
 					_trigger(obj, obs, key, resp, root[seg], 'drop');
-
-					root[seg] = resp;
 
 					return val !== U ? root[seg] : root;
 				},
