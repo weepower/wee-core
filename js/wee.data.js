@@ -193,7 +193,7 @@
 					conf.data :
 					conf.type == 'json' ?
 						JSON.stringify(conf.data) :
-						$.serialize(conf.data);
+						W.$serialize(conf.data);
 			}
 
 			x.open(method, conf.url, true);
