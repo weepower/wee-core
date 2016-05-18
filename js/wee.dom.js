@@ -1,3 +1,4 @@
+
 /* jshint maxdepth: 4 */
 
 (function(W, U) {
@@ -562,7 +563,7 @@
 		 * Get or set the height of each matching selection
 		 *
 		 * @param {($|HTMLElement|string)} target
-		 * @param {(function|number|string)} value
+		 * @param {(boolean|function|number|string)} value
 		 * @returns {number}
 		 */
 		$height: function(target, value) {
@@ -581,8 +582,8 @@
 
 					if (value === true) {
 						var style = getComputedStyle(el);
-						height += parseInt(style.marginTop) +
-							parseInt(style.marginBottom);
+						height += parseFloat(style.marginTop) +
+							parseFloat(style.marginBottom);
 					}
 				}
 
@@ -1302,7 +1303,7 @@
 		 * Get or set the width of each matching selection
 		 *
 		 * @param {($|HTMLElement|string)} target
-		 * @param {(function|number|string)} value
+		 * @param {(boolean|function|number|string)} value
 		 * @returns {number}
 		 */
 		$width: function(target, value) {
@@ -1321,8 +1322,8 @@
 
 					if (value === true) {
 						var style = getComputedStyle(el);
-						width += parseInt(style.marginLeft) +
-							parseInt(style.marginRight);
+						width += parseFloat(style.marginLeft) +
+							parseFloat(style.marginRight);
 					}
 				}
 
