@@ -42,7 +42,9 @@
 		 * @returns {boolean}
 		 */
 		_success = function(x, conf) {
-			var resp = x.responseText,
+			var resp = ! conf.responseType || conf.responseType == 'text' ?
+					x.responseText :
+					x.response,
 				exec = {
 					args: conf.args.slice(0),
 					scope: conf.scope
@@ -125,6 +127,7 @@
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
 		 * @param {string} [options.method=get] - request verb
 		 * @param {boolean} [options.processData=true] - post data in the body
+		 * @param {string} [options.responseType] - set the type of the response
 		 * @param {string} [options.root=''] - prepended request path
 		 * @param {object} [options.scope] - callback scope
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
@@ -233,6 +236,11 @@
 				}
 			}
 
+			// Set response type
+			if (conf.responseType) {
+				x.responseType = conf.responseType;
+			}
+
 			x.send(send);
 		},
 
@@ -257,4 +265,6 @@
 			return url;
 		}
 	};
+
+	W.fetch = W.data;
 })(Wee);
