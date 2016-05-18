@@ -465,11 +465,11 @@
 				},
 				app = W.app;
 
-			fn(model);
-
 			// Create a new application controller
 			app.fn[name] = W._make(name, {}, {}, false, model);
 			app[name] = new app.fn[name]();
+
+			fn(model);
 
 			W.$extend(app[name], {
 				/**
