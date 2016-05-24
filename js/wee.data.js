@@ -119,6 +119,7 @@
 		 * @param {object} options
 		 * @param {Array} [options.args] - callback arguments appended after default values
 		 * @param {(Array|function|string)} [options.complete] - callback on request completion
+		 * @param {boolean} [options.cache=true] - disable automatic cache-busting query string
 		 * @param {object} [options.data] - object to serialize and pass along with request
 		 * @param {(Array|function|string)} [options.error] - callback if request fails
 		 * @param {object} [options.headers] - request headers
