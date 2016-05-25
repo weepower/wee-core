@@ -65,7 +65,7 @@ var Wee;
 						}
 					}
 
-					return [data, key, _copy(val)];
+					return [data, key, _copy(val), val];
 				},
 
 				/**
@@ -97,7 +97,7 @@ var Wee;
 						resp = stored[0];
 
 					if (stored[2] !== U) {
-						return resp[key];
+						return stored[3];
 					}
 
 					if (fallback !== U) {
