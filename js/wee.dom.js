@@ -1,4 +1,3 @@
-
 /* jshint maxdepth: 4 */
 
 (function(W, U) {
