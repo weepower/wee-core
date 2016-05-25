@@ -2,7 +2,7 @@
 // Licensed under Apache 2 (http://www.apache.org/licenses/LICENSE-2.0)
 // DO NOT MODIFY
 
-/* global exports */
+/* global exports, global */
 /* jshint maxdepth: 4, maxparams: 6 */
 
 var Wee;
@@ -94,10 +94,10 @@ var Wee;
 				 */
 				_get = function(obj, obs, key, fallback, set, options) {
 					var stored = _storage(obj, key),
-						resp = stored[2];
+						resp = stored[0];
 
-					if (resp !== U) {
-						return resp;
+					if (stored[2] !== U) {
+						return resp[key];
 					}
 
 					if (fallback !== U) {
@@ -116,7 +116,7 @@ var Wee;
 				 */
 				_has = function(obj, key, val) {
 					var stored = _storage(obj, key),
-						resp = stored[2];
+						resp = stored[0];
 
 					if (val !== U) {
 						if (W.$isObject(resp)) {
