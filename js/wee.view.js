@@ -130,8 +130,8 @@
 		 * @private
 		 * @param {string} str
 		 * @param {object} data
-		 * @param {object} prev
-		 * @param {object} init
+		 * @param {object} (prev)
+		 * @param {object} (init)
 		 * @returns {*}
 		 */
 		_parseArgs = function(str, data, prev, init) {
