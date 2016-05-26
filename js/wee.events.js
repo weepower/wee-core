@@ -10,7 +10,7 @@
 		 * Attach specific event logic to element
 		 *
 		 * @private
-		 * @param {Array} els
+		 * @param {(Array|HTMLElement|object|string)} els
 		 * @param {object} obj
 		 * @param {object} options
 		 */
