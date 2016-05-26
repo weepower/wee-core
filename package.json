@@ -28,7 +28,7 @@
 		"jscs": "~3.0.3",
 		"jshint": "~2.9.2",
 		"less-plugin-clean-css": "~1.5.1",
-		"node-notifier": "~4.5.0",
+		"node-notifier": "~4.6.0",
 		"remarkable": "~1.6.2"
 	},
 	"devDependencies": {
