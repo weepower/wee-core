@@ -65,7 +65,7 @@ var Wee;
 						}
 					}
 
-					return [data, key, _copy(val), val];
+					return [data, key, val];
 				},
 
 				/**
@@ -82,7 +82,7 @@ var Wee;
 
 					stored[0][seg] = data;
 
-					_trigger(obj, obs, key, stored[2], data, 'set');
+					_trigger(obj, obs, key, _copy(stored[2]), data, 'set');
 
 					return data;
 				},
@@ -93,11 +93,10 @@ var Wee;
 				 * @private
 				 */
 				_get = function(obj, obs, key, fallback, set, options) {
-					var stored = _storage(obj, key),
-						resp = stored[0];
+					var stored = _storage(obj, key);
 
 					if (stored[2] !== U) {
-						return stored[3];
+						return stored[2];
 					}
 
 					if (fallback !== U) {
@@ -142,14 +141,14 @@ var Wee;
 					var stored = _storage(obj, key, true),
 						root = stored[0],
 						seg = stored[1],
-						resp = stored[2];
+						orig = _copy(stored[2]);
 
 					if (seg == '$') {
 						prepend = val;
 						val = key;
 					}
 
-					if (! Array.isArray(resp)) {
+					if (! Array.isArray(orig)) {
 						root[seg] = [];
 					}
 
@@ -163,7 +162,7 @@ var Wee;
 							root[seg].push(val);
 					}
 
-					_trigger(obj, obs, key, resp, root[seg],
+					_trigger(obj, obs, key, orig, root[seg],
 						type == 1 ? 'concat' : 'push');
 
 					return root[seg];
@@ -191,18 +190,18 @@ var Wee;
 					var stored = _storage(obj, key),
 						root = stored[0],
 						seg = stored[1],
-						resp = stored[2],
+						orig = _copy(stored[2]),
 						arr = Array.isArray(root);
 
 					if (val !== U) {
-						if (resp !== U) {
+						if (orig !== U) {
 							if (arr) {
-								var i = resp.indexOf(val);
+								var i = orig.indexOf(val);
 
 								if (i > -1) {
 									root[seg].splice(i, 1);
 								}
-							} else if (resp === val) {
+							} else if (orig === val) {
 								delete root[seg];
 							} else {
 								delete root[seg][val];
@@ -214,7 +213,7 @@ var Wee;
 							delete root[seg];
 					}
 
-					_trigger(obj, obs, key, resp, root[seg], 'drop');
+					_trigger(obj, obs, key, orig, root[seg], 'drop');
 
 					return val !== U ? root[seg] : root;
 				},
