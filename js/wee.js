@@ -961,6 +961,17 @@ var Wee;
 				},
 
 				/**
+				 * Clone value to a new instance
+				 *
+				 * @private
+				 * @param {*} val
+				 * @returns {*}
+				 */
+				$copy: function(val) {
+					return _copy(val);
+				},
+
+				/**
 				 * Extend target object with source object(s)
 				 *
 				 * @param {(boolean|object)} deep - extend nested properties else target object
