@@ -17,7 +17,9 @@ var Wee;
 				store = {
 					$: {}
 				},
-				observe = {},
+				observe = {
+					$: {}
+				},
 				refs = {},
 				env,
 				range,
@@ -227,8 +229,17 @@ var Wee;
 					options = options || {};
 					options.fn = fn;
 
-					obs[key] = obs[key] || [];
-					obs[key].push(options);
+					obs.$[key] = obs.$[key] || [];
+					obs.$[key].push(options);
+				},
+
+				/**
+				 * Remove callback from data storage change
+				 */
+				_unobserve = function(obs, key) {
+					key === U ?
+						obs.$ = {} :
+						delete obs.$[key];
 				},
 
 				/**
@@ -237,10 +248,9 @@ var Wee;
 				 * @private
 				 */
 				_trigger = function(obj, obs, key, orig, upd, type) {
-					if (Object.keys(obs).length && (
-						type == 'trigger' ||
-						! _equals(upd, orig)
-					)) {
+					if (Object.keys(obs.$).length &&
+						(type == 'trigger' || ! _equals(upd, orig))
+					) {
 						if (typeof key != 'string') {
 							key = '';
 						}
@@ -251,11 +261,11 @@ var Wee;
 								return arr.join('.');
 							});
 
-						for (var val in obs) {
+						for (var val in obs.$) {
 							if (opts.indexOf(val) > -1 || val == '*') {
 								var data = val == '*' ? obj.$ : upd;
 
-								obs[val].forEach(function(el, i) {
+								obs.$[val].forEach(function(el, i) {
 									if (val === key || val == '*' || el.recursive) {
 										if (! el.value || _equals(el.value, data)) {
 											var args = [
@@ -274,7 +284,7 @@ var Wee;
 											});
 
 											if (el.once) {
-												obs[val].splice(i, 1);
+												obs.$[val].splice(i, 1);
 											}
 										}
 									}
@@ -806,9 +816,7 @@ var Wee;
 				 * @param {string} [key]
 				 */
 				$unobserve: function(key) {
-					key === U ?
-						observe = [] :
-						delete observe[key];
+					_unobserve(observe, key);
 				},
 
 				/**
@@ -1316,7 +1324,9 @@ var Wee;
 							var store = {
 									$: model || {}
 								},
-								observe = {},
+								observe = {
+									$: {}
+								},
 								core = {
 									/**
 									 * Get value from controller storage
@@ -1392,7 +1402,7 @@ var Wee;
 									 * Remove callback from data storage change
 									 */
 									$unobserve: function(key) {
-										delete observe[key];
+										_unobserve(observe, key);
 									},
 
 									/**
