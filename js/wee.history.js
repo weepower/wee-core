@@ -300,7 +300,7 @@
 		 * @param {string} [options.partials='title,main']
 		 * @param {string} [options.path=current path]
 		 * @param {boolean} [options.push=true]
-		 * @param {object} [options.request]
+		 * @param {(boolean|object)} [options.request]
 		 * @param {boolean} [options.run=true]
 		 * @param {($|boolean|HTMLElement|number|string)} [options.scrollTop]
 		 * @param {string} [options.title]
@@ -313,6 +313,7 @@
 			}
 
 			var req = scope.request,
+				mock = options.action === false,
 				conf = W.$extend(
 					{},
 					settings,
@@ -353,151 +354,152 @@
 			request.url = _path(a);
 			conf.request = request;
 
-			// Request partial Ajax
-			if (request.url !== U) {
-				var sendEvents = [],
-					successEvents = [],
-					errorEvents = [],
-					completeEvents = [],
-					partials = conf.partials,
-					targets = W.$(partials);
+			var sendEvents = [],
+				successEvents = [],
+				errorEvents = [],
+				completeEvents = [],
+				partials = conf.partials,
+				targets = W.$(partials);
 
-				// Setup PJAX headers
-				request.headers = W.$extend({
-					'X-PJAX': 'true',
-					'X-Requested-With': false
-				}, request.headers);
+			// Setup PJAX headers
+			request.headers = W.$extend({
+				'X-PJAX': 'true',
+				'X-Requested-With': false
+			}, request.headers);
 
-				// Process send events
-				if (request.send) {
-					sendEvents.push(request.send);
+			// Process send events
+			if (request.send) {
+				sendEvents.push(request.send);
+			}
+
+			if (req.send) {
+				sendEvents.push(req.send);
+			}
+
+			request.send = sendEvents;
+
+			// Compile success events
+			var replaceEvent = function(x) {
+				var html = typeof x == 'string' ? x : x.responseText;
+
+				if (conf.replace) {
+					html = W.$exec(conf.replace, {
+						args: [html]
+					}) || html;
 				}
 
-				if (req.send) {
-					sendEvents.push(req.send);
+				// Evaluate unload routes against updated path
+				if (W.routes && conf.run) {
+					W.routes.run({
+						event: 'unload',
+						path: path
+					});
 				}
 
-				request.send = sendEvents;
+				if (partials) {
+					html = W.$parseHTML('<i>' + html + '</i>').firstChild;
 
-				// Compile success events
-				var replaceEvent = function(x) {
-					var html = typeof x == 'string' ? x : x.responseText;
+					// Make partial replacements from response
+					W.$each(partials.split(','), function(sel) {
+						W.$each(sel, function(el) {
+							var target = W.$(sel)[0];
 
-					if (conf.replace) {
-						html = W.$exec(conf.replace, {
-							args: [html]
-						}) || html;
-					}
+							if (target) {
+								var parent = target.parentNode;
 
-					// Evaluate unload routes against updated path
-					if (W.routes && conf.run) {
-						W.routes.run({
-							event: 'unload',
-							path: path
+								conf.action == 'append' ?
+									parent.appendChild(el) :
+									parent.replaceChild(el, target);
+
+								_reset(parent);
+							}
+						}, {
+							context: html
 						});
+					});
+				} else {
+					targets.innerHTML = html;
+
+					_reset(targets);
+				}
+			};
+
+			if (! mock) {
+				successEvents.push(replaceEvent);
+			}
+
+			if (request.success) {
+				successEvents.push(request.success);
+			}
+
+			if (req.success) {
+				successEvents.push(req.success);
+			}
+
+			var scrollEvent = function() {
+				var st = conf.scrollTop;
+
+				// Scroll vertically to target
+				if (st !== false) {
+					var top = 0,
+						anim = W.animate;
+
+					if (a.hash) {
+						st = a.hash;
 					}
 
-					if (partials) {
-						html = W.$parseHTML('<i>' + html + '</i>').firstChild;
+					if (typeof st == 'number') {
+						top = st;
+					} else {
+						var el = W.$(st)[0];
 
-						// Make partial replacements from response
-						W.$each(partials.split(','), function(sel) {
-							W.$each(sel, function(el) {
-								var target = W.$(sel)[0];
+						if (el) {
+							top = el.getBoundingClientRect().top +
+								W._win.pageYOffset;
+						}
+					}
 
-								if (target) {
-									var parent = target.parentNode;
-
-									conf.action == 'append' ?
-										parent.appendChild(el) :
-										parent.replaceChild(el, target);
-
-									_reset(parent);
-								}
-							}, {
-								context: html
-							});
+					if (anim) {
+						anim.tween(W._body, {
+							scrollTop: top
 						});
 					} else {
-						targets.innerHTML = html;
-
-						_reset(targets);
+						W._body.scrollTop = top;
 					}
-				};
-
-				successEvents.push(replaceEvent);
-
-				if (request.success) {
-					successEvents.push(request.success);
 				}
+			};
 
-				if (req.success) {
-					successEvents.push(req.success);
-				}
+			successEvents.push(scrollEvent);
 
-				var scrollEvent = function() {
-					var st = conf.scrollTop;
+			request.success = successEvents;
 
-					// Scroll vertically to target
-					if (st !== false) {
-						var top = 0,
-							anim = W.animate;
+			// Compile error events
+			if (request.error) {
+				errorEvents.push(request.error);
+			}
 
-						if (a.hash) {
-							st = a.hash;
-						}
+			if (req.error) {
+				errorEvents.push(req.error);
+			}
 
-						if (typeof st == 'number') {
-							top = st;
-						} else {
-							var el = W.$(st)[0];
+			// Optionally process error events
+			if (conf.processErrors) {
+				errorEvents.push(replaceEvent);
+				errorEvents.push(scrollEvent);
+			}
 
-							if (el) {
-								top = el.getBoundingClientRect().top +
-									W._win.pageYOffset;
-							}
-						}
+			request.error = errorEvents;
 
-						if (anim) {
-							anim.tween(W._body, {
-								scrollTop: top
-							});
-						} else {
-							W._body.scrollTop = top;
-						}
-					}
-				};
+			// Compile complete events
+			if (request.complete) {
+				completeEvents.push(request.complete);
+			}
 
-				successEvents.push(scrollEvent);
+			if (req.complete) {
+				completeEvents.push(req.complete);
+			}
 
-				request.success = successEvents;
-
-				// Compile error events
-				if (request.error) {
-					errorEvents.push(request.error);
-				}
-
-				if (req.error) {
-					errorEvents.push(req.error);
-				}
-
-				// Optionally process error events
-				if (conf.processErrors) {
-					errorEvents.push(replaceEvent);
-					errorEvents.push(scrollEvent);
-				}
-
-				request.error = errorEvents;
-
-				// Compile complete events
-				if (request.complete) {
-					completeEvents.push(request.complete);
-				}
-
-				if (req.complete) {
-					completeEvents.push(req.complete);
-				}
-
+			if (! mock) {
 				completeEvents.push(function(x) {
 					var code = x.status;
 
@@ -505,16 +507,23 @@
 						_process(conf);
 					}
 				});
+			}
 
-				request.complete = completeEvents;
+			request.complete = completeEvents;
 
-				// Make Ajax request
-				request.args = request.args || [];
-				request.args.unshift(targets);
+			// Make Ajax request
+			request.args = request.args || [];
+			request.args.unshift(targets);
 
-				D.request(request);
-			} else {
+			if (mock) {
+				W.$exec(sendEvents.concat(
+					successEvents,
+					completeEvents
+				));
+
 				_process(conf);
+			} else {
+				D.request(request);
 			}
 		}
 	};
