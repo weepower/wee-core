@@ -487,7 +487,7 @@
 				 * Pause view updating
 				 */
 				$pause: function() {
-					app[name].$unobserve('*', fn);
+					app[name].$unobserve('*');
 				},
 
 				/**
