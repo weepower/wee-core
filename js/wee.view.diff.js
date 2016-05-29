@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, Patrick Steele-Idem
+ * Copyright (c) 2016, Patrick Steele-Idem
  * https://github.com/patrick-steele-idem/morphdom
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -60,10 +60,10 @@
 
 			if (fromEl.value != newValue) {
 				fromEl.value = newValue;
-			}
 
-			if (fromEl.firstChild) {
-				fromEl.firstChild.nodeValue = newValue;
+				if (fromEl.firstChild) {
+					fromEl.firstChild.nodeValue = newValue;
+				}
 			}
 		}
 	},
@@ -80,23 +80,18 @@
 	 */
 	_morphAttrs = function(fromNode, toNode) {
 		var attrs = toNode.attributes,
-			foundAttrs = {},
-			attrName,
-			attrValue,
+			i = attrs.length - 1,
 			attr,
-			i;
+			attrName,
+			attrValue;
 
-		for (i = attrs.length - 1; i >= 0; i--) {
+		for (; i >= 0; i--) {
 			attr = attrs[i];
+			attrName = attr.name;
+			attrValue = attr.value;
 
-			if (attr.specified !== false) {
-				attrName = attr.name;
-				attrValue = attr.value;
-				foundAttrs[attrName] = true;
-
-				if (fromNode.getAttribute(attrName) !== attrValue) {
-					fromNode.setAttribute(attrName, attrValue);
-				}
+			if (fromNode.getAttribute(attrName) !== attrValue) {
+				fromNode.setAttribute(attrName, attrValue);
 			}
 		}
 
@@ -107,12 +102,8 @@
 		for (i = attrs.length - 1; i >= 0; i--) {
 			attr = attrs[i];
 
-			if (attr.specified !== false) {
-				attrName = attr.name;
-
-				if (! foundAttrs.hasOwnProperty(attrName)) {
-					fromNode.removeAttribute(attrName);
-				}
+			if (attr.specified && ! toNode.hasAttribute(attr.name)) {
+				fromNode.removeAttributeNode(attr);
 			}
 		}
 	},
@@ -152,9 +143,8 @@
 			removeNodeHelper = function(node, nestedInSavedEl) {
 				var id = node.id;
 
-				// If the node has an ID then store it since we will want to
-				// reuse it in case the target DOM tree has a DOM element with
-				// the same ID
+				// If the node has an ID store it for reuse in case the target
+				// DOM tree has a DOM element with the same ID
 				if (id) {
 					savedEls[id] = node;
 				}
@@ -180,7 +170,6 @@
 
 					while (curChild) {
 						if (! curChild.id) {
-							// Walk recursively
 							walkDiscardedChildNodes(curChild);
 						}
 
@@ -215,9 +204,8 @@
 			 */
 			morphEl = function(fromEl, toEl, alreadyVisited) {
 				if (toEl.id) {
-					// If an element with an ID is being morphed then it is
-					// will be in the final DOM so clear it out of the saved
-					// elements collection
+					// If an element with an ID morphed then it will be in the
+					// final DOM so clear it out of the elements collection
 					delete savedEls[toEl.id];
 				}
 
@@ -350,7 +338,7 @@
 			morphedNode = fromNode;
 
 		if (replace) {
-			var el = fromNode.cloneNode();
+			var el = fromNode.cloneNode(false);
 
 			// Place fragment in container
 			el.appendChild(toNode);
