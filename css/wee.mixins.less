@@ -923,7 +923,7 @@
 	.check () when (@value = none) {
 		content: none;
 	}
-	.check () when not (@value = false) {
+	.check () when not (@value = false) and not (@value = none) {
 		content: ~"'@{value}'";
 	}
 	.check();
