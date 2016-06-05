@@ -7,7 +7,7 @@
 		var LessCssClean = require('less-plugin-clean-css'),
 			rootPath = '../../';
 
-		global.version = '3.3.2';
+		global.version = '3.3.4';
 
 		global.bs = require('browser-sync').create();
 		global.fs = require('fs-extra');
