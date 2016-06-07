@@ -11,17 +11,13 @@
 	 * @returns {Array} selected
 	 */
 	var _getSelected = function(select) {
-		var options = select.options,
-			arr = [],
-			i = 0;
+		var arr = [];
 
-		for (; i < options.length; i++) {
-			var option = options[i];
-
-			if (option.selected) {
-				arr.push(option.value);
+		W._slice.call(select.options).map(function(el) {
+			if (el.selected) {
+				arr.push(el.value);
 			}
-		}
+		});
 
 		return arr;
 	},
@@ -659,7 +655,7 @@
 		 */
 		$index: function(target) {
 			var el = W.$(target)[0],
-				children = W.$children(W.$parent(el)),
+				children = W._slice.call(el.parentNode.children),
 				i = 0;
 
 			for (; i < children.length; i++) {
@@ -1153,15 +1149,10 @@
 			var arr = [];
 
 			W.$each(target, function(el) {
-				var siblings = W._slice.call(el.parentNode.children),
-					i = 0;
-
-				for (; i < siblings.length; i++) {
-					if (siblings[i] === el) {
-						siblings.splice(i, 1);
-						break;
-					}
-				}
+				var siblings = W._slice.call(el.parentNode.children)
+					.filter(function(a) {
+						return a !== el;
+					});
 
 				arr = arr.concat(
 					filter ?
@@ -1278,11 +1269,10 @@
 			var func = W._canExec(value);
 
 			W.$each(target, function(el, i) {
-				if (el.nodeName == 'SELECT') {
-					var opt = W.$find(el, 'option');
+				if (el.type == 'select-multiple') {
 					value = W.$toArray(value);
 
-					opt.forEach(function(a) {
+					W._slice.call(el.options).forEach(function(a) {
 						if (value.indexOf(a.value) > -1) {
 							a.selected = true;
 						}
