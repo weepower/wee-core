@@ -8,22 +8,23 @@
 			ext: /(.[^\(]+)(?:\((.*)\))?/,
 			pair: /{{#(\S+?)(?:\|(.+?))?}}([\s\S]+?){{\/\1}}/g,
 			partial: /{{\s*>(.+?)}}/g,
+			short: /{{(.+) +\? (.+)}}/g,
 			single: /{{(.+?)}}/g,
 			str: /^\\?("|')/,
 			tags: /{{\s*(?:([#\/])([^#{\|\n\s]+)\s*(\|[^{\n]+)?|else)\s*}}/g
 		},
 		helpers = {
-			is: function(val) {
-				return this.val === val;
+			is: function(a, b) {
+				return a === (b !== U ? b : this.val);
 			},
-			not: function(val) {
-				return this.val !== val;
+			not: function(a, b) {
+				return ! helpers.is.call(this, a, b);
 			},
-			isEmpty: function() {
-				return this.empty;
+			isEmpty: function(val) {
+				return val !== U ? _isEmpty(val) : this.empty;
 			},
-			notEmpty: function() {
-				return ! this.empty;
+			notEmpty: function(val) {
+				return ! helpers.isEmpty.call(this, val);
 			}
 		},
 		views = {},
@@ -97,7 +98,11 @@
 
 					// Return value on last segment
 					if (i === len) {
-						return data;
+						if (! _isEmpty(data)) {
+							return data;
+						}
+
+						break;
 					}
 				} else {
 					break;
@@ -110,18 +115,32 @@
 
 			// Process fallback value
 			if (fb && fb !== '') {
-				fb = fb.trim();
-				var match = fb.match(reg.str);
-
-				if (match) {
-					return fb.replace(reg.str, '')
-						.replace(new RegExp(match[0] + '$'), '');
-				}
-
-				return _get(orig, prev, fb, '', init);
+				return _string(fb) || _get(orig, prev, fb, '', init);
 			}
 
 			return fb;
+		},
+
+		/**
+		 * Process value based on quote enclosure
+		 *
+		 * @private
+		 * @param {string} val
+		 * @param {boolean} [wrap=false]
+		 * @returns {string}
+		 */
+		_string = function(val, wrap) {
+			val = val.trim();
+			var match = val.match(reg.str);
+
+			if (match) {
+				return val.replace(reg.str, '')
+					.replace(new RegExp(match[0] + '$'), '');
+			}
+
+			if (wrap) {
+				return '{{' + val + '}}';
+			}
 		},
 
 		/**
@@ -222,7 +241,7 @@
 									tag: tag,
 									empty: empty,
 									index: index
-								}, _parseArgs(f[1], data, prev, init));
+								}, _parseArgs(f[1], val, prev, init));
 
 								if (rv === false) {
 									return rv;
@@ -279,7 +298,7 @@
 											tag: tag,
 											empty: empty,
 											index: i
-										}, _parseArgs(f[1], val));
+										}, _parseArgs(f[1], el));
 
 										if (rv === false) {
 											return rv;
@@ -382,7 +401,17 @@
 			temp = _embed(temp);
 
 			// Match tag pairs
-			temp = temp.replace(reg.tags, function(m, pre, tag, helper) {
+			temp = temp.replace(reg.short, function(m, cond, val) {
+				cond = cond.trim() + '}}';
+				var segs = val.split(' : '),
+					resp = '{{#' + cond + _string(segs[0], true);
+
+				if (segs.length > 1) {
+					resp += '{{else}}' + _string(segs[1], true);
+				}
+
+				return resp + '{{/' + cond;
+			}).replace(reg.tags, function(m, pre, tag, helper) {
 				var resp = '{{';
 
 				if (tag == '!') {
