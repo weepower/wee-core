@@ -130,7 +130,7 @@
 		return toEl;
 	};
 
-	W.view.diff = function(fromNode, toNode, replace) {
+	W.view.diff = function(fromNode, toNode, replace, transClass) {
 		// Used to store DOM elements with IDs
 		var savedEls = {},
 			unmatchedEls = {},
@@ -314,6 +314,12 @@
 						// and we exhausted all of the children "from" nodes. Therefore, we will just
 						// append the current "to node" to the end
 						fromEl.appendChild(curToNodeChild);
+
+						var trans = curToNodeChild.getAttribute('data-transition');
+
+						if (trans !== null) {
+							curToNodeChild.className = curToNodeChild.className + ' ' + (trans || transClass);
+						}
 
 						curToNodeChild = toNextSibling;
 						curFromNodeChild = fromNextSibling;
