@@ -280,7 +280,8 @@ var Wee;
 											}
 
 											W.$exec(el.fn, {
-												args: args
+												args: args.concat(el.args),
+												scope: el.scope
 											});
 
 											if (el.once) {
