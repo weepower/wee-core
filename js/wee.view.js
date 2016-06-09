@@ -26,6 +26,7 @@
 				return ! this.empty;
 			}
 		},
+		raf = W._win.requestAnimationFrame,
 		views = {},
 		esc,
 
@@ -451,6 +452,7 @@
 			var sel = options.view,
 				targ = options.target,
 				model = options.model || {},
+				transition = options.transition || '-is-transitioning',
 				views = W.$(targ || sel).map(function(el) {
 					return [el, targ ? sel : el.outerHTML];
 				}),
@@ -459,8 +461,18 @@
 						W.$setRef(
 							W.view.diff(view[0], W.$parseHTML(
 								W.view.render(view[1], data)
-							), targ)
+							), targ, transition)
 						);
+
+						var cb = function() {
+							$('.' + transition, view[0]).removeClass(transition);
+						};
+
+						raf ?
+							raf(function() {
+								raf(cb);
+							}) :
+							setTimeout(cb, 15);
 					});
 				},
 				app = W.app;
