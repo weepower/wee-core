@@ -149,8 +149,8 @@
 		 * @private
 		 * @param {string} str
 		 * @param {object} data
-		 * @param {object} (prev)
-		 * @param {object} (init)
+		 * @param {object} prev
+		 * @param {object} init
 		 * @returns {*}
 		 */
 		_parseArgs = function(str, data, prev, init) {
@@ -298,7 +298,7 @@
 											tag: tag,
 											empty: empty,
 											index: i
-										}, _parseArgs(f[1], el));
+										}, _parseArgs(f[1], el, prev, init));
 
 										if (rv === false) {
 											return rv;
@@ -357,7 +357,7 @@
 								tag: tag,
 								index: index,
 								fallback: fb
-							}, _parseArgs(arr[2], data));
+							}, _parseArgs(arr[2], data, prev, init));
 						}
 					}
 				});
