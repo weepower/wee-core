@@ -212,10 +212,11 @@
 			files = W.$toArray(files);
 			root = root || '';
 
-			var a = W._doc.createElement('a');
+			var a = W._doc.createElement('a'),
+				i = 0;
 
-			files.forEach(function(key) {
-				var src = root + files[key];
+			for (; i < files.length; i++) {
+				var src = root + files[i];
 				a.href = src;
 				src = a.href;
 
@@ -226,7 +227,7 @@
 					el = null;
 					delete loaded[src];
 				}
-			});
+			}
 		},
 
 		/**
