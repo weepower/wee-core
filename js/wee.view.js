@@ -118,7 +118,7 @@
 				return _string(fb) || _get(orig, prev, fb, '', init);
 			}
 
-			return fb;
+			return fb || data;
 		},
 
 		/**
