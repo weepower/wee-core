@@ -105,6 +105,7 @@
 						break;
 					}
 				} else {
+					data = data ? data[key] : U;
 					break;
 				}
 			}
