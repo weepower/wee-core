@@ -235,26 +235,26 @@
 					// Process aggregates
 					if (agg.length) {
 						if (! agg.every(function(f) {
-								var rv = f[0].apply({
-									val: val,
-									data: data,
-									root: init,
-									tag: tag,
-									empty: empty,
-									index: index
-								}, _parseArgs(f[1], val, prev, init));
+							var rv = f[0].apply({
+								val: val,
+								data: data,
+								root: init,
+								tag: tag,
+								empty: empty,
+								index: index
+							}, _parseArgs(f[1], val, prev, init));
 
-								if (rv === false) {
-									return rv;
-								}
+							if (rv === false) {
+								return rv;
+							}
 
-								if (rv !== true) {
-									val = rv;
-									empty = _isEmpty(val);
-								}
+							if (rv !== true) {
+								val = rv;
+								empty = _isEmpty(val);
+							}
 
-								return true;
-							})) {
+							return true;
+						})) {
 							return _parse(sec, data, prev, init, index);
 						}
 					} else if (empty) {
