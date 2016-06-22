@@ -87,7 +87,7 @@
 
 							// Ensure the specified element, event, and function
 							// combination hasn't already been bound
-							if (evt != 'init' && ! W.events.bound(el, ev, f).length) {
+							if (evt != 'init' && ! W.events.bound(el, ev, f, conf.targ).length) {
 								// Determine if the event is native or custom
 								if ('on' + evt in el) {
 									el.addEventListener(evt, cb, false);
@@ -100,7 +100,8 @@
 									ev: ev,
 									evt: evt,
 									cb: cb,
-									fn: f
+									fn: f,
+									targ: conf.targ
 								});
 							}
 
@@ -194,7 +195,7 @@
 
 					for (; i < evts.length; i++) {
 						var evt = evts[i],
-						fn = obj[evt];
+							fn = obj[evt];
 
 						_off(target, evt, fn);
 					}
@@ -210,9 +211,10 @@
 		 * @param {(boolean|HTMLElement|string)} [target]
 		 * @param {string} [event] - event name to match
 		 * @param {function} [fn] - specific function to match
+		 * @param {HTMLElement} [delegateTarg] - targets of delegated event
 		 * @returns {Array} matches
 		 */
-		bound: function(target, event, fn) {
+		bound: function(target, event, fn, delegateTarg) {
 			var segs = (event || '').split('.'),
 				matches = [];
 			target = target || [0];
@@ -240,6 +242,11 @@
 					}
 
 					if (fn && String(fn) !== String(binding.fn)) {
+						match = false;
+					}
+
+					// If delegated event, check against target element
+					if ((delegateTarg && binding.targ) && delegateTarg.sel !== binding.targ.sel) {
 						match = false;
 					}
 
