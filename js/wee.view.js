@@ -285,46 +285,49 @@
 
 						for (var key in val) {
 							if (val.hasOwnProperty(key)) {
-								// Merge default properties
 								var el = val[key];
 								empty = _isEmpty(el);
 
-								// Process helpers
-								if (! help.length ||
-									help.every(function(f) {
-										var rv = f[0].apply({
-											val: el,
-											data: data,
-											root: init,
-											tag: tag,
-											empty: empty,
-											index: i
-										}, _parseArgs(f[1], el, prev, init));
+								var cont = help.every(function(f) {
+									var rv = f[0].apply({
+										val: el,
+										data: data,
+										root: init,
+										tag: tag,
+										empty: empty,
+										index: i
+									}, _parseArgs(f[1], el, prev, init));
 
-										if (rv === false) {
-											return rv;
-										}
+									if (rv === false) {
+										return rv;
+									}
 
-										if (rv !== true) {
-											el = rv;
-										}
+									if (rv !== true) {
+										el = rv;
+									}
 
-										return true;
-									})
-								) {
-									var item = W.$extend({}, W.$isObject(el) ?
-											el :
-											(isPlainObject ? val : {}),
-										{
-											$key: key,
-											'.': el,
-											'#': i,
-											'##': i + 1
-										});
-									i++;
+									return true;
+								});
 
-									resp += _parse(inner, item, data, init, i);
+								// Merge default properties
+								var item = W.$extend({}, W.$isObject(el) ?
+										el :
+										(isPlainObject ? val : {}),
+									{
+										$key: key,
+										'.': el,
+										'#': i,
+										'##': i + 1
+									}),
+									hl = helper.length;
+
+								cont = (hl && cont) || (! hl && ! empty);
+
+								if (cont || sec) {
+									resp += _parse(cont ? inner : sec, item, data, init, i);
 								}
+
+								i++;
 							}
 						}
 
