@@ -105,7 +105,6 @@
 						break;
 					}
 				} else {
-					data = data ? data[key] : U;
 					break;
 				}
 			}
@@ -119,7 +118,7 @@
 				return _string(fb) || _get(orig, prev, fb, '', init);
 			}
 
-			return fb || data;
+			return fb || (W.$isObject(data) || W.$isArray(data) ? data[key] : data);
 		},
 
 		/**
