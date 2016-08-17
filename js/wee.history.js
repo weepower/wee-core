@@ -150,6 +150,7 @@
 		 * @param {boolean} [options.push=true]
 		 * @param {object} [options.request]
 		 * @param {boolean} [options.run=true]
+		 * @param {boolean} [options.useResponseURL=true]
 		 */
 		init: function(options) {
 			if (! this.request) {
@@ -501,7 +502,12 @@
 
 			if (! mock) {
 				completeEvents.push(function(x) {
-					var code = x.status;
+					var code = x.status,
+						responseURL = x.responseURL;
+
+					if (conf.useResponseURL !== false && conf.request.type === 'form' && responseURL) {
+						conf.path = '/' + responseURL.replace(/^(?:\/\/|[^\/]+)*\//, '');
+					}
 
 					if (conf.processErrors || (code >= 200 && code < 400)) {
 						_process(conf);
