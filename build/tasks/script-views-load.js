@@ -6,8 +6,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('loadViews', function() {
 		// Find core view templates
 		var matches = glob.sync(config.paths.viewSource + 'load/**/*.html'),
-			data = {},
-			moduleData = {};
+			data = {};
 
 		if (matches.length) {
 			matches.forEach(function(view) {
@@ -22,12 +21,8 @@ module.exports = function(grunt) {
 		// Find module view templates
 		for (var name in config.modules) {
 			var autoload = config.modules[name].autoload,
-				namespace = config.modules[name].namespace;
-
-			if (autoload) {
-				// Autoloading, so point to the main data object
-				moduleData = data;
-			}
+				namespace = config.modules[name].namespace,
+				moduleData = autoload ? data : {};
 
 			var root = config.paths.moduleSource + name;
 			matches = glob.sync(root + '/core/js/views/load/**/*.html');
