@@ -521,40 +521,27 @@ var Wee;
 					 * @param {object} pub - public methods and properties
 					 * @param {object} [priv] - private methods and properties
 					 */
-					make: function(name, pub, priv) {
+					make: function(name, pub, priv, options) {
 						var base,
 							basePubConst,
-							basePrivConst;
+							basePrivConst,
+							options = options || {},
+							args = options.arguments || {},
+							instance = options.instance === false ? false : true;
 
 						// Check for base controller
 						if (name.indexOf(':') > 0) {
 							var segs = name.split(':');
 							base = _copy(W[segs[1]]);
-							basePubConst = base._construct;
-							basePrivConst = base.$private._construct;
 							name = segs[0];
 						}
 
 						// Create new controller instance
 						W.fn[name] = W._make(name, pub, priv, base);
-						W[name] = new W.fn[name](name);
 
-						// Execute base constructors
-						if (basePubConst) {
-							basePubConst();
-						}
-
-						if (basePrivConst) {
-							basePrivConst();
-						}
-
-						// Execute controller constructors
-						if (W[name].$private._construct) {
-							W[name].$private._construct();
-						}
-
-						if (W[name]._construct) {
-							W[name]._construct();
+						if (instance) {
+							args.name = name;
+							W[name] = new W.fn[name](args);
 						}
 					},
 
@@ -564,8 +551,9 @@ var Wee;
 					 * @param {(object|string)} a - controller name or core methods
 					 * @param {object} [b] - public methods and properties
 					 * @param {object} [c] - private methods and properties
+					 * @param {object} [d] - options
 					 */
-					extend: function(a, b, c) {
+					extend: function(a, b, c, d) {
 						if (W.$isObject(a)) {
 							// Merge into the global object
 							_extend(W, a);
@@ -577,7 +565,7 @@ var Wee;
 
 							_extend(W[a], b, true);
 						} else {
-							this.make(a, b, c);
+							this.make(a, b, c, d);
 						}
 					}
 				},
@@ -1327,9 +1315,10 @@ var Wee;
 				 * @returns {Function}
 				 */
 				_make: function(name, pub, priv, base, model) {
-					return function(id) {
+					return function(options) {
 						var Public = pub || {},
-							Private = priv || {};
+							Private = priv || {},
+							id = options.name ? options.name : null;
 
 						// Ensure the current controller is not being extended
 						if (name != '_tmp') {
@@ -1459,27 +1448,17 @@ var Wee;
 						Private.$public = Public;
 
 						if (base) {
-							var pubDest = Public.$destroy,
-								basePubDest = base._destruct,
-								basePrivDest = base.$private._destruct;
-
 							// Extend controller methods into base
 							Public = _extend(base, Public, true);
 							Public.$private.$public = Public;
+						}
 
-							Public.$destroy = function() {
-								// Execute controller destructor
-								pubDest.call(this);
+						if (Public.$private._construct) {
+							Public.$private._construct(options);
+						}
 
-								// Execute base destructors
-								if (basePrivDest) {
-									basePrivDest.call(this.$private);
-								}
-
-								if (basePubDest) {
-									basePubDest.call(this);
-								}
-							};
+						if (Public._construct) {
+							Public._construct(options);
 						}
 
 						return Public;
