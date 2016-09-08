@@ -526,7 +526,7 @@ var Wee;
 						var base,
 							options = options || {},
 							args = options.args || {},
-							instance = options.instance === false ? false : true;
+							instance = options.instance !== false;
 
 						// Check for base controller
 						if (name.indexOf(':') > 0) {
