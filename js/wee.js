@@ -520,13 +520,12 @@ var Wee;
 					 * @param {string} name
 					 * @param {object} pub - public methods and properties
 					 * @param {object} [priv] - private methods and properties
+					 * @param {object} [options] - configuration options
 					 */
 					make: function(name, pub, priv, options) {
 						var base,
-							basePubConst,
-							basePrivConst,
 							options = options || {},
-							args = options.arguments || {},
+							args = options.args || {},
 							instance = options.instance === false ? false : true;
 
 						// Check for base controller
