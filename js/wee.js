@@ -1317,6 +1317,7 @@ var Wee;
 					return function(options) {
 						var Public = pub || {},
 							Private = priv || {},
+							options = options || {},
 							id = options.name ? options.name : null;
 
 						// Ensure the current controller is not being extended
