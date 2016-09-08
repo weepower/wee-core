@@ -918,6 +918,8 @@
 					W.$each(pre, function(cel) {
 						el.insertBefore(cel, el.firstChild);
 					});
+
+					W.$setRef(el);
 				}
 			});
 		},
