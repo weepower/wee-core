@@ -33,6 +33,62 @@ define(function(require) {
 						'Controller function response correctly returned.'
 					);
 				},
+				'make and pass in constructor arguments': function() {
+					Wee.fn.make('controller', {
+						_construct: function(options) {
+							this.newVal = options.newVal;
+						}
+					}, null, {
+						args: {
+							newVal: 'hello'
+						}
+					});
+
+					assert.equal(Wee.controller.newVal, 'hello',
+						'Controller properly passed args to constructor on make'
+					);
+				},
+				'create multiple controller instances/inspect constructors': function() {
+					var second;
+
+					Wee.fn.make('controller', {
+						_construct: function(options) {
+							this.pubProp = options.newVal;
+						}
+					}, null, {
+						args: {
+							newVal: 'suh duh'
+						}
+					});
+
+					second = Wee.fn.controller({
+						newVal: 'hello'
+					});
+
+					assert.equal(Wee.controller.pubProp, 'suh duh',
+						'First controller instance fired constructor'
+					);
+					assert.equal(second.pubProp, 'hello',
+						'Second controller instance fired constructor'
+					);
+				},
+				'extend controller': function() {
+					Wee.fn.make('parent', {
+						name: 'parent',
+						color: 'blue'
+					});
+
+					Wee.fn.make('child:parent', {
+						name: 'child'
+					});
+
+					assert.equal(Wee.child.name, 'child',
+						'Child controller inherited parent property'
+					);
+					assert.equal(Wee.child.color, 'blue',
+						'Child controller inherited parent property'
+					);
+				},
 				'$get': function() {
 					assert.isObject(Wee.controller.$get(),
 						'$get did not return an object'
