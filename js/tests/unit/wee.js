@@ -33,6 +33,13 @@ define(function(require) {
 						'Controller function response correctly returned.'
 					);
 				},
+				'make and do not instantiate': function() {
+					Wee.fn.make('noInstance', {}, {}, {
+						instance: false
+					});
+
+					assert.isUndefined(Wee.noInstance);
+				},
 				'make and pass in constructor arguments': function() {
 					Wee.fn.make('controller', {
 						_construct: function(options) {
