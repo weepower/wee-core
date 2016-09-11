@@ -1,6 +1,6 @@
 {
 	"name": "wee-core",
-	"version": "1.4.2",
+	"version": "1.5.0",
 	"description": "Core Wee library and build scripts",
 	"homepage": "https://www.weepower.com",
 	"license": "Apache-2.0",
