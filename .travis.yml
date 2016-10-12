@@ -6,4 +6,5 @@ install:
   - npm install
 
 script:
+  - grunt
   - ./node_modules/.bin/intern-runner config=js/tests/config.js
