@@ -12,6 +12,7 @@ define(function(require) {
 
 			container.id = 'container';
 			container.className = 'js-container';
+			// TODO Need to use data refs instead of js- classes
 
 			document.body.appendChild(container);
 		},
@@ -473,7 +474,7 @@ define(function(require) {
 			}
 		},
 		'$envSecure': function() {
-			assert.ok(Wee.$envSecure(),
+			assert.notOk(Wee.$envSecure(),
 				'The environment was not correctly identified as secure'
 			);
 		},

@@ -1,9 +1,9 @@
 define({
 	proxyPort: 9010,
-	proxyUrl: 'http://localhost:9010/',
+	proxyUrl: 'http://localhost:9010',
 	initialBaseUrl: '../../',
 	excludeInstrumentation: /^(?:node_modules|js\/tests)\//,
-	tunnel: 'NullTunnel',
+	tunnel: 'BrowserStackTunnel',
 	suites: [
 		'js/tests/unit/wee',
 		'js/tests/unit/wee.animate',
@@ -18,7 +18,28 @@ define({
 		'js/tests/unit/wee.touch',
 		'js/tests/unit/wee.view'
 	],
-	environments: [{
-		browserName: 'chrome'
-	}]
+	environments: [
+		{
+			browser: 'Chrome',
+			'os': 'Windows',
+			'os_version': '10',
+			'browser_version': '54.0 beta'
+		},
+		{
+			'os': 'OS X',
+			'os_version': 'El Capitan',
+			'browser': 'Chrome',
+			'browser_version': '54.0 beta'
+		}
+	],
+	tunnelOptions: {
+		verbose: true,
+		username: 'caddis'
+	},
+	capabilities: {
+		'browserstack.local': true,
+		'browserstack.debug': true,
+		fixSessionCapabilities: false,
+		acceptSslCerts: true
+	}
 });
