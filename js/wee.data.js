@@ -175,10 +175,10 @@
 				_change(x, conf);
 			};
 
-			var contentTypeHeader = 'Content-Type',
-				method = conf.method.toUpperCase(),
+			var method = conf.method.toUpperCase(),
 				send = null,
-				headers = [];
+				headers = [],
+				contentTypeHeader;
 
 			// Format data based on specified verb
 			if (method == 'GET') {
@@ -199,14 +199,21 @@
 
 			x.open(method, conf.url, true);
 
-			// Add content type header
-			if (conf.type == 'json') {
-				headers[contentTypeHeader] = 'application/json';
-			} else if (conf.type == 'xml') {
-				headers[contentTypeHeader] = 'text/xml';
-			} else if (method == 'POST' || conf.type == 'form') {
-				headers[contentTypeHeader] =
-					'application/x-www-form-urlencoded';
+			if (conf.headers !== false) {
+				contentTypeHeader = 'Content-Type';
+
+				// Add content type header
+				if (conf.type == 'json') {
+					headers[contentTypeHeader] = 'application/json';
+				} else if (conf.type == 'xml') {
+					headers[contentTypeHeader] = 'text/xml';
+				} else if (method == 'POST' || conf.type == 'form') {
+					headers[contentTypeHeader] =
+						'application/x-www-form-urlencoded';
+				}
+
+				// Append character set to content type header
+				headers[contentTypeHeader] += '; charset=UTF-8';
 			}
 
 			// Accept JSON header
@@ -221,9 +228,6 @@
 			if (! a.host || a.host == location.host) {
 				headers['X-Requested-With'] = 'XMLHttpRequest';
 			}
-
-			// Append character set to content type header
-			headers[contentTypeHeader] += '; charset=UTF-8';
 
 			// Extend configured headers into defaults
 			headers = W.$extend(headers, conf.headers);
