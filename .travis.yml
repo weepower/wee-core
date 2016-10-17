@@ -9,7 +9,7 @@ install:
   - mv wee-master wee
   - cd wee && npm install
   - rm -rf node_modules/wee-core
-  - cp ../wee-core node_modules/
+  - cp -r ../wee-core node_modules/wee-core
   - cd node_modules/wee-core
   - npm install
 
