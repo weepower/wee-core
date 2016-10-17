@@ -16,7 +16,7 @@ install:
   - npm install
 
 script:
-  - ./node_modules/.bin/intern-runner config=js/tests/config.js suites=js/tests/unit/wee.js
+  - ./node_modules/.bin/intern-runner config=js/tests/config.js
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
