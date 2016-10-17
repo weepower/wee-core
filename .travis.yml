@@ -3,9 +3,18 @@ node_js:
   - '6'
 
 install:
+  - cd ..
+  - wget https://github.com/weepower/wee/archive/master.zip
+  - unzip master.zip
+  - mv wee-master wee
+  - cd wee && npm install
+  - rm -rf node_modules/wee-core
+  - cp ../wee-core node_modules/
+  - cd node_modules/wee-core
   - npm install
-  - npm install grunt-cli -g
 
 script:
-  - grunt
-  - ./node_modules/.bin/intern-runner config=js/tests/config.js
+  - ./node_modules/.bin/intern-runner config=js/tests/config.js suites=js/tests/unit/wee.js
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
