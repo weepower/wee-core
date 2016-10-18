@@ -3,6 +3,7 @@ node_js:
   - '6'
 
 install:
+  - npm install -g codecov
   - cd ..
   - wget https://github.com/weepower/wee/archive/master.zip
   - unzip master.zip
@@ -17,6 +18,7 @@ install:
 
 script:
   - ./node_modules/.bin/intern-runner config=js/tests/config.js
+  - codecov
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
