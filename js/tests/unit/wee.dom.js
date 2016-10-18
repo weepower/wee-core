@@ -1052,37 +1052,37 @@ define(function(require) {
 			},
 
 			set: function() {
-				// TODO: Complete
 				assert.isTrue(true);
 
-				//Wee.$css('#container', 'width', '15000px');
-				//
-				//Wee.$scrollLeft('body', 10);
-				//
-				//assert.strictEqual(Wee.$scrollLeft(), 10,
-				//	'Scroll left value not set successfully'
-				//);
+				Wee.$css('body', 'width', '15000px');
+
+				Wee.$scrollLeft('body', 10);
+
+				assert.strictEqual(Wee.$scrollLeft(), 10,
+					'Scroll left value not set successfully'
+				);
 			}
 		},
 
 		'$scrollTop': {
 			'get': function() {
+				Wee.$scrollTop('body', 0);
+
 				assert.strictEqual(Wee.$scrollTop(), 0,
 					'Scroll top value not retreived successfully'
 				);
 			},
 
 			'set': function() {
-				// TODO: Complete
 				assert.isTrue(true);
 
-				//Wee.$css('#container', 'height', '500px');
-				//
-				//Wee.$scrollTop('body', 10);
-				//
-				//assert.strictEqual(Wee.$scrollTop(), 10,
-				//	'Scroll top value not set successfully'
-				//);
+				Wee.$css('body', 'height', '500px');
+
+				Wee.$scrollTop('body', 10);
+
+				assert.strictEqual(Wee.$scrollTop(), 10,
+					'Scroll top value not set successfully'
+				);
 			}
 		},
 		'$serializeForm': function() {

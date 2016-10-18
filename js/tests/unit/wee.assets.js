@@ -7,21 +7,23 @@ define(function(require) {
 	registerSuite({
 		name: 'Assets',
 
+		// TODO: File path is relative to wee-core. Need solution that
+		// TODO: uses conditional path that works with Browsersync as well.
 		root: {
 			set: function() {
 				Wee.assets.root(
-					'/$root/node_modules/wee-core/js/tests/sample-files/'
+					'/js/tests/sample-files/'
 				);
 
 				assert.strictEqual(Wee.assets.root(),
-					'/$root/node_modules/wee-core/js/tests/sample-files/',
+					'/js/tests/sample-files/',
 					'Asset root not set successfully'
 				);
 			},
 
 			get: function() {
 				assert.strictEqual(Wee.assets.root(),
-					'/$root/node_modules/wee-core/js/tests/sample-files/',
+					'/js/tests/sample-files/',
 					'Asset root not retrieved successfully'
 				);
 			}
@@ -32,14 +34,14 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
+					root: '/js/tests/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
 							'Sample file not loaded successfully'
 						);
 
-						Wee.assets.remove('/$root/node_modules/wee-core/js/' +
+						Wee.assets.remove('/js/' +
 							'tests/sample-files/sample.js'
 						);
 					})
@@ -50,7 +52,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
+					root: '/js/tests/sample-files/',
 					files: [
 						'sample.js',
 						'sample-2.js'
@@ -65,9 +67,9 @@ define(function(require) {
 						);
 
 						Wee.assets.remove([
-							'/$root/node_modules/wee-core/js/' +
+							'/js/' +
 							'tests/sample-files/sample.js',
-							'/$root/node_modules/wee-core/js/' +
+							'/js/' +
 							'tests/sample-files/sample-2.js'
 						]);
 					})
@@ -78,7 +80,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
+					root: '/js/tests/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
@@ -87,7 +89,7 @@ define(function(require) {
 						);
 
 						Wee.assets.remove(
-							'/$root/node_modules/wee-core/js/tests/' +
+							'/js/tests/' +
 							'sample-files/sample.js'
 						);
 
@@ -101,7 +103,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
+					root: '/js/tests/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
@@ -109,7 +111,7 @@ define(function(require) {
 						);
 
 						Wee.assets.remove(
-							'/$root/node_modules/wee-core/js/' +
+							'/js/' +
 							'tests/sample-files/sample.js'
 						);
 					})
@@ -120,7 +122,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/$root/node_modules/wee-core/js/tests/sample-files/',
+					root: '/js/tests/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
@@ -131,7 +133,7 @@ define(function(require) {
 								);
 
 								Wee.assets.remove(
-									'/$root/node_modules/wee-core/js/' +
+									'/js/' +
 									'tests/sample-files/sample.js'
 								);
 							})
