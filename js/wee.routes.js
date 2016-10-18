@@ -221,7 +221,7 @@
 			var curr = routes || {};
 
 			if (obj) {
-				routes = W.$extend(curr, obj);
+				routes = W.$extend(true, curr, obj);
 
 				if (init) {
 					this.run({
