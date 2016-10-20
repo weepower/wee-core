@@ -128,6 +128,10 @@
 							'js/wee.touch.js',
 							'js/wee.view.js',
 							'js/wee.view.diff.js',
+							'js/chain/wee.chain.animate.js',
+							'js/chain/wee.chain.dom.js',
+							'js/chain/wee.chain.events.js',
+							'js/chain/wee.chain.view.js',
 							'<%= config.paths.temp %>build.min.js'
 						]
 					}]
