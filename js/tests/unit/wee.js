@@ -2,7 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('temp/core.min.js');
+	require('temp/core-test.js');
 
 	registerSuite({
 		name: 'Core',

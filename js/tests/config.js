@@ -20,7 +20,7 @@ define({
 	],
 	environments: [
 		{
-			browser: 'Chrome',
+			'browser': 'Chrome',
 			'os': 'Windows',
 			'os_version': '10',
 			'browser_version': '54.0 beta'

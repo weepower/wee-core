@@ -111,6 +111,25 @@
 							'<%= config.paths.temp %>core.min.js',
 							'<%= config.paths.temp %>build.min.js'
 						]
+					}, {
+						dest: '<%= config.paths.temp %>core-test.js',
+						src: [
+							'js/tests/unit/exports.js',
+							'js/wee.js',
+							'js/wee.animate.js',
+							'js/wee.assets.js',
+							'js/wee.chain.js',
+							'js/wee.data.js',
+							'js/wee.dom.js',
+							'js/wee.events.js',
+							'js/wee.history.js',
+							'js/wee.routes.js',
+							'js/wee.screen.js',
+							'js/wee.touch.js',
+							'js/wee.view.js',
+							'js/wee.view.diff.js',
+							'<%= config.paths.temp %>build.min.js'
+						]
 					}]
 				},
 				style: {
