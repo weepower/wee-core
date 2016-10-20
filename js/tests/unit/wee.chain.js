@@ -4,7 +4,7 @@ define(function(require) {
 		$el,
 		el;
 
-	require('temp/core-test.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Chain',

@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('temp/core-test.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Events',
