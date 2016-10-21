@@ -46,6 +46,14 @@ define(function(require) {
 				'Two variables parsed successfully.'
 			);
 
+			assert.strictEqual(Wee.view.render('{{ #married|is(false) }}Not married{{ /married }}', data), 'Not married',
+				'Did not return expected result from "is" filter'
+			);
+
+			assert.strictEqual(Wee.view.render('{{ #married|not(true) }}Not married{{ /married }}', data), 'Not married',
+				'Did not return expected result from "is" filter'
+			);
+
 			assert.strictEqual(Wee.view.render('{{ #children|notEmpty }}Has children{{ /children }}', data),
 				'Has children', 'Children exist.'
 			);
