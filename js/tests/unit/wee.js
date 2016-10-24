@@ -264,6 +264,13 @@ define(function(require) {
 					);
 
 				},
+				'$has': function() {
+					Wee.controller.$set('hasContrTest', 'value1');
+
+					assert.strictEqual(Wee.controller.$has('hasContrTest.0'), true,
+						'No value set for "hasContrTest"'
+					);
+				},
 				'$push': function() {
 					Wee.controller.$push('test', 'test-1');
 
