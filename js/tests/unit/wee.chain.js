@@ -420,6 +420,24 @@ define(function(require) {
 				}
 			},
 
+			each: function() {
+				$el.html(
+					'<div class="testEach">1</div>' +
+					'<div class="testEach">2</div>' +
+					'<div class="testEach">3</div>'
+				);
+
+				$('.testEach').each(function() {
+					$(this).html('Hello!');
+				});
+
+				$('.testEach').each(function(test) {
+					assert.strictEqual(test.innerHTML, 'Hello!',
+						'Did not return "Hello!" as expected'
+					);
+				});
+			},
+
 			empty: function() {
 				$el.html('<span id="test"></span>');
 
@@ -1181,6 +1199,14 @@ define(function(require) {
 			//		);
 			//	}
 			//},
+			
+			reverse: function() {
+				var revArray = [1, 2, 3];
+
+				assert.deepEqual(revArray.reverse(), [3, 2, 1],
+					'Array was not reversed'
+				);
+			},
 
 			val: {
 				beforeEach: function() {
