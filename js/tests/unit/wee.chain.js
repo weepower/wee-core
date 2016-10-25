@@ -1201,10 +1201,37 @@ define(function(require) {
 			//},
 			
 			reverse: function() {
-				var revArray = [1, 2, 3];
+				$el.html(
+					'<div class="revTest" id="first">1</div>' +
+					'<div class="revTest" id="second">2</div>' +
+					'<div class="revTest" id="third">3</div>'
+				);
 
-				assert.deepEqual(revArray.reverse(), [3, 2, 1],
-					'Array was not reversed'
+				var arr = $('.revTest').reverse();
+
+				assert.strictEqual($('.revTest').innerHTML, 3,
+					'Not reversed'
+				);
+			},
+
+			setRef: function() {
+				$el.html('<div data-ref="testElement1">1</div>');
+
+				Wee.$setRef();
+
+				assert.strictEqual(Wee.$text('ref:testElement1'), '1',
+					'Reference element was successfully selected.'
+				);
+
+			},
+
+			setVar: function() {
+				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+
+				Wee.$setVar();
+
+				assert.strictEqual(Wee.$get('testSet'), 'yes',
+					'Data-set variable was not added to datastore'
 				);
 			},
 
