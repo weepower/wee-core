@@ -1200,19 +1200,19 @@ define(function(require) {
 			//	}
 			//},
 			
-			reverse: function() {
-				$el.html(
-					'<div class="revTest" id="first">1</div>' +
-					'<div class="revTest" id="second">2</div>' +
-					'<div class="revTest" id="third">3</div>'
-				);
+			// reverse: function() {
+			// 	$el.html(
+			// 		'<div class="revTest" id="first">1</div>' +
+			// 		'<div class="revTest" id="second">2</div>' +
+			// 		'<div class="revTest" id="third">3</div>'
+			// 	);
 
-				var arr = $('.revTest').reverse();
+			// 	var arr = $('.revTest').reverse();
 
-				assert.strictEqual($('.revTest').innerHTML, 3,
-					'Not reversed'
-				);
-			},
+			// 	assert.strictEqual($('.revTest').innerHTML, 3,
+			// 		'Not reversed'
+			// 	);
+			// },
 
 			setRef: function() {
 				$el.html('<div data-ref="testElement1">1</div>');
