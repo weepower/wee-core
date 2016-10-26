@@ -45,6 +45,12 @@ define(function(require) {
 
 					return this;
 				});
+
+				$el.setId('idTest');
+
+				assert.strictEqual($el[0].id, 'idTest',
+					'Chain was not registered successfully'
+				);
 			}
 		},
 
@@ -82,7 +88,7 @@ define(function(require) {
 						.trigger('blur');
 
 					assert.ok($el.hasClass('test-class-2'),
-						'Multple events were not triggered successfully'
+						'Multiple events were not triggered successfully'
 					);
 				}
 			},
