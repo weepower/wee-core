@@ -24,18 +24,28 @@ define(function(require) {
 			el.parentNode.removeChild(el);
 		},
 
-		register: function() {
-			$.fn.setId = function(id) {
-				this.data('id', id);
+		register: {
+			jquery: function() {
+				$.fn.setId = function(id) {
+					this.data('id', id);
 
-				return this;
-			};
+					return this;
+				};
 
-			$el.setId(3);
+				$el.setId(3);
 
-			assert.strictEqual($el.data('id'), 3,
-				'Chain was not registered successfully'
-			);
+				assert.strictEqual($el.data('id'), 3,
+					'Chain was not registered successfully'
+				);
+			},
+
+			regular: function() {
+				Wee.$chain('setId', function(id) {
+					this.attr('id', id);
+
+					return this;
+				});
+			}
 		},
 
 		events: {
