@@ -691,6 +691,48 @@ define(function(require) {
 				);
 			},
 
+			map: {
+				array: function() {
+					var mapTest = [1, 2, 3];
+
+					assert.isArray(
+						mapTest.map(function(val) {
+							return val + 1;
+						}), true);
+
+					assert.deepEqual(
+						mapTest.map(function(val) {
+							return val + 1;
+						}), [2, 3, 4],
+					'Did not return correct array');
+				},
+
+				selection: function() {
+					$el.html('<div class="mapTest2">1</div>');
+
+					assert.isArray(
+						$('.mapTest2').map(function() {
+							return 'Map test passed'
+						}), 'Map test passed',
+						"Did not correctly map selection"
+					);
+
+					assert.deepEqual(
+						$('.mapTest2').map(function() {
+							return 'mapping'
+						}), ['mapping'],
+						"Did not correctly map selection"
+					);
+				}
+			},
+
+			// function() {
+			// 	$el.html('<div class="testMap">1</div>');	
+
+			// 	var num = parseInt($('.testMap').text());
+
+			// 	$('.testMap').map(function())
+
 			//next: function() {
 			//	$el.append('body', '<div id="wee-chain-2"></div>');
 			//
@@ -1200,26 +1242,34 @@ define(function(require) {
 			//	}
 			//},
 			
-			// reverse: function() {
-			// 	$el.html(
-			// 		'<div class="revTest" id="first">1</div>' +
-			// 		'<div class="revTest" id="second">2</div>' +
-			// 		'<div class="revTest" id="third">3</div>'
-			// 	);
+			reverse: function() {
+				$el.html(
+					'<div class="revTest" id="first">1</div>' +
+					'<div class="revTest" id="second">2</div>' +
+					'<div class="revTest" id="third">3</div>'
+				);
 
-			// 	var arr = $('.revTest').reverse();
+				var $arr = $('.revTest').reverse();
 
-			// 	assert.strictEqual($('.revTest').innerHTML, 3,
-			// 		'Not reversed'
-			// 	);
-			// },
+				assert.strictEqual($arr[0].innerHTML, '3',
+					'Not reversed'
+				);
+
+				assert.strictEqual($arr[1].innerHTML, '2',
+					'Not reversed'
+				);
+
+				assert.strictEqual($arr[2].innerHTML, '1',
+					'Not reversed'
+				);
+			},
 
 			setRef: function() {
-				$el.html('<div data-ref="testElement1">1</div>');
+				$el.html('<div data-ref="testElement">1</div>');
 
-				Wee.$setRef();
+				$('ref:testElement').setRef();
 
-				assert.strictEqual(Wee.$text('ref:testElement1'), '1',
+				assert.strictEqual($('ref:testElement').sel, 'ref:testElement',
 					'Reference element was successfully selected.'
 				);
 
@@ -1228,10 +1278,24 @@ define(function(require) {
 			setVar: function() {
 				$el.html('<div data-set="testSet" data-value="yes">1</div>');
 
-				Wee.$setVar();
+				$('ref:testSet').setVar();
 
-				assert.strictEqual(Wee.$get('testSet'), 'yes',
+				assert.strictEqual($('ref:testSet').sel, 'ref:testSet',
 					'Data-set variable was not added to datastore'
+				);
+			},
+
+			toArray: function() {
+				$el.html(
+					'<div class="testArr">1</div>' +
+					'<div class="testArr">2</div>' +
+					'<div class="testArr">3</div>'
+				);
+
+				assert.isArray($('.testArr').toArray(), true);
+
+				assert.lengthOf($('.testArr').toArray(), 3,
+					'Array was not created properly'
 				);
 			},
 
