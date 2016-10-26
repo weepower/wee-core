@@ -106,7 +106,7 @@
 		 * @returns {$}
 		 */
 		reverse: function() {
-			var copy = W.$extend(this),
+			var copy = W.$extend({}, this),
 				x = this.length,
 				total = x,
 				i = 0;
