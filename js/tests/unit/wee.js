@@ -294,6 +294,21 @@ define(function(require) {
 						'No value set for "hasContrTest"'
 					);
 				},
+				'$merge': function() {
+					Wee.controller.$set('obj', {
+						'color1': 'blue'
+					});
+
+					Wee.controller.$merge('obj', {
+						'color2': 'red'
+					});
+
+					assert.deepEqual(Wee.controller.$get('obj'), {
+						color1: 'blue',
+						color2: 'red'
+					},
+					'Property "color2: red" was not appended to object');
+				},
 				'$push': function() {
 					Wee.controller.$push('test', 'test-1');
 
