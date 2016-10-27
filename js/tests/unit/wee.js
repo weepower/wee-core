@@ -406,6 +406,13 @@ define(function(require) {
 							'Function was not executed on page load'
 						);
 					});
+				},
+				'$destroy': function() {
+					Wee.controller.$destroy();
+
+					assert.isUndefined(Wee.controller,
+						'Controller was not successfully destroyed'
+					);
 				}
 			},
 			'private': {
