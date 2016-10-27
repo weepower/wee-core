@@ -1093,7 +1093,7 @@ define(function(require) {
 				trig++;
 			});
 
-			Wee.$trigger('testTrigger')
+			Wee.$trigger('testTrigger');
 
 			assert.strictEqual(trig, 1,
 				'Variable "trig" was not incremented'
