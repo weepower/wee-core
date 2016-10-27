@@ -337,9 +337,42 @@ define(function(require) {
 				},
 				'$destroy': function() {
 					Wee.controller.$destroy();
+				'$observe': {
+					'basic': function() {
+						var returnVal;
 
-					assert.isUndefined(Wee.controller,
-						'Controller was not successfully destroyed'
+						Wee.controller.$observe('testCtrlObserve', function(data) {
+							returnVal = data;
+						}, {
+							recursive: true
+						});
+
+						Wee.controller.$set('testCtrlObserve.key1', 5);
+
+						assert.deepEqual(returnVal, { key1: 5},
+							'Property of "key1: 5" was not set on "testCtrlObserve" object'
+						);
+					},
+					'advanced': function() {
+						var returnVal2;
+						
+						Wee.controller.$set('testCtrlObserve2', 'value1');
+
+						Wee.controller.$observe('testCtrlObserve2', function(data, type, diff) {
+							if (type === 'set' && diff.before === 'value1') {
+								returnVal2 = data;
+							}
+						}, {
+							diff: true
+						});
+
+						Wee.controller.$set('testCtrlObserve2', 27);
+
+						assert.strictEqual(returnVal2, 27,
+							'Did not observe change of "testCtrlObserve2" to 2'
+						);
+					}
+				},
 					);
 				},
 				'ready': function() {
