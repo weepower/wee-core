@@ -310,33 +310,31 @@ define(function(require) {
 					'Property "color2: red" was not appended to object');
 				},
 				'$push': function() {
-					Wee.controller.$push('test', 'test-1');
+					Wee.controller.$push('testCtrlPush', 'test-1');
 
 					assert.isFunction(Wee.controller.$push,
 						'$push did not return as a function'
 					);
 
-					assert.isArray(Wee.controller.$get('test'),
+					assert.isArray(Wee.controller.$get('testCtrlPush'),
 						'$push did not push'
 					);
 
-					assert.equal(Wee.controller.$get('test'), 'test-1');
+					assert.equal(Wee.controller.$get('testCtrlPush'), 'test-1');
 				},
 				'$drop': function() {
-					Wee.controller.$set('test', 'test-2');
+					Wee.controller.$set('testCtrlDrop', 'test-2');
 
-					assert.strictEqual(Wee.controller.$get('test'), 'test-2',
+					assert.strictEqual(Wee.controller.$get('testCtrlDrop'), 'test-2',
 						'Variable test-2 was not properly set'
 					);
 
-					Wee.controller.$drop('test');
+					Wee.controller.$drop('testCtrlDrop');
 
-					assert.strictEqual(Wee.controller.$get('test'), null,
+					assert.strictEqual(Wee.controller.$get('testCtrlDrop'), null,
 						'Variable test-2 was not properly dropped'
 					);
 				},
-				'$destroy': function() {
-					Wee.controller.$destroy();
 				'$observe': {
 					'basic': function() {
 						var returnVal;
