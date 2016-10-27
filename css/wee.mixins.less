@@ -2311,7 +2311,10 @@
 	white-space: nowrap;
 }
 .wrap () {
-	white-space: initial;
+	white-space: normal;
+}
+.white-space (@value) {
+	white-space: @value;
 }
 .ellipsis (@maxWidth: false) {
 	overflow-x: hidden;
