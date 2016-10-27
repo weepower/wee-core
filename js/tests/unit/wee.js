@@ -1148,12 +1148,25 @@ define(function(require) {
 				'Only unique elements were correctly returned.'
 			);
 		},
-		'_canExec': function() {
-			var fun = function() {};
+		'_canExec': {
+			'simple function': function() {
+				var fun = function() {};
 
-			assert.isTrue(Wee._canExec(fun),
-				'Method did not identify executable function successfully'
-			);
+				assert.isTrue(Wee._canExec(fun),
+					'Method did not identify executable function successfully'
+				);
+			},
+			'function as object property': function() {
+				var fun2 = {
+					prop1: function(a, b) {
+						return a + b;
+					}
+				};
+
+				assert.isTrue(Wee._canExec(fun2.prop1),
+					'Method did not identify executable function successfully'
+				);
+			}
 		},
 		'_castString': function() {
 			var num = '5';
