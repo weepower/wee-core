@@ -373,6 +373,25 @@ define(function(require) {
 						);
 					}
 				},
+				'$unobserve': function() {
+					var returnVal3;
+
+					Wee.controller.$set('testCtrlObserve', {});
+
+					Wee.controller.$observe('testCtrlObserve.key1', function(data) {
+						returnVal3 = data;
+					}, {
+						recursive: true
+					});
+
+					Wee.controller.$set('testCtrlObserve.key1', 5);
+
+					Wee.controller.$unobserve('testCtrlObserve.key1');
+
+					Wee.controller.$set('testCtrlObserve.key1', 25);
+
+					assert.strictEqual(returnVal3, 5,
+						'Value of "returnVal3" did not remain 5 as expected'
 					);
 				},
 				'ready': function() {
