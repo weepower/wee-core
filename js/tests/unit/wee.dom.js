@@ -516,6 +516,17 @@ define(function(require) {
 			);
 		},
 
+		'$first': function() {
+			Wee.$html('#container',
+					'<div class="test">1</div>' +
+					'<div class="test">2</div>'
+				);
+
+				assert.strictEqual($('.test').first().text(), '1',
+					'First element was selected not successfully.'
+				);
+		},
+
 		'$hasClass': {
 			'single': function() {
 				Wee.$addClass('#container', 'test-class');
