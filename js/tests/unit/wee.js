@@ -264,6 +264,29 @@ define(function(require) {
 					);
 
 				},
+				'$concat': {
+					'create array': function() {
+						Wee.controller.$concat('concatCtrlTest', 1);
+
+						assert.isArray(Wee.controller.$get('concatCtrlTest'),
+							'$get did not return an array'
+						);
+					},
+					'concat arrays': function() {
+						Wee.controller.$concat('concatCtrlTest', [2, 3]);
+
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [1, 2, 3],
+							'Array was not concatenated correctly.'
+						);
+					},
+					'concat array with prepended values': function() {
+						Wee.controller.$concat('concatCtrlTest', [4, 5, 6], true);
+
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [4, 5, 6, 1, 2, 3], 
+							'Array was not concatenated correctly.'
+						);
+					}
+				},
 				'$has': function() {
 					Wee.controller.$set('hasContrTest', 'value1');
 
