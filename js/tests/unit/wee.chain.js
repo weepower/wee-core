@@ -217,8 +217,13 @@ define(function(require) {
 
 			append: {
 				selection: function() {
-					 // TODO: Complete
-					 assert.isTrue(true);
+					 $el.html('<div class="appendTest">Testing</div>');
+					 
+					 $el.append('<p>Hello</p>');
+
+					 assert.strictEqual($el.text(), 'TestingHello',
+					 	'Selection was not appended to correctly'
+					 );
 				},
 
 				markup: function() {
