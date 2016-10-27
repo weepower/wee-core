@@ -529,15 +529,11 @@ define(function(require) {
 			},
 
 			first: function() {
-				// TODO: Complete
-				//$el.html(
-				//	'<div class="test">1</div>' +
-				//	'<div class="test">2</div>'
-				//);
-				//
-				//assert.strictEqual($('.test').first().text(), '1',
-				//	'First element was selected not successfully.'
-				//);
+				$el.html('<div class="test-stuff">1</div><div class="test-stuff">2</div>');
+				
+				assert.strictEqual($('.test-stuff').first().text(), '1',
+					'First element was not selected successfully.'
+				);
 			},
 
 			hasClass: {

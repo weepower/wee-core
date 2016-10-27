@@ -518,13 +518,13 @@ define(function(require) {
 
 		'$first': function() {
 			Wee.$html('#container',
-					'<div class="test">1</div>' +
-					'<div class="test">2</div>'
+					'<div class="test-first">1</div>' +
+					'<div class="test-first">2</div>'
 				);
 
-				assert.strictEqual($('.test').first().text(), '1',
-					'First element was selected not successfully.'
-				);
+			assert.strictEqual(Wee.$first('.test-first').textContent, '1',
+				'First element was not selected successfully.'
+			);
 		},
 
 		'$hasClass': {
