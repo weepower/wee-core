@@ -43,6 +43,12 @@ define(function(require) {
 				}]), undefined,
 				'Multiple events were not mapped successfully'
 			);
+		},
+
+		run: function() {
+			assert.isFunction(Wee.screen.run, true,
+				'"run" did not evaluate as a function'
+			);
 		}
 	});
 });
