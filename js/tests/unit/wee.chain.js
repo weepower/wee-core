@@ -1003,47 +1003,41 @@ define(function(require) {
 				);
 			},
 
-			//'scrollLeft': {
-			//	'get': function() {
-			//		assert.strictEqual($('body').scrollLeft(), 0,
-			//			'Scroll left value not retreived successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		// TODO: Complete
-			//		assert.isTrue(true);
-			//
-			//		//$el.css('width', '15000px');
-			//		//
-			//		//$el.scrollLeft('body', 10);
-			//		//
-			//		//assert.strictEqual($('body').scrollLeft(), 10,
-			//		//	'Scroll left value not set successfully'
-			//		//);
-			//	}
-			//},
-			//
-			//'scrollTop': {
-			//	'get': function() {
-			//		assert.strictEqual($('body').scrollTop(), 0,
-			//			'Scroll top value not retreived successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		// TODO: Complete
-			//		assert.isTrue(true);
-			//
-			//		//$el.css('height', '500px');
-			//		//
-			//		//$el.scrollTop('body', 10);
-			//		//
-			//		//assert.strictEqual($('body').scrollTop(), 10,
-			//		//	'Scroll top value not set successfully'
-			//		//);
-			//	}
-			//},
+			'scrollLeft': {
+				'get': function() {
+					assert.strictEqual($('body').scrollLeft(), 0,
+						'Scroll left value not retrieved successfully'
+					);
+				},
+			
+				'set': function() {
+					$('body').css('width', '15000px');
+					
+					$('body').scrollLeft(10);
+					
+					assert.strictEqual($('body').scrollLeft(), 10,
+						'Scroll left value not set successfully'
+					);
+				}
+			},
+
+			'scrollTop': {
+				'get': function() {
+					assert.strictEqual($el.scrollTop(), 0,
+						'Scroll top value not retreived successfully'
+					);
+				},
+			
+				'set': function() {
+					$('body').css('height', '500px');
+					
+					$('body').scrollTop(10);
+					
+					assert.strictEqual($('body').scrollTop(), 10,
+						'Scroll top value not set successfully'
+					);
+				}
+			},
 			//
 			//'serialize': function() {
 			//	$el.html(el,
