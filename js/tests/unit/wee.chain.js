@@ -938,6 +938,19 @@ define(function(require) {
 				);
 			},
 			
+			'removeAttr': function() {
+				$el.attr('data-test', 'value');
+			
+				assert.strictEqual($el.attr('data-test'), 'value',
+					'Attribute was not added successfully'
+				);
+			
+				$el.removeAttr('data-test');
+			
+				assert.strictEqual($el.attr('data-test'), null,
+					'Attribute was not removed successfully'
+				);
+			},
 
 			removeClass: {
 				single: function() {
