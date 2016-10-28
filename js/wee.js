@@ -1117,7 +1117,7 @@ var Wee;
 						.split('&').forEach(function(el) {
 							var split = el.split('='),
 								key = split[0],
-								val = split[1].replace('+', ' ') || '';
+								val = (split[1] || '').replace('+', ' ') || '';
 
 							if (obj[key]) {
 								obj[key] = W.$toArray(obj[key]);
