@@ -8,6 +8,7 @@
 		settings = {},
 		root = '',
 		path = '',
+		url = '',
 
 		/**
 		 * Return current path
@@ -163,6 +164,7 @@
 					scrollTop: 0
 				}, options);
 				root = settings.request.root || '';
+				url = W.routes.uri().full;
 
 				this.request = settings.request;
 				delete settings.request;
@@ -241,7 +243,7 @@
 					var event = keys[i],
 						sel = events[event];
 
-					$(sel).each(function(el) {
+					W.$each(sel, function(el) {
 						var evt = event.split(' ').map(function(val) {
 								return val + '.history';
 							}).join(' '),
@@ -250,9 +252,17 @@
 							l = el;
 
 						if (loc || form) {
+							var attrs = el.attributes,
+								x = 0,
+								attr;
 							l = W._doc.createElement('a');
-							l.href = loc || el.getAttribute('action') ||
-								W.routes.uri().full;
+
+							for (; x < attrs.length; x++) {
+								attr = attrs[x];
+								l.setAttribute(attr.name, attr.value);
+							}
+
+							l.href = loc || el.getAttribute('action') || url;
 						}
 
 						// Ensure the path exists and is local
@@ -352,7 +362,8 @@
 			// Reset URL to exclude root
 			a.href = request.url;
 
-			request.url = _path(a);
+			url = _path(a);
+			request.url = url;
 			conf.request = request;
 
 			var sendEvents = [],
