@@ -792,6 +792,24 @@ define(function(require) {
 				}
 			},
 			
+			'parent': {
+				'selection': function() {
+					$el.html('<div id="parent"><p id="child"></p></div>');
+			
+					assert.deepEqual($('#child').parent()[0].id, 'parent',
+						'Parent was not returned successfully'
+					);
+				},
+			
+				'filtered': function() {
+					$el.html('<div id="parent"><p id="child"></p></div>');
+			
+					assert.deepEqual($('#child').parent('div')[0].id, 'parent',
+						'Parent was not returned successfully'
+					);
+				}
+			},
+			
 
 			position: function() {
 				var positionValue = {
