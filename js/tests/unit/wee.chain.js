@@ -841,69 +841,6 @@ define(function(require) {
 				);
 			},
 
-			//'prop': {
-			//	'beforeEach': function() {
-			//		$el.html(el,
-			//			'<input type="text" class="testing">'
-			//		);
-			//	},
-			//
-			//	'afterEach': function() {
-			//		$el.remove('.testing');
-			//	},
-			//
-			//	'get': function() {
-			//		$('.testing').prop('checked');
-			//
-			//		assert.notOk($('.testing').prop('checked'),
-			//			'Property was selected successfully'
-			//		);
-			//	},
-			//
-			//	'single': function() {
-			//		$('.testing').prop('disabled', true);
-			//
-			//		assert.ok($('.testing').prop('disabled'),
-			//			'Disabled property was not added successfully'
-			//		);
-			//	},
-			//
-			//	'multiple': function() {
-			//		$('.testing').prop({
-			//			'disabled': true,
-			//			'required': true
-			//		});
-			//
-			//		assert.ok($('.testing').prop('disabled'),
-			//			'Disabled property was negated successfully.'
-			//		);
-			//		assert.ok($('.testing').prop('required'),
-			//			'Required property was added successfully.'
-			//		);
-			//	}
-			//},
-			//
-			// remove: function() {
-			// 	$el.remove();
-			//
-			// 	assert.strictEqual($('#wee').length, 0,
-			// 		'Element was not removed successfully'
-			// 	);
-			// },
-			//
-			//'removeAttr': function() {
-			//	$el.attr('data-test', 'value');
-			//
-			//	assert.strictEqual($el.attr('data-test'), 'value',
-			//		'Attribute was not added successfully'
-			//	);
-			//
-			//	$el.removeAttr('data-test');
-			//
-			//	assert.strictEqual($el.attr('data-test'), null,
-			//		'Attribute was not removed successfully'
-			//	);
-			//},
 			'prepend': {
 				'prepend as first element': function() {
 					$el.prepend('<span class="testing">First span</span>');
