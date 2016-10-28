@@ -841,14 +841,6 @@ define(function(require) {
 				);
 			},
 
-			//'prev': function() {
-			//	$el.after(el,
-			//		$('<span id="wee-chain-id-2"></span>')
-			//	);
-			//
-			//	assert.strictEqual($('#wee-chain-id-2').prev().length, 1);
-			//},
-			//
 			//'prop': {
 			//	'beforeEach': function() {
 			//		$el.html(el,
