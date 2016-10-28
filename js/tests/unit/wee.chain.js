@@ -749,7 +749,7 @@ define(function(require) {
 				$('#wee-chain-1').remove();
 			},
 
-			'not': {
+			not: {
 				'selection': function() {
 					$el.html(
 						'<span class="testing-not one">1</span>' +
@@ -759,6 +759,27 @@ define(function(require) {
 			
 					assert.isObject($('.testing-not').not('.two'));
 
+					assert.strictEqual($('.testing-not').not('.two')[0].textContent, '1',
+						'Filtered elements not returned successfully'
+					);
+				}
+				// // TODO: Not working in console.
+				// 'fn': function() {
+				// 	$el.html(
+				// 		'<ul class="people">' +
+				// 		    '<li>Charlie Kelly</li>' +
+				// 		    '<li data-hidden="true">Dennis Reynolds</li>' +
+				// 		    '<li>Mac</li>' +
+				// 		    '<li>Dee Reynolds</li>' +
+				// 		'</ul>'
+				// 	);
+			
+				// 	$('.people li').not(function(i, el) {
+				// 		return $el.data(el, 'hidden') === true;
+				// 	});
+				// }
+			},
+			
 			'offset': {
 				'beforeEach': function() {
 					$el.css({
