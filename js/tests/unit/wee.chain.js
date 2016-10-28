@@ -841,18 +841,6 @@ define(function(require) {
 				);
 			},
 
-			//'prependTo': function() {
-			//	var prependFixture = '<div id="test"></div>';
-			//
-			//	$el.html('<div id="wee-inner"></div>');
-			//
-			//	$(prependFixture).prependTo('#wee-inner');
-			//
-			//	assert.ok($('#wee-chain-id-inner').parent(), prependFixture,
-			//		'Element was not appended to element successfully'
-			//	);
-			//},
-			//
 			//'prev': function() {
 			//	$el.after(el,
 			//		$('<span id="wee-chain-id-2"></span>')
