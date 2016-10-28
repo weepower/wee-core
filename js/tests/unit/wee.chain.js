@@ -667,38 +667,34 @@ define(function(require) {
 				);
 			},
 
-			//'is': {
-			//	'selection': function() {
-			//		$el.addClass('one');
-			//
-			//		assert.ok($el.is('.one'),
-			//			'Element was not successfully identified with "one" class'
-			//		);
-			//
-			//		assert.isFalse($el.is(),
-			//			'$is returned false instead of true'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<ul class="people">' +
-			//			    '<li data-hidden="false">Charlie Kelly</li>' +
-			//			    '<li data-hidden="true">Dennis Reynolds</li>' +
-			//			    '<li data-hidden="false">Mac</li>' +
-			//			    '<li data-hidden="false">Dee Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		var isFunction = $('.people li').is(function(i, el) {
-			//				return $el.data('hidden');
-			//			});
-			//
-			//		assert.isTrue(isFunction,
-			//			'Function executed successfully'
-			//		);
-			//	}
-			//},
+			'is': {
+				'selection': function() {
+					$el.addClass('one');
+			
+					assert.ok($el.is('.one'),
+						'Element was not successfully identified with "one" class'
+					);
+			
+					assert.isFalse($el.is(),
+						'$is returned false instead of true'
+					);
+				},
+			
+				fn: function() {
+					$el.html(
+						'<ul class="people"><li data-hidden="false">Charlie Kelly</li>' +
+						    '<li data-hidden="true">Dennis Reynolds</li>' +
+						    '<li data-hidden="false">Mac</li>' +
+						    '<li data-hidden="false">Dee Reynolds</li>' +
+						'</ul>'
+					);
+			
+					assert.isFalse($el.is('.people li', function(i, el) {
+							return $el.data('hidden') === 'false';
+						}), 'Function executed successfully'
+					);
+				}
+			},
 
 			last: function() {
 				$el.html('<div>1</div><div>2</div><div>3</div>');
