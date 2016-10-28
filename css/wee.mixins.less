@@ -336,7 +336,7 @@
 	# Borders
 \*------------------------------------*/
 
-.border (@value) when (@value = 0) {
+.border (@value) when (@value = 0), (@value = none) {
 	border: none;
 }
 .border (@value) when not (@value = false)
