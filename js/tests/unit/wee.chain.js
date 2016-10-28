@@ -739,22 +739,16 @@ define(function(require) {
 				}
 			},
 
-			// function() {
-			// 	$el.html('<div class="testMap">1</div>');	
+			next: function() {
+				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
+			
+				assert.strictEqual($('#wee-chain').next()[0].id, 'wee-chain-1',
+					'Next element was not returned successfully'
+				);
+			
+				$('#wee-chain-1').remove();
+			},
 
-			// 	var num = parseInt($('.testMap').text());
-
-			// 	$('.testMap').map(function())
-
-			//next: function() {
-			//	$el.append('body', '<div id="wee-chain-2"></div>');
-			//
-			//	assert.strictEqual($el.next()[0].id, 'wee-chain-2',
-			//		'Next element was not returned successfully'
-			//	);
-			//
-			//	$('#wee-chain-id-2').remove();
-			//},
 
 			//'not': {
 			//	'selection': function() {
