@@ -678,10 +678,30 @@
 	border-color: @color;
 }
 .border-color (light; @opacity: @defaultOpacity) {
-	border-color: rgba(255, 255, 255, (@opacity / 100));
+	.check () when (@opacity > 1)
+			and not (ispercentage(@opacity)) {
+		border-color: rgba(255, 255, 255, (@opacity / 100));
+	}
+	.check () when (@opacity < 1) {
+		border-color: rgba(255, 255, 255, @opacity);
+	}
+	.check () when (ispercentage(@opacity)) {
+		border-color: rgba(255, 255, 255, unit((@opacity / 100)));
+	}
+	.check();
 }
 .border-color (dark; @opacity: @defaultOpacity) {
-	border-color: rgba(0, 0, 0, (@opacity / 100));
+	.check () when (@opacity > 1)
+			and not (ispercentage(@opacity)) {
+		border-color: rgba(0, 0, 0, (@opacity / 100));
+	}
+	.check () when (@opacity < 1) {
+		border-color: rgba(0, 0, 0, @opacity);
+	}
+	.check () when (ispercentage(@opacity)) {
+		border-color: rgba(0, 0, 0, unit((@opacity / 100)));
+	}
+	.check();
 }
 .border-color (top; @color) {
 	border-top-color: @color;
