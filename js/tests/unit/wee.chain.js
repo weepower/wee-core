@@ -749,49 +749,16 @@ define(function(require) {
 				$('#wee-chain-1').remove();
 			},
 
+			'not': {
+				'selection': function() {
+					$el.html(
+						'<span class="testing-not one">1</span>' +
+						'<span class="testing-not two">2</span>' +
+						'<span class="testing-not three">3</span>'
+					);
+			
+					assert.isObject($('.testing-not').not('.two'));
 
-			//'not': {
-			//	'selection': function() {
-			//		$el.html(el,
-			//			'<span class="testing-not one"></span>' +
-			//			'<span class="testing-not two"></span>' +
-			//			'<span class="testing-not three"></span>'
-			//		);
-			//
-			//		var $elements = Wee.$('.testing-not');
-			//
-			//		assert.isObject($($elements).not('.one'));
-			//
-			//		assert.strictEqual($el.not($elements, '.one').length, 2,
-			//			'Filtered elements not retuned successfully'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<ul class="people">' +
-			//			    '<li data-hidden="false">Charlie Kelly</li>' +
-			//			    '<li data-hidden="true">Dennis Reynolds</li>' +
-			//			    '<li data-hidden="false">Mac</li>' +
-			//			    '<li data-hidden="false">Dee Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		var notFunction = $('.people li').not(function(i, el) {
-			//				return $el.data('hidden') === true;
-			//
-			//			});
-			//
-			//		assert.isObject(notFunction,
-			//			'$not did not return an array'
-			//		);
-			//
-			//		assert.strictEqual(notFunction.length, 3,
-			//			'Incorrect values were returned'
-			//		);
-			//	}
-			//},
-			//
 			//'offset': {
 			//	'beforeEach': function() {
 			//		$el.css({
