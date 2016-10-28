@@ -1070,39 +1070,53 @@ define(function(require) {
 			//	);
 			//},
 			//
-			//'show': function() {
-			//	$el.hide(el);
-			//
-			//	assert.ok($el.hasClass('js-hide'),
-			//		'Element was not hidden successfully'
-			//	);
-			//
-			//	$el.show();
-			//
-			//	assert.notOk($el.hasClass('js-hide'),
-			//		'Element was not shown successfully'
-			//	);
-			//},
-			//
-			//'siblings': {
-			//	'beforeEach': function() {
-			//		$el.append(el,
-			//			'<p></p>' +
-			//			'<span></span>' +
-			//			'<div id="target-div"></div>'
-			//		);
-			//	},
-			//
-			//	'all': function() {
-			//		assert.strictEqual($('#target-div').siblings().length, 2,
-			//			'All siblings were not retrieved successfully'
-			//		);
-			//
-			//		assert.isObject($('#target-div').siblings(),
-			//			'$siblings did not return an array'
-			//		);
-			//	}
-			//},
+			'show': function() {
+				$el.hide(el);
+			
+				assert.ok($el.hasClass('js-hide'),
+					'Element was not hidden successfully'
+				);
+			
+				$el.show();
+			
+				assert.notOk($el.hasClass('js-hide'),
+					'Element was not shown successfully'
+				);
+			},
+			
+			'siblings': {			
+				'all': function() {
+					$el.html(
+						'<p>Sibling paragraph</p>' +
+						'<span>Sibling span</span>' +
+						'<div id="target-div">Target div</div>'
+					);
+
+					assert.strictEqual($('#target-div').siblings().length, 2,
+						'All siblings were not retrieved successfully'
+					);
+
+					assert.deepEqual($('#target-div').siblings()[0].innerText, 'Sibling paragraph',
+						'Expected result did not match actual result'
+					);
+				},
+
+				'filtered': function() {
+					$el.html(
+						'<p>Sibling paragraph</p>' +
+						'<span>Sibling span</span>' +
+						'<div id="target-div">Target div</div>'
+					);
+
+					assert.strictEqual($('#target-div').siblings('p').length, 1,
+						'All siblings were not retrieved successfully'
+					);
+
+					assert.deepEqual($('#target-div').siblings('p')[0].innerText, 'Sibling paragraph',
+						'Expected result did not match actual result'
+					);
+				}
+			},
 			//
 			//'slice': function() {
 			//	$el.html(el,
