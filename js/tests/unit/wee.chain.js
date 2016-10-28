@@ -898,6 +898,36 @@ define(function(require) {
 				$('#wee-chain-1').remove();
 			},
 			
+			'prop': {			
+				'get': function() {
+					$el.html('<input type="radio" class="testing" value="" checked>');
+			
+					assert.isTrue($('.testing').prop('checked'),
+						'Property was not selected successfully (should have returned as true)'
+					);
+				},
+			
+				'single': function() {
+					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+				
+					assert.strictEqual($('.testing').prop('disabled', 'true')[0].id, 'testProp',
+						'Property was not selected successfully'
+					);
+				},
+			
+				'multiple': function() {
+					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+			
+					assert.strictEqual(
+						$('.testing').prop({
+							'disabled': true,
+							'type': 'radio'
+						})[0].id, 'testProp',
+						'Property was not selected successfully'
+					);
+				}
+			},
+			
 
 			removeClass: {
 				single: function() {
