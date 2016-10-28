@@ -841,38 +841,6 @@ define(function(require) {
 				);
 			},
 
-			//'prepend': {
-			//	'selection': function() {
-			//		$el.prepend('<span class="testing"></span>');
-			//
-			//		assert.ok($el.contains('.testing'),
-			//			'Test element was not prepended successfully'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<h1 id="list-heading"></h1>' +
-			//			'<ul id="wee-list">' +
-			//				'<li>Dee Reynolds</li>' +
-			//				'<li>Frank Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		$('#list-heading').prepend(function() {
-			//			return '(' + $el.children('#wee-list').length + ')';
-			//		});
-			//
-			//		assert.include($el.text('#list-heading'), '(2)',
-			//			'Function was not executed successfully'
-			//		);
-			//
-			//		assert.strictEqual($el.text('#list-heading'), '(2)',
-			//			'Function was not executed successfully'
-			//		);
-			//	}
-			//},
-			//
 			//'prependTo': function() {
 			//	var prependFixture = '<div id="test"></div>';
 			//
@@ -956,6 +924,41 @@ define(function(require) {
 			//		'Attribute was not removed successfully'
 			//	);
 			//},
+			'prepend': {
+				'prepend as first element': function() {
+					$el.prepend('<span class="testing">First span</span>');
+
+					assert.strictEqual($el.children().first()[0].innerText, 'First span',
+						'Element was not correctly prepended as first element'
+					);
+				},
+				'prepend before selection': function() {
+					$el.prepend('<span class="testing2">Second span</span>', '<span class="testing"></span>');
+			
+					assert.strictEqual($el.children().first()[0].innerText, 'Second span',
+						'Element was not correctly prepended as first element'
+					);
+				},
+			
+				fn: function() {
+					$el.html(
+						'<h1 id="list-heading"></h1>' +
+						'<ul id="wee-list">' +
+							'<li>Dee Reynolds</li>' +
+							'<li>Frank Reynolds</li>' +
+						'</ul>'
+					);
+			
+					$('#list-heading').prepend(function() {
+						return '(' + $el.children('#wee-list').length + ')';
+					});
+			
+					assert.strictEqual($('#list-heading').text(), '(1)',
+						'Function was not executed successfully'
+					);
+				}
+			},
+			
 
 			removeClass: {
 				single: function() {
