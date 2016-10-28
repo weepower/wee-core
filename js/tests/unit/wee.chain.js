@@ -928,6 +928,16 @@ define(function(require) {
 				}
 			},
 			
+			remove: function() {
+				$el.html('<div id="wee-inner"></div>');
+
+				$('#wee-inner').remove();				
+
+				assert.strictEqual($('#wee').children().length, 0,
+					'Element was not removed successfully'
+				);
+			},
+			
 
 			removeClass: {
 				single: function() {
