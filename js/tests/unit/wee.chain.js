@@ -951,6 +951,16 @@ define(function(require) {
 				);
 			},
 			
+			'prev': function() {
+				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
+				
+				assert.strictEqual($('#wee-chain-1').prev()[0].id, 'wee-chain',
+					'Next element was not returned successfully'
+				);
+				
+				$('#wee-chain-1').remove();
+			},
+			
 
 			removeClass: {
 				single: function() {
