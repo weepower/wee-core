@@ -828,8 +828,8 @@
 	}
 	.check();
 }
-.shadow (inner) {
-	.shadow(inner; dark);
+.shadow (inner; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0; @spread: 0) {
+	.shadow(dark; @opacity; @x; @y; @blur; @spread; 'inset ');
 }
 .shadow (inner; dark; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0; @spread: 0) {
 	.shadow(dark; @opacity; @x; @y; @blur; @spread; 'inset ');
