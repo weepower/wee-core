@@ -759,6 +759,39 @@ define(function(require) {
 			
 					assert.isObject($('.testing-not').not('.two'));
 
+			'offset': {
+				'beforeEach': function() {
+					$el.css({
+						position: 'absolute',
+						top: '-10000px',
+						left: '-10000px'
+					});
+				},
+			
+				'get': function() {
+					assert.deepEqual($el.offset(), {
+						top: -10000,
+						left: -10000
+					},
+						'Offset not returned successfully'
+					);
+				},
+			
+				'set': function() {
+					$el.offset({
+						top: 100,
+						left: 20
+					});
+			
+					assert.deepEqual($el.offset(), {
+						top: 100,
+						left: 20
+					},
+						'Offset value was not set successfully'
+					);
+				}
+			},
+			
 
 			position: function() {
 				var positionValue = {
