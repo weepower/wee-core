@@ -677,6 +677,12 @@
 .border-color (@color) when (iscolor(@color)) {
 	border-color: @color;
 }
+.border-color (light; @opacity: @defaultOpacity) {
+	border-color: rgba(255, 255, 255, (@opacity / 100));
+}
+.border-color (dark; @opacity: @defaultOpacity) {
+	border-color: rgba(0, 0, 0, (@opacity / 100));
+}
 .border-color (top; @color) {
 	border-top-color: @color;
 }
