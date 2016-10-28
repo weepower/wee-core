@@ -810,6 +810,19 @@ define(function(require) {
 				}
 			},
 			
+			'parents': function() {
+				$el.html(
+					'<span id="child">' +
+						'<span id="child-2">' +
+							'<span id="child-3"></span>' +
+						'</span>' +
+					'</span>'
+				);
+			
+				assert.strictEqual($('#child-3').parents().length, 5,
+					'Parents were not returned successfully'
+				);
+			},
 
 			position: function() {
 				var positionValue = {
