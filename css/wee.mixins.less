@@ -2537,16 +2537,15 @@
 	-webkit-transition: ~'@{value}';
 	transition: ~'@{value}';
 }
-.transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
-		when (@property = all) {
-	.transition('@{arguments}');
-}
-.transition (@property; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
-		when (default()) {
-	.transition('@{property}');
-	.transition-delay(@delay);
-	.transition-duration(@duration);
-	.transition-timing-function(@ease);
+.transition (@property; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s) {
+	.check () when (@property = transform) {
+		-webkit-transition: ~'-webkit-@{arguments}';
+	}
+	.check () when (default()) {
+		-webkit-transition: ~'@{arguments}';
+	}
+	.check();
+	transition: ~'@{arguments}';
 }
 .transition-delay (@delay: 1s) {
 	-webkit-transition-delay: @delay;
@@ -2557,8 +2556,15 @@
 	transition-duration: @duration;
 }
 .transition-property (@property: all) {
-	-webkit-transition-property: @property;
-	transition-property: @property;
+	.check () when (@property = transform) {
+		-webkit-transition-property: -webkit-transform;
+		transition-property: transform;
+	}
+	.check () when (default()) {
+		-webkit-transition-property: @property;
+		transition-property: @property;
+	}
+	.check();
 }
 .transition-timing-function (@function: @defaultTiming) {
 	-webkit-transition-timing-function: @function;
