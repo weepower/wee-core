@@ -225,12 +225,20 @@ var Wee;
 				 *
 				 * @private
 				 */
-				_observe = function(obs, key, fn, options) {
+				_observe = function(store, obs, key, fn, options) {
 					options = options || {};
 					options.fn = fn;
 
 					obs.$[key] = obs.$[key] || [];
 					obs.$[key].push(options);
+
+					if (options.init) {
+						var val = _get(store, false, key);
+
+						if (val) {
+							fn(val);
+						}
+					}
 				},
 
 				/**
@@ -790,12 +798,13 @@ var Wee;
 				 * @param {function} fn
 				 * @param {object} [options]
 				 * @param {boolean} [options.diff=false]
+				 * @param {boolean} [options.init=false]
 				 * @param {boolean} [options.once=false]
 				 * @param {boolean} [options.recursive=false]
 				 * @param {*} [options.value]
 				 */
 				$observe: function(key, fn, options) {
-					_observe(observe, key, fn, options);
+					_observe(store, observe, key, fn, options);
 				},
 
 				/**
@@ -1396,7 +1405,7 @@ var Wee;
 									 * Attach callback to data storage change
 									 */
 									$observe: function(key, fn, options) {
-										_observe(observe, key, fn, options);
+										_observe(store, observe, key, fn, options);
 									},
 
 									/**
