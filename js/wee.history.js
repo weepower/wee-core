@@ -334,7 +334,8 @@
 					{},
 					req,
 					conf.request || {}
-				);
+				),
+				route = conf.run && W.routes;
 
 			request.root = request.root !== U ? request.root : root;
 			request.url = request.url !== U ? request.url : conf.path;
@@ -365,6 +366,14 @@
 			url = _path(a);
 			request.url = url;
 			conf.request = request;
+
+			// Evaluate preload routes against target path
+			if (route) {
+				W.routes.run({
+					event: 'preload',
+					path: url
+				});
+			}
 
 			var sendEvents = [],
 				successEvents = [],
@@ -401,7 +410,7 @@
 				}
 
 				// Evaluate unload routes against updated path
-				if (W.routes && conf.run) {
+				if (route) {
 					W.routes.run({
 						event: 'unload',
 						path: path
