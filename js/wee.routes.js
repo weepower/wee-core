@@ -21,8 +21,9 @@
 		 * @param {int} i - current index in iteration
 		 * @param {int} total - total number of routes
 		 * @param {string} [event='load'] - lifecycle event
+		 * @param {array} [parent] - parent route values
 		 */
-		_process = function(route, i, total, event) {
+		_process = function(route, i, total, event, parent) {
 			var seg = segs[i],
 				keys = Object.keys(route),
 				x = 0;
@@ -49,8 +50,8 @@
 					// Ensure event type matches route type
 					if ((! history && (
 							parts.indexOf('unload') > -1 ||
-							parts.indexOf('pop') > -1)
-						) ||
+							parts.indexOf('pop') > -1
+						)) ||
 						(history && (
 							! W.$isObject(child) &&
 							parts.indexOf(event) < 0
@@ -61,6 +62,12 @@
 					// Set option to rule root
 					if (parts.length > 1) {
 						opt = parts[0];
+
+						if (! opt && parent) {
+							opt = parent[0];
+							seg = parent[1];
+							y--;
+						}
 					}
 
 					// Negate routes prefixed by !
@@ -145,7 +152,7 @@
 				// If matched then process recursively or execute if applicable
 				if (match) {
 					if (W.$isObject(child)) {
-						_process(child, y, total, event);
+						_process(child, y, total, event, [opt, seg]);
 					} else if (! ran && y === total) {
 						W.$exec(child, {
 							args: seg
