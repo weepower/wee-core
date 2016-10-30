@@ -72,10 +72,8 @@ define(function(require) {
 						);
 
 						Wee.assets.remove([
-							'/js/' +
-							'tests/sample-files/sample.js',
-							'/js/' +
-							'tests/sample-files/sample-2.js'
+							'/js/tests/support/sample-files/sample.js',
+							'/js/tests/support/sample-files/sample-2.js'
 						]);
 					})
 				});
@@ -94,8 +92,7 @@ define(function(require) {
 						);
 
 						Wee.assets.remove(
-							'/js/tests/' +
-							'sample-files/sample.js'
+							'/js/tests/support/sample-files/sample.js'
 						);
 
 					})
@@ -116,8 +113,7 @@ define(function(require) {
 						);
 
 						Wee.assets.remove(
-							'/js/' +
-							'tests/sample-files/sample.js'
+							'/js/tests/support/sample-files/sample.js'
 						);
 					})
 				});
@@ -138,8 +134,7 @@ define(function(require) {
 								);
 
 								Wee.assets.remove(
-									'/js/' +
-									'tests/sample-files/sample.js'
+									'/js/tests/support/sample-files/sample.js'
 								);
 							})
 						});
