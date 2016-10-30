@@ -70,6 +70,34 @@ define(function(require) {
 							);
 						})
 					});
+
+					Wee.$set('sampleJsLoaded', false);
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						js: 'sample.js',
+						cache: false,
+						success: promise.callback(function() {
+							assert.isTrue(Wee.$get('sampleJsLoaded'),
+								'Sample file not loaded successfully'
+							);
+
+							Wee.assets.remove(
+								'/js/tests/support/sample-files/sample.js'
+							);
+						})
+					});
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						js: '404.js',
+						group: 'errorGroup',
+						error: promise.callback(function() {
+							assert.isTrue(true,
+								'Error callback executed in error'
+							);
+						})
+					});
 				},
 
 				css: function() {
@@ -97,24 +125,33 @@ define(function(require) {
 							);
 						})
 					});
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						css: '404.css',
+						group: 'errorGroup',
+						error: promise.callback(function() {
+							assert.isTrue(true,
+								'Error callback executed in error'
+							);
+						})
+					});
 				},
 
-				// img: function() {
+				img: function() {
+					var promise = this.async(1000);
 
-				// TODO: find out how to test this or what it even does
-				// 	var promise = this.async(1000);
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						img: 'logo.png',
+						success: promise.callback(function() {
 
-				// 	Wee.assets.load({
-				// 		root: '/js/tests/support/sample-files/',
-				// 		img: 'logo.png',
-				// 		success: promise.callback(function() {
-
-				// 			Wee.assets.remove(
-				// 				'/js/tests/support/sample-files/logo.png'
-				// 			);
-				// 		})
-				// 	})
-				// }
+							Wee.assets.remove(
+								'/js/tests/support/sample-files/logo.png'
+							);
+						})
+					});
+				}
 			},
 
 			'multiple files': function() {
