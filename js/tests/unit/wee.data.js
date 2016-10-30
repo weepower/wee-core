@@ -14,7 +14,7 @@ define(function(require) {
 				// TODO: File path is relative to wee-core. Need solution that
 				// TODO: uses conditional path that works with Browsersync as well.
 				Wee.data.request({
-					url: '/js/tests/sample-files/sample.json',
+					url: '/js/tests/support/sample-files/sample.json',
 					json: true,
 					success: promise.callback(function(data) {
 						assert.strictEqual(data.person.firstName, 'Don',

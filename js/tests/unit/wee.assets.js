@@ -12,18 +12,18 @@ define(function(require) {
 		root: {
 			set: function() {
 				Wee.assets.root(
-					'/js/tests/sample-files/'
+					'/js/tests/support/sample-files/'
 				);
 
 				assert.strictEqual(Wee.assets.root(),
-					'/js/tests/sample-files/',
+					'/js/tests/support/sample-files/',
 					'Asset root not set successfully'
 				);
 			},
 
 			get: function() {
 				assert.strictEqual(Wee.assets.root(),
-					'/js/tests/sample-files/',
+					'/js/tests/support/sample-files/',
 					'Asset root not retrieved successfully'
 				);
 			}
@@ -34,7 +34,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/js/tests/sample-files/',
+					root: '/js/tests/support/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
@@ -52,7 +52,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/js/tests/sample-files/',
+					root: '/js/tests/support/sample-files/',
 					files: [
 						'sample.js',
 						'sample-2.js'
@@ -80,7 +80,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/js/tests/sample-files/',
+					root: '/js/tests/support/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
@@ -103,7 +103,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/js/tests/sample-files/',
+					root: '/js/tests/support/sample-files/',
 					files: 'sample.js',
 					success: promise.callback(function() {
 						assert.isTrue(Wee.$get('sampleJsLoaded'),
@@ -122,7 +122,7 @@ define(function(require) {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
-					root: '/js/tests/sample-files/',
+					root: '/js/tests/support/sample-files/',
 					files: 'sample.js',
 					group: 'assetsGroup',
 					success: promise.callback(function() {
