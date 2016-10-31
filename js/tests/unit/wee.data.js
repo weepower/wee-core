@@ -7,8 +7,8 @@ define(function(require) {
 	registerSuite({
 		name: 'Data',
 
-		'request': {
-			'get': function() {
+		get: {
+			'standard': function() {
 				var promise = this.async(1000);
 
 				// TODO: File path is relative to wee-core. Need solution that
@@ -24,14 +24,140 @@ define(function(require) {
 				});
 			},
 
-			'post with data': function() {
-				// TODO: Complete
-				assert.isTrue(true);
+			'with data': function() {
+				var promise = this.async(1000);
+
+				Wee.data.request({
+					url: 'https://httpbin.org/get',
+					json: true,
+					data: {
+						test: 'test'
+					},
+					success: promise.callback(function(data) {
+						assert.strictEqual(data.args.test, 'test',
+							'Data posted successfully'
+						);
+					}),
+					complete: function() {
+						assert.isTrue(true,
+							'Complete callback called on error'
+						);
+					}
+				});
 			},
 
-			'JSONP': function() {
-				// TODO: Complete
-				assert.isTrue(true);
+			'with query string': function() {
+				var promise = this.async(1000);
+
+				Wee.data.request({
+					url: 'https://httpbin.org/get?test=test',
+					json: true,
+					success: promise.callback(function(data) {
+						assert.strictEqual(data.args.test, 'test',
+							'Data posted successfully'
+						);
+					})
+				});
+			}
+		},
+
+		post: {
+			'with data': function() {
+				var promise = this.async(1000);
+
+				Wee.data.request({
+					root: 'https://httpbin.org/',
+					url: 'post',
+					method: 'post',
+					json: true,
+					data: {
+						test: 'test'
+					},
+					success: promise.callback(function(data) {
+						var response = JSON.parse(data.data);
+
+						assert.strictEqual(response.test, 'test',
+							'Data posted successfully'
+						);
+					})
+				});
+			},
+			type: {
+				form: function() {
+					var promise = this.async(1000);
+
+					Wee.data.request({
+						url: 'https://httpbin.org/post',
+						method: 'post',
+						json: true,
+						type: 'form',
+						data: {
+							test: 'test'
+						},
+						success: promise.callback(function(data) {
+							assert.strictEqual(data.form.test, 'test',
+								'Data posted successfully'
+							);
+
+							assert.strictEqual(data.headers['Content-Type'],
+								'application/x-www-form-urlencoded; charset=UTF-8',
+								'Incorrect headers sent'
+							);
+						})
+					});
+				},
+				html: function() {
+					var promise = this.async(1000);
+
+					Wee.data.request({
+						url: 'https://httpbin.org/post',
+						method: 'post',
+						json: true,
+						type: 'xml',
+						success: promise.callback(function(data) {
+							assert.strictEqual(data.headers['Content-Type'],
+								'text/xml; charset=UTF-8',
+								'Incorrect headers sent'
+							);
+						})
+					});
+				},
+				json: function() {
+					var promise = this.async(1000);
+
+					Wee.data.request({
+						url: 'https://httpbin.org/post',
+						method: 'post',
+						json: true,
+						type: 'json',
+						success: promise.callback(function(data) {
+							assert.equal(data.data, '{}',
+								'Data posted successfully'
+							);
+
+							assert.strictEqual(data.headers['Content-Type'],
+								'application/json; charset=UTF-8',
+								'Incorrect headers sent'
+							);
+						})
+					});
+				},
+				xml: function() {
+					var promise = this.async(1000);
+
+					Wee.data.request({
+						url: 'https://httpbin.org/post',
+						method: 'post',
+						json: true,
+						type: 'xml',
+						success: promise.callback(function(data) {
+							assert.strictEqual(data.headers['Content-Type'],
+								'text/xml; charset=UTF-8',
+								'Incorrect headers sent'
+							);
+						})
+					});
+				}
 			}
 		}
 	});
