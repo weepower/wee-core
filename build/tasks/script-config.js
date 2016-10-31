@@ -70,6 +70,10 @@ module.exports = function(grunt) {
 
 			if (features.history === true) {
 				config.script.core.push(weeScriptRoot + 'wee.history.js');
+
+				if (features.chain === true) {
+					chained.push(weeScriptRoot + 'chain/wee.chain.history.js');
+				}
 			}
 
 			if (features.routes === true) {
