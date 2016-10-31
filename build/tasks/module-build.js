@@ -195,6 +195,10 @@ module.exports = function(grunt) {
 
 					if (features.history === true) {
 						coreScript.push(root + 'wee.history.js');
+
+						if (features.chain === true) {
+							chained.push(root + 'chain/wee.chain.history.js');
+						}
 					}
 
 					if (features.routes === true) {
@@ -256,6 +260,7 @@ module.exports = function(grunt) {
 			fs.writeFileSync(config.paths.temp + name + '.less',
 				less.replace(/{{moduleName}}/g, name)
 					.replace(/{{modulePath}}/g, modulePath)
+					.replace(/{{standalone}}/g, module.standalone === true)
 					.replace('{{namespaceOpen}}', namespaceOpen)
 					.replace('{{namespaceClose}}', namespaceClose)
 					.replace('{{fontPath}}', '/' + project.paths.assets + '/modules/' + name + '/fonts/')
