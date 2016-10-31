@@ -65,7 +65,7 @@
 			W.$setRef(sel);
 			W.$setVar(sel);
 
-			W.history.bind();
+			W.history.bind(false, sel);
 		},
 
 		/**
@@ -234,7 +234,7 @@
 				var keys = Object.keys(events),
 					i = 0;
 
-				if (typeof a !== 'object') {
+				if (! W.$isObject(a)) {
 					context = a;
 					a = {};
 				}
