@@ -957,8 +957,11 @@
 .content (@value; @font; ...) {
 	font-family: @font;
 }
-.content (@value; @font; @size) {
+.content (@value; @font; @size; ...) {
 	.font-size(@size);
+}
+.content (@value; @font; @size; @lineHeight) {
+	.line-height(@lineHeight);
 }
 .prefix (@value: '-'; @margin: .5em; @font: false; @color: false) {
 	&:before {
