@@ -37,7 +37,8 @@
 					k = 0,
 					y = i,
 					match = false,
-					ran = false;
+					ran = false,
+					object = W.$isObject(child);
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k],
@@ -53,7 +54,7 @@
 							parts.indexOf('pop') > -1
 						)) ||
 						(history && (
-							! W.$isObject(child) &&
+							! object &&
 							parts.indexOf(event) < 0
 						))) {
 						continue;
@@ -91,7 +92,7 @@
 
 							if (parts.indexOf('fire') > -1) {
 								ran = true;
-							} else if (! W.$isObject(child)) {
+							} else if (! object) {
 								push = true;
 							}
 						} else if (opt == 'root') {
@@ -117,6 +118,8 @@
 								eq = true;
 							}
 						}
+
+						opt = '$' + opt;
 					}
 
 					// Invert the equality if the route is negated
@@ -127,9 +130,13 @@
 					if (eq) {
 						// If ran is true then execute the route immediately
 						if (ran) {
-							W.$exec(child, {
-								args: seg
-							});
+							if (object) {
+								_process(child, y, total, event, [opt, seg]);
+							} else {
+								W.$exec(child, {
+									args: seg
+								});
+							}
 						}
 
 						// If push is true then push the route to the any queue
@@ -151,7 +158,7 @@
 
 				// If matched then process recursively or execute if applicable
 				if (match) {
-					if (W.$isObject(child)) {
+					if (object) {
 						_process(child, y, total, event, [opt, seg]);
 					} else if (! ran && y === total) {
 						W.$exec(child, {
