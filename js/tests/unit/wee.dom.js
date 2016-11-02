@@ -1286,11 +1286,10 @@ define(function(require) {
 				);
 			},
 			'get multiple': function() {
-				assert.strictEqual(Wee.$val('.testing2'),
-					[
-						'selectValue1',
-						'selectValue2'
-					],
+				assert.strictEqual(
+					Wee.$equals(Wee.$val('.testing2'),
+					['selectValue1', 'selectValue2']),
+					true,
 					'Value was not retrieved successfully'
 				);
 
