@@ -558,8 +558,19 @@ define(function(require) {
 				Wee.$height('#container', '100px');
 			},
 			get: function() {
+				var docHeight = document.documentElement.scrollHeight,
+					winHeight = window.innerHeight;
+
 				assert.strictEqual(Wee.$height('#container'), 100,
 					'Element height not set successfully'
+				);
+
+				assert.strictEqual(Wee.$height(window), winHeight,
+					'Element width not set successfully'
+				);
+
+				assert.strictEqual(Wee.$height(document), docHeight,
+					'Element width not set successfully'
 				);
 			},
 			set: function() {
