@@ -1244,6 +1244,48 @@ define(function(require) {
 				);
 
 			},
+			
+			'toggleClass': {
+				'single': function() {
+					$el.toggleClass('test-class');
+			
+					assert.ok($el.hasClass('test-class'),
+						'Class was not added successfully'
+					);
+			
+					$el.toggleClass('test-class');
+			
+					assert.notOk($el.hasClass('test-class'),
+						'Class was not removed successfully'
+					);
+				},
+			
+				'multiple': function() {
+					$el.toggleClass('test-class test-class-2');
+			
+					assert.strictEqual($el.attr('class'),
+						'js-wee test-class test-class-2',
+						'Multiple classes were not toggled successfully'
+					);
+			
+					$el.toggleClass('test-class test-class-2');
+			
+					assert.notStrictEqual($el.attr('class'),
+						'js-wee test-class test-class-2',
+						'Multiple classes were not toggled successfully'
+					);
+			
+					assert.notOk($el.hasClass('test-class'),
+						'Multiple classes were not toggled successfully'
+					);
+			
+					assert.notOk($el.hasClass('test-class-2'),
+						'Multiple classes were not toggled successfully'
+					);
+				},
+			
+				'fn': function() {
+					$el.html('<div class="toggle-test"></div>');
 
 					$('.toggle-test').toggleClass(function(i, className) {
 						return ' -is-active';
