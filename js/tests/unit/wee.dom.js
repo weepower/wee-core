@@ -1272,13 +1272,30 @@ define(function(require) {
 		$val: {
 			beforeEach: function() {
 				Wee.$html('#container',
-					'<input type="text" class="testing" value="test">'
+					'<input type="text" class="testing" value="test">' +
+					'<select name="select-multiple" class="testing2" multiple>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
+						'<option value="selectValue2" selected>Option 2</option>' +
+					'</select>'
 				);
 			},
 			get: function() {
 				assert.strictEqual(Wee.$val('.testing'),
 					'test',
 					'Value was not retrieved successfully'
+				);
+			},
+			'get multiple': function() {
+				assert.strictEqual(Wee.$val('.testing2'),
+					[
+						'selectValue1',
+						'selectValue2'
+					],
+					'Value was not retrieved successfully'
+				);
+
+				assert.isArray(Wee.$val('.testing2'),
+					'Returned value was not an array'
 				);
 			},
 			set: function() {
