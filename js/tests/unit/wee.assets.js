@@ -94,7 +94,7 @@ define(function(require) {
 						group: 'errorGroup',
 						error: promise.callback(function() {
 							assert.isTrue(true,
-								'Error callback executed in error'
+								'Error callback executed erroneously'
 							);
 						})
 					});
@@ -132,7 +132,7 @@ define(function(require) {
 						group: 'errorGroup',
 						error: promise.callback(function() {
 							assert.isTrue(true,
-								'Error callback executed in error'
+								'Error callback executed erroneously'
 							);
 						})
 					});
@@ -148,6 +148,18 @@ define(function(require) {
 
 							Wee.assets.remove(
 								'/js/tests/support/sample-files/logo.png'
+							);
+						})
+					});
+
+					var promise = this.async(1000);
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						img: '404.png',
+						error: promise.callback(function() {
+							assert.isTrue(true,
+								'Error callback executed erroneously'
 							);
 						})
 					});
@@ -202,7 +214,7 @@ define(function(require) {
 		},
 
 		ready: {
-			'check': function() {
+			check: function() {
 				var promise = this.async(1000);
 
 				Wee.assets.load({
@@ -239,6 +251,29 @@ define(function(require) {
 								);
 							})
 						});
+					})
+				});
+			},
+
+			poll: function() {
+				var promise = this.async(1000);
+
+				Wee.assets.load({
+					root: '/js/tests/support/sample-files/',
+					files: 'sample.js',
+					group: 'assetsGroup',
+					success: promise.callback(function() {
+						Wee.assets.ready('assetsGroup', {
+							success: promise.callback(function() {
+								assert.ok(Wee.assets.ready('assetsGroup'),
+									'Asset group was not created successfully'
+								);
+
+								Wee.assets.remove(
+									'/js/tests/support/sample-files/sample.js'
+								);
+							})
+						}, true);
 					})
 				});
 			}
