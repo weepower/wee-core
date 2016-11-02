@@ -22,6 +22,22 @@ define(function(require) {
 						);
 					})
 				});
+
+				Wee.data.request({
+					url: 'js/tests/support/sample-files/sample.json',
+					json: true,
+					cache: false,
+					send: promise.callback(function() {
+						// TODO: find a better way to test this
+						assert.isTrue(true);
+					}),
+					responseType: 'text',
+					success: promise.callback(function(data) {
+						assert.strictEqual(data.person.firstName, 'Don',
+							'Sample file was not loaded successfully'
+						);
+					})
+				});
 			},
 
 			'with data': function() {
@@ -54,11 +70,27 @@ define(function(require) {
 					json: true,
 					success: promise.callback(function(data) {
 						assert.strictEqual(data.args.test, 'test',
-							'Data posted successfully'
+							'Data posted unsuccessfully'
 						);
 					})
 				});
-			}
+			},
+
+			// TODO: hook this up with new http api test site
+			// jsonp: function() {
+			// 	var promise = this.async(1000);
+			//
+			// 	Wee.data.request({
+			// 		url: 'https://httpbin.org/get?test=test',
+			// 		json: true,
+			// 		jsonp: true,
+			// 		success: promise.callback(function(data) {
+			// 			assert.strictEqual(data.key, 'value',
+			// 				'JSONP callback was not set executed'
+			// 			);
+			// 		})
+			// 	});
+			// }
 		},
 
 		post: {
@@ -158,6 +190,40 @@ define(function(require) {
 						})
 					});
 				}
+			}
+		},
+
+		error: {
+			// TODO: Find out why this is timing out
+			// 'not found': function() {
+			// 	var promise = this.async(2000);
+			//
+			// 	Wee.data.request({
+			// 		url: 'https://httpbin.com/status/500',
+			// 		method: 'get',
+			// 		json: true,
+			// 		error: promise.callback(function() {
+			// 			//
+			// 		})
+			// 	});
+			// },
+
+			'invalid json': function() {
+				var promise = this.async(1000);
+
+				Wee.data.request({
+					url: '/js/tests/support/sample-files/invalid-json.json',
+					json: true,
+					success: promise.callback(function(data) {
+						assert.isObject(data, {},
+							'Invalid JSON parsed'
+						);
+
+						assert.equal(Object.keys(data).length, 0,
+							'Invalid JSON parsed'
+						);
+					})
+				});
 			}
 		}
 	});
