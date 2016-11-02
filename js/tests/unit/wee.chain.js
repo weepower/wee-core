@@ -240,7 +240,7 @@ define(function(require) {
 
 			append: {
 				selection: function() {
-					 $el.html('<div class="appendTest">Testing</div>');
+					 $el.html('<div class="append-test">Testing</div>');
 					 
 					 $el.append('<p>Hello</p>');
 
