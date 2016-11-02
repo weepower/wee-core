@@ -1331,13 +1331,22 @@ define(function(require) {
 				}
 			},
 
-			// wrap: function() {
-			// 	$el.wrap('<div id="test"></div>');
-			//
-			// 	assert.strictEqual($el.parent('#test').length, 1,
-			// 		'Element was not wrapped successfully'
-			// 	);
-			// },
+			wrap: function() {
+				$el.html(
+					'<ul class="list">' + 
+						'<li class="list__item">Red</li>' +
+						'<li class="list__item">Green</li>' +
+						'<li class="list__item">Blue</li>' +
+						'<li class="list__item">Orange</li>' +
+					'</ul>'
+				);
+
+				$('.list').wrap('<div class="wrapper"></div>');
+			
+				assert.strictEqual($('.list')[0].parentElement.className, 'wrapper',
+					'Element was not wrapped successfully'
+				);
+			},
 
 			wrapInner: function() {
 				$el.wrapInner('<div id="test"></div>');
