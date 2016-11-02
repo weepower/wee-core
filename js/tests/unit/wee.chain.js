@@ -360,12 +360,12 @@ define(function(require) {
 			},
 
 			closest: function() {
-				// TODO: Complete
-				//$el.wrap('<div id="test"></div>');
-				//
-				//assert.strictEqual($el.closest('#test').length, 1,
-				//	'Closest element not available'
-				//);
+				$el.html('<div class="nav" id="div1"><a class="link__account">Your Account</a></div>' + 
+					'<div class="nav"><a class="link__about">About Us</a></div>');
+				
+				assert.strictEqual($('.link__account').closest('.nav')[0].id, 'div1',
+					'Did not get unique closest ancestor'
+				);
 			},
 
 			contains: function() {
