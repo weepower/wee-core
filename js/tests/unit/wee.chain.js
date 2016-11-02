@@ -470,20 +470,26 @@ define(function(require) {
 
 			each: function() {
 				$el.html(
-					'<div class="testEach">1</div>' +
-					'<div class="testEach">2</div>' +
-					'<div class="testEach">3</div>'
+					'<div class="test-each">1</div>' +
+					'<div class="test-each">2</div>' +
+					'<div class="test-each">3</div>'
 				);
 
-				$('.testEach').each(function() {
-					$(this).html('Hello!');
+				$('.test-each').each(function(el, i) {
+					$(this).html('Hello ' + i);
 				});
 
-				$('.testEach').each(function(test) {
-					assert.strictEqual(test.innerHTML, 'Hello!',
-						'Did not return "Hello!" as expected'
-					);
-				});
+				assert.strictEqual($('.test-each')[0].innerHTML, 'Hello 0',
+					'Did not return "Hello!" as expected'
+				);
+
+				assert.strictEqual($('.test-each')[1].innerHTML, 'Hello 1',
+					'Did not return "Hello!" as expected'
+				);
+
+				assert.strictEqual($('.test-each')[2].innerHTML, 'Hello 2',
+					'Did not return "Hello!" as expected'
+				);
 			},
 
 			empty: function() {
