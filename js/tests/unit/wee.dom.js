@@ -1325,6 +1325,10 @@ define(function(require) {
 				assert.strictEqual(Wee.$width('#container'), 100,
 					'Element width not set successfully'
 				);
+
+				assert.strictEqual(Wee.$width('#container', true), 100,
+					'Element width not set successfully'
+				);
 			},
 			set: function() {
 				Wee.$width('#container', '200px');
