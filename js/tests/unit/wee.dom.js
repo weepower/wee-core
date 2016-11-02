@@ -1321,6 +1321,17 @@ define(function(require) {
 				Wee.$width('#container', '100px');
 			},
 			get: function() {
+				var docWidth = document.documentElement.scrollWidth,
+					winWidth = window.innerWidth;
+
+				assert.strictEqual(Wee.$width(window), winWidth,
+					'Element width not set successfully'
+				);
+
+				assert.strictEqual(Wee.$width(document), docWidth,
+					'Element width not set successfully'
+				);
+
 				assert.strictEqual(Wee.$width('#container'), 100,
 					'Element width not set successfully'
 				);
