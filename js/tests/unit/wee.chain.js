@@ -1253,19 +1253,34 @@ define(function(require) {
 				);
 
 				var $arr = $('.revTest').reverse();
+			'text': {
+				'get': function() {
+					$el.html('<p>This is some text</p>');
 
-				assert.strictEqual($arr[0].innerHTML, '3',
-					'Not reversed'
-				);
+					assert.strictEqual($el.text(), 'This is some text',
+						'Text was not retrieved successfully'
+					);
+				},
+			
+				'set': function() {
+					$el.html('<span class="text-test"></span>');
 
-				assert.strictEqual($arr[1].innerHTML, '2',
-					'Not reversed'
-				);
+					$('.text-test').text('Test 123');
+			
+					assert.strictEqual($('.text-test').text(), 'Test 123',
+						'Element text was not set successfully'
+					);
+				},
 
-				assert.strictEqual($arr[2].innerHTML, '1',
-					'Not reversed'
-				);
-			},
+				'function': function() {
+					$el.html(
+						'<ul class="list">' + 
+							'<li class="list__item one">Red</li>' +
+							'<li class="list__item two">Green</li>' +
+							'<li class="list__item three">Blue</li>' +
+							'<li class="list__item four">Orange</li>' +
+						'</ul>'
+					);
 
 					$('.three').text(function() {
 						return 'Purple';
