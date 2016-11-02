@@ -1257,14 +1257,14 @@ define(function(require) {
 
 			toArray: function() {
 				$el.html(
-					'<div class="testArr">1</div>' +
-					'<div class="testArr">2</div>' +
-					'<div class="testArr">3</div>'
+					'<div class="test-arr">1</div>' +
+					'<div class="test-arr">2</div>' +
+					'<div class="test-arr">3</div>'
 				);
 
-				assert.isArray($('.testArr').toArray(), true);
+				assert.isArray($('.test-arr').toArray(), true);
 
-				assert.lengthOf($('.testArr').toArray(), 3,
+				assert.lengthOf($('.test-arr').toArray(), 3,
 					'Array was not created properly'
 				);
 			},
