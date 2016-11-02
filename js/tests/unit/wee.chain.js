@@ -585,6 +585,14 @@ define(function(require) {
 				}
 			},
 
+			get: function() {
+				$el.html('<div class="get-test">First div</div><div class="get-test">Second div</div>');
+
+				assert.strictEqual($('.get-test').get(0).textContent, 'First div',
+					'Did not successfully get correct selection'
+				);
+			},
+
 			height: {
 				get: function() {
 					$el.height(100);
