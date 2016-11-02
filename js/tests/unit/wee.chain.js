@@ -69,8 +69,31 @@ define(function(require) {
 				},
 
 				delegation: function() {
-					// TODO: Complete
-					assert.isTrue(true);
+					$el.html(
+						'<ul class="parent-list">' +
+							'<li class="post">Item 1</li>' +
+							'<li class="post">Item 2</li>' +
+							'<li class="post">Item 3</li>' +
+							'<li class="post">Item 4</li>' +
+							'<li class="post">Item 5</li>' +
+							'<li class="post">Item 6</li>' +
+						'</ul>'
+					);
+
+					$('.post').on('click', function(e, el) {
+						$(this).text("Clicked");
+						e.preventDefault();
+					}, {
+						delegate: '.parent-list'
+					});
+
+					assert.strictEqual(Wee.events.bound('.parent-list')[0].ev, 'click',
+						'Click event was not bound to parent element'
+					);
+
+					assert.strictEqual(Wee.events.bound('.parent-list')[0].targ[0].className, 'post',
+						'Target element was not bound to parent element'
+					);
 				},
 
 				'multiple events': function() {
