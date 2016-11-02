@@ -1102,13 +1102,21 @@ define(function(require) {
 					'<input type="text" name="input" value="inputValue">' +
 					'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
 					'<input type="radio" name="radio1" value="radioValue" checked>' +
+					'<input type="text" name="name[]" value="name1">' +
+					'<input type="text" name="email[]" value="email1">' +
+					'<input type="text" name="name[]" value="name2">' +
+					'<input type="text" name="email[]" value="email2">' +
 					'<select name="select">' +
-						'<option value="selectValue1" checked>Option 1</option>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
 						'<option value="selectValue2">Option 2</option>' +
+					'</select>' +
+					'<select name="select-multiple" multiple>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
+						'<option value="selectValue2" selected>Option 2</option>' +
 					'</select>' +
 					'<select name="optgroup">' +
 						'<optgroup>' +
-							'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+							'<option value="optgroupValue1" selected>Optgroup 1</option>' +
 							'<option value="optgroupValue2">Optgroup 2</option>' +
 						'</optgroup>' +
 					'</select>' +
@@ -1118,12 +1126,20 @@ define(function(require) {
 				'</form>'
 			);
 
-			var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
-				'&radio1=radioValue&select=selectValue1&' +
-				'optgroup=optgroupValue1&textarea=Text+Area';
+			var serializedValue = 'input=inputValue&checkbox=checkboxValue&' +
+				'radio1=radioValue&name[]=name1&name[]=name2&email[]=email1' +
+				'&email[]=email2&select=selectValue1&select-multiple[]=sele' +
+				'ctValue1&select-multiple[]=selectValue2&optgroup=optgroupV' +
+				'alue1&textarea=Text+Area';
 
 			assert.strictEqual(Wee.$serializeForm('#wee-form'), serializedValue,
 				'Form was not serialized successfully'
+			);
+
+			Wee.$html('#container', '<div id="wee-form">hi</div>');
+
+			assert.strictEqual(Wee.$serializeForm('#wee-form'), '',
+				'Attempted to serialize a non FORM element'
 			);
 		},
 		$show: function() {
