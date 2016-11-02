@@ -520,10 +520,10 @@ define(function(require) {
 				},
 
 				'positive index': function() {
-					// TODO: Complete
-					//assert.strictEqual($('.test').eq(1).text(), '2',
-					//	'Element with index 1 was not selected successfully.'
-					//);
+					assert.strictEqual($('.test').eq(1).text(), '2',
+						'Element at index 1 was not selected successfully.'
+					);
+
 				},
 
 				'negative index': function() {
