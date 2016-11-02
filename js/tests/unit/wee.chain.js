@@ -310,6 +310,10 @@ define(function(require) {
 			},
 
 			'$before': {
+				afterEach: function() {
+					$('.test').remove();
+				},
+
 				markup: function() {
 					$el.before('<span class="test"></span>');
 
