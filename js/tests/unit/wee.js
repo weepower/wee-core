@@ -103,7 +103,7 @@ define(function(require) {
 					'create array': function() {
 						Wee.$concat('concatTest', 1);
 
-						assert.isArray(Wee.$get('concatTest'),
+						assert.deepEqual(Wee.$get('concatTest'), [1],
 							'$get did not return an array'
 						);
 					},
@@ -268,8 +268,8 @@ define(function(require) {
 					'create array': function() {
 						Wee.controller.$concat('concatCtrlTest', 1);
 
-						assert.isArray(Wee.controller.$get('concatCtrlTest'),
-							'$get did not return an array'
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [1],
+							'Did not create an array of [1]'
 						);
 					},
 					'concat arrays': function() {
