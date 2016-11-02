@@ -348,7 +348,7 @@ define(function(require) {
 						Wee.controller.$set('testCtrlObserve.key1', 5);
 
 						assert.deepEqual(returnVal, { key1: 5},
-							'Property of "key1: 5" was not set on "testCtrlObserve" object'
+							'Did not observe change to "testCtrlObserve"'
 						);
 					},
 					'advanced': function() {
@@ -367,7 +367,7 @@ define(function(require) {
 						Wee.controller.$set('testCtrlObserve2', 27);
 
 						assert.strictEqual(returnVal2, 27,
-							'Did not observe change of "testCtrlObserve2" to 2'
+							'Did not observe change of "testCtrlObserve2" to 27'
 						);
 					}
 				},
