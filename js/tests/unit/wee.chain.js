@@ -1245,14 +1245,22 @@ define(function(require) {
 
 			},
 
-			setVar: function() {
-				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+					$('.toggle-test').toggleClass(function(i, className) {
+						return ' -is-active';
+					});
+					
+					assert.isTrue($('.toggle-test').hasClass('-is-active'),
+						'Class was not toggled on'
+					);
 
-				$('ref:testSet').setVar();
+					$('.toggle-test').toggleClass(function(i, className) {
+						return ' -is-active';
+					});
 
-				assert.strictEqual($('ref:testSet').sel, 'ref:testSet',
-					'Data-set variable was not added to datastore'
-				);
+					assert.isFalse($('.toggle-test').hasClass('-is-active'),
+						'Class was not toggled off'
+					);
+				}
 			},
 
 			toArray: function() {
