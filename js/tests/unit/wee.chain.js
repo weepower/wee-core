@@ -1267,15 +1267,32 @@ define(function(require) {
 				);
 			},
 
-			setRef: function() {
-				$el.html('<div data-ref="testElement">1</div>');
+					$('.three').text(function() {
+						return 'Purple';
+					});
 
-				$('ref:testElement').setRef();
+					$('.list__item').text(function(i, text) {
+						return text.toUpperCase();
+					});
 
-				assert.strictEqual($('ref:testElement').sel, 'ref:testElement',
-					'Reference element was successfully selected.'
+					assert.strictEqual($('.three').text(), 'PURPLE',
+						'Text was not changed as expected'
+					);
+				}
+			},
+			
+			'toggle': function() {
+				$el.toggle();
+			
+				assert.ok($el.hasClass('js-hide'),
+					'Element was not hidden successfully'
 				);
-
+			
+				$el.toggle();
+			
+				assert.notOk($el.hasClass('js-hide'),
+					'Element was not shown successfully'
+				);
 			},
 			
 			'toggleClass': {
