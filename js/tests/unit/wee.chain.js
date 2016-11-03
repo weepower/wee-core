@@ -803,22 +803,26 @@ define(function(require) {
 					assert.strictEqual($('.testing-not').not('.two')[0].textContent, '1',
 						'Filtered elements not returned successfully'
 					);
-				}
-				// // TODO: Not working in console.
-				// 'fn': function() {
-				// 	$el.html(
-				// 		'<ul class="people">' +
-				// 		    '<li>Charlie Kelly</li>' +
-				// 		    '<li data-hidden="true">Dennis Reynolds</li>' +
-				// 		    '<li>Mac</li>' +
-				// 		    '<li>Dee Reynolds</li>' +
-				// 		'</ul>'
-				// 	);
+				},
+				
+				'fn': function() {
+					$el.html(
+						'<ul class="people">' +
+							'<li>Charlie Kelly</li>' +
+							'<li data-hidden="true">Dennis Reynolds</li>' +
+							'<li>Mac</li>' +
+							'<li>Dee Reynolds</li>' +
+						'</ul>'
+					);
 			
-				// 	$('.people li').not(function(i, el) {
-				// 		return $el.data(el, 'hidden') === true;
-				// 	});
-				// }
+					var arr = $('.people li').not(function(i, el) {
+						return $(el).data('hidden') === true;
+					});
+
+					assert.strictEqual(arr.length, 3,
+						'Did not filter out selected element'
+					);
+				}
 			},
 			
 			'offset': {
