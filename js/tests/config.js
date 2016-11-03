@@ -3,7 +3,7 @@ define({
 	proxyUrl: 'http://localhost:9010',
 	initialBaseUrl: '../../',
 	excludeInstrumentation: /^(?:node_modules|js\/tests)\//,
-	tunnel: 'NullTunnel',
+	tunnel: 'BrowserStackTunnel',
 	suites: [
 		'js/tests/unit/wee',
 		'js/tests/unit/wee.animate',
@@ -20,7 +20,16 @@ define({
 	],
 	environments: [
 		{
-			'browserName': 'chrome'
+			'browser': 'Chrome',
+			'os': 'Windows',
+			'os_version': '10',
+			'browser_version': '54.0 beta'
+		},
+		{
+			'os': 'OS X',
+			'os_version': 'El Capitan',
+			'browser': 'Chrome',
+			'browser_version': '54.0 beta'
 		}
 	],
 	tunnelOptions: {
