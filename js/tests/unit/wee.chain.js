@@ -1211,7 +1211,7 @@ define(function(require) {
 						'All siblings were not retrieved successfully'
 					);
 
-					assert.deepEqual($('#target-div').siblings()[0].innerText, 'Sibling paragraph',
+					assert.deepEqual($('#target-div').siblings()[0].textContent, 'Sibling paragraph',
 						'Expected result did not match actual result'
 					);
 				},
@@ -1227,7 +1227,7 @@ define(function(require) {
 						'All siblings were not retrieved successfully'
 					);
 
-					assert.deepEqual($('#target-div').siblings('p')[0].innerText, 'Sibling paragraph',
+					assert.deepEqual($('#target-div').siblings('p')[0].textContent, 'Sibling paragraph',
 						'Expected result did not match actual result'
 					);
 				}
