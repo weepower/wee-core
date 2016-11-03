@@ -1047,6 +1047,34 @@ define(function(require) {
 				);
 			},
 
+			reverse: function() {
+				var revArray = [1, 2, 3];
+				
+				assert.deepEqual(revArray.reverse(), [3, 2, 1],
+					'Array was not reversed'
+				);
+			},
+
+			setRef: function() {
+				$el.html('<div data-ref="testElement1">1</div>');
+
+				Wee.$setRef();
+
+				assert.strictEqual($('ref:testElement1')[0].textContent, '1',
+					'Reference element was successfully selected.'
+				);
+			},
+
+			setVar: function() {
+				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+
+				Wee.$setVar();
+				
+				assert.strictEqual(Wee.$get('testSet'), 'yes',
+					'Data-set variable was not added to datastore'
+				);
+			},
+
 			'scrollLeft': {
 				'get': function() {
 					assert.strictEqual($('body').scrollLeft(), 0,
