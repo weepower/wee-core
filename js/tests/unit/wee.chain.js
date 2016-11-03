@@ -1239,8 +1239,31 @@ define(function(require) {
 					'<div class="revTest" id="second">2</div>' +
 					'<div class="revTest" id="third">3</div>'
 				);
+			'slice': {
+				'array': function() {
+					var arr = [1, 2, 3, 4, 5, 6];
+			
+					assert.deepEqual(arr.slice(1, 3), [2, 3],
+						'Slice was not performed correctly'
+					);
+				},
 
-				var $arr = $('.revTest').reverse();
+				'string': function() {
+					$el.html(
+						'<ul class="list">' + 
+							'<li class="list__item">Red</li>' +
+							'<li class="list__item">Green</li>' +
+							'<li class="list__item">Blue</li>' +
+							'<li class="list__item">Orange</li>' +
+						'</ul>'
+					);
+					
+					assert.strictEqual($('.list__item').slice(0, 2)[1].innerText, 'Green',
+						'Second element was not selected successfully'
+					);
+				}
+			},
+			
 			'text': {
 				'get': function() {
 					$el.html('<p>This is some text</p>');
