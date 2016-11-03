@@ -723,15 +723,16 @@ define(function(require) {
 			
 				fn: function() {
 					$el.html(
-						'<ul class="people"><li data-hidden="false">Charlie Kelly</li>' +
-						    '<li data-hidden="true">Dennis Reynolds</li>' +
-						    '<li data-hidden="false">Mac</li>' +
-						    '<li data-hidden="false">Dee Reynolds</li>' +
+						'<ul class="people">' + 
+							'<li data-hidden="false">Charlie Kelly</li>' +
+							'<li>Dennis Reynolds</li>' +
+							'<li>Mac</li>' +
+							'<li>Dee Reynolds</li>' +
 						'</ul>'
 					);
 			
-					assert.isFalse($el.is('.people li', function(i, el) {
-							return $el.data('hidden') === 'false';
+					assert.isTrue($('.people li').is(function(i, el) {
+							return $(el).data('hidden') === false;
 						}), 'Function executed successfully'
 					);
 				}
