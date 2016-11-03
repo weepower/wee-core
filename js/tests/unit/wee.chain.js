@@ -1233,12 +1233,6 @@ define(function(require) {
 				}
 			},
 			
-			reverse: function() {
-				$el.html(
-					'<div class="revTest" id="first">1</div>' +
-					'<div class="revTest" id="second">2</div>' +
-					'<div class="revTest" id="third">3</div>'
-				);
 			'slice': {
 				'array': function() {
 					var arr = [1, 2, 3, 4, 5, 6];
