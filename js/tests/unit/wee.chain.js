@@ -1082,38 +1082,74 @@ define(function(require) {
 					);
 				}
 			},
-			//
-			//'serialize': function() {
-			//	$el.html(el,
-			//		'<form action="#" id="wee-chain-id-form">' +
-			//			'<input type="text" name="input" value="inputValue">' +
-			//			'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
-			//			'<input type="radio" name="radio1" value="radioValue" checked>' +
-			//			'<select name="select">' +
-			//				'<option value="selectValue1" checked>Option 1</option>' +
-			//				'<option value="selectValue2">Option 2</option>' +
-			//			'</select>' +
-			//			'<select name="optgroup">' +
-			//				'<optgroup>' +
-			//					'<option value="optgroupValue1" checked>Optgroup 1</option>' +
-			//					'<option value="optgroupValue2">Optgroup 2</option>' +
-			//				'</optgroup>' +
-			//			'</select>' +
-			//			'<textarea name="textarea">' +
-			//			'Text Area' +
-			//			'</textarea>' +
-			//		'</form>'
-			//	);
-			//
-			//	var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
-			//		'&radio1=radioValue&select=selectValue1&' +
-			//		'optgroup=optgroupValue1&textarea=Text+Area';
-			//
-			//	assert.strictEqual($('#wee-chain-id-form').serialize(), serializedValue,
-			//		'Form was not serialized successfully'
-			//	);
-			//},
-			//
+			
+			'serialize': {
+				'standard': function() {
+					$el.html(
+						'<form action="#" id="wee-chain-id-form">' +
+							'<input type="text" name="input" value="inputValue">' +
+							'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
+							'<input type="radio" name="radio1" value="radioValue" checked>' +
+							'<select name="select">' +
+								'<option value="selectValue1" checked>Option 1</option>' +
+								'<option value="selectValue2">Option 2</option>' +
+							'</select>' +
+							'<select name="optgroup">' +
+								'<optgroup>' +
+									'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+									'<option value="optgroupValue2">Optgroup 2</option>' +
+								'</optgroup>' +
+							'</select>' +
+							'<textarea name="textarea">Text Area</textarea>' +
+						'</form>'
+					);
+				
+					var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
+						'&radio1=radioValue&select=selectValue1&' +
+						'optgroup=optgroupValue1&textarea=Text+Area';
+				
+					assert.strictEqual($('#wee-chain-id-form').serialize(), serializedValue,
+						'Form was not serialized successfully'
+					);
+				},
+
+				'json': function() {
+					$el.html(
+						'<form action="#" id="wee-chain-id-form">' +
+							'<input type="text" name="input" value="inputValue">' +
+							'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
+							'<input type="radio" name="radio1" value="radioValue" checked>' +
+							'<select name="select">' +
+								'<option value="selectValue1" checked>Option 1</option>' +
+								'<option value="selectValue2">Option 2</option>' +
+							'</select>' +
+							'<select name="optgroup">' +
+								'<optgroup>' +
+									'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+									'<option value="optgroupValue2">Optgroup 2</option>' +
+								'</optgroup>' +
+							'</select>' +
+							'<textarea name="textarea">Text Area</textarea>' +
+						'</form>'
+					);
+					
+					var serializedValue = {
+						"input": "inputValue",
+						"checkbox": "checkboxValue",
+						"radio1": "radioValue",
+						"select": "selectValue1",
+						"optgroup": "optgroupValue1",
+						"textarea": "Text Area"
+					};
+					
+					assert.deepEqual($('#wee-chain-id-form').serialize(true), serializedValue,
+						'Form was not serialized in JSON format successfully'
+					);
+
+
+				}
+			},
+			
 			'show': function() {
 				$el.hide(el);
 			
