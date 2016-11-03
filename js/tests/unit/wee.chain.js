@@ -973,22 +973,29 @@ define(function(require) {
 				},
 			
 				'single': function() {
-					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+					$el.html('<input id="testProp" type="radio" class="testing" value="">');
+
+					$('.testing').prop('disabled', true);
 				
-					assert.strictEqual($('.testing').prop('disabled', 'true')[0].id, 'testProp',
+					assert.isTrue($('.testing').prop('disabled'),
 						'Property was not selected successfully'
 					);
 				},
 			
 				'multiple': function() {
-					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+					$el.html('<input id="testProp" type="radio" class="testing" value="">');
 			
-					assert.strictEqual(
-						$('.testing').prop({
-							'disabled': true,
-							'type': 'radio'
-						})[0].id, 'testProp',
-						'Property was not selected successfully'
+					$('.testing').prop({
+						disabled: true,
+						required: true
+					});
+
+					assert.isTrue($('.testing').prop('disabled'),
+						'Disabled property was not selected successfully'
+					);
+
+					assert.isTrue($('.testing').prop('required'),
+						'Required property was not selected successfully'
 					);
 				}
 			},
@@ -998,7 +1005,7 @@ define(function(require) {
 
 				$('#wee-inner').remove();				
 
-				assert.strictEqual($('#wee').children().length, 0,
+				assert.strictEqual($('#wee-inner').length, 0,
 					'Element was not removed successfully'
 				);
 			},
