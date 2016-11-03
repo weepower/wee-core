@@ -755,24 +755,24 @@ define(function(require) {
 						}), true);
 
 					assert.deepEqual(
-						mapTest.map(function(val) {
-							return val + 1;
-						}), [2, 3, 4],
+						mapTest.map(function(val, i) {
+							return val + i;
+						}), [1, 3, 5],
 					'Did not return correct array');
 				},
 
 				selection: function() {
-					$el.html('<div class="mapTest2">1</div>');
+					$el.html('<div class="map-test2">1</div>');
 
 					assert.isArray(
-						$('.mapTest2').map(function() {
+						$('.map-test2').map(function() {
 							return 'Map test passed'
 						}), 'Map test passed',
 						"Did not correctly map selection"
 					);
 
 					assert.deepEqual(
-						$('.mapTest2').map(function() {
+						$('.map-test2').map(function() {
 							return 'mapping'
 						}), ['mapping'],
 						"Did not correctly map selection"
