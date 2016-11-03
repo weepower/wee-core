@@ -911,14 +911,14 @@ define(function(require) {
 				'prepend as first element': function() {
 					$el.prepend('<span class="testing">First span</span>');
 
-					assert.strictEqual($el.children().first()[0].innerText, 'First span',
+					assert.strictEqual($el.children().first()[0].textContent, 'First span',
 						'Element was not correctly prepended as first element'
 					);
 				},
 				'prepend before selection': function() {
 					$el.prepend('<span class="testing2">Second span</span>', '<span class="testing"></span>');
 			
-					assert.strictEqual($el.children().first()[0].innerText, 'Second span',
+					assert.strictEqual($el.children().first()[0].textContent, 'Second span',
 						'Element was not correctly prepended as first element'
 					);
 				},
@@ -933,23 +933,22 @@ define(function(require) {
 					);
 			
 					$('#list-heading').prepend(function() {
-						return '(' + $el.children('#wee-list').length + ')';
+						return '<span>New span</span>';
 					});
 			
-					assert.strictEqual($('#list-heading').text(), '(1)',
+					assert.strictEqual($('#list-heading').children()[0].textContent, 'New span',
 						'Function was not executed successfully'
 					);
 				}
 			},
 			
 			'prependTo': function() {
-				var prependFixture = '<div id="test"></div>';
-			
 				$el.html('<div id="wee-inner"></div>');
 			
-				$(prependFixture).prependTo('#wee-inner');
+				$('<div id="test1"></div>').prependTo('#wee-inner');
+				$('<div id="test2"></div>').prependTo('#wee-inner');
 			
-				assert.ok($('#wee-chain-id-inner').parent(), prependFixture,
+				assert.ok($('#wee-inner').children()[0].id, 'test2',
 					'Element was not appended to element successfully'
 				);
 			},
