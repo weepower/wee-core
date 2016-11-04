@@ -1066,7 +1066,7 @@ define(function(require) {
 			setRef: function() {
 				$el.html('<div data-ref="testElement1">1</div>');
 
-				Wee.$setRef();
+				$el.setRef();
 
 				assert.strictEqual($('ref:testElement1')[0].textContent, '1',
 					'Reference element was successfully selected.'
@@ -1076,7 +1076,7 @@ define(function(require) {
 			setVar: function() {
 				$el.html('<div data-set="testSet" data-value="yes">1</div>');
 
-				Wee.$setVar();
+				$el.setVar();
 				
 				assert.strictEqual(Wee.$get('testSet'), 'yes',
 					'Data-set variable was not added to datastore'
