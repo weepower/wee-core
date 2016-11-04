@@ -614,7 +614,7 @@ define(function(require) {
 					'Element with class "testing" was selected successfully.'
 				);
 			},
-			
+
 			'select window': function() {
 				assert.isArray(Wee.$('window'));
 			},
@@ -704,20 +704,30 @@ define(function(require) {
 		},
 		'$has': {
 			'simple value': function() {
-				Wee.$set('testHas', 'value');
+				Wee.$set('test-has', 'value');
 
-				assert.strictEqual(Wee.$has('testHas.0'), true,
-					'Not detecting any value for "testHas"'
+				assert.strictEqual(Wee.$has('test-has.0'), true,
+					'Not detecting any value for "test-has"'
 				);
 			},
+
 			'object as value': function() {
-				Wee.$set('testHas2', {
+				Wee.$set('test-has2', {
 					'color1': 'blue',
 					'color2': 'red'
 				});
 
-				assert.strictEqual(Wee.$has('testHas.0'), true,
-					'Not detecting any value for "testHas"'
+				assert.strictEqual(Wee.$has('test-has2.0'), true,
+					'Not detecting any value for "test-has2"'
+				);
+			},
+
+			'array as value': function() {
+				Wee.$set('key', [1, 2, 3]);
+				Wee.$has('key', 4);
+
+				assert.isFalse(Wee.$has('key', 4),
+					'Not detecting any value for "test-has2"'
 				);
 			}
 		},
