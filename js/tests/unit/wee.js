@@ -613,13 +613,15 @@ define(function(require) {
 				assert.strictEqual(Wee.$('.testing').length, 1,
 					'Element with class "testing" was selected successfully.'
 				);
+			},
+			
+			'select window': function() {
+				assert.isArray(Wee.$('window'));
+			},
+
+			'select document': function() {
+				assert.isArray(Wee.$('document'));
 			}
-			// 'select window': function {
-			// 	assert.isTrue(Array.isArray(Wee.$('window')));
-			// },
-			// 'select document': function {
-			// 	assert.isTrue(Array.isArray(Wee.$('document')));
-			// }
 		},
 		'$parseHTML': function() {
 			var el = Wee.$parseHTML(
