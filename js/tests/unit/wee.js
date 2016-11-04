@@ -369,6 +369,46 @@ define(function(require) {
 						assert.strictEqual(returnVal, 27,
 							'Did not observe change of "testCtrlObserve2" to 27'
 						);
+					},
+					
+					'execute once': function() {
+						var num = 0;
+
+						Wee.controller.$observe('observeOnceTest', function() {
+							num++;
+						}, {
+							once: true
+						});
+
+						Wee.controller.$set('observeOnceTest', 'val1');
+
+						Wee.controller.$set('observeOnceTest', 'val1');
+
+						assert.strictEqual(num, 1,
+							'Function executed more than once ("num" should equal 1)'
+						);
+					},
+
+					'specific value to trigger': function() {
+						var num = 0;
+
+						Wee.controller.$observe('observeValueTest', function() {
+							num++;
+						}, {
+							value: 2
+						});
+
+						Wee.controller.$set('observeValueTest', 1);
+
+						assert.strictEqual(num, 0,
+							'Function should not have triggered'
+						);
+
+						Wee.controller.$set('observeValueTest', 2);
+
+						assert.strictEqual(num, 1,
+							'Function did not trigger as expected'
+						);
 					}
 				},
 				'$unobserve': {
@@ -737,6 +777,7 @@ define(function(require) {
 					'Property of "key1: 5" was not set on "testObserve" object'
 				);
 			},
+
 			'advanced': function() {
 				var returnVal;
 				
@@ -755,8 +796,49 @@ define(function(require) {
 				assert.strictEqual(returnVal, 27,
 					'Did not observe change of "testObserve2" to 2'
 				);
+			},
+
+			'execute once': function() {
+				var num = 0;
+
+				Wee.$observe('observeOnceTest', function() {
+					num++;
+				}, {
+					once: true
+				});
+
+				Wee.$set('observeOnceTest', 'val1');
+
+				Wee.$set('observeOnceTest', 'val1');
+
+				assert.strictEqual(num, 1,
+					'Function executed more than once ("num" should equal 1)'
+				);
+			},
+
+			'specific value to trigger': function() {
+				var num = 0;
+
+				Wee.$observe('observeValueTest', function() {
+					num++;
+				}, {
+					value: 2
+				});
+
+				Wee.$set('observeValueTest', 1);
+
+				assert.strictEqual(num, 0,
+					'Function should not have triggered'
+				);
+
+				Wee.$set('observeValueTest', 2);
+
+				assert.strictEqual(num, 1,
+					'Function did not trigger as expected'
+				);
 			}
 		},
+
 		'$unobserve': function() {
 			var returnVal;
 
