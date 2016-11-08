@@ -184,32 +184,37 @@
 		 * @returns {object} data
 		 */
 		uri: function(value) {
-			if (value) {
-				if (W.$isObject(value)) {
-					uri = W.$extend(this.uri(), value);
-					return uri;
-				}
-
-				var a = W._doc.createElement('a');
-				a.href = value;
-
-				var search = a.search,
-					path = a.pathname.replace(/^\/|\/$/g, '');
-
-				uri = {
-					full: '/' + path + search + a.hash,
-					hash: a.hash.slice(1),
-					history: false,
-					path: '/' + path,
-					query: search ? W.$unserialize(search) : {},
-					segments: path.split('/'),
-					url: a.href
-				};
-			} else if (! uri) {
-				uri = W.routes.uri(location.href);
+			if (! value && uri) {
+				return uri;
+			} else if (W.$isObject(value)) {
+				return W.$extend(this.uri(), value);
 			}
 
+			uri = this.parse(value || location.href);
 			return uri;
+		},
+
+		/**
+		 * Parse a URL string into parts
+		 *
+		 * @param {string} uri
+		 */
+		parse: function(uri) {
+			var a = W._doc.createElement('a');
+			a.href = uri;
+
+			var search = a.search,
+				path = a.pathname.replace(/^\/|\/$/g, '');
+
+			return {
+				full: '/' + path + search + a.hash,
+				hash: a.hash.slice(1),
+				history: false,
+				path: '/' + path,
+				query: search ? W.$unserialize(search) : {},
+				segments: path.split('/'),
+				url: a.href
+			};
 		},
 
 		/**
