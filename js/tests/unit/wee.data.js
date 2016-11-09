@@ -28,7 +28,8 @@ define(function(require) {
 					json: true,
 					cache: false,
 					send: promise.callback(function() {
-						// TODO: find a better way to test this
+						// TODO: Find a better way to test this
+						// TODO: Use state variable to verify all lifecycle methods
 						assert.isTrue(true);
 					}),
 					responseType: 'text',
