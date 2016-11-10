@@ -642,6 +642,8 @@
 					} else {
 						el.innerHTML = html;
 					}
+
+					W.$setRef(el);
 				}
 			});
 		},
