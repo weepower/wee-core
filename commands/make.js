@@ -42,6 +42,23 @@
 						message = 'Controller generated at "' + target + '"';
 					}
 				},
+				api: function() {
+					var name = config.args.name || 'api',
+						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
+
+					if (fs.existsSync(target)) {
+						error = 'Controller "' + name + '" already exists';
+					}
+
+					if (! error) {
+						var template = fs.readFileSync(templatePath + 'controller/api.js', 'utf8'),
+							parsed = Wee.view.render(template, name);
+
+						fs.outputFileSync(target, parsed);
+
+						message = 'Api interface controller generated at "' + target + '"';
+					}
+				},
 				module: function() {
 					var name = config.args.name || '',
 						target = path.join(sourcePath, 'modules/' + slugify(name));
