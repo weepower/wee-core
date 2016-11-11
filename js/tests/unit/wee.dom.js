@@ -197,6 +197,32 @@ define(function(require) {
 		},
 
 		$before: {
+			selection: function() {
+				Wee.$html('#container',
+					'<div class="div2"></div>' +
+					'<div class="div2"></div>'
+				);
+
+				Wee.$before('.div2', '<div class="div1"></div>');
+
+				assert.strictEqual(Wee.$prev('.div2')[1].className, 'div1',
+					'Did not insert selection'
+				);
+			},
+
+			remove: function() {
+				Wee.$html('#container',
+					'<div class="div2"></div>' +
+					'<div class="div2"></div>'
+				);
+
+				Wee.$before('.div2', '<div class="div1"></div>', true);
+
+				assert.deepEqual(Wee.$('.div2').length, 0,
+					'Did not remove elements with class of "div2"'
+				);
+			},
+
 			markup: function() {
 				Wee.$before('#container',
 					'<span class="testing-before"></span>'
