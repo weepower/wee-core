@@ -293,11 +293,15 @@ define(function(require) {
 		},
 		$closest: function() {
 			Wee.$append('#container',
-				'<div id="inner"></div>'
+				'<div id="inner" class="div1"></div>'
 			);
 
 			assert.strictEqual(Wee.$closest('#inner', '#container').length, 1,
-				'Closest element was identified successfully'
+				'Closest element was not identified'
+			);
+
+			assert.strictEqual(Wee.$closest('#inner', '.div').length, 0,
+				'Closest element was not identified'
 			);
 
 			assert.isArray(Wee.$closest('#inner', '#container'),
