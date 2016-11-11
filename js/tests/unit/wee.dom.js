@@ -764,10 +764,10 @@ define(function(require) {
 			function: function() {
 				Wee.$html('#container',
 					'<ul class="people">' +
-					    '<li data-hidden="false">Charlie Kelly</li>' +
-					    '<li data-hidden="true">Dennis Reynolds</li>' +
-					    '<li data-hidden="false">Mac</li>' +
-					    '<li data-hidden="false">Dee Reynolds</li>' +
+						'<li data-hidden="false">Charlie Kelly</li>' +
+						'<li data-hidden="true">Dennis Reynolds</li>' +
+						'<li data-hidden="false">Mac</li>' +
+						'<li data-hidden="false">Dee Reynolds</li>' +
 					'</ul>'
 				);
 
@@ -819,10 +819,10 @@ define(function(require) {
 			function: function() {
 				Wee.$html('#container',
 					'<ul class="people">' +
-					    '<li data-hidden="false">Charlie Kelly</li>' +
-					    '<li data-hidden="true">Dennis Reynolds</li>' +
-					    '<li data-hidden="false">Mac</li>' +
-					    '<li data-hidden="false">Dee Reynolds</li>' +
+						'<li data-hidden="false">Charlie Kelly</li>' +
+						'<li data-hidden="true">Dennis Reynolds</li>' +
+						'<li data-hidden="false">Mac</li>' +
+						'<li data-hidden="false">Dee Reynolds</li>' +
 					'</ul>'
 				);
 
@@ -1073,7 +1073,7 @@ define(function(require) {
 				Wee.$addClass('#container', 'wee-3');
 				Wee.$addClass('#container', 'peter');
 
-				Wee.$removeClass ('#container', 'wee wee-2 wee-3');
+				Wee.$removeClass('#container', 'wee wee-2 wee-3');
 
 				assert.notInclude(Wee.$attr('#container', 'class'),
 					'wee wee-2',
@@ -1112,7 +1112,7 @@ define(function(require) {
 					'</ul>');
 
 				Wee.$replaceWith('.names li', function(i, html) {
-				    return '<li>The ' + html + '</li>';
+					return '<li>The ' + html + '</li>';
 				});
 
 				assert.strictEqual(Wee.$html('#container li'), 'The John Doe',
@@ -1323,7 +1323,6 @@ define(function(require) {
 				assert.notOk(Wee.$hasClass('#container', 'test-class-2'),
 					'Multiple classes were not toggled successfully'
 				);
-
 			},
 			function: function() {
 				Wee.$toggleClass('#container', function() {
