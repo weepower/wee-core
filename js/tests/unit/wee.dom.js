@@ -416,7 +416,7 @@ define(function(require) {
 				}
 			},
 			set: {
-				single: function () {
+				single: function() {
 					Wee.$data('#wee-data', 'id', '250');
 
 					assert.notStrictEqual(Wee.$data('#wee-data', 'id'), 150,
