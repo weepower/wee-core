@@ -73,6 +73,19 @@ define(function(require) {
 		},
 
 		$after: {
+			selection: function() {
+				Wee.$html('#container',
+					'<div class="main-div"></div>' +
+					'<div class="main-div"></div>'
+				);
+
+				Wee.$after('.main-div', '<div class="secondary-div"></div>');
+
+				assert.strictEqual(Wee.$next('.main-div')[1].className, 'secondary-div',
+					'Did not insert selection'
+				);
+			},
+
 			markup: function() {
 				Wee.$after('#container',
 					'<span class="testing-after"></span>'
