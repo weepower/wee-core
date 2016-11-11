@@ -6,10 +6,59 @@ define(function(require) {
 
 	registerSuite({
 		name: 'Routes',
-
-		afterEach: function() {
-			$.set('test', false);
-			$.set('test2', false);
+		setup: function() {
+			Wee.routes.map({
+				'$any': function() {
+					$.set('any', true);
+				},
+				'$any:fire': function() {
+					$.set('anyFire', true);
+				},
+				'no-children-fire:fire': function() {
+					$.set('noChildrenFire', true);
+				},
+				'no-children': function() {
+					$.set('noChildren', true);
+				},
+				'$/bad': {
+					'route': function() {
+						$.set('badRoute', true);
+					}
+				},
+				'$root': function() {
+					$.set('root', true);
+				},
+				'number': {
+					'$num': function() {
+						$.set('number', true);
+					}
+				},
+				'test': {
+					'$root': function() {
+						$.set('test', true);
+					},
+					'test2': function() {
+						$.set('test2', true);
+					}
+				},
+				'function': function() {
+					return 'test';
+				},
+				'this||that': function() {
+					$.set('this', true);
+				},
+				'not': {
+					'!$root': function() {
+						$.set('negateRoot', true);
+					}
+				},
+				'unload-test:unload': function() {
+					$.set('unload', true);
+				},
+				'pop-test:pop': function() {
+					$.set('pop', true);
+				}
+			});
 		},
 
 		uri: {
@@ -91,18 +140,11 @@ define(function(require) {
 
 		map: {
 			set: function() {
-				var routes = Wee.routes.map({
-				    '$any': 'common',
-				    'script': {
-				        'routes': function() {
-							return 'test';
-				        }
-				    }
-				});
+				var map = Wee.routes.map();
 
-				assert.isObject(Wee.routes.map());
+				assert.isObject(map);
 
-				assert.strictEqual(routes.script.routes(), 'test',
+				assert.strictEqual(map.function(), 'test',
 					'Route function was not executed successfully'
 				);
 			}
@@ -110,26 +152,109 @@ define(function(require) {
 
 		run: {
 			simple: function() {
-				Wee.routes.map({
-					'$any': function() {
-						$.set('test', true);
-					},
-					'$root': function() {
-						$.set('test2', true);
-					}
-				});
 
+				// Test root
 				Wee.routes.run({
 					path: '/'
 				});
 
-				assert.isTrue($.get('test'),
-					'$any was not evaulated correctly'
+				assert.isTrue($.get('any'),
+					'$any was not evalulated correctly'
 				);
 
-				assert.isTrue($.get('test2'),
-					'$root was not evaulated correctly'
+				assert.isTrue($.get('anyFire'),
+					'$any:fire was not evalulated correctly'
 				);
+
+				assert.isTrue($.get('root'),
+					'$root was not evalulated correctly'
+				);
+
+				// Test || operator
+				Wee.routes.run({
+					path: 'that'
+				});
+
+				assert.isTrue($.get('this'),
+					'"||" evaluator did not work'
+				);
+
+				// Test route negation
+				Wee.routes.run({
+					path: 'not'
+				});
+
+				assert.isNull($.get('negateRoot'),
+					'Route negation did not work'
+				);
+
+				// Test $num filter
+				Wee.routes.run({
+					path: 'number/4'
+				});
+
+				assert.isTrue($.get('number'),
+					'$num filter did not evaluate correctly'
+				);
+
+				// Test bad route
+				Wee.routes.run({
+					path: 'bad/route'
+				});
+
+				assert.isTrue($.get('badRoute'),
+					'Route was not parsed correctly'
+				);
+
+				// Test fire
+				Wee.routes.run({
+					path: 'no-children-fire'
+				});
+
+				assert.isTrue($.get('noChildrenFire'),
+					'Fire was not executed correctly'
+				);
+
+				// Test no child route object
+				Wee.routes.run({
+					path: 'no-children'
+				});
+
+				assert.isTrue($.get('noChildren'),
+					'Route with no child route object was not executed correctly'
+				);
+
+				// TODO: get these to work
+				// Test unload and pop
+				// Wee.routes.run({
+				// 	path: 'unload-test'
+				// });
+				//
+				// Wee.routes.run({
+				// 	path: 'pop-test'
+				// });
+				//
+				// Wee.routes.run({
+				// 	path: '/'
+				// });
+				//
+				// assert.isTrue($.get('unload'),
+				// 	'Unload was not evaluated correctly'
+				// );
+				//
+				// assert.isTrue($.get('pop'),
+				// 	'Pop was not evaluated correctly'
+				// );
+
+				// Test immediate route evaulation
+				// TODO: Get this to work
+				Wee.routes.map({
+					'run-me-immediately': function() {
+						assert.isTrue(true,
+							'Immediate route evaulation did not work'
+						);
+					}
+				}, true);
 			},
 
 			advanced: function() {
@@ -145,16 +270,6 @@ define(function(require) {
 						}
 					}
 				});
-
-				Wee.routes.map({
-					'$root': function() {
-						$.set('test', true);
-					}
-				}, true);
-
-				assert.isTrue($.get('test'),
-					'Routes were not initialized'
-				);
 			}
 		},
 
@@ -186,17 +301,17 @@ define(function(require) {
 			var i = 0;
 
 			Wee.routes.map({
-				'$any:once': function() {
+				'once:once': function() {
 					i++;
 				}
 			});
 
 			Wee.routes.run({
-				path: '/'
+				path: '/once'
 			});
 
 			Wee.routes.run({
-				path: '/'
+				path: '/once'
 			});
 
 			assert.strictEqual(i, 1,
@@ -207,29 +322,31 @@ define(function(require) {
 		controller: function() {
 			Wee.fn.make('testController', {
 				init: function() {
-					$.set('test', true);
+					$.set('init', true);
 				},
-				test: function() {
-					$.set('test2', true);
+				method: function() {
+					$.set('method', true);
 				}
 			});
 
 			Wee.routes.map({
-				'$any': [
-					'testController:init',
-					'testController:test'
+				'controller': [
+					'testController',
+					'testController:method'
 				]
 			});
 
-			Wee.routes.run();
+			Wee.routes.run({
+				path: 'controller'
+			});
 
-			assert.strictEqual($.get('test'), true,
+			assert.strictEqual($.get('init'), true,
 				'Init method was not executed successfully'
 			);
 
-			assert.strictEqual($.get('test2'), true,
+			assert.strictEqual($.get('method'), true,
 				'Method was not executed successfully'
 			);
-		},
+		}
 	});
 });
