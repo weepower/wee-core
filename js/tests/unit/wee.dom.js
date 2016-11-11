@@ -22,13 +22,12 @@ define(function(require) {
 
 		add: function() {
 			Wee.$append('body',
-				'<div class="div1"></div>' + 
-				'<div class="div2"></div>'
+				'<div class="div1"></div><div class="div2"></div>'
 			);
 
 			$('.div1').add('.div2').text('Test add function');
 
-			assert.strictEqual($('.div2').text(), 'Test add function', 
+			assert.strictEqual($('.div2').text(), 'Test add function',
 				'Did not add element with class of "div2" to selection'
 			);
 		},
