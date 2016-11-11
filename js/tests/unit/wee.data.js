@@ -117,9 +117,18 @@ define(function(require) {
 						});
 					},
 					error: function() {
-						// Test error handling
+						var promise = this.async(1000);
 
-						assert.isTrue(true);
+						Wee.data.request({
+							url: 'http://echo.jsontest2.com/key/value',
+							method: 'get',
+							jsonp: true,
+							error: promise.callback(function() {
+								assert.isTrue(true,
+									'Did not result in an error'
+								);
+							})
+						});
 					}
 				}
 			},
