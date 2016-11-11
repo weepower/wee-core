@@ -20,12 +20,6 @@ define({
 	],
 	environments: [
 		{
-			'browser': 'Chrome',
-			'os': 'Windows',
-			'os_version': '10',
-			'browser_version': '54.0 beta'
-		},
-		{
 			'os': 'OS X',
 			'os_version': 'El Capitan',
 			'browser': 'Chrome',
