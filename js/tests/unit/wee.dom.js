@@ -304,6 +304,10 @@ define(function(require) {
 				'Closest element was not identified'
 			);
 
+			assert.strictEqual(Wee.$closest('#inner', '#inner').length, 1,
+				'Closest element was not identified'
+			);
+
 			assert.isArray(Wee.$closest('#inner', '#container'),
 				'Closest element was identified successfully'
 			);
