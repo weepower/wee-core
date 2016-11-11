@@ -123,7 +123,7 @@ define(function(require) {
 					'<span class="testing-append"></span>'
 				);
 
-				assert.ok(Wee.$contains('#container','.testing-append'),
+				assert.ok(Wee.$contains('#container', '.testing-append'),
 					'Testing element was not appended successfully'
 				);
 			},
