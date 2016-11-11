@@ -41,6 +41,6 @@ Wee.fn.make('extension', {
 			isInactive: function() {
 				return ! this.hasClass(active);
 			}
-		})
+		});
 	}
-})
+});
