@@ -34,6 +34,14 @@ define(function(require) {
 				'Single variable parsed successfully.'
 			);
 
+			assert.strictEqual(Wee.view.render('{{ $root.firstName }}', data), 'Keith',
+				'Root variable parsed successfully.'
+			);
+
+			assert.strictEqual(Wee.view.render('{{ pets.0 }}', data), 'dog',
+				'Array variable parsed successfully.'
+			);
+
 			assert.strictEqual(Wee.view.render('{{ firstName }}', {}), '',
 				'Unavailable variable cleared successfully.'
 			);
@@ -68,6 +76,11 @@ define(function(require) {
 
 			assert.strictEqual(Wee.view.render('<ul>{{ #children|each }}<li>{{ firstName }}</li>{{ /children }}</ul>', data), '<ul><li>Tim</li><li>Kathy</li></ul>',
 				'Child variables parsed successfully.'
+			);
+
+			assert.strictEqual(Wee.view.render('<ul>{{ #children|each }}<li>{{ ../firstName }}</li>{{ /children }}</ul>', data),
+				'<ul><li>Keith</li><li>Keith</li></ul>',
+				'Traversal was not successful'
 			);
 		},
 
@@ -106,6 +119,58 @@ define(function(require) {
 			assert.strictEqual(Wee.view.render('{{> partial }}{{> partial }}{{> partial2 }}', {}), '123123456',
 				'Template parsed successfully.'
 			);
+		},
+
+		app: {
+			make: function() {
+				var view = '<ul><li>{{ firstName }}</li><li>{{ lastName }}</li></ul>';
+
+				Wee.app.make('test', {
+					view: view,
+					model: {
+						firstName: 'Peter',
+						lastName: 'McLovin'
+					},
+					_destruct: function() {
+						$.set('destroyed', true);
+					}
+				});
+
+				assert.isObject(Wee.app.test,
+					'App is not an object'
+				);
+
+				assert.strictEqual(Wee.app.test.$get('firstName'), 'Peter',
+					'App data retreieved successfully'
+				);
+			},
+
+			$destroy: function() {
+				Wee.app.test.$destroy();
+
+				assert.isNotObject(Wee.app.test,
+					'App was not destroyed'
+				);
+
+				assert.isUndefined(Wee.app.test,
+					'App was not destroyed'
+				);
+
+				// TODO: add this to docs maybe?
+				assert.isTrue($.get('destroyed'),
+					'Destroy callback not executed'
+				);
+			},
+
+			$pause: function() {
+				// TODO: complete
+				assert.isTrue(true);
+			},
+
+			$resume: function() {
+				// TODO: complete
+				assert.isTrue(true);
+			}
 		}
 	});
 });
