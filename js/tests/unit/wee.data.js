@@ -85,31 +85,42 @@ define(function(require) {
 						})
 					});
 				},
-				jsonp: function() {
-					var promise = this.async(1000);
+				jsonp: {
+					jsonpCallback: function() {
+						var promise = this.async(1000);
 
-					Wee.data.request({
-						url: 'http://api-test.dev/get/jsonp',
-						method: 'get',
-						jsonp: 'cb',
-						success: promise.callback(function(data) {
-							assert.strictEqual(data.key, 'value',
-								'JSONP was not executed correctly'
-							);
-						})
-					});
+						Wee.data.request({
+							url: 'http://echo.jsontest.com/key/value',
+							method: 'get',
+							jsonp: true,
+							jsonpCallback: 'cb',
+							success: promise.callback(function(data) {
+								assert.strictEqual(data.key, 'value',
+									'JSONP was not executed correctly'
+								);
+							})
+						});
+					},
+					default: function() {
+						var promise = this.async(1000);
 
-					Wee.data.request({
-						url: 'http://api-test.dev/get/jsonp123',
-						method: 'get',
-						jsonp: 'cb',
-						error: promise.callback(function(data) {
-							// TODO: test this better - ask nathan to gander at it
-							assert.strictEqual(data.key, 'value',
-								'JSONP was not executed correctly'
-							);
-						})
-					});
+						Wee.data.request({
+							url: 'http://echo.jsontest.com/key/value',
+							method: 'get',
+							jsonp: true,
+							success: promise.callback(function(data) {
+								// TODO: test this better - ask nathan to gander at it
+								assert.strictEqual(data.key, 'value',
+									'JSONP was not executed correctly'
+								);
+							})
+						});
+					},
+					error: function() {
+						// Test error handling
+
+						assert.isTrue(true);
+					}
 				}
 			},
 			post: {
