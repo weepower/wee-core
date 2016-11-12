@@ -371,6 +371,15 @@
 		},
 
 		/**
+		 * Get outer height of matching selection
+		 *
+		 * @returns {number}
+		 */
+		outerHeight: function() {
+			return W.$height(this, true);
+		},
+
+		/**
 		 * Get unique parent from each matching selection
 		 *
 		 * @returns {$}
