@@ -1124,6 +1124,189 @@
 
 
 /*------------------------------------*\
+	# Flexbox
+\*------------------------------------*/
+
+.flex (@grow: 0; @shrink: 0; @basis: auto) {
+	.flex-grow(@grow);
+	.flex-shrink(@shrink);
+	.flex-basis(@basis);
+}
+.flex-container (@direction: row; @wrap: nowrap; @justify: flex-start; @align: stretch; @align-content: stretch) {
+	.flexbox();
+	.flex-direction(@direction);
+	.flex-wrap(@wrap);
+	.justify-content(@justify);
+	.flex-align-items(@align);
+	.flex-align-content(@align-content)
+}
+
+// Flexbox container
+.flexbox (@value: flex) {
+	.check () when (@value = flex) {
+		display: -ms-flexbox;
+		display: -webkit-flex;
+	}
+
+	.check () when (@value = inline-flex) {
+		display: -ms-inline-flexbox;
+		display: -webkit-inline-flex;
+	}
+
+	.check();
+	display: @value;
+}
+.flex-direction (@direction: row) {
+	.check () when (@direction = row-reverse) {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: reverse;
+	}
+
+	.check () when (@direction = column) {
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+	}
+
+	.check () when (@direction = column-reverse) {
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: reverse;
+	}
+
+	.check () when (@direction = row) {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+	}
+
+	.check();
+	-webkit-flex-direction: @direction;
+	-ms-flex-direction: @direction;
+	flex-direction: @direction;
+}
+.flex-wrap (@wrap: nowrap) {
+	.check(@wrap) when (@wrap = nowrap) {
+		-ms-flex-wrap: none;
+	}
+
+	.check(@wrap) when (@wrap = wrap), (@wrap = wrap-reverse) {
+		-ms-flex-wrap: @wrap;
+	}
+
+	.check();
+	-webkit-flex-wrap: @wrap;
+	flex-wrap: @wrap;
+}
+.justify-content (@justify: flex-start) {
+	.check () when (@justify = space-between) {
+		-ms-flex-pack: justify;
+	}
+
+	.check () when (@justify = space-around) {
+		-ms-flex-pack: distribute;
+	}
+
+	.check () when (@justify = flex-start) {
+		-ms-flex-pack: start;
+	}
+
+	.check () when (@justify = flex-end) {
+		-ms-flex-pack: end;
+	}
+
+	.check () when (@justify = center) {
+		-ms-flex-pack: center;
+	}
+
+	.check();
+	-webkit-justify-content: @justify;
+	-ms-justify-content: @justify;
+	justify-content: @justify;
+}
+.flex-align-items (@align: stretch) {
+	.check () when (@align = flex-start) {
+		-ms-flex-align: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-align: end;
+	}
+
+	.check () when (@align = center), (@align = baseline), (@align = stretch) {
+		-ms-flex-align: @align;
+	}
+
+	.check();
+	-webkit-align-items: @align;
+	-moz-align-items: @align;
+	-ms-align-items: @align;
+	align-items: @align;
+}
+.flex-align-content(@align: stretch) {
+	.check () when (@align = space-between) {
+		-ms-flex-line-pack: justify;
+	}
+
+	.check () when (@align = space-around) {
+		-ms-flex-line-pack: distribute;
+	}
+
+	.check () when (@align = flex-start) {
+		-ms-flex-line-pack: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-line-pack: end;
+	}
+
+	.check () when (@align = center), (@align = stretch) {
+		-ms-flex-line-pack: @align;
+	}
+
+	-webkit-align-content: @align;
+	-ms-align-content: @align;
+	align-content: @align;
+}
+
+// Flexbox items
+.flex-grow (@proportion: 1) {
+	-webkit-box-flex: @proportion;
+	-webkit-flex-grow: @proportion;
+	-ms-flex-positive: @proportion;
+	flex-grow: @proportion;
+}
+.flex-shrink (@proportion: 1) {
+	-webkit-flex-shrink: @proportion;
+	-ms-flex-negative: @proportion;
+	flex-shrink: @proportion;
+}
+.flex-basis (@proportion: auto) {
+	-webkit-flex-basis: @proportion;
+	-ms-flex-preferred-size: @proportion;
+	flex-basis: @proportion;
+}
+.flex-align-self (@align: auto) {
+	.check () when (@align = flex-start) {
+		-ms-flex-item-align: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-item-align: end;
+	}
+
+	.check () when (@align = auto), (@align = center), (@align = baseline), (@align = stretch) {
+		-ms-flex-item-align: @align;
+	}
+
+	.check();
+	-webkit-align-self: @align;
+	-ms-align-self: @align;
+	align-self: @align;
+}
+
+
+
+
+
+/*------------------------------------*\
 	# Font Family
 \*------------------------------------*/
 
