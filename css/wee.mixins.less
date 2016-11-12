@@ -1157,7 +1157,7 @@
 	display: @value;
 }
 .flex-direction (@direction: row) {
-	.check () when (@direction = row-reverse), (@direction = column-reverse) {
+	.check () when (@direction = row-reverse) {
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: reverse;
 	}
