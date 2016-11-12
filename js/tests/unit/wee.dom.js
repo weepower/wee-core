@@ -385,7 +385,7 @@ define(function(require) {
 			beforeEach: function() {
 				Wee.$append('#container',
 					'<div id="wee-data" data-id="150"' +
-					'data-ref="data-reference" data-test="data-test">'
+					'data-ref="data-reference" data-test="data-test" data-camel-case="camel">'
 				);
 			},
 			afterEach: function() {
@@ -397,7 +397,8 @@ define(function(require) {
 						dataObject = {
 							id: 150,
 							ref: 'data-reference',
-							test: 'data-test'
+							test: 'data-test',
+							camelCase: 'camel'
 						};
 
 					assert.isObject(weeData,
@@ -435,14 +436,16 @@ define(function(require) {
 					Wee.$data('#wee-data', {
 						id: 350,
 						ref: 'reference',
-						test: 'failed'
+						test: 'failed',
+						camelCase: 'camel'
 					});
 
 					var weeData = Wee.$data('#wee-data'),
 						dataObject = {
 							id: 350,
 							ref: 'reference',
-							test: 'failed'
+							test: 'failed',
+							camelCase: 'camel'
 						};
 
 					assert.deepEqual(weeData, dataObject,
@@ -460,6 +463,11 @@ define(function(require) {
 
 					assert.strictEqual(Wee.$data('#wee-data', 'test'),
 						'failed',
+						'Data references were not set successfully'
+					);
+
+					assert.strictEqual(Wee.$data('#wee-data', 'camelCase'),
+						'camel',
 						'Data references were not set successfully'
 					);
 
@@ -616,21 +624,30 @@ define(function(require) {
 			beforeEach: function() {
 				Wee.$height('#container', '100px');
 			},
-			get: function() {
-				var docHeight = document.documentElement.scrollHeight,
-					winHeight = window.innerHeight;
+			get: {
+				standard: function() {
+					var docHeight = document.documentElement.scrollHeight,
+						winHeight = window.innerHeight;
 
-				assert.strictEqual(Wee.$height('#container'), 100,
-					'Element height not set successfully'
-				);
+					assert.strictEqual(Wee.$height('#container'), 100,
+						'Element height not set successfully'
+					);
 
-				assert.strictEqual(Wee.$height(window), winHeight,
-					'Element width not set successfully'
-				);
+					assert.strictEqual(Wee.$height(window), winHeight,
+						'Element width not set successfully'
+					);
 
-				assert.strictEqual(Wee.$height(document), docHeight,
-					'Element width not set successfully'
-				);
+					assert.strictEqual(Wee.$height(document), docHeight,
+						'Element width not set successfully'
+					);
+				},
+				outer: function() {
+					$('#container').css('margin-bottom', '20px');
+
+					assert.strictEqual(Wee.$height('#container', true), 120,
+						'Element height not set successfully'
+					);
+				}
 			},
 			set: function() {
 				Wee.$height('#container', '150px');
@@ -678,6 +695,21 @@ define(function(require) {
 					assert.strictEqual(Wee.$html('#container'),
 						'<span>1</span><span>1</span><span>1</span>',
 						'HTML span values not returned successfully'
+					);
+				},
+				atob: function() {
+					var html = '<select name="test" data-ref="select">' +
+						'<option value="test">test</option>' +
+						'</select>';
+
+					// TODO: revisit with Nathan
+					Wee._win.atob = false;
+
+					Wee.$html('#container', html);
+
+					assert.strictEqual(Wee.$html('#container'),
+						html,
+						'HTML value not returned successfully'
 					);
 				}
 			},
