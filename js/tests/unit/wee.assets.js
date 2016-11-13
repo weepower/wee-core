@@ -10,6 +10,13 @@ define(function(require) {
 		afterEach: function() {
 			Wee.$set('sampleJsLoaded', false);
 			Wee.$set('sampleJsLoadedAgain', false);
+
+			Wee.assets.remove([
+				'/js/tests/support/sample-files/sample.js',
+				'/js/tests/support/sample-files/sample-2.js',
+				'/js/tests/support/sample-files/logo.png',
+				'/js/tests/support/sample-files/sample.css'
+			]);
 		},
 
 		// TODO: File path is relative to wee-core. Need solution that
@@ -100,6 +107,30 @@ define(function(require) {
 					});
 				},
 
+				twice: function() {
+					var promise = this.async(1000);
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						js: 'sample.js',
+						success: promise.callback(function() {
+							assert.isTrue(Wee.$get('sampleJsLoaded'),
+								'Sample file not loaded successfully'
+							);
+						})
+					});
+
+					Wee.assets.load({
+						root: '/js/tests/support/sample-files/',
+						js: 'sample.js',
+						success: promise.callback(function() {
+							assert.isTrue(Wee.$get('sampleJsLoaded'),
+								'Sample file not loaded successfully'
+							);
+						})
+					});
+				},
+
 				css: function() {
 					var promise = this.async(1000);
 
@@ -145,7 +176,6 @@ define(function(require) {
 						root: '/js/tests/support/sample-files/',
 						img: 'logo.png',
 						success: promise.callback(function() {
-
 							Wee.assets.remove(
 								'/js/tests/support/sample-files/logo.png'
 							);
