@@ -109,28 +109,8 @@ define(function(require) {
 							method: 'get',
 							jsonp: true,
 							success: promise.callback(function(data) {
-								// TODO: test this better - ask nathan to gander at it
 								assert.strictEqual(data.key, 'value',
 									'JSONP was not executed correctly'
-								);
-							})
-						});
-
-						Wee.data.request({
-							url: 'http://echo.jsontest.com/key2/value2',
-							method: 'get',
-							jsonp: true,
-							success: promise.callback(function(data) {
-								// TODO: test this better - ask nathan to gander at it
-								assert.strictEqual(data.key2, 'value2',
-									'JSONP was not executed correctly'
-								);
-
-								var scripts = document.getElementsByTagName('script');
-
-								assert.strictEqual(scripts[1].src,
-									'http://echo.jsontest.com/key2/value2',
-									'Script tag was not appended'
 								);
 							})
 						});
