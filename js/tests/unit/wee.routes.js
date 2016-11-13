@@ -57,6 +57,9 @@ define(function(require) {
 				},
 				'pop-test:pop': function() {
 					$.set('pop', true);
+				},
+				'$no-var': function() {
+					$.set('noVar', true);
 				}
 			});
 		},
@@ -152,110 +155,116 @@ define(function(require) {
 		},
 
 		run: {
-			simple: function() {
+			simple: {
+				root: function() {
+					Wee.routes.run({
+						path: '/'
+					});
 
-				// Test root
-				Wee.routes.run({
-					path: '/'
-				});
+					assert.isTrue($.get('root'),
+						'$root was not evalulated correctly'
+					);
+				},
 
-				assert.isTrue($.get('any'),
-					'$any was not evalulated correctly'
-				);
+				any: function() {
+					assert.isTrue($.get('any'),
+						'$any was not evalulated correctly'
+					);
 
-				assert.isTrue($.get('anyFire'),
-					'$any:fire was not evalulated correctly'
-				);
+					assert.isTrue($.get('anyFire'),
+						'$any:fire was not evalulated correctly'
+					);
+				},
 
-				assert.isTrue($.get('root'),
-					'$root was not evalulated correctly'
-				);
+				or: function() {
+					Wee.routes.run({
+						path: 'that'
+					});
 
-				// Test || operator
-				Wee.routes.run({
-					path: 'that'
-				});
+					assert.isTrue($.get('this'),
+						'"||" evaluator did not work'
+					);
+				},
 
-				assert.isTrue($.get('this'),
-					'"||" evaluator did not work'
-				);
+				negation: function() {
+					Wee.routes.run({
+						path: 'not'
+					});
 
-				// Test route negation
-				Wee.routes.run({
-					path: 'not'
-				});
+					assert.isNull($.get('negateRoot'),
+						'Route negation did not work'
+					);
+				},
 
-				assert.isNull($.get('negateRoot'),
-					'Route negation did not work'
-				);
+				$num: function() {
+					Wee.routes.run({
+						path: 'number/4'
+					});
 
-				// Test $num filter
-				Wee.routes.run({
-					path: 'number/4'
-				});
+					assert.isTrue($.get('number'),
+						'$num filter did not evaluate correctly'
+					);
+				},
 
-				assert.isTrue($.get('number'),
-					'$num filter did not evaluate correctly'
-				);
+				invalid: function() {
+					Wee.routes.run({
+						path: 'bad/route'
+					});
 
-				// Test bad route
-				Wee.routes.run({
-					path: 'bad/route'
-				});
+					assert.isTrue($.get('badRoute'),
+						'Route was not parsed correctly'
+					);
+				},
 
-				assert.isTrue($.get('badRoute'),
-					'Route was not parsed correctly'
-				);
+				fire: function() {
+					Wee.routes.run({
+						path: 'no-children-fire'
+					});
 
-				// Test fire
-				Wee.routes.run({
-					path: 'no-children-fire'
-				});
+					assert.isTrue($.get('noChildrenFire'),
+						'Fire was not executed correctly'
+					);
+				},
 
-				assert.isTrue($.get('noChildrenFire'),
-					'Fire was not executed correctly'
-				);
+				'no-children': function() {
+					Wee.routes.run({
+						path: 'no-children'
+					});
 
-				// Test no child route object
-				Wee.routes.run({
-					path: 'no-children'
-				});
+					assert.isTrue($.get('noChildren'),
+						'Route with no child route object was not executed correctly'
+					);
+				},
 
-				assert.isTrue($.get('noChildren'),
-					'Route with no child route object was not executed correctly'
-				);
+				pop: function() {
+					// TOOD: finish
+					assert.isTrue(true);
+				},
 
-				// TODO: get these to work
-				// Test unload and pop
-				// Wee.routes.run({
-				// 	path: 'unload-test'
-				// });
-				//
-				// Wee.routes.run({
-				// 	path: 'pop-test'
-				// });
-				//
-				// Wee.routes.run({
-				// 	path: '/'
-				// });
-				//
-				// assert.isTrue($.get('unload'),
-				// 	'Unload was not evaluated correctly'
-				// );
-				//
-				// assert.isTrue($.get('pop'),
-				// 	'Pop was not evaluated correctly'
-				// );
+				unload: function() {
+					// TOOD: finish
+					assert.isTrue(true);
+				},
 
-				// Test immediate route evaulation
-				// TODO: Get this to work
-				Wee.routes.map({
-					'run-me-immediately': function() {
-						assert.isTrue(true,
-							'Immediate route evaulation did not work'
-						);
-					}
-				}, true);
+				init: function() {
+					Wee.routes.map({
+						'run-me-immediately': function() {
+							assert.isTrue(true,
+								'Immediate route evaulation did not work'
+							);
+						}
+					}, true);
+				},
+
+				'$no-var': function() {
+					Wee.routes.run({
+						path: 'no-var'
+					});
+
+					assert.isTrue($.get('noVar'),
+						'$ variable was parsed incorrectly'
+					);
+				}
 			},
 
 			advanced: function() {
