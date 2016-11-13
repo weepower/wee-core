@@ -53,7 +53,7 @@ define(function(require) {
 					var promise = this.async(1000);
 
 					Wee.data.request({
-						url: 'https://httpbin.org/get',
+						url: 'http://httpbin.org/get',
 						json: true,
 						data: {
 							test: 'test'
@@ -115,12 +115,31 @@ define(function(require) {
 								);
 							})
 						});
+
+						Wee.data.request({
+							url: 'http://echo.jsontest.com/key2/value2',
+							method: 'get',
+							jsonp: true,
+							success: promise.callback(function(data) {
+								// TODO: test this better - ask nathan to gander at it
+								assert.strictEqual(data.key2, 'value2',
+									'JSONP was not executed correctly'
+								);
+
+								var scripts = document.getElementsByTagName('script');
+
+								assert.strictEqual(scripts[1].src,
+									'http://echo.jsontest.com/key2/value2',
+									'Script tag was not appended'
+								);
+							})
+						});
 					},
 					error: function() {
 						var promise = this.async(1000);
 
 						Wee.data.request({
-							url: 'http://echo.jsontest2.com/key/value',
+							url: 'http://httpbin.org/status/404',
 							method: 'get',
 							jsonp: true,
 							error: promise.callback(function() {
