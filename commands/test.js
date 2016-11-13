@@ -3,16 +3,31 @@
 (function() {
 	'use strict';
 
-	function getOptions(configPath, suites) {
+	function getOptions(configPath, suitesPath) {
 		var options = [
 			'config=' + configPath
 		];
 
-		if (suites) {
-			options.push(suites);
+		if (suitesPath) {
+			options.push('suites=' + suitesPath);
 		}
 
 		return options;
+	}
+
+	function getConfigPath(source, env, core) {
+		var file = 'config.js',
+			path = source + '/js/tests/';
+
+		if (core) {
+			if (env === 'ci') {
+				file = 'ci-config.js';
+			}
+
+			path = 'js/tests/';
+		}
+
+		return path + file;
 	}
 
 	module.exports = function(config) {
@@ -22,19 +37,15 @@
 			runnerPath = core ?
 				'./node_modules/.bin/intern-runner' :
 				config.rootPath + '/node_modules/.bin/intern-runner',
-			configPath = path.join(
-				core ? '' : config.project.paths.source,
-				'js/tests/config.js'
-			),
+			configPath = getConfigPath(config.project.paths.source, config.args.env, core),
 			port = config.project.server.port,
-			suites = config.args.suites ? 'suites=' + config.args.suites : null,
 			child;
 
 		if (core) {
 			process.chdir('node_modules/wee-core');
 		}
 
-		child = spawn(runnerPath, getOptions(configPath, suites));
+		child = spawn(runnerPath, getOptions(configPath, config.args.suites));
 
 		child.stdout.on('data', function(data) {
 			process.stdout.write(data.toString());
@@ -70,6 +81,6 @@
 
 		child.on('close', function(code) {
 			console.log('Exited with code ' + code);
-		})
+		});
 	};
 })();
