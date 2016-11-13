@@ -1073,16 +1073,23 @@ define(function(require) {
 		},
 
 		$remove: function() {
-			Wee.$html('#container', '<div id="wee-inner"></div>');
+			var html = '<div id="wee-inner"></div>';
 
-			assert.ok(Wee.$html('#container'), '<div id="wee-inner"></div>',
+			Wee.$html('#container', html);
+
+			assert.ok(Wee.$html('#container'), html,
 				'Element was not created successfully'
 			);
 
-			Wee.$remove('#wee-inner');
+			var $el = $('#wee-inner'),
+				$inner = Wee.$remove('#wee-inner');
 
 			assert.strictEqual(Wee.$html('#container'), '',
 				'Element was not removed successfully'
+			);
+
+			assert.strictEqual($inner[0], $el[0],
+				'Removed element was not returned'
 			);
 		},
 
