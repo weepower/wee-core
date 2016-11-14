@@ -814,6 +814,14 @@ define(function(require) {
 				assert.isTrue(isFunction,
 					'Function executed successfully'
 				);
+			},
+
+			'data-ref as filter': function() {
+				Wee.$append('#container', '<div data-ref="is-test"></div>');
+
+				assert.isTrue(Wee.$is('ref:is-test', 'div'),
+					'Did not correctly identify element as div'
+				);
 			}
 		},
 		$last: function() {
