@@ -2540,15 +2540,15 @@
 	-webkit-transition: ~'@{value}';
 	transition: ~'@{value}';
 }
-.transition (@property; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s) {
+.transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s) {
 	.check () when (@property = transform) {
-		-webkit-transition: ~'-webkit-@{arguments}';
+		-webkit-transition: ~'-webkit-transform @{duration} @{ease} @{delay}';
 	}
 	.check () when (default()) {
-		-webkit-transition: ~'@{arguments}';
+		-webkit-transition: @arguments;
 	}
 	.check();
-	transition: ~'@{arguments}';
+	transition: @arguments;
 }
 .transition-delay (@delay: 1s) {
 	-webkit-transition-delay: @delay;
@@ -2561,13 +2561,12 @@
 .transition-property (@property: all) {
 	.check () when (@property = transform) {
 		-webkit-transition-property: -webkit-transform;
-		transition-property: transform;
 	}
 	.check () when (default()) {
 		-webkit-transition-property: @property;
-		transition-property: @property;
 	}
 	.check();
+	transition-property: @property;
 }
 .transition-timing-function (@function: @defaultTiming) {
 	-webkit-transition-timing-function: @function;
