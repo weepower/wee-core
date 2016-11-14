@@ -822,6 +822,18 @@ define(function(require) {
 				assert.isTrue(Wee.$is('ref:is-test', 'div'),
 					'Did not correctly identify element as div'
 				);
+			},
+
+			'multiple': function() {
+				Wee.$append('#container',
+					'<div data-ref="is-test" class="is-test"></div>' +
+					'<div data-ref="is-test" class="is-test"></div>' +
+					'<div data-ref="is-test" class="is-test"></div>'
+				);
+
+				assert.isTrue(Wee.$is('ref:is-test', '.is-test'),
+					'Did not return as true'
+				);
 			}
 		},
 		$last: function() {
