@@ -261,8 +261,8 @@
 					}
 				}
 
-				// Process parent context on reserved tag pairs
-				if (tag[0] == '$') {
+				// Process parent context on reserved tag pairs, excluding $root
+				if (tag[0] == '$' && tag[1] != 'r') {
 					val = data;
 				}
 
