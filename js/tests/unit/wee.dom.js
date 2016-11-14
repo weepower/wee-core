@@ -1519,6 +1519,16 @@ define(function(require) {
 				});
 
 				assert.ok(Wee.$parent('#test-2', '#test'));
+			},
+
+			'with children': function() {
+				Wee.$append('#container',
+					'<div id="wrap-test" class="wrap-test"></div>'
+				);
+
+				Wee.$wrapInner('#wrap-test', '<div id="wrap-test-2"><p class="testPara"></p></div>');
+
+				assert.ok(Wee.$parent('#wrap-test-2', '#wrap-test'));
 			}
 		}
 	});
