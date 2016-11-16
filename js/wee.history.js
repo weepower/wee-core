@@ -373,7 +373,7 @@
 				sendEvents.push(request.send);
 			}
 
-			if (req.send) {
+			if (req.send && req.send !== request.send) {
 				sendEvents.push(req.send);
 			}
 
@@ -433,7 +433,7 @@
 				successEvents.push(request.success);
 			}
 
-			if (req.success) {
+			if (req.success && req.success !== request.success) {
 				successEvents.push(req.success);
 			}
 
@@ -479,7 +479,7 @@
 				errorEvents.push(request.error);
 			}
 
-			if (req.error) {
+			if (req.error && req.error !== request.error) {
 				errorEvents.push(req.error);
 			}
 
@@ -496,7 +496,7 @@
 				completeEvents.push(request.complete);
 			}
 
-			if (req.complete) {
+			if (req.complete && req.complete !== request.complete) {
 				completeEvents.push(req.complete);
 			}
 
