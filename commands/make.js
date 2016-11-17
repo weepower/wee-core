@@ -52,7 +52,7 @@
 
 					if (! error) {
 						var template = fs.readFileSync(templatePath + 'controller/api.js', 'utf8'),
-							parsed = Wee.view.render(template, name);
+							parsed = Wee.view.render(template, { name: name });
 
 						fs.outputFileSync(target, parsed);
 
