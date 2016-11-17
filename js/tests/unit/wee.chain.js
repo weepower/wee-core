@@ -4,7 +4,7 @@ define(function(require) {
 		$el,
 		el;
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Chain',
@@ -24,18 +24,34 @@ define(function(require) {
 			el.parentNode.removeChild(el);
 		},
 
-		register: function() {
-			$.fn.setId = function(id) {
-				this.data('id', id);
+		register: {
+			jquery: function() {
+				$.fn.setId = function(id) {
+					this.data('id', id);
 
-				return this;
-			};
+					return this;
+				};
 
-			$el.setId(3);
+				$el.setId(3);
 
-			assert.strictEqual($el.data('id'), 3,
-				'Chain was not registered successfully'
-			);
+				assert.strictEqual($el.data('id'), 3,
+					'Chain was not registered successfully'
+				);
+			},
+
+			regular: function() {
+				Wee.$chain('setId', function(id) {
+					this.attr('id', id);
+
+					return this;
+				});
+
+				$el.setId('idTest');
+
+				assert.strictEqual($el[0].id, 'idTest',
+					'Chain was not registered successfully'
+				);
+			}
 		},
 
 		events: {
@@ -72,7 +88,7 @@ define(function(require) {
 						.trigger('blur');
 
 					assert.ok($el.hasClass('test-class-2'),
-						'Multple events were not triggered successfully'
+						'Multiple events were not triggered successfully'
 					);
 				}
 			},
@@ -201,8 +217,13 @@ define(function(require) {
 
 			append: {
 				selection: function() {
-					 // TODO: Complete
-					 assert.isTrue(true);
+					 $el.html('<div class="appendTest">Testing</div>');
+					 
+					 $el.append('<p>Hello</p>');
+
+					 assert.strictEqual($el.text(), 'TestingHello',
+					 	'Selection was not appended to correctly'
+					 );
 				},
 
 				markup: function() {
@@ -420,6 +441,24 @@ define(function(require) {
 				}
 			},
 
+			each: function() {
+				$el.html(
+					'<div class="testEach">1</div>' +
+					'<div class="testEach">2</div>' +
+					'<div class="testEach">3</div>'
+				);
+
+				$('.testEach').each(function() {
+					$(this).html('Hello!');
+				});
+
+				$('.testEach').each(function(test) {
+					assert.strictEqual(test.innerHTML, 'Hello!',
+						'Did not return "Hello!" as expected'
+					);
+				});
+			},
+
 			empty: function() {
 				$el.html('<span id="test"></span>');
 
@@ -490,15 +529,11 @@ define(function(require) {
 			},
 
 			first: function() {
-				// TODO: Complete
-				//$el.html(
-				//	'<div class="test">1</div>' +
-				//	'<div class="test">2</div>'
-				//);
-				//
-				//assert.strictEqual($('.test').first().text(), '1',
-				//	'First element was selected not successfully.'
-				//);
+				$el.html('<div class="test-stuff">1</div><div class="test-stuff">2</div>');
+				
+				assert.strictEqual($('.test-stuff').first().text(), '1',
+					'First element was not selected successfully.'
+				);
 			},
 
 			hasClass: {
@@ -632,38 +667,34 @@ define(function(require) {
 				);
 			},
 
-			//'is': {
-			//	'selection': function() {
-			//		$el.addClass('one');
-			//
-			//		assert.ok($el.is('.one'),
-			//			'Element was not successfully identified with "one" class'
-			//		);
-			//
-			//		assert.isFalse($el.is(),
-			//			'$is returned false instead of true'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<ul class="people">' +
-			//			    '<li data-hidden="false">Charlie Kelly</li>' +
-			//			    '<li data-hidden="true">Dennis Reynolds</li>' +
-			//			    '<li data-hidden="false">Mac</li>' +
-			//			    '<li data-hidden="false">Dee Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		var isFunction = $('.people li').is(function(i, el) {
-			//				return $el.data('hidden');
-			//			});
-			//
-			//		assert.isTrue(isFunction,
-			//			'Function executed successfully'
-			//		);
-			//	}
-			//},
+			'is': {
+				'selection': function() {
+					$el.addClass('one');
+			
+					assert.ok($el.is('.one'),
+						'Element was not successfully identified with "one" class'
+					);
+			
+					assert.isFalse($el.is(),
+						'$is returned false instead of true'
+					);
+				},
+			
+				fn: function() {
+					$el.html(
+						'<ul class="people"><li data-hidden="false">Charlie Kelly</li>' +
+						    '<li data-hidden="true">Dennis Reynolds</li>' +
+						    '<li data-hidden="false">Mac</li>' +
+						    '<li data-hidden="false">Dee Reynolds</li>' +
+						'</ul>'
+					);
+			
+					assert.isFalse($el.is('.people li', function(i, el) {
+							return $el.data('hidden') === 'false';
+						}), 'Function executed successfully'
+					);
+				}
+			},
 
 			last: function() {
 				$el.html('<div>1</div><div>2</div><div>3</div>');
@@ -673,150 +704,146 @@ define(function(require) {
 				);
 			},
 
-			//next: function() {
-			//	$el.append('body', '<div id="wee-chain-2"></div>');
-			//
-			//	assert.strictEqual($el.next()[0].id, 'wee-chain-2',
-			//		'Next element was not returned successfully'
-			//	);
-			//
-			//	$('#wee-chain-id-2').remove();
-			//},
+			map: {
+				array: function() {
+					var mapTest = [1, 2, 3];
 
-			//'not': {
-			//	'selection': function() {
-			//		$el.html(el,
-			//			'<span class="testing-not one"></span>' +
-			//			'<span class="testing-not two"></span>' +
-			//			'<span class="testing-not three"></span>'
-			//		);
-			//
-			//		var $elements = Wee.$('.testing-not');
-			//
-			//		assert.isObject($($elements).not('.one'));
-			//
-			//		assert.strictEqual($el.not($elements, '.one').length, 2,
-			//			'Filtered elements not retuned successfully'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<ul class="people">' +
-			//			    '<li data-hidden="false">Charlie Kelly</li>' +
-			//			    '<li data-hidden="true">Dennis Reynolds</li>' +
-			//			    '<li data-hidden="false">Mac</li>' +
-			//			    '<li data-hidden="false">Dee Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		var notFunction = $('.people li').not(function(i, el) {
-			//				return $el.data('hidden') === true;
-			//
-			//			});
-			//
-			//		assert.isObject(notFunction,
-			//			'$not did not return an array'
-			//		);
-			//
-			//		assert.strictEqual(notFunction.length, 3,
-			//			'Incorrect values were returned'
-			//		);
-			//	}
-			//},
-			//
-			//'offset': {
-			//	'beforeEach': function() {
-			//		$el.css({
-			//			position: 'absolute',
-			//			top: '-10000px',
-			//			left: '-10000px'
-			//		});
-			//	},
-			//
-			//	'get': function() {
-			//		assert.deepEqual($el.offset(), {
-			//			top: -10000,
-			//			left: -10000
-			//		},
-			//			'Offset not returned successfully'
-			//		);
-			//
-			//		assert.notDeepEqual($el.offset(), {
-			//			top: 10000,
-			//			left: 10000
-			//		},
-			//			'Offset not returned successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		$el.offset({
-			//			top: 100,
-			//			left: 20
-			//		});
-			//
-			//		assert.deepEqual($el.offset(), {
-			//			top: 100,
-			//			left: 20
-			//		},
-			//			'Offset value was not set successfully'
-			//		);
-			//
-			//		assert.notDeepEqual($el.offset(), {
-			//			top: 101,
-			//			left: 22
-			//		},
-			//			'Offset value was not set successfully'
-			//		);
-			//	}
-			//},
-			//
-			//'parent': {
-			//	'all': function() {
-			//		var $fixture = Wee.$el;
-			//
-			//		$el.html($fixture, '<span class="fixture-child"></span>');
-			//
-			//		assert.deepEqual($el.parent('.fixture-child'), $fixture,
-			//			'Parent was not returned successfully'
-			//		);
-			//	},
-			//
-			//	'filtered': function() {
-			//		var $fixture = Wee.$el;
-			//
-			//		$el.html($fixture, '<div class="fixture-child"></div>');
-			//
-			//		assert.deepEqual($el.parent('.fixture-child', 'div'), $fixture,
-			//			'Filtered parent was not returned successfully'
-			//		);
-			//	}
-			//},
-			//
-			//'parents': function() {
-			//	var $fixture = Wee.$el;
-			//
-			//	$el.html($fixture,
-			//		'<span id="child">' +
-			//			'<span id="child-2">' +
-			//				'<span id="child-3"></span>' +
-			//			'</span>' +
-			//		'</span>'
-			//	);
-			//
-			//	assert.strictEqual($('#child-3').parents().length, 5,
-			//		'Parents were not returned successfully'
-			//	);
-			//
-			//	assert.strictEqual($('#child-2').parents().length, 4,
-			//		'Parents were not returned successfully'
-			//	);
-			//
-			//	assert.isObject($('#child-3').parents(),
-			//		'$parents did not return an array'
-			//	);
-			//},
+					assert.isArray(
+						mapTest.map(function(val) {
+							return val + 1;
+						}), true);
+
+					assert.deepEqual(
+						mapTest.map(function(val) {
+							return val + 1;
+						}), [2, 3, 4],
+					'Did not return correct array');
+				},
+
+				selection: function() {
+					$el.html('<div class="mapTest2">1</div>');
+
+					assert.isArray(
+						$('.mapTest2').map(function() {
+							return 'Map test passed'
+						}), 'Map test passed',
+						"Did not correctly map selection"
+					);
+
+					assert.deepEqual(
+						$('.mapTest2').map(function() {
+							return 'mapping'
+						}), ['mapping'],
+						"Did not correctly map selection"
+					);
+				}
+			},
+
+			next: function() {
+				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
+			
+				assert.strictEqual($('#wee-chain').next()[0].id, 'wee-chain-1',
+					'Next element was not returned successfully'
+				);
+			
+				$('#wee-chain-1').remove();
+			},
+
+			not: {
+				'selection': function() {
+					$el.html(
+						'<span class="testing-not one">1</span>' +
+						'<span class="testing-not two">2</span>' +
+						'<span class="testing-not three">3</span>'
+					);
+			
+					assert.isObject($('.testing-not').not('.two'));
+
+					assert.strictEqual($('.testing-not').not('.two')[0].textContent, '1',
+						'Filtered elements not returned successfully'
+					);
+				}
+				// // TODO: Not working in console.
+				// 'fn': function() {
+				// 	$el.html(
+				// 		'<ul class="people">' +
+				// 		    '<li>Charlie Kelly</li>' +
+				// 		    '<li data-hidden="true">Dennis Reynolds</li>' +
+				// 		    '<li>Mac</li>' +
+				// 		    '<li>Dee Reynolds</li>' +
+				// 		'</ul>'
+				// 	);
+			
+				// 	$('.people li').not(function(i, el) {
+				// 		return $el.data(el, 'hidden') === true;
+				// 	});
+				// }
+			},
+			
+			'offset': {
+				'beforeEach': function() {
+					$el.css({
+						position: 'absolute',
+						top: '-10000px',
+						left: '-10000px'
+					});
+				},
+			
+				'get': function() {
+					assert.deepEqual($el.offset(), {
+						top: -10000,
+						left: -10000
+					},
+						'Offset not returned successfully'
+					);
+				},
+			
+				'set': function() {
+					$el.offset({
+						top: 100,
+						left: 20
+					});
+			
+					assert.deepEqual($el.offset(), {
+						top: 100,
+						left: 20
+					},
+						'Offset value was not set successfully'
+					);
+				}
+			},
+			
+			'parent': {
+				'selection': function() {
+					$el.html('<div id="parent"><p id="child"></p></div>');
+			
+					assert.deepEqual($('#child').parent()[0].id, 'parent',
+						'Parent was not returned successfully'
+					);
+				},
+			
+				'filtered': function() {
+					$el.html('<div id="parent"><p id="child"></p></div>');
+			
+					assert.deepEqual($('#child').parent('div')[0].id, 'parent',
+						'Parent was not returned successfully'
+					);
+				}
+			},
+			
+			'parents': function() {
+				$el.html(
+					'<span id="child">' +
+						'<span id="child-2">' +
+							'<span id="child-3"></span>' +
+						'</span>' +
+					'</span>'
+				);
+			
+				assert.strictEqual($('#child-3').parents().length, 5,
+					'Parents were not returned successfully'
+				);
+			},
 
 			position: function() {
 				var positionValue = {
@@ -835,121 +862,116 @@ define(function(require) {
 				);
 			},
 
-			//'prepend': {
-			//	'selection': function() {
-			//		$el.prepend('<span class="testing"></span>');
-			//
-			//		assert.ok($el.contains('.testing'),
-			//			'Test element was not prepended successfully'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.html(el,
-			//			'<h1 id="list-heading"></h1>' +
-			//			'<ul id="wee-list">' +
-			//				'<li>Dee Reynolds</li>' +
-			//				'<li>Frank Reynolds</li>' +
-			//			'</ul>'
-			//		);
-			//
-			//		$('#list-heading').prepend(function() {
-			//			return '(' + $el.children('#wee-list').length + ')';
-			//		});
-			//
-			//		assert.include($el.text('#list-heading'), '(2)',
-			//			'Function was not executed successfully'
-			//		);
-			//
-			//		assert.strictEqual($el.text('#list-heading'), '(2)',
-			//			'Function was not executed successfully'
-			//		);
-			//	}
-			//},
-			//
-			//'prependTo': function() {
-			//	var prependFixture = '<div id="test"></div>';
-			//
-			//	$el.html('<div id="wee-inner"></div>');
-			//
-			//	$(prependFixture).prependTo('#wee-inner');
-			//
-			//	assert.ok($('#wee-chain-id-inner').parent(), prependFixture,
-			//		'Element was not appended to element successfully'
-			//	);
-			//},
-			//
-			//'prev': function() {
-			//	$el.after(el,
-			//		$('<span id="wee-chain-id-2"></span>')
-			//	);
-			//
-			//	assert.strictEqual($('#wee-chain-id-2').prev().length, 1);
-			//},
-			//
-			//'prop': {
-			//	'beforeEach': function() {
-			//		$el.html(el,
-			//			'<input type="text" class="testing">'
-			//		);
-			//	},
-			//
-			//	'afterEach': function() {
-			//		$el.remove('.testing');
-			//	},
-			//
-			//	'get': function() {
-			//		$('.testing').prop('checked');
-			//
-			//		assert.notOk($('.testing').prop('checked'),
-			//			'Property was selected successfully'
-			//		);
-			//	},
-			//
-			//	'single': function() {
-			//		$('.testing').prop('disabled', true);
-			//
-			//		assert.ok($('.testing').prop('disabled'),
-			//			'Disabled property was not added successfully'
-			//		);
-			//	},
-			//
-			//	'multiple': function() {
-			//		$('.testing').prop({
-			//			'disabled': true,
-			//			'required': true
-			//		});
-			//
-			//		assert.ok($('.testing').prop('disabled'),
-			//			'Disabled property was negated successfully.'
-			//		);
-			//		assert.ok($('.testing').prop('required'),
-			//			'Required property was added successfully.'
-			//		);
-			//	}
-			//},
-			//
-			// remove: function() {
-			// 	$el.remove();
-			//
-			// 	assert.strictEqual($('#wee').length, 0,
-			// 		'Element was not removed successfully'
-			// 	);
-			// },
-			//
-			//'removeAttr': function() {
-			//	$el.attr('data-test', 'value');
-			//
-			//	assert.strictEqual($el.attr('data-test'), 'value',
-			//		'Attribute was not added successfully'
-			//	);
-			//
-			//	$el.removeAttr('data-test');
-			//
-			//	assert.strictEqual($el.attr('data-test'), null,
-			//		'Attribute was not removed successfully'
-			//	);
-			//},
+			'prepend': {
+				'prepend as first element': function() {
+					$el.prepend('<span class="testing">First span</span>');
+
+					assert.strictEqual($el.children().first()[0].innerText, 'First span',
+						'Element was not correctly prepended as first element'
+					);
+				},
+				'prepend before selection': function() {
+					$el.prepend('<span class="testing2">Second span</span>', '<span class="testing"></span>');
+			
+					assert.strictEqual($el.children().first()[0].innerText, 'Second span',
+						'Element was not correctly prepended as first element'
+					);
+				},
+			
+				fn: function() {
+					$el.html(
+						'<h1 id="list-heading"></h1>' +
+						'<ul id="wee-list">' +
+							'<li>Dee Reynolds</li>' +
+							'<li>Frank Reynolds</li>' +
+						'</ul>'
+					);
+			
+					$('#list-heading').prepend(function() {
+						return '(' + $el.children('#wee-list').length + ')';
+					});
+			
+					assert.strictEqual($('#list-heading').text(), '(1)',
+						'Function was not executed successfully'
+					);
+				}
+			},
+			
+			'prependTo': function() {
+				var prependFixture = '<div id="test"></div>';
+			
+				$el.html('<div id="wee-inner"></div>');
+			
+				$(prependFixture).prependTo('#wee-inner');
+			
+				assert.ok($('#wee-chain-id-inner').parent(), prependFixture,
+					'Element was not appended to element successfully'
+				);
+			},
+			
+			'prev': function() {
+				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
+				
+				assert.strictEqual($('#wee-chain-1').prev()[0].id, 'wee-chain',
+					'Next element was not returned successfully'
+				);
+				
+				$('#wee-chain-1').remove();
+			},
+			
+			'prop': {			
+				'get': function() {
+					$el.html('<input type="radio" class="testing" value="" checked>');
+			
+					assert.isTrue($('.testing').prop('checked'),
+						'Property was not selected successfully (should have returned as true)'
+					);
+				},
+			
+				'single': function() {
+					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+				
+					assert.strictEqual($('.testing').prop('disabled', 'true')[0].id, 'testProp',
+						'Property was not selected successfully'
+					);
+				},
+			
+				'multiple': function() {
+					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
+			
+					assert.strictEqual(
+						$('.testing').prop({
+							'disabled': true,
+							'type': 'radio'
+						})[0].id, 'testProp',
+						'Property was not selected successfully'
+					);
+				}
+			},
+			
+			remove: function() {
+				$el.html('<div id="wee-inner"></div>');
+
+				$('#wee-inner').remove();				
+
+				assert.strictEqual($('#wee').children().length, 0,
+					'Element was not removed successfully'
+				);
+			},
+			
+			'removeAttr': function() {
+				$el.attr('data-test', 'value');
+			
+				assert.strictEqual($el.attr('data-test'), 'value',
+					'Attribute was not added successfully'
+				);
+			
+				$el.removeAttr('data-test');
+			
+				assert.strictEqual($el.attr('data-test'), null,
+					'Attribute was not removed successfully'
+				);
+			},
 
 			removeClass: {
 				single: function() {
@@ -981,47 +1003,41 @@ define(function(require) {
 				);
 			},
 
-			//'scrollLeft': {
-			//	'get': function() {
-			//		assert.strictEqual($('body').scrollLeft(), 0,
-			//			'Scroll left value not retreived successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		// TODO: Complete
-			//		assert.isTrue(true);
-			//
-			//		//$el.css('width', '15000px');
-			//		//
-			//		//$el.scrollLeft('body', 10);
-			//		//
-			//		//assert.strictEqual($('body').scrollLeft(), 10,
-			//		//	'Scroll left value not set successfully'
-			//		//);
-			//	}
-			//},
-			//
-			//'scrollTop': {
-			//	'get': function() {
-			//		assert.strictEqual($('body').scrollTop(), 0,
-			//			'Scroll top value not retreived successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		// TODO: Complete
-			//		assert.isTrue(true);
-			//
-			//		//$el.css('height', '500px');
-			//		//
-			//		//$el.scrollTop('body', 10);
-			//		//
-			//		//assert.strictEqual($('body').scrollTop(), 10,
-			//		//	'Scroll top value not set successfully'
-			//		//);
-			//	}
-			//},
+			'scrollLeft': {
+				'get': function() {
+					assert.strictEqual($('body').scrollLeft(), 0,
+						'Scroll left value not retrieved successfully'
+					);
+				},
+			
+				'set': function() {
+					$('body').css('width', '15000px');
+					
+					$('body').scrollLeft(10);
+					
+					assert.strictEqual($('body').scrollLeft(), 10,
+						'Scroll left value not set successfully'
+					);
+				}
+			},
+
+			'scrollTop': {
+				'get': function() {
+					assert.strictEqual($el.scrollTop(), 0,
+						'Scroll top value not retreived successfully'
+					);
+				},
+			
+				'set': function() {
+					$('body').css('height', '500px');
+					
+					$('body').scrollTop(10);
+					
+					assert.strictEqual($('body').scrollTop(), 10,
+						'Scroll top value not set successfully'
+					);
+				}
+			},
 			//
 			//'serialize': function() {
 			//	$el.html(el,
@@ -1054,39 +1070,53 @@ define(function(require) {
 			//	);
 			//},
 			//
-			//'show': function() {
-			//	$el.hide(el);
-			//
-			//	assert.ok($el.hasClass('js-hide'),
-			//		'Element was not hidden successfully'
-			//	);
-			//
-			//	$el.show();
-			//
-			//	assert.notOk($el.hasClass('js-hide'),
-			//		'Element was not shown successfully'
-			//	);
-			//},
-			//
-			//'siblings': {
-			//	'beforeEach': function() {
-			//		$el.append(el,
-			//			'<p></p>' +
-			//			'<span></span>' +
-			//			'<div id="target-div"></div>'
-			//		);
-			//	},
-			//
-			//	'all': function() {
-			//		assert.strictEqual($('#target-div').siblings().length, 2,
-			//			'All siblings were not retrieved successfully'
-			//		);
-			//
-			//		assert.isObject($('#target-div').siblings(),
-			//			'$siblings did not return an array'
-			//		);
-			//	}
-			//},
+			'show': function() {
+				$el.hide(el);
+			
+				assert.ok($el.hasClass('js-hide'),
+					'Element was not hidden successfully'
+				);
+			
+				$el.show();
+			
+				assert.notOk($el.hasClass('js-hide'),
+					'Element was not shown successfully'
+				);
+			},
+			
+			'siblings': {			
+				'all': function() {
+					$el.html(
+						'<p>Sibling paragraph</p>' +
+						'<span>Sibling span</span>' +
+						'<div id="target-div">Target div</div>'
+					);
+
+					assert.strictEqual($('#target-div').siblings().length, 2,
+						'All siblings were not retrieved successfully'
+					);
+
+					assert.deepEqual($('#target-div').siblings()[0].innerText, 'Sibling paragraph',
+						'Expected result did not match actual result'
+					);
+				},
+
+				'filtered': function() {
+					$el.html(
+						'<p>Sibling paragraph</p>' +
+						'<span>Sibling span</span>' +
+						'<div id="target-div">Target div</div>'
+					);
+
+					assert.strictEqual($('#target-div').siblings('p').length, 1,
+						'All siblings were not retrieved successfully'
+					);
+
+					assert.deepEqual($('#target-div').siblings('p')[0].innerText, 'Sibling paragraph',
+						'Expected result did not match actual result'
+					);
+				}
+			},
 			//
 			//'slice': function() {
 			//	$el.html(el,
@@ -1181,6 +1211,63 @@ define(function(require) {
 			//		);
 			//	}
 			//},
+			
+			reverse: function() {
+				$el.html(
+					'<div class="revTest" id="first">1</div>' +
+					'<div class="revTest" id="second">2</div>' +
+					'<div class="revTest" id="third">3</div>'
+				);
+
+				var $arr = $('.revTest').reverse();
+
+				assert.strictEqual($arr[0].innerHTML, '3',
+					'Not reversed'
+				);
+
+				assert.strictEqual($arr[1].innerHTML, '2',
+					'Not reversed'
+				);
+
+				assert.strictEqual($arr[2].innerHTML, '1',
+					'Not reversed'
+				);
+			},
+
+			setRef: function() {
+				$el.html('<div data-ref="testElement">1</div>');
+
+				$('ref:testElement').setRef();
+
+				assert.strictEqual($('ref:testElement').sel, 'ref:testElement',
+					'Reference element was successfully selected.'
+				);
+
+			},
+
+			setVar: function() {
+				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+
+				$('ref:testSet').setVar();
+
+				assert.strictEqual($('ref:testSet').sel, 'ref:testSet',
+					'Data-set variable was not added to datastore'
+				);
+			},
+
+			toArray: function() {
+				$el.html(
+					'<div class="testArr">1</div>' +
+					'<div class="testArr">2</div>' +
+					'<div class="testArr">3</div>'
+				);
+
+				assert.isArray($('.testArr').toArray(), true);
+
+				assert.lengthOf($('.testArr').toArray(), 3,
+					'Array was not created properly'
+				);
+			},
 
 			val: {
 				beforeEach: function() {

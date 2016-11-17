@@ -2,7 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'View',
@@ -44,6 +44,14 @@ define(function(require) {
 
 			assert.strictEqual(Wee.view.render('{{ firstName }} {{ lastName }}', data), 'Keith Roberts',
 				'Two variables parsed successfully.'
+			);
+
+			assert.strictEqual(Wee.view.render('{{ #married|is(false) }}Not married{{ /married }}', data), 'Not married',
+				'Did not return expected result from "is" filter'
+			);
+
+			assert.strictEqual(Wee.view.render('{{ #married|not(true) }}Not married{{ /married }}', data), 'Not married',
+				'Did not return expected result from "is" filter'
 			);
 
 			assert.strictEqual(Wee.view.render('{{ #children|notEmpty }}Has children{{ /children }}', data),

@@ -2,7 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Core',
@@ -12,6 +12,7 @@ define(function(require) {
 
 			container.id = 'container';
 			container.className = 'js-container';
+			// TODO Need to use data refs instead of js- classes
 
 			document.body.appendChild(container);
 		},
@@ -22,79 +23,179 @@ define(function(require) {
 
 		'fn.make': {
 			'public': {
-				'make': function() {
-					Wee.fn.make('controller', {
-						test: function() {
-							return 'response';
-						}
-					});
+				'make': {
+					'instantiate': function() {
+						Wee.fn.make('controller', {
+							test: function() {
+								return 'response';
+							}
+						});
 
-					assert.equal(Wee.controller.test(), 'response',
-						'Controller function response correctly returned.'
-					);
-				},
-				'make and do not instantiate': function() {
-					Wee.fn.make('noInstance', {}, {}, {
-						instance: false
-					});
+						assert.equal(Wee.controller.test(), 'response',
+							'Controller function response correctly returned.'
+						);
+					},
+					'do not instantiate': function() {
+						Wee.fn.make('noInstance', {}, {}, {
+							instance: false
+						});
 
-					assert.isUndefined(Wee.noInstance);
-				},
-				'make and pass in constructor arguments': function() {
-					Wee.fn.make('controller', {
-						_construct: function(options) {
-							this.newVal = options.newVal;
-						}
-					}, null, {
-						args: {
+						assert.isUndefined(Wee.noInstance);
+					},
+					'pass in constructor arguments': function() {
+						Wee.fn.make('controller', {
+							_construct: function(options) {
+								this.newVal = options.newVal;
+							}
+						}, null, {
+							args: {
+								newVal: 'hello'
+							}
+						});
+
+						assert.equal(Wee.controller.newVal, 'hello',
+							'Controller properly passed args to constructor on make'
+						);
+					},
+					'create multiple controller instances/inspect constructors': function() {
+						var second;
+
+						Wee.fn.make('controller', {
+							_construct: function(options) {
+								this.pubProp = options.newVal;
+							}
+						}, null, {		
+							args: {
+								newVal: 'suh duh'
+							}
+						});
+
+						second = Wee.fn.controller({
 							newVal: 'hello'
-						}
-					});
+						});
 
-					assert.equal(Wee.controller.newVal, 'hello',
-						'Controller properly passed args to constructor on make'
-					);
+						assert.equal(Wee.controller.pubProp, 'suh duh',
+							'First controller instance did not fire constructor'
+						);
+						assert.equal(second.pubProp, 'hello',
+							'Second controller instance did not fire constructor'
+						);
+					},
+					'extend controller': function() {
+						Wee.fn.make('parent', {
+							name: 'parent',
+							color: 'blue'
+						});
+
+						Wee.fn.make('child:parent', {
+							name: 'child'
+						});
+
+						assert.equal(Wee.child.name, 'child',
+							'Child controller inherited parent property'
+						);
+						assert.equal(Wee.child.color, 'blue',
+							'Child controller inherited parent property'
+						);
+					}
 				},
-				'create multiple controller instances/inspect constructors': function() {
-					var second;
+				'$concat': {
+					'create array': function() {
+						Wee.$concat('concatTest', 1);
 
-					Wee.fn.make('controller', {
-						_construct: function(options) {
-							this.pubProp = options.newVal;
-						}
-					}, null, {
-						args: {
-							newVal: 'suh duh'
-						}
-					});
+						assert.isArray(Wee.$get('concatTest'),
+							'$get did not return an array'
+						);
+					},
+					'concat arrays': function() {
+						Wee.$concat('concatTest', [2, 3]);
 
-					second = Wee.fn.controller({
-						newVal: 'hello'
-					});
+						assert.deepEqual(Wee.$get('concatTest'), [1, 2, 3],
+							'Array was not concatenated correctly.'
+						);
+					},
+					'concat array with prepended values': function() {
+						Wee.$concat('concatTest', [4, 5, 6], true);
 
-					assert.equal(Wee.controller.pubProp, 'suh duh',
-						'First controller instance fired constructor'
-					);
-					assert.equal(second.pubProp, 'hello',
-						'Second controller instance fired constructor'
-					);
+						assert.deepEqual(Wee.$get('concatTest'), [4, 5, 6, 1, 2, 3], 
+							'Array was not concatenated correctly.'
+						);
+					}
 				},
-				'extend controller': function() {
-					Wee.fn.make('parent', {
-						name: 'parent',
-						color: 'blue'
-					});
+				'$copy': {
+					'copy object': function() {
+						assert.isObject(Wee.$copy({}), 
+							'No existence of an object'
+						);
+					},
+					'copy array': function() {
+						assert.isArray(Wee.$copy([]), 
+							'No existence of an array'
+						);
+					}
+				},
+				'$diff': {
+					'return object': function() {
+						Wee.$diff({
+							key1: 'blue',
+							key2: true,
+							key3: {
+								id: 1
+							}
+						}, {
+							key1: 'blue',
+							key3: {
+								id: 2
+							},
+							key4: 'new'
+						});
 
-					Wee.fn.make('child:parent', {
-						name: 'child'
-					});
-
-					assert.equal(Wee.child.name, 'child',
-						'Child controller inherited parent property'
-					);
-					assert.equal(Wee.child.color, 'blue',
-						'Child controller inherited parent property'
-					);
+						assert.isObject(Wee.$diff(), 
+							'Did not return an object as expected'
+						);
+					},
+					'get difference in objects': function() {
+						assert.deepEqual(
+							Wee.$diff({
+								key1: 'blue',
+								key2: true,
+								key3: {
+									id: 1
+								}
+							}, {
+								key1: 'blue',
+								key3: {
+									id: 2
+								},
+								key4: 'new'
+							}), 
+							{
+								key1: {
+									after: "blue",
+									before: "blue",
+									type: "-"
+								},
+								key2: {
+									after: undefined,
+									before: true,
+									type: "d"
+								},
+								key3: {
+									id: {
+										after: 2,
+										before: 1,
+										type: "u"
+									}
+								},
+								key4: {
+									after: "new",
+									before: undefined,
+									type: "c"
+								}
+							},
+							'Object did not return as expected'
+						);
+					}
 				},
 				'$get': function() {
 					assert.isObject(Wee.controller.$get(),
@@ -163,31 +264,146 @@ define(function(require) {
 					);
 
 				},
+				'$concat': {
+					'create array': function() {
+						Wee.controller.$concat('concatCtrlTest', 1);
+
+						assert.isArray(Wee.controller.$get('concatCtrlTest'),
+							'$get did not return an array'
+						);
+					},
+					'concat arrays': function() {
+						Wee.controller.$concat('concatCtrlTest', [2, 3]);
+
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [1, 2, 3],
+							'Array was not concatenated correctly.'
+						);
+					},
+					'concat array with prepended values': function() {
+						Wee.controller.$concat('concatCtrlTest', [4, 5, 6], true);
+
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [4, 5, 6, 1, 2, 3], 
+							'Array was not concatenated correctly.'
+						);
+					}
+				},
+				'$has': function() {
+					Wee.controller.$set('hasContrTest', 'value1');
+
+					assert.strictEqual(Wee.controller.$has('hasContrTest.0'), true,
+						'No value set for "hasContrTest"'
+					);
+				},
+				'$merge': function() {
+					Wee.controller.$set('obj', {
+						'color1': 'blue'
+					});
+
+					Wee.controller.$merge('obj', {
+						'color2': 'red'
+					});
+
+					assert.deepEqual(Wee.controller.$get('obj'), {
+						color1: 'blue',
+						color2: 'red'
+					},
+					'Property "color2: red" was not appended to object');
+				},
 				'$push': function() {
-					Wee.controller.$push('test', 'test-1');
+					Wee.controller.$push('testCtrlPush', 'test-1');
 
 					assert.isFunction(Wee.controller.$push,
 						'$push did not return as a function'
 					);
 
-					assert.isArray(Wee.controller.$get('test'),
+					assert.isArray(Wee.controller.$get('testCtrlPush'),
 						'$push did not push'
 					);
 
-					assert.equal(Wee.controller.$get('test'), 'test-1');
+					assert.equal(Wee.controller.$get('testCtrlPush'), 'test-1');
 				},
 				'$drop': function() {
-					Wee.controller.$set('test', 'test-2');
+					Wee.controller.$set('testCtrlDrop', 'test-2');
 
-					assert.strictEqual(Wee.controller.$get('test'), 'test-2',
+					assert.strictEqual(Wee.controller.$get('testCtrlDrop'), 'test-2',
 						'Variable test-2 was not properly set'
 					);
 
-					Wee.controller.$drop('test');
+					Wee.controller.$drop('testCtrlDrop');
 
-					assert.strictEqual(Wee.controller.$get('test'), null,
+					assert.strictEqual(Wee.controller.$get('testCtrlDrop'), null,
 						'Variable test-2 was not properly dropped'
 					);
+				},
+				'$observe': {
+					'basic': function() {
+						var returnVal;
+
+						Wee.controller.$observe('testCtrlObserve', function(data) {
+							returnVal = data;
+						}, {
+							recursive: true
+						});
+
+						Wee.controller.$set('testCtrlObserve.key1', 5);
+
+						assert.deepEqual(returnVal, { key1: 5},
+							'Property of "key1: 5" was not set on "testCtrlObserve" object'
+						);
+					},
+					'advanced': function() {
+						var returnVal2;
+						
+						Wee.controller.$set('testCtrlObserve2', 'value1');
+
+						Wee.controller.$observe('testCtrlObserve2', function(data, type, diff) {
+							if (type === 'set' && diff.before === 'value1') {
+								returnVal2 = data;
+							}
+						}, {
+							diff: true
+						});
+
+						Wee.controller.$set('testCtrlObserve2', 27);
+
+						assert.strictEqual(returnVal2, 27,
+							'Did not observe change of "testCtrlObserve2" to 2'
+						);
+					}
+				},
+				'$unobserve': function() {
+					var returnVal3;
+
+					Wee.controller.$set('testCtrlObserve', {});
+
+					Wee.controller.$observe('testCtrlObserve.key1', function(data) {
+						returnVal3 = data;
+					}, {
+						recursive: true
+					});
+
+					Wee.controller.$set('testCtrlObserve.key1', 5);
+
+					Wee.controller.$unobserve('testCtrlObserve.key1');
+
+					Wee.controller.$set('testCtrlObserve.key1', 25);
+
+					assert.strictEqual(returnVal3, 5,
+						'Value of "returnVal3" did not remain 5 as expected'
+					);
+				},
+				'ready': function() {
+					var result;
+
+					Wee.ready(function() {
+						result = 5 * 5;
+					});
+
+					document.addEventListener('DOMContentLoaded', function() {
+						assert.strictEqual(result, 25,
+							'Function was not executed on page load'
+						);
+					});
 				},
 				'$destroy': function() {
 					Wee.controller.$destroy();
@@ -324,19 +540,27 @@ define(function(require) {
 				);
 			}
 		},
-		'$': function() {
-			Wee.$html('#container',
-				'<div id="testing"></div>' +
-				'<div class="testing"></div>'
-			);
+		'$': {
+			'parsing HTML': function() {
+				Wee.$html('#container',
+					'<div id="testing"></div>' +
+					'<div class="testing"></div>'
+				);
 
-			assert.strictEqual(Wee.$('#testing').length, 1,
-				'Element with ID "testing" was selected successfully.'
-			);
+				assert.strictEqual(Wee.$('#testing').length, 1,
+					'Element with ID "testing" was selected successfully.'
+				);
 
-			assert.strictEqual(Wee.$('.testing').length, 1,
-				'Element with class "testing" was selected successfully.'
-			);
+				assert.strictEqual(Wee.$('.testing').length, 1,
+					'Element with class "testing" was selected successfully.'
+				);
+			}
+			// 'select window': function {
+			// 	assert.isTrue(Array.isArray(Wee.$('window')));
+			// },
+			// 'select document': function {
+			// 	assert.isTrue(Array.isArray(Wee.$('document')));
+			// }
 		},
 		'$parseHTML': function() {
 			var el = Wee.$parseHTML(
@@ -379,6 +603,20 @@ define(function(require) {
 			assert.strictEqual(Wee.$get('set-var-123'), 'string',
 				'Variable "set-var-123" is correctly set to "string".'
 			);
+
+			assert.isArray(Wee.$set('testArray', [1, 2, 3]), [1, 2, 3],
+				'Value was not properly set to an array'
+			);
+
+			assert.strictEqual(Wee.$has('testArray.key1'), true, 
+				'Global storage object should have key of "key1"'
+			);
+
+			Wee.$set('myArray', ['blue', 'red', 'green']);
+
+			assert.strictEqual(Wee.$get('myArray.0'), 'blue',
+				'Array did not return value of "blue"'
+			);
 		},
 		'$get': function() {
 			assert.strictEqual(Wee.$get('var-234'), null,
@@ -403,13 +641,125 @@ define(function(require) {
 				'Variable "var-234" is returned as the default "string".'
 			);
 		},
-		'$observe': function() {
-			// TODO: Complete
-			assert.isTrue(true);
+		'$has': {
+			'simple value': function() {
+				Wee.$set('testHas', 'value');
+
+				assert.strictEqual(Wee.$has('testHas.0'), true,
+					'Not detecting any value for "testHas"'
+				);
+			},
+			'object as value': function() {
+				Wee.$set('testHas2', {
+					'color1': 'blue',
+					'color2': 'red'
+				});
+
+				assert.strictEqual(Wee.$has('testHas.0'), true,
+					'Not detecting any value for "testHas"'
+				);
+			}
+		},
+		'$push': function() {
+			Wee.$push('testPush', 'value1');
+			Wee.$push('testPush', 'value2');
+
+			assert.deepEqual(Wee.$get('testPush'), ['value1', 'value2'], 
+				'Second value was not pushed to end of array'
+			);
+		},
+		'$merge': function() {
+			Wee.$set('obj', {
+				'color1': 'blue'
+			});
+
+			Wee.$merge('obj', {
+				'color2': 'red'
+			});
+
+			assert.deepEqual(Wee.$get('obj'), {
+				color1: 'blue',
+				color2: 'red'
+			},
+			'Property "color2: red" was not appended to object');
+		},
+		'$drop': {
+			'drop key from object': function() {
+				Wee.$set('testDrop', {
+					color1: 'blue',
+					color2: 'red'
+				});
+
+				assert.deepEqual(Wee.$drop('testDrop.color1'), {color2: 'red'},
+					'Property "color1" was not dropped from object as expected'
+				);
+			},
+			'drop value from array': function() {
+				Wee.$set('testDrop2', ['red', 'green', 'blue']);
+
+				assert.deepEqual(Wee.$drop('testDrop2', 1), ['red', , 'blue'],
+					'Value of "green" was not removed from array'
+				);
+			}
+		},
+		'$observe': {
+			'basic': function() {
+				var returnVal;
+
+				Wee.$observe('testObserve', function(data) {
+					returnVal = data;
+				}, {
+					recursive: true
+				});
+
+				Wee.$set('testObserve.key1', 5);
+
+				assert.deepEqual(returnVal, { key1: 5},
+					'Property of "key1: 5" was not set on "testObserve" object'
+				);
+			},
+			'advanced': function() {
+				var returnVal2;
+				
+				Wee.$set('testObserve2', 'value1');
+
+				Wee.$observe('testObserve2', function(data, type, diff) {
+					if (type === 'set' && diff.before === 'value1') {
+						returnVal2 = data;
+					}
+				}, {
+					diff: true
+				});
+
+				Wee.$set('testObserve2', 27);
+
+				assert.strictEqual(returnVal2, 27,
+					'Did not observe change of "testObserve2" to 2'
+				);
+			}
 		},
 		'$unobserve': function() {
-			// TODO: Complete
-			assert.isTrue(true);
+			var returnVal3;
+
+			// TODO: 
+
+			Wee.$set('testObserve', {});
+
+			Wee.$observe('testObserve.key1', function(data) {
+				returnVal3 = data;
+			}, {
+				recursive: true
+			});
+
+			Wee.$set('testObserve.key1', 5);
+
+			Wee.$unobserve('testObserve.key1');
+
+			Wee.$set('testObserve.key1', 25);
+
+			assert.strictEqual(returnVal3, 5,
+				'Value of "returnVal3" did not remain 5 as expected'
+			);
 		},
 		'$each': {
 			'simple': function() {
@@ -473,9 +823,44 @@ define(function(require) {
 			}
 		},
 		'$envSecure': function() {
-			assert.ok(Wee.$envSecure(),
+			assert.notOk(Wee.$envSecure(),
 				'The environment was not correctly identified as secure'
 			);
+		},
+		'$equals': {
+			'string values': function() {
+				assert.strictEqual(Wee.$equals('blue', 'blue'), true,
+					'Strings should have evaluated as equal'
+				);
+			},
+			'number values': function() {
+				assert.strictEqual(Wee.$equals(1, 2), false,
+					'Numbers should not evaluate as equal'
+				);
+			},
+			'object values': function() {
+				assert.strictEqual(Wee.$equals(
+					{
+						key: 'val1'
+					}, {
+						key: 'val1'
+					}), true,
+					'Objects should have evaluated as equal'
+				);
+			},
+			'array values': function() {
+				assert.strictEqual(Wee.$equals([1, 2, 3], [1, 2]), false,
+					'Arrays should have evaluated as equal'
+				);
+			},
+			'date values': function() {
+				var d1 = new Date();
+				var d2 = new Date(d1);
+
+				assert.strictEqual(Wee.$equals(d1, d2), true,
+					'Dates should not evaluate as equal'
+				);
+			}
 		},
 		'$exec': function() {
 			Wee.fn.make('execTest', {
@@ -697,6 +1082,21 @@ define(function(require) {
 				'Array ["string"] is still ["string"].'
 			);
 		},
+		'$trigger': function() {
+			var trig = 0;
+
+			Wee.$set('testTrigger', 'value');
+
+			Wee.$observe('testTrigger', function() {
+				trig++;
+			});
+
+			Wee.$trigger('testTrigger');
+
+			assert.strictEqual(trig, 1,
+				'Variable "trig" was not incremented'
+			);
+		},
 		'$type': function() {
 			var obj = {},
 				arr = [],
@@ -746,12 +1146,25 @@ define(function(require) {
 				'Only unique elements were correctly returned.'
 			);
 		},
-		'_canExec': function() {
-			var fun = function() {};
+		'_canExec': {
+			'simple function': function() {
+				var fun = function() {};
 
-			assert.isTrue(Wee._canExec(fun),
-				'Method did not identify executable function successfully'
-			);
+				assert.isTrue(Wee._canExec(fun),
+					'Method did not identify executable function successfully'
+				);
+			},
+			'function as object property': function() {
+				var fun2 = {
+					prop1: function(a, b) {
+						return a + b;
+					}
+				};
+
+				assert.isTrue(Wee._canExec(fun2.prop1),
+					'Method did not identify executable function successfully'
+				);
+			}
 		},
 		'_castString': function() {
 			var num = '5';

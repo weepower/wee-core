@@ -5,6 +5,7 @@
 node_modules/
 out/
 temp/
+lcov.info
 
 
 #------------------------------------

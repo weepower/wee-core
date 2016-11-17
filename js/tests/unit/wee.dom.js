@@ -2,7 +2,7 @@ define(function(require) {
 	var registerSuite = require('intern!object'),
 		assert = require('intern/chai!assert');
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'DOM',
@@ -20,8 +20,8 @@ define(function(require) {
 			Wee.$remove('#container');
 		},
 
-		'$addClass': {
-			'single': function() {
+		$addClass: {
+			single: function() {
 				assert.ok(Wee.$hasClass('#container',
 					'js-container'
 				),
@@ -29,7 +29,7 @@ define(function(require) {
 				);
 			},
 
-			'multiple': function() {
+			multiple: function() {
 				Wee.$addClass('#container',
 					'test-class-1 test-class-2 test-class-3'
 				);
@@ -45,7 +45,7 @@ define(function(require) {
 				);
 			},
 
-			'function': function() {
+			function: function() {
 				Wee.$addClass('#container', function(i, className) {
 					return className + i;
 				});
@@ -60,8 +60,8 @@ define(function(require) {
 			}
 		},
 
-		'$after': {
-			'markup': function() {
+		$after: {
+			markup: function() {
 				Wee.$after('#container',
 					'<span class="testing-after"></span>'
 				);
@@ -73,7 +73,7 @@ define(function(require) {
 				);
 			},
 
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<div id="name" data-name="John Smith">' +
 						'<h1 id="nameTwo" data-ref="bioName">Name</h1>' +
@@ -92,8 +92,8 @@ define(function(require) {
 			}
 		},
 
-		'$append': {
-			'selection': function() {
+		$append: {
+			selection: function() {
 				Wee.$html('#container',
 					'<span class="testing-append"></span>'
 				);
@@ -103,7 +103,7 @@ define(function(require) {
 				);
 			},
 
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<h1 id="list-heading"></h1>' +
 					'<ul id="wee-list">' +
@@ -126,8 +126,8 @@ define(function(require) {
 			}
 		},
 
-		'$attr': {
-			'get': function() {
+		$attr: {
+			get: function() {
 				Wee.$html('#container',
 					'<a id="wee-link" href="https://www.weepower.com">Wee</a>'
 				);
@@ -143,7 +143,7 @@ define(function(require) {
 				);
 			},
 
-			'single': function() {
+			single: function() {
 				Wee.$html('#container',
 					'<a id="wee-link" href="https://www.weepower.com">Wee</a>'
 				);
@@ -154,7 +154,7 @@ define(function(require) {
 				);
 			},
 
-			'multiple': function() {
+			multiple: function() {
 				Wee.$html('#container',
 					'<a id="wee-link" href="https://www.google.com"' +
 					'data-ref="data-reference">Wee</a>');
@@ -171,8 +171,8 @@ define(function(require) {
 			}
 		},
 
-		'$before': {
-			'markup': function() {
+		$before: {
+			markup: function() {
 				Wee.$before('#container',
 					'<span class="testing-before"></span>'
 				);
@@ -184,7 +184,7 @@ define(function(require) {
 				);
 			},
 
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<div id="wee-inner"></div>'
 				);
@@ -199,8 +199,8 @@ define(function(require) {
 			}
 		},
 
-		'$children': {
-			'all': function() {
+		$children: {
+			all: function() {
 				Wee.$html('#container',
 					'<span></span><span></span>'
 				);
@@ -215,7 +215,7 @@ define(function(require) {
 				);
 			},
 
-			'filtered': function() {
+			filtered: function() {
 				Wee.$html('#container',
 					'<li></li>li<li></li><li></li><span></span>'
 				);
@@ -230,7 +230,7 @@ define(function(require) {
 			}
 		},
 
-		'$clone': function() {
+		$clone: function() {
 			Wee.$html('#container', '<h1 id="inner"></h1>');
 
 			Wee.$append('#container', Wee.$clone('#inner'));
@@ -240,7 +240,7 @@ define(function(require) {
 				'Element was not cloned successfully'
 			);
 		},
-		'$closest': function() {
+		$closest: function() {
 			Wee.$append('#container',
 				'<div id="inner"></div>'
 			);
@@ -253,7 +253,7 @@ define(function(require) {
 				'Closest element was identified successfully'
 			);
 		},
-		'$contains': function() {
+		$contains: function() {
 			Wee.$html('#container',
 				'<span class="testing-contains"></span>'
 			);
@@ -272,7 +272,7 @@ define(function(require) {
 				'$contains returned boolean true'
 			);
 		},
-		'$contents': function() {
+		$contents: function() {
 			Wee.$html('#container',
 				'<span></span><span></span>'
 			);
@@ -285,13 +285,13 @@ define(function(require) {
 				'Contents were not selected successfully'
 			);
 		},
-		'$css': {
+		$css: {
 			'get value': function() {
 				assert.strictEqual(Wee.$css('#container', 'paddingTop'), '0px',
 					'Default value was not retrieved successfully'
 				);
 			},
-			'single': function() {
+			single: function() {
 				Wee.$css('#container', 'fontSize', '10px');
 
 				assert.strictEqual(Wee.$css('#container', 'fontSize'), '10px',
@@ -302,7 +302,7 @@ define(function(require) {
 					'Single value was not set successfully'
 				);
 			},
-			'multiple': function() {
+			multiple: function() {
 				Wee.$css('#container', {
 					marginTop: '10px',
 					marginBottom: '5px'
@@ -322,18 +322,18 @@ define(function(require) {
 				);
 			}
 		},
-		'$data': {
-			'beforeEach': function() {
+		$data: {
+			beforeEach: function() {
 				Wee.$append('#container',
 					'<div id="wee-data" data-id="150"' +
 					'data-ref="data-reference" data-test="data-test">'
 				);
 			},
-			'afterEach': function() {
+			afterEach: function() {
 				Wee.$remove('#wee-data');
 			},
-			'get': {
-				'all': function() {
+			get: {
+				all: function() {
 					var weeData = Wee.$data('#wee-data'),
 						dataObject = {
 							id: 150,
@@ -349,7 +349,7 @@ define(function(require) {
 						'Data references were not selected successfully'
 					);
 				},
-				'single': function() {
+				single: function() {
 					assert.strictEqual(Wee.$data('#wee-data', 'id'), 150,
 						'Data reference was not returned successfully'
 					);
@@ -360,8 +360,8 @@ define(function(require) {
 					);
 				}
 			},
-			'set': {
-				'single': function () {
+			set: {
+				single: function () {
 					Wee.$data('#wee-data', 'id', '250');
 
 					assert.notStrictEqual(Wee.$data('#wee-data', 'id'), 150,
@@ -372,7 +372,7 @@ define(function(require) {
 						'Data reference was not set successfully'
 					);
 				},
-				'multiple': function() {
+				multiple: function() {
 					Wee.$data('#wee-data', {
 						id: 350,
 						ref: 'reference',
@@ -410,7 +410,7 @@ define(function(require) {
 				}
 			}
 		},
-		'$empty': function() {
+		$empty: function() {
 			Wee.$html('#container',
 				'<span class="testing-empty"></span>'
 			);
@@ -431,7 +431,7 @@ define(function(require) {
 				'Element was not emptied successfully'
 			);
 		},
-		'$eq': {
+		$eq: {
 			'positive index': function() {
 				Wee.$html('#container',
 					'<div class="testing-eq-pos">1</div>' +
@@ -459,8 +459,8 @@ define(function(require) {
 				);
 			}
 		},
-		'$filter': {
-			'selection': function() {
+		$filter: {
+			selection: function() {
 				Wee.$html('#container',
 					'<span class="testing-filter one"></span>' +
 					'<span class="testing-filter two"></span>' +
@@ -477,7 +477,7 @@ define(function(require) {
 					'$filter did not return an array'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<ul class="people">' +
 						'<li>Charlie Kelly</li>' +
@@ -500,7 +500,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$find': function() {
+		$find: function() {
 			Wee.$html('#container',
 				'<span class="testing-find"></span>' +
 				'<span class="testing-find-2"></span>' +
@@ -516,8 +516,19 @@ define(function(require) {
 			);
 		},
 
-		'$hasClass': {
-			'single': function() {
+		$first: function() {
+			Wee.$html('#container',
+					'<div class="test-first">1</div>' +
+					'<div class="test-first">2</div>'
+				);
+
+			assert.strictEqual(Wee.$first('.test-first').textContent, '1',
+				'First element was not selected successfully.'
+			);
+		},
+
+		$hasClass: {
+			single: function() {
 				Wee.$addClass('#container', 'test-class');
 
 				assert.ok(Wee.$hasClass('#container', 'test-class'),
@@ -529,7 +540,7 @@ define(function(require) {
 				);
 			},
 
-			'multiple': function() {
+			multiple: function() {
 				Wee.$addClass('#container',
 					'test-class test-class-2 test-class-3'
 				);
@@ -542,23 +553,34 @@ define(function(require) {
 			}
 		},
 
-		'$height': {
-			'beforeEach': function() {
+		$height: {
+			beforeEach: function() {
 				Wee.$height('#container', '100px');
 			},
-			'get': function() {
+			get: function() {
+				var docHeight = document.documentElement.scrollHeight,
+					winHeight = window.innerHeight;
+
 				assert.strictEqual(Wee.$height('#container'), 100,
 					'Element height not set successfully'
 				);
+
+				assert.strictEqual(Wee.$height(window), winHeight,
+					'Element width not set successfully'
+				);
+
+				assert.strictEqual(Wee.$height(document), docHeight,
+					'Element width not set successfully'
+				);
 			},
-			'set': function() {
+			set: function() {
 				Wee.$height('#container', '150px');
 
 				assert.strictEqual(Wee.$height('#container'), 150,
 					'Element height not set successfully'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$height('#container', function(i, height) {
 					return (height += 50) + 'px';
 				});
@@ -568,16 +590,16 @@ define(function(require) {
 				);
 			}
 		},
-		'$hide': function() {
+		$hide: function() {
 			Wee.$hide('#container');
 
 			assert.ok(Wee.$hasClass('#container', 'js-hide'),
 				'Element was not hidden successfully'
 			);
 		},
-		'$html': {
-			'get': {
-				'single': function() {
+		$html: {
+			get: {
+				single: function() {
 					Wee.$html('#container',
 						'<h1>Testing</h1>'
 					);
@@ -587,7 +609,7 @@ define(function(require) {
 						'HTML "<h1>testing</h1>" was not set correctly'
 					);
 				},
-				'multiple': function() {
+				multiple: function() {
 					Wee.$html('#container',
 						'<span></span><span></span><span></span>'
 					);
@@ -600,13 +622,13 @@ define(function(require) {
 					);
 				}
 			},
-			'set': {
-				'beforeEach': function() {
+			set: {
+				beforeEach: function() {
 					Wee.$append('#container',
 						'<h1>Heading One</h1><h2>Heading Two</h2>'
 					);
 				},
-				'single': function() {
+				single: function() {
 					Wee.$html('#container',
 						'<h2>New Heading</h2>'
 					);
@@ -617,7 +639,7 @@ define(function(require) {
 					);
 				}
 			},
-			'function': function() {
+			function: function() {
 				Wee.$append('#container',
 					'<h1>Heading One</h1>' +
 					'<h2>Heading Two</h2>'
@@ -633,7 +655,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$index': function() {
+		$index: function() {
 			Wee.$html('#container',
 				'<div id="one"></div>' +
 				'<div id="two"></div>' +
@@ -644,7 +666,7 @@ define(function(require) {
 				'Incorrect element index returned'
 			);
 		},
-		'$insertAfter': function() {
+		$insertAfter: function() {
 			Wee.$html('#container',
 				'<div id="wee-inner"></div>'
 			);
@@ -659,7 +681,7 @@ define(function(require) {
 				'Element added successfully.'
 			);
 		},
-		'$insertBefore': function() {
+		$insertBefore: function() {
 			Wee.$html('#container', '<div id="wee-inner"></div>');
 
 			var $el = Wee.$parseHTML('<span class="testing-insertbefore"></span>');
@@ -672,8 +694,8 @@ define(function(require) {
 				'Element was not added before successfully'
 			);
 		},
-		'$is': {
-			'selection': function() {
+		$is: {
+			selection: function() {
 				Wee.$addClass('#container', 'one');
 
 				assert.ok(Wee.$is('#container', '.one'),
@@ -684,7 +706,7 @@ define(function(require) {
 					'$is returned false instead of true'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<ul class="people">' +
 					    '<li data-hidden="false">Charlie Kelly</li>' +
@@ -703,7 +725,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$last': function() {
+		$last: function() {
 			Wee.$html('#container',
 				'<span>1</span><span>2</span><span>3</span>'
 			);
@@ -713,7 +735,7 @@ define(function(require) {
 			);
 		},
 
-		'$next': function() {
+		$next: function() {
 			Wee.$append('body', '<div id="wee-2"></div>');
 
 			assert.strictEqual(Wee.$next('#container')[0].id, 'wee-2',
@@ -723,8 +745,8 @@ define(function(require) {
 			Wee.$remove('#wee-2');
 		},
 
-		'$not': {
-			'selection': function() {
+		$not: {
+			selection: function() {
 				Wee.$html('#container',
 					'<span class="testing-not one"></span>' +
 					'<span class="testing-not two"></span>' +
@@ -739,7 +761,7 @@ define(function(require) {
 					'Filtered elements not retuned successfully'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<ul class="people">' +
 					    '<li data-hidden="false">Charlie Kelly</li>' +
@@ -762,15 +784,15 @@ define(function(require) {
 				);
 			}
 		},
-		'$offset': {
-			'beforeEach': function() {
+		$offset: {
+			beforeEach: function() {
 				Wee.$css('#container', {
 					position: 'absolute',
 					top: '-10000px',
 					left: '-10000px'
 				});
 			},
-			'get': function() {
+			get: function() {
 				assert.deepEqual(Wee.$offset('#container'), {
 					top: -10000,
 					left: -10000
@@ -785,7 +807,7 @@ define(function(require) {
 					'Offset not returned successfully'
 				);
 			},
-			'set': function() {
+			set: function() {
 				Wee.$offset('#container', {
 					top: 100,
 					left: 20
@@ -806,8 +828,8 @@ define(function(require) {
 				);
 			}
 		},
-		'$parent': {
-			'all': function() {
+		$parent: {
+			all: function() {
 				var $fixture = Wee.$('#container');
 
 				Wee.$html($fixture, '<span class="fixture-child"></span>');
@@ -816,7 +838,7 @@ define(function(require) {
 					'Parent was not returned successfully'
 				);
 			},
-			'filtered': function() {
+			filtered: function() {
 				var $fixture = Wee.$('#container');
 
 				Wee.$html($fixture, '<div class="fixture-child"></div>');
@@ -826,7 +848,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$parents': function() {
+		$parents: function() {
 			var $fixture = Wee.$('#container');
 
 			Wee.$html($fixture,
@@ -853,7 +875,7 @@ define(function(require) {
 				'$parents did not return an array'
 			);
 		},
-		'$position': function() {
+		$position: function() {
 			var positionValue = {
 				top: -10000,
 				left: -10000
@@ -880,8 +902,8 @@ define(function(require) {
 				'$position did not return an object'
 			);
 		},
-		'$prepend': {
-			'selection': function() {
+		$prepend: {
+			selection: function() {
 				Wee.$prepend('#container',
 					'<span class="testing"></span>'
 				);
@@ -890,7 +912,7 @@ define(function(require) {
 					'Testing element was not prepended successfully'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<h1 id="list-heading"></h1>' +
 					'<ul id="wee-list">' +
@@ -913,7 +935,7 @@ define(function(require) {
 			}
 		},
 
-		'$prev': function() {
+		$prev: function() {
 			Wee.$after('#container',
 				Wee.$('<div id="container-2"></div>')
 			);
@@ -921,33 +943,33 @@ define(function(require) {
 			assert.strictEqual(Wee.$prev('#container-2')[0].id, 'container');
 		},
 
-		'$prop': {
-			'beforeEach': function() {
+		$prop: {
+			beforeEach: function() {
 				Wee.$html('#container',
 					'<input type="text" class="testing">'
 				);
 			},
-			'afterEach': function() {
+			afterEach: function() {
 				Wee.$remove('.testing');
 			},
-			'get': function() {
+			get: function() {
 				Wee.$prop('.testing', 'checked');
 
 				assert.notOk(Wee.$prop('.testing', 'checked'),
 					'Property was selected successfully'
 				);
 			},
-			'single': function() {
+			single: function() {
 				Wee.$prop('.testing', 'disabled', true);
 
 				assert.ok(Wee.$prop('.testing', 'disabled'),
 					'Disabled property was not added successfully'
 				);
 			},
-			'multiple': function() {
+			multiple: function() {
 				Wee.$prop('.testing', {
-					'disabled': true,
-					'required': true
+					disabled: true,
+					required: true
 				});
 
 				assert.ok(Wee.$prop('.testing', 'disabled'),
@@ -959,7 +981,7 @@ define(function(require) {
 			}
 		},
 
-		'$remove': function() {
+		$remove: function() {
 			Wee.$html('#container', '<div id="wee-inner"></div>');
 
 			assert.ok(Wee.$html('#container'), '<div id="wee-inner"></div>',
@@ -973,7 +995,7 @@ define(function(require) {
 			);
 		},
 
-		'$removeAttr': function() {
+		$removeAttr: function() {
 			Wee.$attr('#container', 'data-test', 'value');
 			Wee.$removeAttr('#container', 'data-test');
 
@@ -982,7 +1004,7 @@ define(function(require) {
 			);
 		},
 
-		'$removeClass': {
+		$removeClass: {
 			single: function() {
 				Wee.$removeClass('#container', 'wee');
 
@@ -1010,8 +1032,8 @@ define(function(require) {
 			}
 		},
 
-		'$replaceWith': {
-			'markup': function() {
+		$replaceWith: {
+			markup: function() {
 				Wee.$replaceWith('#container',
 					'<span class="testing-replacewith"></span>'
 				);
@@ -1028,7 +1050,7 @@ define(function(require) {
 					'<div id="wee" class="wee"></div>'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$html('#container',
 					'<ul class="names">' +
 						'<li>John Doe</li>' +
@@ -1044,7 +1066,7 @@ define(function(require) {
 			}
 		},
 
-		'$scrollLeft': {
+		$scrollLeft: {
 			get: function() {
 				assert.strictEqual(Wee.$scrollLeft(), 0,
 					'Scroll left value not retreived successfully'
@@ -1052,52 +1074,60 @@ define(function(require) {
 			},
 
 			set: function() {
-				// TODO: Complete
 				assert.isTrue(true);
 
-				//Wee.$css('#container', 'width', '15000px');
-				//
-				//Wee.$scrollLeft('body', 10);
-				//
-				//assert.strictEqual(Wee.$scrollLeft(), 10,
-				//	'Scroll left value not set successfully'
-				//);
+				Wee.$css('body', 'width', '15000px');
+
+				Wee.$scrollLeft('body', 10);
+
+				assert.strictEqual(Wee.$scrollLeft(), 10,
+					'Scroll left value not set successfully'
+				);
 			}
 		},
 
-		'$scrollTop': {
-			'get': function() {
+		$scrollTop: {
+			get: function() {
+				Wee.$scrollTop('body', 0);
+
 				assert.strictEqual(Wee.$scrollTop(), 0,
 					'Scroll top value not retreived successfully'
 				);
 			},
 
-			'set': function() {
-				// TODO: Complete
+			set: function() {
 				assert.isTrue(true);
 
-				//Wee.$css('#container', 'height', '500px');
-				//
-				//Wee.$scrollTop('body', 10);
-				//
-				//assert.strictEqual(Wee.$scrollTop(), 10,
-				//	'Scroll top value not set successfully'
-				//);
+				Wee.$css('body', 'height', '500px');
+
+				Wee.$scrollTop('body', 10);
+
+				assert.strictEqual(Wee.$scrollTop(), 10,
+					'Scroll top value not set successfully'
+				);
 			}
 		},
-		'$serializeForm': function() {
+		$serializeForm: function() {
 			Wee.$html('#container',
 				'<form action="#" id="wee-form">' +
 					'<input type="text" name="input" value="inputValue">' +
 					'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
 					'<input type="radio" name="radio1" value="radioValue" checked>' +
+					'<input type="text" name="name[]" value="name1">' +
+					'<input type="text" name="email[]" value="email1">' +
+					'<input type="text" name="name[]" value="name2">' +
+					'<input type="text" name="email[]" value="email2">' +
 					'<select name="select">' +
-						'<option value="selectValue1" checked>Option 1</option>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
 						'<option value="selectValue2">Option 2</option>' +
+					'</select>' +
+					'<select name="select-multiple" multiple>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
+						'<option value="selectValue2" selected>Option 2</option>' +
 					'</select>' +
 					'<select name="optgroup">' +
 						'<optgroup>' +
-							'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+							'<option value="optgroupValue1" selected>Optgroup 1</option>' +
 							'<option value="optgroupValue2">Optgroup 2</option>' +
 						'</optgroup>' +
 					'</select>' +
@@ -1107,15 +1137,23 @@ define(function(require) {
 				'</form>'
 			);
 
-			var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
-				'&radio1=radioValue&select=selectValue1&' +
-				'optgroup=optgroupValue1&textarea=Text+Area';
+			var serializedValue = 'input=inputValue&checkbox=checkboxValue&' +
+				'radio1=radioValue&name[]=name1&name[]=name2&email[]=email1' +
+				'&email[]=email2&select=selectValue1&select-multiple[]=sele' +
+				'ctValue1&select-multiple[]=selectValue2&optgroup=optgroupV' +
+				'alue1&textarea=Text+Area';
 
 			assert.strictEqual(Wee.$serializeForm('#wee-form'), serializedValue,
 				'Form was not serialized successfully'
 			);
+
+			Wee.$html('#container', '<div id="wee-form">hi</div>');
+
+			assert.strictEqual(Wee.$serializeForm('#wee-form'), '',
+				'Attempted to serialize a non FORM element'
+			);
 		},
-		'$show': function() {
+		$show: function() {
 			Wee.$hide('#container');
 
 			assert.ok(Wee.$hasClass('#container', 'js-hide'),
@@ -1128,15 +1166,15 @@ define(function(require) {
 				'Element was not shown successfully'
 			);
 		},
-		'$siblings': {
-			'beforeEach': function() {
+		$siblings: {
+			beforeEach: function() {
 				Wee.$html('#container',
 					'<p></p>' +
 					'<span></span>' +
 					'<div id="target-div"></div>'
 				);
 			},
-			'all': function() {
+			all: function() {
 				assert.strictEqual(Wee.$siblings('#target-div').length, 2,
 					'All siblings were not retrieved successfully'
 				);
@@ -1145,7 +1183,7 @@ define(function(require) {
 					'$siblings did not return an array'
 				);
 			},
-			'filtered': function() {
+			filtered: function() {
 				assert.strictEqual(Wee.$siblings('#target-div', 'p').length, 1,
 					'Filtered siblings were not retrieved successfully'
 				);
@@ -1155,7 +1193,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$slice': function() {
+		$slice: function() {
 			Wee.$html('#container',
 				'<span>1</span><span>2</span><span>3</span>'
 			);
@@ -1164,16 +1202,16 @@ define(function(require) {
 				'Second element was not selected successfully'
 			);
 		},
-		'$text': {
-			'beforeEach': function() {
+		$text: {
+			beforeEach: function() {
 				Wee.$text('#container', 'Wee Test');
 			},
-			'get': function() {
+			get: function() {
 				assert.strictEqual(Wee.$text('#container'), 'Wee Test',
 					'Text was not retreived successfully'
 				);
 			},
-			'set': function() {
+			set: function() {
 				Wee.$text('#container', 'Testing 123');
 
 				assert.strictEqual(Wee.$text('#container'), 'Testing 123',
@@ -1181,7 +1219,7 @@ define(function(require) {
 				);
 			}
 		},
-		'$toggle': function() {
+		$toggle: function() {
 			Wee.$toggle('#container');
 
 			assert.ok(Wee.$hasClass('#container', 'js-hide'),
@@ -1194,8 +1232,8 @@ define(function(require) {
 				'Element was not shown successfully'
 			);
 		},
-		'$toggleClass': {
-			'single': function() {
+		$toggleClass: {
+			single: function() {
 				Wee.$toggleClass('#container', 'test-class');
 
 				assert.ok(Wee.$hasClass('#container', 'test-class'),
@@ -1208,7 +1246,7 @@ define(function(require) {
 					'Class was not removed successfully'
 				);
 			},
-			'multiple': function() {
+			multiple: function() {
 				Wee.$toggleClass('#container', 'test-class test-class-2');
 
 				assert.strictEqual(Wee.$attr('#container', 'class'),
@@ -1232,7 +1270,7 @@ define(function(require) {
 				);
 
 			},
-			'function': function() {
+			function: function() {
 				Wee.$toggleClass('#container', function() {
 					return Wee.$addClass('#container', 'test');
 				});
@@ -1242,26 +1280,42 @@ define(function(require) {
 				);
 			}
 		},
-		'$val': {
-			'beforeEach': function() {
+		$val: {
+			beforeEach: function() {
 				Wee.$html('#container',
-					'<input type="text" class="testing" value="test">'
+					'<input type="text" class="testing" value="test">' +
+					'<select name="select-multiple" class="testing2" multiple>' +
+						'<option value="selectValue1" selected>Option 1</option>' +
+						'<option value="selectValue2" selected>Option 2</option>' +
+					'</select>'
 				);
 			},
-			'get': function() {
+			get: function() {
 				assert.strictEqual(Wee.$val('.testing'),
 					'test',
 					'Value was not retrieved successfully'
 				);
 			},
-			'set': function() {
+			'get multiple': function() {
+				assert.strictEqual(
+					Wee.$equals(Wee.$val('.testing2'),
+					['selectValue1', 'selectValue2']),
+					true,
+					'Value was not retrieved successfully'
+				);
+
+				assert.isArray(Wee.$val('.testing2'),
+					'Returned value was not an array'
+				);
+			},
+			set: function() {
 				Wee.$val('.testing', 'testing');
 
 				assert.strictEqual(Wee.$val('.testing'), 'testing',
 					'Value was not set successfully'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$val('.testing', function(i, value) {
 					if (value.length > 3) {
 						return 'success';
@@ -1273,23 +1327,38 @@ define(function(require) {
 				);
 			}
 		},
-		'$width': {
-			'beforeEach': function() {
+		$width: {
+			beforeEach: function() {
 				Wee.$width('#container', '100px');
 			},
-			'get': function() {
+			get: function() {
+				var docWidth = document.documentElement.scrollWidth,
+					winWidth = window.innerWidth;
+
+				assert.strictEqual(Wee.$width(window), winWidth,
+					'Element width not set successfully'
+				);
+
+				assert.strictEqual(Wee.$width(document), docWidth,
+					'Element width not set successfully'
+				);
+
 				assert.strictEqual(Wee.$width('#container'), 100,
 					'Element width not set successfully'
 				);
+
+				assert.strictEqual(Wee.$width('#container', true), 100,
+					'Element width not set successfully'
+				);
 			},
-			'set': function() {
+			set: function() {
 				Wee.$width('#container', '200px');
 
 				assert.strictEqual(Wee.$width('#container'), 200,
 					'Element width not set successfully'
 				);
 			},
-			'function': function() {
+			function: function() {
 				Wee.$width('#container', function(i, width) {
 					return (width += 50) + 'px';
 				});
@@ -1300,7 +1369,7 @@ define(function(require) {
 			}
 		},
 
-		'$wrap': {
+		$wrap: {
 			markup: function() {
 				Wee.$append('#container', '<div id="container-inner"></div>');
 
@@ -1328,7 +1397,7 @@ define(function(require) {
 			}
 		},
 
-		'$wrapInner': {
+		$wrapInner: {
 			markup: function() {
 				Wee.$append('#container',
 					'<div id="test"></div>'

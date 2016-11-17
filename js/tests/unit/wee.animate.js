@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Animate',
@@ -36,6 +36,22 @@ define(function(require) {
 			});
 		},
 
+		easing: function() {
+			var promise = this.async(1000),
+				$el = Wee.$(el);
+
+			Wee.animate.tween($el, {
+				height: 200
+			}, {
+				ease: 'linear',
+				complete: promise.callback(function() {
+					assert.equal(Wee.$height($el), 200,
+						'The container height should equal 200.'
+					);
+				})
+			});
+		},
+
 		addEasing: function() {
 			var promise = this.async(1000),
 				$el = Wee.$(el);
@@ -47,7 +63,7 @@ define(function(require) {
 			Wee.animate.tween($el, {
 				height: 200
 			}, {
-				easing: 'custom',
+				ease: 'custom',
 				complete: promise.callback(function() {
 					assert.equal(Wee.$height($el), 200,
 						'The container height should equal 200.'

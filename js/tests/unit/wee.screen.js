@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Screen',
@@ -42,6 +42,12 @@ define(function(require) {
 					callback: function() {}
 				}]), undefined,
 				'Multiple events were not mapped successfully'
+			);
+		},
+
+		run: function() {
+			assert.isFunction(Wee.screen.run, true,
+				'"run" did not evaluate as a function'
 			);
 		}
 	});
