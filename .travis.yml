@@ -17,7 +17,7 @@ install:
   - npm install
 
 script:
-  - ./node_modules/.bin/intern-runner config=js/tests/config.js reporters=Lcov
+  - ./node_modules/.bin/intern-runner config=js/tests/ci-config.js reporters=Lcov
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

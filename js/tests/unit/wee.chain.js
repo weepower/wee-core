@@ -69,8 +69,31 @@ define(function(require) {
 				},
 
 				delegation: function() {
-					// TODO: Complete
-					assert.isTrue(true);
+					$el.html(
+						'<ul class="parent-list">' +
+							'<li class="post">Item 1</li>' +
+							'<li class="post">Item 2</li>' +
+							'<li class="post">Item 3</li>' +
+							'<li class="post">Item 4</li>' +
+							'<li class="post">Item 5</li>' +
+							'<li class="post">Item 6</li>' +
+						'</ul>'
+					);
+
+					$('.post').on('click', function(e, el) {
+						$(this).text("Clicked");
+						e.preventDefault();
+					}, {
+						delegate: '.parent-list'
+					});
+
+					assert.strictEqual(Wee.events.bound('.parent-list')[0].ev, 'click',
+						'Click event was not bound to parent element'
+					);
+
+					assert.strictEqual(Wee.events.bound('.parent-list')[0].targ[0].className, 'post',
+						'Target element was not bound to parent element'
+					);
 				},
 
 				'multiple events': function() {
@@ -217,8 +240,8 @@ define(function(require) {
 
 			append: {
 				selection: function() {
-					 $el.html('<div class="appendTest">Testing</div>');
-					 
+					 $el.html('<div class="append-test">Testing</div>');
+
 					 $el.append('<p>Hello</p>');
 
 					 assert.strictEqual($el.text(), 'TestingHello',
@@ -287,6 +310,10 @@ define(function(require) {
 			},
 
 			'$before': {
+				afterEach: function() {
+					$('.test').remove();
+				},
+
 				markup: function() {
 					$el.before('<span class="test"></span>');
 
@@ -333,12 +360,12 @@ define(function(require) {
 			},
 
 			closest: function() {
-				// TODO: Complete
-				//$el.wrap('<div id="test"></div>');
-				//
-				//assert.strictEqual($el.closest('#test').length, 1,
-				//	'Closest element not available'
-				//);
+				$el.html('<div class="nav" id="div1"><a class="link__account">Your Account</a></div>' +
+					'<div class="nav"><a class="link__about">About Us</a></div>');
+
+				assert.strictEqual($('.link__account').closest('.nav')[0].id, 'div1',
+					'Did not get unique closest ancestor'
+				);
 			},
 
 			contains: function() {
@@ -443,20 +470,26 @@ define(function(require) {
 
 			each: function() {
 				$el.html(
-					'<div class="testEach">1</div>' +
-					'<div class="testEach">2</div>' +
-					'<div class="testEach">3</div>'
+					'<div class="test-each">1</div>' +
+					'<div class="test-each">2</div>' +
+					'<div class="test-each">3</div>'
 				);
 
-				$('.testEach').each(function() {
-					$(this).html('Hello!');
+				$('.test-each').each(function(el, i) {
+					$(this).html('Hello ' + i);
 				});
 
-				$('.testEach').each(function(test) {
-					assert.strictEqual(test.innerHTML, 'Hello!',
-						'Did not return "Hello!" as expected'
-					);
-				});
+				assert.strictEqual($('.test-each')[0].innerHTML, 'Hello 0',
+					'Did not return "Hello!" as expected'
+				);
+
+				assert.strictEqual($('.test-each')[1].innerHTML, 'Hello 1',
+					'Did not return "Hello!" as expected'
+				);
+
+				assert.strictEqual($('.test-each')[2].innerHTML, 'Hello 2',
+					'Did not return "Hello!" as expected'
+				);
 			},
 
 			empty: function() {
@@ -487,10 +520,10 @@ define(function(require) {
 				},
 
 				'positive index': function() {
-					// TODO: Complete
-					//assert.strictEqual($('.test').eq(1).text(), '2',
-					//	'Element with index 1 was not selected successfully.'
-					//);
+					assert.strictEqual($('.test').eq(1).text(), '2',
+						'Element at index 1 was not selected successfully.'
+					);
+
 				},
 
 				'negative index': function() {
@@ -530,7 +563,7 @@ define(function(require) {
 
 			first: function() {
 				$el.html('<div class="test-stuff">1</div><div class="test-stuff">2</div>');
-				
+
 				assert.strictEqual($('.test-stuff').first().text(), '1',
 					'First element was not selected successfully.'
 				);
@@ -550,6 +583,14 @@ define(function(require) {
 						'Classes were not detected successfully'
 					);
 				}
+			},
+
+			get: function() {
+				$el.html('<div class="get-test">First div</div><div class="get-test">Second div</div>');
+
+				assert.strictEqual($('.get-test').get(0).textContent, 'First div',
+					'Did not successfully get correct selection'
+				);
 			},
 
 			height: {
@@ -670,27 +711,28 @@ define(function(require) {
 			'is': {
 				'selection': function() {
 					$el.addClass('one');
-			
+
 					assert.ok($el.is('.one'),
 						'Element was not successfully identified with "one" class'
 					);
-			
+
 					assert.isFalse($el.is(),
 						'$is returned false instead of true'
 					);
 				},
-			
+
 				fn: function() {
 					$el.html(
-						'<ul class="people"><li data-hidden="false">Charlie Kelly</li>' +
-						    '<li data-hidden="true">Dennis Reynolds</li>' +
-						    '<li data-hidden="false">Mac</li>' +
-						    '<li data-hidden="false">Dee Reynolds</li>' +
+						'<ul class="people">' +
+							'<li data-hidden="false">Charlie Kelly</li>' +
+							'<li>Dennis Reynolds</li>' +
+							'<li>Mac</li>' +
+							'<li>Dee Reynolds</li>' +
 						'</ul>'
 					);
-			
-					assert.isFalse($el.is('.people li', function(i, el) {
-							return $el.data('hidden') === 'false';
+
+					assert.isTrue($('.people li').is(function(i, el) {
+							return $(el).data('hidden') === false;
 						}), 'Function executed successfully'
 					);
 				}
@@ -714,24 +756,24 @@ define(function(require) {
 						}), true);
 
 					assert.deepEqual(
-						mapTest.map(function(val) {
-							return val + 1;
-						}), [2, 3, 4],
+						mapTest.map(function(val, i) {
+							return val + i;
+						}), [1, 3, 5],
 					'Did not return correct array');
 				},
 
 				selection: function() {
-					$el.html('<div class="mapTest2">1</div>');
+					$el.html('<div class="map-test2">1</div>');
 
 					assert.isArray(
-						$('.mapTest2').map(function() {
+						$('.map-test2').map(function() {
 							return 'Map test passed'
 						}), 'Map test passed',
 						"Did not correctly map selection"
 					);
 
 					assert.deepEqual(
-						$('.mapTest2').map(function() {
+						$('.map-test2').map(function() {
 							return 'mapping'
 						}), ['mapping'],
 						"Did not correctly map selection"
@@ -741,11 +783,11 @@ define(function(require) {
 
 			next: function() {
 				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
-			
+
 				assert.strictEqual($('#wee-chain').next()[0].id, 'wee-chain-1',
 					'Next element was not returned successfully'
 				);
-			
+
 				$('#wee-chain-1').remove();
 			},
 
@@ -756,30 +798,34 @@ define(function(require) {
 						'<span class="testing-not two">2</span>' +
 						'<span class="testing-not three">3</span>'
 					);
-			
+
 					assert.isObject($('.testing-not').not('.two'));
 
 					assert.strictEqual($('.testing-not').not('.two')[0].textContent, '1',
 						'Filtered elements not returned successfully'
 					);
+				},
+
+				'fn': function() {
+					$el.html(
+						'<ul class="people">' +
+							'<li>Charlie Kelly</li>' +
+							'<li data-hidden="true">Dennis Reynolds</li>' +
+							'<li>Mac</li>' +
+							'<li>Dee Reynolds</li>' +
+						'</ul>'
+					);
+
+					var arr = $('.people li').not(function(i, el) {
+						return $(el).data('hidden') === true;
+					});
+
+					assert.strictEqual(arr.length, 3,
+						'Did not filter out selected element'
+					);
 				}
-				// // TODO: Not working in console.
-				// 'fn': function() {
-				// 	$el.html(
-				// 		'<ul class="people">' +
-				// 		    '<li>Charlie Kelly</li>' +
-				// 		    '<li data-hidden="true">Dennis Reynolds</li>' +
-				// 		    '<li>Mac</li>' +
-				// 		    '<li>Dee Reynolds</li>' +
-				// 		'</ul>'
-				// 	);
-			
-				// 	$('.people li').not(function(i, el) {
-				// 		return $el.data(el, 'hidden') === true;
-				// 	});
-				// }
 			},
-			
+
 			'offset': {
 				'beforeEach': function() {
 					$el.css({
@@ -788,7 +834,7 @@ define(function(require) {
 						left: '-10000px'
 					});
 				},
-			
+
 				'get': function() {
 					assert.deepEqual($el.offset(), {
 						top: -10000,
@@ -797,13 +843,13 @@ define(function(require) {
 						'Offset not returned successfully'
 					);
 				},
-			
+
 				'set': function() {
 					$el.offset({
 						top: 100,
 						left: 20
 					});
-			
+
 					assert.deepEqual($el.offset(), {
 						top: 100,
 						left: 20
@@ -812,25 +858,25 @@ define(function(require) {
 					);
 				}
 			},
-			
+
 			'parent': {
 				'selection': function() {
 					$el.html('<div id="parent"><p id="child"></p></div>');
-			
+
 					assert.deepEqual($('#child').parent()[0].id, 'parent',
 						'Parent was not returned successfully'
 					);
 				},
-			
+
 				'filtered': function() {
 					$el.html('<div id="parent"><p id="child"></p></div>');
-			
+
 					assert.deepEqual($('#child').parent('div')[0].id, 'parent',
 						'Parent was not returned successfully'
 					);
 				}
 			},
-			
+
 			'parents': function() {
 				$el.html(
 					'<span id="child">' +
@@ -839,7 +885,7 @@ define(function(require) {
 						'</span>' +
 					'</span>'
 				);
-			
+
 				assert.strictEqual($('#child-3').parents().length, 5,
 					'Parents were not returned successfully'
 				);
@@ -866,18 +912,18 @@ define(function(require) {
 				'prepend as first element': function() {
 					$el.prepend('<span class="testing">First span</span>');
 
-					assert.strictEqual($el.children().first()[0].innerText, 'First span',
+					assert.strictEqual($el.children().first()[0].textContent, 'First span',
 						'Element was not correctly prepended as first element'
 					);
 				},
 				'prepend before selection': function() {
 					$el.prepend('<span class="testing2">Second span</span>', '<span class="testing"></span>');
-			
-					assert.strictEqual($el.children().first()[0].innerText, 'Second span',
+
+					assert.strictEqual($el.children().first()[0].textContent, 'Second span',
 						'Element was not correctly prepended as first element'
 					);
 				},
-			
+
 				fn: function() {
 					$el.html(
 						'<h1 id="list-heading"></h1>' +
@@ -886,88 +932,94 @@ define(function(require) {
 							'<li>Frank Reynolds</li>' +
 						'</ul>'
 					);
-			
+
 					$('#list-heading').prepend(function() {
-						return '(' + $el.children('#wee-list').length + ')';
+						return '<span>New span</span>';
 					});
-			
-					assert.strictEqual($('#list-heading').text(), '(1)',
+
+					assert.strictEqual($('#list-heading').children()[0].textContent, 'New span',
 						'Function was not executed successfully'
 					);
 				}
 			},
-			
+
 			'prependTo': function() {
-				var prependFixture = '<div id="test"></div>';
-			
 				$el.html('<div id="wee-inner"></div>');
-			
-				$(prependFixture).prependTo('#wee-inner');
-			
-				assert.ok($('#wee-chain-id-inner').parent(), prependFixture,
+
+				$('<div id="test1"></div>').prependTo('#wee-inner');
+				$('<div id="test2"></div>').prependTo('#wee-inner');
+
+				assert.ok($('#wee-inner').children()[0].id, 'test2',
 					'Element was not appended to element successfully'
 				);
 			},
-			
+
 			'prev': function() {
 				$el.append('<div id="wee-chain"></div><div id="wee-chain-1"></div>');
-				
+
 				assert.strictEqual($('#wee-chain-1').prev()[0].id, 'wee-chain',
 					'Next element was not returned successfully'
 				);
-				
+
 				$('#wee-chain-1').remove();
 			},
-			
-			'prop': {			
+
+			'prop': {
 				'get': function() {
 					$el.html('<input type="radio" class="testing" value="" checked>');
-			
+
 					assert.isTrue($('.testing').prop('checked'),
 						'Property was not selected successfully (should have returned as true)'
 					);
 				},
-			
+
 				'single': function() {
-					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
-				
-					assert.strictEqual($('.testing').prop('disabled', 'true')[0].id, 'testProp',
+					$el.html('<input id="testProp" type="radio" class="testing" value="">');
+
+					$('.testing').prop('disabled', true);
+
+					assert.isTrue($('.testing').prop('disabled'),
 						'Property was not selected successfully'
 					);
 				},
-			
+
 				'multiple': function() {
-					$el.html('<input id="testProp" type="radio" class="testing" value="" disabled>');
-			
-					assert.strictEqual(
-						$('.testing').prop({
-							'disabled': true,
-							'type': 'radio'
-						})[0].id, 'testProp',
-						'Property was not selected successfully'
+					$el.html('<input id="testProp" type="radio" class="testing" value="">');
+
+					$('.testing').prop({
+						disabled: true,
+						required: true
+					});
+
+					assert.isTrue($('.testing').prop('disabled'),
+						'Disabled property was not selected successfully'
+					);
+
+					assert.isTrue($('.testing').prop('required'),
+						'Required property was not selected successfully'
 					);
 				}
 			},
-			
+
 			remove: function() {
 				$el.html('<div id="wee-inner"></div>');
 
-				$('#wee-inner').remove();				
+				$('#wee-inner').remove();
 
-				assert.strictEqual($('#wee').children().length, 0,
+				assert.strictEqual($('#wee-inner').length, 0,
 					'Element was not removed successfully'
 				);
 			},
-			
+
 			'removeAttr': function() {
 				$el.attr('data-test', 'value');
-			
+
 				assert.strictEqual($el.attr('data-test'), 'value',
 					'Attribute was not added successfully'
 				);
-			
+
 				$el.removeAttr('data-test');
-			
+
 				assert.strictEqual($el.attr('data-test'), null,
 					'Attribute was not removed successfully'
 				);
@@ -1003,18 +1055,46 @@ define(function(require) {
 				);
 			},
 
+			reverse: function() {
+				var revArray = [1, 2, 3];
+
+				assert.deepEqual(revArray.reverse(), [3, 2, 1],
+					'Array was not reversed'
+				);
+			},
+
+			setRef: function() {
+				$el.html('<div data-ref="testElement1">1</div>');
+
+				$el.setRef();
+
+				assert.strictEqual($('ref:testElement1')[0].textContent, '1',
+					'Reference element was successfully selected.'
+				);
+			},
+
+			setVar: function() {
+				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+
+				$el.setVar();
+
+				assert.strictEqual(Wee.$get('testSet'), 'yes',
+					'Data-set variable was not added to datastore'
+				);
+			},
+
 			'scrollLeft': {
 				'get': function() {
 					assert.strictEqual($('body').scrollLeft(), 0,
 						'Scroll left value not retrieved successfully'
 					);
 				},
-			
+
 				'set': function() {
 					$('body').css('width', '15000px');
-					
+
 					$('body').scrollLeft(10);
-					
+
 					assert.strictEqual($('body').scrollLeft(), 10,
 						'Scroll left value not set successfully'
 					);
@@ -1027,64 +1107,100 @@ define(function(require) {
 						'Scroll top value not retreived successfully'
 					);
 				},
-			
+
 				'set': function() {
 					$('body').css('height', '500px');
-					
+
 					$('body').scrollTop(10);
-					
+
 					assert.strictEqual($('body').scrollTop(), 10,
 						'Scroll top value not set successfully'
 					);
 				}
 			},
-			//
-			//'serialize': function() {
-			//	$el.html(el,
-			//		'<form action="#" id="wee-chain-id-form">' +
-			//			'<input type="text" name="input" value="inputValue">' +
-			//			'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
-			//			'<input type="radio" name="radio1" value="radioValue" checked>' +
-			//			'<select name="select">' +
-			//				'<option value="selectValue1" checked>Option 1</option>' +
-			//				'<option value="selectValue2">Option 2</option>' +
-			//			'</select>' +
-			//			'<select name="optgroup">' +
-			//				'<optgroup>' +
-			//					'<option value="optgroupValue1" checked>Optgroup 1</option>' +
-			//					'<option value="optgroupValue2">Optgroup 2</option>' +
-			//				'</optgroup>' +
-			//			'</select>' +
-			//			'<textarea name="textarea">' +
-			//			'Text Area' +
-			//			'</textarea>' +
-			//		'</form>'
-			//	);
-			//
-			//	var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
-			//		'&radio1=radioValue&select=selectValue1&' +
-			//		'optgroup=optgroupValue1&textarea=Text+Area';
-			//
-			//	assert.strictEqual($('#wee-chain-id-form').serialize(), serializedValue,
-			//		'Form was not serialized successfully'
-			//	);
-			//},
-			//
+
+			'serialize': {
+				'standard': function() {
+					$el.html(
+						'<form action="#" id="wee-chain-id-form">' +
+							'<input type="text" name="input" value="inputValue">' +
+							'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
+							'<input type="radio" name="radio1" value="radioValue" checked>' +
+							'<select name="select">' +
+								'<option value="selectValue1" checked>Option 1</option>' +
+								'<option value="selectValue2">Option 2</option>' +
+							'</select>' +
+							'<select name="optgroup">' +
+								'<optgroup>' +
+									'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+									'<option value="optgroupValue2">Optgroup 2</option>' +
+								'</optgroup>' +
+							'</select>' +
+							'<textarea name="textarea">Text Area</textarea>' +
+						'</form>'
+					);
+
+					var serializedValue = 'input=inputValue&checkbox=checkboxValue' +
+						'&radio1=radioValue&select=selectValue1&' +
+						'optgroup=optgroupValue1&textarea=Text+Area';
+
+					assert.strictEqual($('#wee-chain-id-form').serialize(), serializedValue,
+						'Form was not serialized successfully'
+					);
+				},
+
+				'json': function() {
+					$el.html(
+						'<form action="#" id="wee-chain-id-form">' +
+							'<input type="text" name="input" value="inputValue">' +
+							'<input type="checkbox" name="checkbox" value="checkboxValue" checked>' +
+							'<input type="radio" name="radio1" value="radioValue" checked>' +
+							'<select name="select">' +
+								'<option value="selectValue1" checked>Option 1</option>' +
+								'<option value="selectValue2">Option 2</option>' +
+							'</select>' +
+							'<select name="optgroup">' +
+								'<optgroup>' +
+									'<option value="optgroupValue1" checked>Optgroup 1</option>' +
+									'<option value="optgroupValue2">Optgroup 2</option>' +
+								'</optgroup>' +
+							'</select>' +
+							'<textarea name="textarea">Text Area</textarea>' +
+						'</form>'
+					);
+
+					var serializedValue = {
+						"input": "inputValue",
+						"checkbox": "checkboxValue",
+						"radio1": "radioValue",
+						"select": "selectValue1",
+						"optgroup": "optgroupValue1",
+						"textarea": "Text Area"
+					};
+
+					assert.deepEqual($('#wee-chain-id-form').serialize(true), serializedValue,
+						'Form was not serialized in JSON format successfully'
+					);
+
+
+				}
+			},
+
 			'show': function() {
 				$el.hide(el);
-			
+
 				assert.ok($el.hasClass('js-hide'),
 					'Element was not hidden successfully'
 				);
-			
+
 				$el.show();
-			
+
 				assert.notOk($el.hasClass('js-hide'),
 					'Element was not shown successfully'
 				);
 			},
-			
-			'siblings': {			
+
+			'siblings': {
 				'all': function() {
 					$el.html(
 						'<p>Sibling paragraph</p>' +
@@ -1096,7 +1212,7 @@ define(function(require) {
 						'All siblings were not retrieved successfully'
 					);
 
-					assert.deepEqual($('#target-div').siblings()[0].innerText, 'Sibling paragraph',
+					assert.deepEqual($('#target-div').siblings()[0].textContent, 'Sibling paragraph',
 						'Expected result did not match actual result'
 					);
 				},
@@ -1112,159 +1228,164 @@ define(function(require) {
 						'All siblings were not retrieved successfully'
 					);
 
-					assert.deepEqual($('#target-div').siblings('p')[0].innerText, 'Sibling paragraph',
+					assert.deepEqual($('#target-div').siblings('p')[0].textContent, 'Sibling paragraph',
 						'Expected result did not match actual result'
 					);
 				}
 			},
-			//
-			//'slice': function() {
-			//	$el.html(el,
-			//		'<span>1</span><span>2</span><span>3</span>'
-			//	);
-			//
-			//	assert.strictEqual($el.html($('#wee-chain-id span').slice(1, 2)), '2',
-			//		'Second element was not selected successfully'
-			//	);
-			//},
-			//
-			//'text': {
-			//	'beforeEach': function() {
-			//		$el.text('Wee Test');
-			//	},
-			//
-			//	'get': function() {
-			//		assert.strictEqual($el.text(), 'Wee Test',
-			//			'Text was not retreived successfully'
-			//		);
-			//	},
-			//
-			//	'set': function() {
-			//		$el.text('Test 123');
-			//
-			//		assert.strictEqual($el.text(el), 'Test 123',
-			//			'Element text was not set successfully'
-			//		);
-			//	}
-			//},
-			//
-			//'toggle': function() {
-			//	$el.toggle();
-			//
-			//	assert.ok($el.hasClass('js-hide'),
-			//		'Element was not hidden successfully'
-			//	);
-			//
-			//	$el.toggle();
-			//
-			//	assert.notOk($el.hasClass('js-hide'),
-			//		'Element was not shown successfully'
-			//	);
-			//},
-			//
-			//'toggleClass': {
-			//	'single': function() {
-			//		$el.toggleClass('test-class');
-			//
-			//		assert.ok($el.hasClass('test-class'),
-			//			'Class was not added successfully'
-			//		);
-			//
-			//		$el.toggleClass('test-class');
-			//
-			//		assert.notOk($el.hasClass('test-class'),
-			//			'Class was not removed successfully'
-			//		);
-			//	},
-			//
-			//	'multiple': function() {
-			//		$el.toggleClass('test-class test-class-2');
-			//
-			//		assert.strictEqual($el.attr('class'),
-			//			'wee-chain-class test-class test-class-2',
-			//			'Multiple classes were not toggled successfully'
-			//		);
-			//
-			//		$el.toggleClass('test-class test-class-2');
-			//
-			//		assert.notStrictEqual($el.attr('class'),
-			//			'wee-chain-class test-class test-class-2',
-			//			'Multiple classes were not toggled successfully'
-			//		);
-			//
-			//		assert.notOk($el.hasClass('test-class'),
-			//			'Multiple classes were not toggled successfully'
-			//		);
-			//
-			//		assert.notOk($el.hasClass('test-class-2'),
-			//			'Multiple classes were not toggled successfully'
-			//		);
-			//	},
-			//
-			//	fn: function() {
-			//		$el.toggleClass(function() {
-			//			return $el.addClass('test');
-			//		});
-			//
-			//		assert.ok($el.hasClass('test'),
-			//			'Function was not executed successfully'
-			//		);
-			//	}
-			//},
-			
-			reverse: function() {
-				$el.html(
-					'<div class="revTest" id="first">1</div>' +
-					'<div class="revTest" id="second">2</div>' +
-					'<div class="revTest" id="third">3</div>'
+
+			'slice': {
+				'array': function() {
+					var arr = [1, 2, 3, 4, 5, 6];
+
+					assert.deepEqual(arr.slice(1, 3), [2, 3],
+						'Slice was not performed correctly'
+					);
+				},
+
+				'string': function() {
+					$el.html(
+						'<ul class="list">' +
+							'<li class="list__item">Red</li>' +
+							'<li class="list__item">Green</li>' +
+							'<li class="list__item">Blue</li>' +
+							'<li class="list__item">Orange</li>' +
+						'</ul>'
+					);
+
+					assert.strictEqual($('.list__item').slice(0, 2)[1].innerText, 'Green',
+						'Second element was not selected successfully'
+					);
+				}
+			},
+
+			'text': {
+				'get': function() {
+					$el.html('<p>This is some text</p>');
+
+					assert.strictEqual($el.text(), 'This is some text',
+						'Text was not retrieved successfully'
+					);
+				},
+
+				'set': function() {
+					$el.html('<span class="text-test"></span>');
+
+					$('.text-test').text('Test 123');
+
+					assert.strictEqual($('.text-test').text(), 'Test 123',
+						'Element text was not set successfully'
+					);
+				},
+
+				'function': function() {
+					$el.html(
+						'<ul class="list">' +
+							'<li class="list__item one">Red</li>' +
+							'<li class="list__item two">Green</li>' +
+							'<li class="list__item three">Blue</li>' +
+							'<li class="list__item four">Orange</li>' +
+						'</ul>'
+					);
+
+					$('.three').text(function() {
+						return 'Purple';
+					});
+
+					$('.list__item').text(function(i, text) {
+						return text.toUpperCase();
+					});
+
+					assert.strictEqual($('.three').text(), 'PURPLE',
+						'Text was not changed as expected'
+					);
+				}
+			},
+
+			'toggle': function() {
+				$el.toggle();
+
+				assert.ok($el.hasClass('js-hide'),
+					'Element was not hidden successfully'
 				);
 
-				var $arr = $('.revTest').reverse();
+				$el.toggle();
 
-				assert.strictEqual($arr[0].innerHTML, '3',
-					'Not reversed'
-				);
-
-				assert.strictEqual($arr[1].innerHTML, '2',
-					'Not reversed'
-				);
-
-				assert.strictEqual($arr[2].innerHTML, '1',
-					'Not reversed'
+				assert.notOk($el.hasClass('js-hide'),
+					'Element was not shown successfully'
 				);
 			},
 
-			setRef: function() {
-				$el.html('<div data-ref="testElement">1</div>');
+			'toggleClass': {
+				'single': function() {
+					$el.toggleClass('test-class');
 
-				$('ref:testElement').setRef();
+					assert.ok($el.hasClass('test-class'),
+						'Class was not added successfully'
+					);
 
-				assert.strictEqual($('ref:testElement').sel, 'ref:testElement',
-					'Reference element was successfully selected.'
-				);
+					$el.toggleClass('test-class');
 
-			},
+					assert.notOk($el.hasClass('test-class'),
+						'Class was not removed successfully'
+					);
+				},
 
-			setVar: function() {
-				$el.html('<div data-set="testSet" data-value="yes">1</div>');
+				'multiple': function() {
+					$el.toggleClass('test-class test-class-2');
 
-				$('ref:testSet').setVar();
+					assert.strictEqual($el.attr('class'),
+						'js-wee test-class test-class-2',
+						'Multiple classes were not toggled successfully'
+					);
 
-				assert.strictEqual($('ref:testSet').sel, 'ref:testSet',
-					'Data-set variable was not added to datastore'
-				);
+					$el.toggleClass('test-class test-class-2');
+
+					assert.notStrictEqual($el.attr('class'),
+						'js-wee test-class test-class-2',
+						'Multiple classes were not toggled successfully'
+					);
+
+					assert.notOk($el.hasClass('test-class'),
+						'Multiple classes were not toggled successfully'
+					);
+
+					assert.notOk($el.hasClass('test-class-2'),
+						'Multiple classes were not toggled successfully'
+					);
+				},
+
+				'fn': function() {
+					$el.html('<div class="toggle-test"></div>');
+
+					$('.toggle-test').toggleClass(function(i, className) {
+						return ' -is-active';
+					});
+
+					assert.isTrue($('.toggle-test').hasClass('-is-active'),
+						'Class was not toggled on'
+					);
+
+					$('.toggle-test').toggleClass(function(i, className) {
+						return ' -is-active';
+					});
+
+					assert.isFalse($('.toggle-test').hasClass('-is-active'),
+						'Class was not toggled off'
+					);
+				}
 			},
 
 			toArray: function() {
 				$el.html(
-					'<div class="testArr">1</div>' +
-					'<div class="testArr">2</div>' +
-					'<div class="testArr">3</div>'
+					'<div class="test-arr">1</div>' +
+					'<div class="test-arr">2</div>' +
+					'<div class="test-arr">3</div>'
 				);
 
-				assert.isArray($('.testArr').toArray(), true);
+				assert.isArray($('.test-arr').toArray(), true);
 
-				assert.lengthOf($('.testArr').toArray(), 3,
+				assert.lengthOf($('.test-arr').toArray(), 3,
 					'Array was not created properly'
 				);
 			},
@@ -1331,19 +1452,45 @@ define(function(require) {
 				}
 			},
 
-			// wrap: function() {
-			// 	$el.wrap('<div id="test"></div>');
-			//
-			// 	assert.strictEqual($el.parent('#test').length, 1,
-			// 		'Element was not wrapped successfully'
-			// 	);
-			// },
+			wrap: function() {
+				$el.html(
+					'<ul class="list">' +
+						'<li class="list__item">Red</li>' +
+						'<li class="list__item">Green</li>' +
+						'<li class="list__item">Blue</li>' +
+						'<li class="list__item">Orange</li>' +
+					'</ul>'
+				);
+
+				$('.list').wrap('<div class="wrapper"></div>');
+
+				assert.strictEqual($('.list')[0].parentElement.className, 'wrapper',
+					'Element was not wrapped successfully'
+				);
+			},
 
 			wrapInner: function() {
 				$el.wrapInner('<div id="test"></div>');
 
 				assert.ok($el.contains('#test'),
 					'Element was not wrapped successfully'
+				);
+			}
+		},
+		view: {
+			render: function() {
+				var template = 'My name is {{ firstName }} {{ lastName }}',
+					data = {
+						firstName: 'John',
+						lastName: 'Smith'
+					};
+
+				$el.text(template);
+				$el.render(data);
+
+				assert.strictEqual($el.text(),
+					'My name is John Smith',
+					'Template was not parsed successfully'
 				);
 			}
 		}

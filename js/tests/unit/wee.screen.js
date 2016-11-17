@@ -46,8 +46,20 @@ define(function(require) {
 		},
 
 		run: function() {
-			assert.isFunction(Wee.screen.run, true,
-				'"run" did not evaluate as a function'
+			var num = 0;
+
+			Wee.screen.map({
+				size: 5,
+				callback: function() {
+					console.log(num);
+					num++;
+				}
+			});
+
+			Wee.screen.run();
+
+			assert.strictEqual(num, 2,
+				'Did not evaluate breakpoint ("num" should be 2)'
 			);
 		}
 	});

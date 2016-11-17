@@ -15,25 +15,56 @@ define(function(require) {
 			el.className = 'js-container';
 
 			document.body.appendChild(el);
+
+			$el = $(el);
 		},
 
 		afterEach: function() {
 			el.parentNode.removeChild(el);
 		},
 
-		tween: function() {
-			var promise = this.async(1000),
-				$el = Wee.$(el);
+		tween: {
+			simple: function() {
+				var promise = this.async(1000);
 
-			Wee.animate.tween($el, {
-				height: 100
-			}, {
-				complete: promise.callback(function() {
-					assert.equal(Wee.$height($el), 100,
-						'The container height should equal 100.'
-					);
-				})
-			});
+				$el.tween({
+					height: 100
+				}, {
+					complete: promise.callback(function() {
+						assert.strictEqual($el.attr('style'), 'height: 100px;',
+							'The container height should equal 100.'
+						);
+					})
+				});
+			},
+
+			advanced: function() {
+				var promise = this.async(2000);
+				var num = 0;
+
+				$el.tween({
+					height: 200,
+					marginTop: 150
+				}, {
+					duration: 500,
+					ease: 'linear',
+					complete: promise.callback(function() {
+						num++;
+						
+						assert.strictEqual(num, 1,
+							'Function did not execute correctly ("num" should equal 2)'
+						);
+
+						assert.strictEqual($el.height(), 200,
+							'Container height should equal 200'
+						);
+						
+						assert.strictEqual($el.css('marginTop'), '150px',
+							'The container margin-top should equal 150.'
+						);
+					})
+				});
+			}
 		},
 
 		easing: function() {

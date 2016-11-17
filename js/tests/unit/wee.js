@@ -103,7 +103,7 @@ define(function(require) {
 					'create array': function() {
 						Wee.$concat('concatTest', 1);
 
-						assert.isArray(Wee.$get('concatTest'),
+						assert.deepEqual(Wee.$get('concatTest'), [1],
 							'$get did not return an array'
 						);
 					},
@@ -268,8 +268,8 @@ define(function(require) {
 					'create array': function() {
 						Wee.controller.$concat('concatCtrlTest', 1);
 
-						assert.isArray(Wee.controller.$get('concatCtrlTest'),
-							'$get did not return an array'
+						assert.deepEqual(Wee.controller.$get('concatCtrlTest'), [1],
+							'Did not create an array of [1]'
 						);
 					},
 					'concat arrays': function() {
@@ -348,17 +348,17 @@ define(function(require) {
 						Wee.controller.$set('testCtrlObserve.key1', 5);
 
 						assert.deepEqual(returnVal, { key1: 5},
-							'Property of "key1: 5" was not set on "testCtrlObserve" object'
+							'Did not observe change to "testCtrlObserve"'
 						);
 					},
 					'advanced': function() {
-						var returnVal2;
+						var returnVal;
 						
 						Wee.controller.$set('testCtrlObserve2', 'value1');
 
 						Wee.controller.$observe('testCtrlObserve2', function(data, type, diff) {
 							if (type === 'set' && diff.before === 'value1') {
-								returnVal2 = data;
+								returnVal = data;
 							}
 						}, {
 							diff: true
@@ -366,31 +366,90 @@ define(function(require) {
 
 						Wee.controller.$set('testCtrlObserve2', 27);
 
-						assert.strictEqual(returnVal2, 27,
-							'Did not observe change of "testCtrlObserve2" to 2'
+						assert.strictEqual(returnVal, 27,
+							'Did not observe change of "testCtrlObserve2" to 27'
+						);
+					},
+					
+					'execute once': function() {
+						var num = 0;
+
+						Wee.controller.$observe('observeOnceTest', function() {
+							num++;
+						}, {
+							once: true
+						});
+
+						Wee.controller.$set('observeOnceTest', 'val1');
+
+						Wee.controller.$set('observeOnceTest', 'val1');
+
+						assert.strictEqual(num, 1,
+							'Function executed more than once ("num" should equal 1)'
+						);
+					},
+
+					'specific value to trigger': function() {
+						var num = 0;
+
+						Wee.controller.$observe('observeValueTest', function() {
+							num++;
+						}, {
+							value: 2
+						});
+
+						Wee.controller.$set('observeValueTest', 1);
+
+						assert.strictEqual(num, 0,
+							'Function should not have triggered'
+						);
+
+						Wee.controller.$set('observeValueTest', 2);
+
+						assert.strictEqual(num, 1,
+							'Function did not trigger as expected'
 						);
 					}
 				},
-				'$unobserve': function() {
-					var returnVal3;
+				'$unobserve': {
+					standard: function() {
+						var num = 0;
 
-					Wee.controller.$set('testCtrlObserve', {});
+						Wee.controller.$observe('testCtrlObserve', function() {
+							num++;
+						});
 
-					Wee.controller.$observe('testCtrlObserve.key1', function(data) {
-						returnVal3 = data;
-					}, {
-						recursive: true
-					});
+						Wee.controller.$set('testCtrlObserve', 5);
 
-					Wee.controller.$set('testCtrlObserve.key1', 5);
+						Wee.controller.$unobserve();
 
-					Wee.controller.$unobserve('testCtrlObserve.key1');
+						Wee.controller.$set('testCtrlObserve', 25);
 
-					Wee.controller.$set('testCtrlObserve.key1', 25);
+						assert.strictEqual(num, 1,
+							'Did not unobserve "testCtrlObserve"'
+						);
+					},
+					recursive: function() {
+						var returnVal;
 
-					assert.strictEqual(returnVal3, 5,
-						'Value of "returnVal3" did not remain 5 as expected'
-					);
+						Wee.controller.$set('testCtrlObserve', {});
+
+						Wee.controller.$observe('testCtrlObserve', function(data) {
+							returnVal = data.obj.key;
+						}, {
+							recursive: true
+						});
+
+						Wee.controller.$set('testCtrlObserve.obj.key', 25);
+
+						Wee.controller.$unobserve('testCtrlObserve');
+
+						Wee.controller.$set('testCtrlObserve.obj.key', 5);
+
+						assert.strictEqual(returnVal, 25,
+							'Value of "returnVal" did not remain 25 as expected'
+						);
+					}
 				},
 				'ready': function() {
 					var result;
@@ -554,13 +613,15 @@ define(function(require) {
 				assert.strictEqual(Wee.$('.testing').length, 1,
 					'Element with class "testing" was selected successfully.'
 				);
+			},
+
+			'select window': function() {
+				assert.isArray(Wee.$('window'));
+			},
+
+			'select document': function() {
+				assert.isArray(Wee.$('document'));
 			}
-			// 'select window': function {
-			// 	assert.isTrue(Array.isArray(Wee.$('window')));
-			// },
-			// 'select document': function {
-			// 	assert.isTrue(Array.isArray(Wee.$('document')));
-			// }
 		},
 		'$parseHTML': function() {
 			var el = Wee.$parseHTML(
@@ -643,20 +704,30 @@ define(function(require) {
 		},
 		'$has': {
 			'simple value': function() {
-				Wee.$set('testHas', 'value');
+				Wee.$set('test-has', 'value');
 
-				assert.strictEqual(Wee.$has('testHas.0'), true,
-					'Not detecting any value for "testHas"'
+				assert.strictEqual(Wee.$has('test-has.0'), true,
+					'Not detecting any value for "test-has"'
 				);
 			},
+
 			'object as value': function() {
-				Wee.$set('testHas2', {
+				Wee.$set('test-has2', {
 					'color1': 'blue',
 					'color2': 'red'
 				});
 
-				assert.strictEqual(Wee.$has('testHas.0'), true,
-					'Not detecting any value for "testHas"'
+				assert.strictEqual(Wee.$has('test-has2.0'), true,
+					'Not detecting any value for "test-has2"'
+				);
+			},
+
+			'array as value': function() {
+				Wee.$set('key', [1, 2, 3]);
+				Wee.$has('key', 4);
+
+				assert.isFalse(Wee.$has('key', 4),
+					'Not detecting any value for "test-has2"'
 				);
 			}
 		},
@@ -718,14 +789,15 @@ define(function(require) {
 					'Property of "key1: 5" was not set on "testObserve" object'
 				);
 			},
+
 			'advanced': function() {
-				var returnVal2;
+				var returnVal;
 				
 				Wee.$set('testObserve2', 'value1');
 
 				Wee.$observe('testObserve2', function(data, type, diff) {
 					if (type === 'set' && diff.before === 'value1') {
-						returnVal2 = data;
+						returnVal = data;
 					}
 				}, {
 					diff: true
@@ -733,32 +805,71 @@ define(function(require) {
 
 				Wee.$set('testObserve2', 27);
 
-				assert.strictEqual(returnVal2, 27,
+				assert.strictEqual(returnVal, 27,
 					'Did not observe change of "testObserve2" to 2'
+				);
+			},
+
+			'execute once': function() {
+				var num = 0;
+
+				Wee.$observe('observeOnceTest', function() {
+					num++;
+				}, {
+					once: true
+				});
+
+				Wee.$set('observeOnceTest', 'val1');
+
+				Wee.$set('observeOnceTest', 'val1');
+
+				assert.strictEqual(num, 1,
+					'Function executed more than once ("num" should equal 1)'
+				);
+			},
+
+			'specific value to trigger': function() {
+				var num = 0;
+
+				Wee.$observe('observeValueTest', function() {
+					num++;
+				}, {
+					value: 2
+				});
+
+				Wee.$set('observeValueTest', 1);
+
+				assert.strictEqual(num, 0,
+					'Function should not have triggered'
+				);
+
+				Wee.$set('observeValueTest', 2);
+
+				assert.strictEqual(num, 1,
+					'Function did not trigger as expected'
 				);
 			}
 		},
-		'$unobserve': function() {
-			var returnVal3;
 
-			// TODO: 
+		'$unobserve': function() {
+			var returnVal;
 
 			Wee.$set('testObserve', {});
 
-			Wee.$observe('testObserve.key1', function(data) {
-				returnVal3 = data;
+			Wee.$observe('testObserve', function(data) {
+				returnVal = data.key;
 			}, {
 				recursive: true
 			});
 
-			Wee.$set('testObserve.key1', 5);
+			Wee.$set('testObserve.key', 5);
 
-			Wee.$unobserve('testObserve.key1');
+			Wee.$unobserve('testObserve');
 
-			Wee.$set('testObserve.key1', 25);
+			Wee.$set('testObserve.key', 25);
 
-			assert.strictEqual(returnVal3, 5,
-				'Value of "returnVal3" did not remain 5 as expected'
+			assert.strictEqual(returnVal, 5,
+				'Value of "returnVal" did not remain 5 as expected'
 			);
 		},
 		'$each': {

@@ -15,6 +15,8 @@ define(function(require) {
 			el.className = 'js-wee';
 
 			document.body.appendChild(el);
+
+			$el = $(el);
 		},
 
 		afterEach: function() {
@@ -221,13 +223,25 @@ define(function(require) {
 		},
 
 		bound: function() {
-			var $el = Wee.$('#wee');
+			$el.html(
+				'<div class="bound-test">Div 1</div>' +
+				'<div class="bound-test">Div 2</div>' +
+				'<div class="bound-test">Div 3</div>' 
+			);
 
-			Wee.events.on($el, 'click', function() {
-				Wee.$addClass($el, 'test-class');
+			$('.bound-test').on('click', function() {
+				return 'click';
 			});
 
-			assert.isArray(Wee.events.bound());
+			$('.bound-test').trigger('click');
+
+			assert.isArray($('.bound-test').bound(),
+				'Did not return an array'
+			);
+
+			assert.strictEqual($('.bound-test').trigger('click')[0].innerText, 'Div 1',
+				'Event was not bound to object'
+			);
 		},
 
 		trigger: function() {
