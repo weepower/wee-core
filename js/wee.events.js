@@ -111,7 +111,7 @@
 						})(el, evt, fn, f, conf);
 					}
 				}
-			});
+			}, options);
 		},
 
 		/**

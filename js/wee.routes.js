@@ -21,8 +21,9 @@
 		 * @param {int} i - current index in iteration
 		 * @param {int} total - total number of routes
 		 * @param {string} [event='load'] - lifecycle event
+		 * @param {array} [parent] - parent route values
 		 */
-		_process = function(route, i, total, event) {
+		_process = function(route, i, total, event, parent) {
 			var seg = segs[i],
 				keys = Object.keys(route),
 				x = 0;
@@ -36,7 +37,8 @@
 					k = 0,
 					y = i,
 					match = false,
-					ran = false;
+					ran = false,
+					object = W.$isObject(child);
 
 				for (; k < opts.length; k++) {
 					var opt = opts[k],
@@ -49,10 +51,10 @@
 					// Ensure event type matches route type
 					if ((! history && (
 							parts.indexOf('unload') > -1 ||
-							parts.indexOf('pop') > -1)
-						) ||
+							parts.indexOf('pop') > -1
+						)) ||
 						(history && (
-							! W.$isObject(child) &&
+							! object &&
 							parts.indexOf(event) < 0
 						))) {
 						continue;
@@ -61,6 +63,12 @@
 					// Set option to rule root
 					if (parts.length > 1) {
 						opt = parts[0];
+
+						if (! opt && parent) {
+							opt = parent[0];
+							seg = parent[1];
+							y--;
+						}
 					}
 
 					// Negate routes prefixed by !
@@ -84,7 +92,7 @@
 
 							if (parts.indexOf('fire') > -1) {
 								ran = true;
-							} else if (! W.$isObject(child)) {
+							} else if (! object) {
 								push = true;
 							}
 						} else if (opt == 'root') {
@@ -110,6 +118,8 @@
 								eq = true;
 							}
 						}
+
+						opt = '$' + opt;
 					}
 
 					// Invert the equality if the route is negated
@@ -120,9 +130,13 @@
 					if (eq) {
 						// If ran is true then execute the route immediately
 						if (ran) {
-							W.$exec(child, {
-								args: seg
-							});
+							if (object) {
+								_process(child, y, total, event, [opt, seg]);
+							} else {
+								W.$exec(child, {
+									args: seg
+								});
+							}
 						}
 
 						// If push is true then push the route to the any queue
@@ -144,8 +158,8 @@
 
 				// If matched then process recursively or execute if applicable
 				if (match) {
-					if (W.$isObject(child)) {
-						_process(child, y, total, event);
+					if (object) {
+						_process(child, y, total, event, [opt, seg]);
 					} else if (! ran && y === total) {
 						W.$exec(child, {
 							args: seg
@@ -170,32 +184,37 @@
 		 * @returns {object} data
 		 */
 		uri: function(value) {
-			if (value) {
-				if (W.$isObject(value)) {
-					uri = W.$extend(this.uri(), value);
-					return uri;
-				}
-
-				var a = W._doc.createElement('a');
-				a.href = value;
-
-				var search = a.search,
-					path = a.pathname.replace(/^\/|\/$/g, '');
-
-				uri = {
-					full: '/' + path + search + a.hash,
-					hash: a.hash.slice(1),
-					history: false,
-					path: '/' + path,
-					query: search ? W.$unserialize(search) : {},
-					segments: path.split('/'),
-					url: a.href
-				};
-			} else if (! uri) {
-				uri = W.routes.uri(location.href);
+			if (! value && uri) {
+				return uri;
+			} else if (W.$isObject(value)) {
+				return W.$extend(this.uri(), value);
 			}
 
+			uri = this.parse(value || location.href);
 			return uri;
+		},
+
+		/**
+		 * Parse a URL string into parts
+		 *
+		 * @param {string} uri
+		 */
+		parse: function(uri) {
+			var a = W._doc.createElement('a');
+			a.href = uri;
+
+			var search = a.search,
+				path = a.pathname.replace(/^\/|\/$/g, '');
+
+			return {
+				full: '/' + path + search + a.hash,
+				hash: a.hash.slice(1),
+				history: false,
+				path: '/' + path,
+				query: search ? W.$unserialize(search) : {},
+				segments: path.split('/'),
+				url: a.href
+			};
 		},
 
 		/**
@@ -221,7 +240,7 @@
 			var curr = routes || {};
 
 			if (obj) {
-				routes = W.$extend(curr, obj);
+				routes = W.$extend(true, curr, obj);
 
 				if (init) {
 					this.run({

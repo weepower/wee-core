@@ -76,7 +76,7 @@
 							};
 
 						W.$exec(evt.callback, {
-							args: evt.args ? [data].concat(evt.args) : [data],
+							args: evt.args ? [data].concat(evt.args) : data,
 							scope: evt.scope
 						});
 
