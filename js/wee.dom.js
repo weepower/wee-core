@@ -1391,14 +1391,13 @@
 			var func = W._canExec(html);
 
 			W.$each(target, function(el, i) {
-				var wrap = W.$parseHTML(
-					func ?
+				var markup = func ?
 						W.$exec(html, {
 							args: i,
 							scope: el
 						}) :
-						html
-				);
+						html,
+					wrap = markup ? $(markup) : null;
 
 				if (wrap) {
 					var children = W.$children(el);
