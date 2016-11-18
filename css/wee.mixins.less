@@ -115,7 +115,7 @@
 .background (@value) when (isstring(@value)), (iskeyword(@value))
  		and not (@value = dark)
 		and not (@value = light) {
-	background: ~'@{value}';
+	background+: ~'@{value}';
 }
 .background (@color: @bodyBackground) when (iscolor(@color)) {
 	background: @color;
@@ -152,13 +152,13 @@
 	background-color: @color;
 }
 .background-image (@value) when (iskeyword(@value)) {
-	background-image: @value;
+	background-image+: @value;
 }
 .background-image (@filename) when not (iskeyword(@filename)) {
-	background-image: url('@{imagePath}@{filename}');
+	background-image+: url('@{imagePath}@{filename}');
 }
 .background-image (@filename; @repeat) when not (iskeyword(@filename)) and (iskeyword(@repeat)) {
-	background-image: url('@{imagePath}@{filename}');
+	background-image+: url('@{imagePath}@{filename}');
 	.background-repeat(@repeat);
 }
 .background-image (retina; @filename; @width: auto; @height: auto) {
@@ -2425,9 +2425,9 @@
 \*------------------------------------*/
 
 .transform (...) {
-	-ms-transform: @arguments;
-	-webkit-transform: @arguments;
-	transform: @arguments;
+	-ms-transform+_: @arguments;
+	-webkit-transform+_: @arguments;
+	transform+_: @arguments;
 }
 .transform-origin (@x; @y: 0) {
 	.check () when (isunit(@x, '')) {
@@ -2537,18 +2537,18 @@
 \*------------------------------------*/
 
 .transition (@value) when (isstring(@value)) {
-	-webkit-transition: ~'@{value}';
-	transition: ~'@{value}';
+	-webkit-transition+: ~'@{value}';
+	transition+: ~'@{value}';
 }
 .transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s) {
 	.check () when (@property = transform) {
-		-webkit-transition: ~'-webkit-transform @{duration} @{ease} @{delay}';
+		-webkit-transition+: ~'-webkit-transform @{duration} @{ease} @{delay}';
 	}
 	.check () when (default()) {
-		-webkit-transition: @arguments;
+		-webkit-transition+: @arguments;
 	}
 	.check();
-	transition: @arguments;
+	transition+: @arguments;
 }
 .transition-delay (@delay: 1s) {
 	-webkit-transition-delay: @delay;
