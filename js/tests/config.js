@@ -1,9 +1,9 @@
 define({
 	proxyPort: 9010,
-	proxyUrl: 'http://localhost:9010/',
+	proxyUrl: 'http://localhost:9010',
 	initialBaseUrl: '../../',
 	excludeInstrumentation: /^(?:node_modules|js\/tests)\//,
-	tunnel: 'NullTunnel',
+	tunnel: 'nullTunnel',
 	suites: [
 		'js/tests/unit/wee',
 		'js/tests/unit/wee.animate',
@@ -20,5 +20,15 @@ define({
 	],
 	environments: [{
 		browserName: 'chrome'
-	}]
+	}],
+	tunnelOptions: {
+		verbose: true,
+		username: 'caddis'
+	},
+	capabilities: {
+		'browserstack.local': true,
+		'browserstack.debug': true,
+		fixSessionCapabilities: false,
+		acceptSslCerts: true
+	}
 });

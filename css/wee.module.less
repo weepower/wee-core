@@ -16,9 +16,12 @@
 .wee-{{moduleName}}-responsive () when (@responsiveEnabled = true) {
 	.check () when not (@mobileLandscapeWidth = false) {
 		@media (min-width: (@mobileLandscapeWidth)) {
-			html {
-				font-family: '"2"';
+			.check () when ({{standalone}} = true) {
+				html {
+					font-family: '"2"';
+				}
 			}
+			.check();
 
 			@import (optional) '{{modulePath}}/core/css/breakpoints/mobile-landscape.less';
 			@import (optional) '{{modulePath}}/css/breakpoints/mobile-landscape.less';
@@ -27,9 +30,12 @@
 
 	.check () when not (@tabletPortraitWidth = false) {
 		@media (min-width: (@tabletPortraitWidth)) {
-			html {
-				font-family: '"3"';
+			.check () when ({{standalone}} = true) {
+				html {
+					font-family: '"3"';
+				}
 			}
+			.check();
 
 			@import (optional) '{{modulePath}}/core/css/breakpoints/tablet-portrait.less';
 			@import (optional) '{{modulePath}}/css/breakpoints/tablet-portrait.less';
@@ -38,9 +44,12 @@
 
 	.check () when not (@desktopSmallWidth = false) {
 		@media (min-width: (@desktopSmallWidth)) {
-			html {
-				font-family: '"4"';
+			.check () when ({{standalone}} = true) {
+				html {
+					font-family: '"4"';
+				}
 			}
+			.check();
 
 			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-small.less';
 			@import (optional) '{{modulePath}}/css/breakpoints/desktop-small.less';
@@ -49,9 +58,12 @@
 
 	.check () when not (@desktopMediumWidth = false) {
 		@media (min-width: (@desktopMediumWidth)) {
-			html {
-				font-family: '"5"';
+			.check () when ({{standalone}} = true) {
+				html {
+					font-family: '"5"';
+				}
 			}
+			.check();
 
 			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-medium.less';
 			@import (optional) '{{modulePath}}/css/breakpoints/desktop-medium.less';
@@ -60,9 +72,12 @@
 
 	.check () when not (@desktopLargeWidth = false) {
 		@media (min-width: (@desktopLargeWidth)) {
-			html {
-				font-family: '"6"';
+			.check () when ({{standalone}} = true) {
+				html {
+					font-family: '"6"';
+				}
 			}
+			.check();
 
 			@import (optional) '{{modulePath}}/core/css/breakpoints/desktop-large.less';
 			@import (optional) '{{modulePath}}/css/breakpoints/desktop-large.less';

@@ -3,7 +3,7 @@ define(function(require) {
 		assert = require('intern/chai!assert'),
 		el;
 
-	require('temp/core.min.js');
+	require('js/tests/support/exports.js');
 
 	registerSuite({
 		name: 'Screen',
@@ -42,6 +42,24 @@ define(function(require) {
 					callback: function() {}
 				}]), undefined,
 				'Multiple events were not mapped successfully'
+			);
+		},
+
+		run: function() {
+			var num = 0;
+
+			Wee.screen.map({
+				size: 5,
+				callback: function() {
+					console.log(num);
+					num++;
+				}
+			});
+
+			Wee.screen.run();
+
+			assert.strictEqual(num, 2,
+				'Did not evaluate breakpoint ("num" should be 2)'
 			);
 		}
 	});

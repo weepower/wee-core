@@ -115,7 +115,7 @@
 .background (@value) when (isstring(@value)), (iskeyword(@value))
  		and not (@value = dark)
 		and not (@value = light) {
-	background: ~'@{value}';
+	background+: ~'@{value}';
 }
 .background (@color: @bodyBackground) when (iscolor(@color)) {
 	background: @color;
@@ -152,13 +152,13 @@
 	background-color: @color;
 }
 .background-image (@value) when (iskeyword(@value)) {
-	background-image: @value;
+	background-image+: @value;
 }
 .background-image (@filename) when not (iskeyword(@filename)) {
-	background-image: url('@{imagePath}@{filename}');
+	background-image+: url('@{imagePath}@{filename}');
 }
 .background-image (@filename; @repeat) when not (iskeyword(@filename)) and (iskeyword(@repeat)) {
-	background-image: url('@{imagePath}@{filename}');
+	background-image+: url('@{imagePath}@{filename}');
 	.background-repeat(@repeat);
 }
 .background-image (retina; @filename; @width: auto; @height: auto) {
@@ -206,8 +206,8 @@
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
 	background-color: @start;
-	.background('-webkit-linear-gradient(@{revDeg}, @{start}, @{end})');
-	.background('linear-gradient(@{deg}, @{start}, @{end})');
+	background: -webkit-linear-gradient(@revDeg, @start, @end);
+	background: linear-gradient(@deg, @start, @end);
 }
 .background-gradient (@color; @spread; @angle: 180) when (iscolor(@color)) and (ispercentage(@spread)) {
 	@lighter: lighten(@color, @spread);
@@ -215,8 +215,8 @@
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
 	background-color: @color;
-	.background('-webkit-linear-gradient(@{revDeg}, @{lighter}, @{darker})');
-	.background('linear-gradient(@{deg}, @{lighter}, @{darker})');
+	background: -webkit-linear-gradient(@revDeg, @lighter, @darker);
+	background: linear-gradient(@deg, @lighter, @darker);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{lighter}', endColorstr='@{darker}', GradientType=0);
 }
 .background-gradient (dark; @start: 0; @end: 1; @angle: 180) {
@@ -224,16 +224,16 @@
 	@endAlpha: rgba(0, 0, 0, @end);
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
-	.background('-webkit-linear-gradient(@{revDeg}, @{startAlpha}, @{endAlpha})');
-	.background('linear-gradient(@{deg}, @{startAlpha}, @{endAlpha})');
+	background: -webkit-linear-gradient(@revDeg, @startAlpha, @endAlpha);
+	background: linear-gradient(@deg, @startAlpha, @endAlpha);
 }
 .background-gradient (light; @start: 0; @end: 1; @angle: 180) {
 	@startAlpha: rgba(255, 255, 255, @start);
 	@endAlpha: rgba(255, 255, 255, @end);
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
-	.background('-webkit-linear-gradient(@{revDeg}, @{startAlpha}, @{endAlpha})');
-	.background('linear-gradient(@{deg}, @{startAlpha}, @{endAlpha})');
+	background: -webkit-linear-gradient(@revDeg, @startAlpha, @endAlpha);
+	background: linear-gradient(@deg, @startAlpha, @endAlpha);
 }
 .background-attachment (...) {
 	background-attachment: @arguments;
@@ -336,7 +336,7 @@
 	# Borders
 \*------------------------------------*/
 
-.border (@value) when (@value = 0) {
+.border (@value) when (@value = 0), (@value = none) {
 	border: none;
 }
 .border (@value) when not (@value = false)
@@ -677,6 +677,32 @@
 .border-color (@color) when (iscolor(@color)) {
 	border-color: @color;
 }
+.border-color (light; @opacity: @defaultOpacity) {
+	.check () when (@opacity > 1)
+			and not (ispercentage(@opacity)) {
+		border-color: rgba(255, 255, 255, (@opacity / 100));
+	}
+	.check () when (@opacity < 1) {
+		border-color: rgba(255, 255, 255, @opacity);
+	}
+	.check () when (ispercentage(@opacity)) {
+		border-color: rgba(255, 255, 255, unit((@opacity / 100)));
+	}
+	.check();
+}
+.border-color (dark; @opacity: @defaultOpacity) {
+	.check () when (@opacity > 1)
+			and not (ispercentage(@opacity)) {
+		border-color: rgba(0, 0, 0, (@opacity / 100));
+	}
+	.check () when (@opacity < 1) {
+		border-color: rgba(0, 0, 0, @opacity);
+	}
+	.check () when (ispercentage(@opacity)) {
+		border-color: rgba(0, 0, 0, unit((@opacity / 100)));
+	}
+	.check();
+}
 .border-color (top; @color) {
 	border-top-color: @color;
 }
@@ -828,8 +854,8 @@
 	}
 	.check();
 }
-.shadow (inner) {
-	.shadow(inner; dark);
+.shadow (inner; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0; @spread: 0) {
+	.shadow(dark; @opacity; @x; @y; @blur; @spread; 'inset ');
 }
 .shadow (inner; dark; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0; @spread: 0) {
 	.shadow(dark; @opacity; @x; @y; @blur; @spread; 'inset ');
@@ -931,8 +957,11 @@
 .content (@value; @font; ...) {
 	font-family: @font;
 }
-.content (@value; @font; @size) {
+.content (@value; @font; @size; ...) {
 	.font-size(@size);
+}
+.content (@value; @font; @size; @lineHeight) {
+	.line-height(@lineHeight);
 }
 .prefix (@value: '-'; @margin: .5em; @font: false; @color: false) {
 	&:before {
@@ -1117,6 +1146,189 @@
 }
 .drop-shadow (dark; @opacity: @defaultOpacity; @x: 1px; @y: 1px; @blur: 0) {
 	.filter('drop-shadow(@{x} @{y} @{blur} rgba(0, 0, 0, @{opacity}))');
+}
+
+
+
+
+
+/*------------------------------------*\
+	# Flexbox
+\*------------------------------------*/
+
+.flex (@grow: 0; @shrink: 0; @basis: auto) {
+	.flex-grow(@grow);
+	.flex-shrink(@shrink);
+	.flex-basis(@basis);
+}
+.flex-container (@direction: row; @wrap: nowrap; @justify: flex-start; @align: stretch; @align-content: stretch) {
+	.flexbox();
+	.flex-direction(@direction);
+	.flex-wrap(@wrap);
+	.justify-content(@justify);
+	.flex-align-items(@align);
+	.flex-align-content(@align-content)
+}
+
+// Flexbox container
+.flexbox (@value: flex) {
+	.check () when (@value = flex) {
+		display: -ms-flexbox;
+		display: -webkit-flex;
+	}
+
+	.check () when (@value = inline-flex) {
+		display: -ms-inline-flexbox;
+		display: -webkit-inline-flex;
+	}
+
+	.check();
+	display: @value;
+}
+.flex-direction (@direction: row) {
+	.check () when (@direction = row-reverse) {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: reverse;
+	}
+
+	.check () when (@direction = column) {
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+	}
+
+	.check () when (@direction = column-reverse) {
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: reverse;
+	}
+
+	.check () when (@direction = row) {
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+	}
+
+	.check();
+	-webkit-flex-direction: @direction;
+	-ms-flex-direction: @direction;
+	flex-direction: @direction;
+}
+.flex-wrap (@wrap: nowrap) {
+	.check(@wrap) when (@wrap = nowrap) {
+		-ms-flex-wrap: none;
+	}
+
+	.check(@wrap) when (@wrap = wrap), (@wrap = wrap-reverse) {
+		-ms-flex-wrap: @wrap;
+	}
+
+	.check();
+	-webkit-flex-wrap: @wrap;
+	flex-wrap: @wrap;
+}
+.justify-content (@justify: flex-start) {
+	.check () when (@justify = space-between) {
+		-ms-flex-pack: justify;
+	}
+
+	.check () when (@justify = space-around) {
+		-ms-flex-pack: distribute;
+	}
+
+	.check () when (@justify = flex-start) {
+		-ms-flex-pack: start;
+	}
+
+	.check () when (@justify = flex-end) {
+		-ms-flex-pack: end;
+	}
+
+	.check () when (@justify = center) {
+		-ms-flex-pack: center;
+	}
+
+	.check();
+	-webkit-justify-content: @justify;
+	-ms-justify-content: @justify;
+	justify-content: @justify;
+}
+.flex-align-items (@align: stretch) {
+	.check () when (@align = flex-start) {
+		-ms-flex-align: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-align: end;
+	}
+
+	.check () when (@align = center), (@align = baseline), (@align = stretch) {
+		-ms-flex-align: @align;
+	}
+
+	.check();
+	-webkit-align-items: @align;
+	-moz-align-items: @align;
+	-ms-align-items: @align;
+	align-items: @align;
+}
+.flex-align-content(@align: stretch) {
+	.check () when (@align = space-between) {
+		-ms-flex-line-pack: justify;
+	}
+
+	.check () when (@align = space-around) {
+		-ms-flex-line-pack: distribute;
+	}
+
+	.check () when (@align = flex-start) {
+		-ms-flex-line-pack: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-line-pack: end;
+	}
+
+	.check () when (@align = center), (@align = stretch) {
+		-ms-flex-line-pack: @align;
+	}
+
+	-webkit-align-content: @align;
+	-ms-align-content: @align;
+	align-content: @align;
+}
+
+// Flexbox items
+.flex-grow (@proportion: 1) {
+	-webkit-box-flex: @proportion;
+	-webkit-flex-grow: @proportion;
+	-ms-flex-positive: @proportion;
+	flex-grow: @proportion;
+}
+.flex-shrink (@proportion: 1) {
+	-webkit-flex-shrink: @proportion;
+	-ms-flex-negative: @proportion;
+	flex-shrink: @proportion;
+}
+.flex-basis (@proportion: auto) {
+	-webkit-flex-basis: @proportion;
+	-ms-flex-preferred-size: @proportion;
+	flex-basis: @proportion;
+}
+.flex-align-self (@align: auto) {
+	.check () when (@align = flex-start) {
+		-ms-flex-item-align: start;
+	}
+
+	.check () when (@align = flex-end) {
+		-ms-flex-item-align: end;
+	}
+
+	.check () when (@align = auto), (@align = center), (@align = baseline), (@align = stretch) {
+		-ms-flex-item-align: @align;
+	}
+
+	.check();
+	-webkit-align-self: @align;
+	-ms-align-self: @align;
+	align-self: @align;
 }
 
 
@@ -2311,7 +2523,7 @@
 	white-space: nowrap;
 }
 .wrap () {
-	white-space: initial;
+	white-space: normal;
 }
 .ellipsis (@maxWidth: false) {
 	overflow-x: hidden;
@@ -2396,9 +2608,9 @@
 \*------------------------------------*/
 
 .transform (...) {
-	-ms-transform: @arguments;
-	-webkit-transform: @arguments;
-	transform: @arguments;
+	-ms-transform+_: @arguments;
+	-webkit-transform+_: @arguments;
+	transform+_: @arguments;
 }
 .transform-origin (@x; @y: 0) {
 	.check () when (isunit(@x, '')) {
@@ -2508,20 +2720,18 @@
 \*------------------------------------*/
 
 .transition (@value) when (isstring(@value)) {
-	-webkit-backface-visibility: hidden;
-	-webkit-transition: ~'@{value}';
-	transition: ~'@{value}';
+	-webkit-transition+: ~'@{value}';
+	transition+: ~'@{value}';
 }
-.transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
-		when (@property = all) {
-	.transition('@{arguments}');
-}
-.transition (@property; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s)
-		when (default()) {
-	.transition('@{property}');
-	.transition-delay(@delay);
-	.transition-duration(@duration);
-	.transition-timing-function(@ease);
+.transition (@property: all; @duration: @defaultDuration; @ease: @defaultTiming; @delay: 0s) {
+	.check () when (@property = transform) {
+		-webkit-transition+: ~'-webkit-transform @{duration} @{ease} @{delay}';
+	}
+	.check () when (default()) {
+		-webkit-transition+: @arguments;
+	}
+	.check();
+	transition+: @arguments;
 }
 .transition-delay (@delay: 1s) {
 	-webkit-transition-delay: @delay;
@@ -2532,7 +2742,13 @@
 	transition-duration: @duration;
 }
 .transition-property (@property: all) {
-	-webkit-transition-property: @property;
+	.check () when (@property = transform) {
+		-webkit-transition-property: -webkit-transform;
+	}
+	.check () when (default()) {
+		-webkit-transition-property: @property;
+	}
+	.check();
 	transition-property: @property;
 }
 .transition-timing-function (@function: @defaultTiming) {
@@ -2623,6 +2839,11 @@
 	&::-webkit-search-cancel-button {
 		-webkit-appearance: none;
 	}
+}
+.appearance (@value) {
+	-moz-appearance: @value;
+	-webkit-appearance: @value;
+	appearance: @value;
 }
 
 

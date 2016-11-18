@@ -642,6 +642,8 @@
 					} else {
 						el.innerHTML = html;
 					}
+
+					W.$setRef(el);
 				}
 			});
 		},
@@ -979,8 +981,12 @@
 		 * @param {($|HTMLElement|string)} [context=document]
 		 */
 		$remove: function(target, context) {
+			var arr = [];
+
 			W.$each(target, function(el) {
 				var par = el.parentNode;
+
+				arr.push(el);
 
 				par.removeChild(el);
 
@@ -988,6 +994,8 @@
 			}, {
 				context: context
 			});
+
+			return arr;
 		},
 
 		/**
