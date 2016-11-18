@@ -206,8 +206,8 @@
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
 	background-color: @start;
-	.background('-webkit-linear-gradient(@{revDeg}, @{start}, @{end})');
-	.background('linear-gradient(@{deg}, @{start}, @{end})');
+	background: -webkit-linear-gradient(@revDeg, @start, @end);
+	background: linear-gradient(@deg, @start, @end);
 }
 .background-gradient (@color; @spread; @angle: 180) when (iscolor(@color)) and (ispercentage(@spread)) {
 	@lighter: lighten(@color, @spread);
@@ -215,8 +215,8 @@
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
 	background-color: @color;
-	.background('-webkit-linear-gradient(@{revDeg}, @{lighter}, @{darker})');
-	.background('linear-gradient(@{deg}, @{lighter}, @{darker})');
+	background: -webkit-linear-gradient(@revDeg, @lighter, @darker);
+	background: linear-gradient(@deg, @lighter, @darker);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{lighter}', endColorstr='@{darker}', GradientType=0);
 }
 .background-gradient (dark; @start: 0; @end: 1; @angle: 180) {
@@ -224,16 +224,16 @@
 	@endAlpha: rgba(0, 0, 0, @end);
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
-	.background('-webkit-linear-gradient(@{revDeg}, @{startAlpha}, @{endAlpha})');
-	.background('linear-gradient(@{deg}, @{startAlpha}, @{endAlpha})');
+	background: -webkit-linear-gradient(@revDeg, @startAlpha, @endAlpha);
+	background: linear-gradient(@deg, @startAlpha, @endAlpha);
 }
 .background-gradient (light; @start: 0; @end: 1; @angle: 180) {
 	@startAlpha: rgba(255, 255, 255, @start);
 	@endAlpha: rgba(255, 255, 255, @end);
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
-	.background('-webkit-linear-gradient(@{revDeg}, @{startAlpha}, @{endAlpha})');
-	.background('linear-gradient(@{deg}, @{startAlpha}, @{endAlpha})');
+	background: -webkit-linear-gradient(@revDeg, @startAlpha, @endAlpha);
+	background: linear-gradient(@deg, @startAlpha, @endAlpha);
 }
 .background-attachment (...) {
 	background-attachment: @arguments;
