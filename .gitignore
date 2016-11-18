@@ -36,6 +36,7 @@ prepros.json
 .tmp
 *.diff
 *.err
+*.lock
 *.log
 *.orig
 *.rej
