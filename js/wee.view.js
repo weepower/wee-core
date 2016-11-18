@@ -261,6 +261,11 @@
 					}
 				}
 
+				// Process parent context on reserved tag pairs, excluding $root
+				if (tag[0] == '$' && tag[1] != 'r') {
+					val = data;
+				}
+
 				var isObject = typeof val == 'object';
 
 				if (! each) {
@@ -279,54 +284,55 @@
 					// Loop through objects and arrays
 					if (isObject) {
 						var isPlainObject = W.$isObject(val),
+							keys = Object.keys(val),
+							total = keys.length,
 							resp = '',
 							i = 0;
 
-						for (var key in val) {
-							if (val.hasOwnProperty(key)) {
-								var el = val[key];
-								empty = _isEmpty(el);
+						for (; i < total; i++) {
+							var key = keys[i],
+								el = val[key];
+							empty = _isEmpty(el);
 
-								var cont = help.every(function(f) {
-									var rv = f[0].apply({
-										val: el,
-										data: data,
-										root: init,
-										tag: tag,
-										empty: empty,
-										index: i
-									}, _parseArgs(f[1], el, prev, init));
+							var cont = help.every(function(f) {
+								var rv = f[0].apply({
+									val: el,
+									data: data,
+									root: init,
+									tag: tag,
+									empty: empty,
+									index: i
+								}, _parseArgs(f[1], el, prev, init));
 
-									if (rv === false) {
-										return rv;
-									}
-
-									if (rv !== true) {
-										el = rv;
-									}
-
-									return true;
-								});
-
-								// Merge default properties
-								var item = W.$extend({}, W.$isObject(el) ?
-										el :
-										(isPlainObject ? val : {}),
-									{
-										$key: key,
-										'.': el,
-										'#': i,
-										'##': i + 1
-									}),
-									hl = helper.length;
-
-								cont = (hl && cont) || (! hl && ! empty);
-
-								if (cont || sec) {
-									resp += _parse(cont ? inner : sec, item, data, init, i);
+								if (rv === false) {
+									return rv;
 								}
 
-								i++;
+								if (rv !== true) {
+									el = rv;
+								}
+
+								return true;
+							});
+
+							// Merge default properties
+							var item = W.$extend({}, W.$isObject(el) ?
+									el :
+									(isPlainObject ? val : {}),
+								{
+									$key: key,
+									$first: ! i,
+									$last: i + 1 == total,
+									'.': el,
+									'#': i,
+									'##': i + 1
+								}),
+								hl = helper.length;
+
+							cont = (hl && cont) || (! hl && ! empty);
+
+							if (cont || sec) {
+								resp += _parse(cont ? inner : sec, item, data, init, i);
 							}
 						}
 

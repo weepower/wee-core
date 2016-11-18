@@ -8,6 +8,7 @@
 		settings = {},
 		root = '',
 		path = '',
+		url = '',
 
 		/**
 		 * Return current path
@@ -64,7 +65,7 @@
 			W.$setRef(sel);
 			W.$setVar(sel);
 
-			W.history.bind();
+			W.history.bind(false, sel);
 		},
 
 		/**
@@ -163,6 +164,7 @@
 					scrollTop: 0
 				}, options);
 				root = settings.request.root || '';
+				url = W.routes.uri().full;
 
 				this.request = settings.request;
 				delete settings.request;
@@ -232,7 +234,7 @@
 				var keys = Object.keys(events),
 					i = 0;
 
-				if (typeof a !== 'object') {
+				if (! W.$isObject(a)) {
 					context = a;
 					a = {};
 				}
@@ -241,7 +243,7 @@
 					var event = keys[i],
 						sel = events[event];
 
-					$(sel).each(function(el) {
+					W.$each(sel, function(el) {
 						var evt = event.split(' ').map(function(val) {
 								return val + '.history';
 							}).join(' '),
@@ -250,9 +252,17 @@
 							l = el;
 
 						if (loc || form) {
+							var attrs = el.attributes,
+								x = 0,
+								attr;
 							l = W._doc.createElement('a');
-							l.href = loc || el.getAttribute('action') ||
-								W.routes.uri().full;
+
+							for (; x < attrs.length; x++) {
+								attr = attrs[x];
+								l.setAttribute(attr.name, attr.value);
+							}
+
+							l.href = loc || el.getAttribute('action') || url;
 						}
 
 						// Ensure the path exists and is local
@@ -324,7 +334,8 @@
 					{},
 					req,
 					conf.request || {}
-				);
+				),
+				route = conf.run && W.routes;
 
 			request.root = request.root !== U ? request.root : root;
 			request.url = request.url !== U ? request.url : conf.path;
@@ -352,8 +363,17 @@
 			// Reset URL to exclude root
 			a.href = request.url;
 
-			request.url = _path(a);
+			url = _path(a);
+			request.url = url;
 			conf.request = request;
+
+			// Evaluate preload routes against target path
+			if (route) {
+				W.routes.run({
+					event: 'preload',
+					path: url
+				});
+			}
 
 			var sendEvents = [],
 				successEvents = [],
@@ -390,7 +410,7 @@
 				}
 
 				// Evaluate unload routes against updated path
-				if (W.routes && conf.run) {
+				if (route) {
 					W.routes.run({
 						event: 'unload',
 						path: path
