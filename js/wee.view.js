@@ -580,6 +580,7 @@
 		 * Check for the existence of a named helper
 		 *
 		 * @param {string} name
+		 * @returns {boolean}
 		 */
 		hasHelper: function(name) {
 			return typeof helpers[name] !== 'undefined';
