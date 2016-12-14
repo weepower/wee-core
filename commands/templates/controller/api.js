@@ -1,4 +1,4 @@
-Wee.fn.make('{{ name }}', {
+Wee.fn.make('api', {
 	get: function(conf) {
 		this.$private.send(conf);
 	},
