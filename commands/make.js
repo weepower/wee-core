@@ -25,13 +25,12 @@
 			commands = {
 				controller: function() {
 					var name = config.args.name || '',
-						type = config.args.type || 'base';
+						type = config.args.type || 'base',
+						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
 
 					if (type !== 'base') {
 						name = type;
 					}
-
-					var target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
 
 					if (! name) {
 						error = 'Missing argument "--name=controllerName"';
