@@ -25,7 +25,14 @@
 			commands = {
 				controller: function() {
 					var name = config.args.name || '',
-						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
+						type = config.args.type || 'base',
+						target;
+
+					if (type !== 'base') {
+						name = type;
+					}
+
+					target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
 
 					if (! name) {
 						error = 'Missing argument "--name=controllerName"';
@@ -34,50 +41,12 @@
 					}
 
 					if (! error) {
-						var template = fs.readFileSync(templatePath + 'controller/base.js', 'utf8'),
+						var template = fs.readFileSync(templatePath + 'controller/' + type + '.js', 'utf8'),
 							parsed = Wee.view.render(template, config.args);
 
 						fs.outputFileSync(target, parsed);
 
 						message = 'Controller generated at "' + target + '"';
-					}
-				},
-				api: function() {
-					var name = config.args.name || 'api',
-						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
-
-					if (fs.existsSync(target)) {
-						error = 'Controller "' + name + '" already exists';
-					}
-
-					if (! error) {
-						var template = fs.readFileSync(templatePath + 'controller/api.js', 'utf8'),
-							parsed = Wee.view.render(template, { name: name });
-
-						fs.outputFileSync(target, parsed);
-
-						message = 'Api interface controller generated at "' + target + '"';
-					}
-				},
-				extension: function() {
-					config.args.name = config.args.name || 'extension';
-					config.args.disabledClass = config.args.disabledClass || '-is-disabled';
-					config.args.activeClass = config.args.activeClass || '-is-active';
-
-					var	name = config.args.name,
-						target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
-
-					if (fs.existsSync(target)) {
-						error = 'Controller "' + name + '" already exists';
-					}
-
-					if (! error) {
-						var template = fs.readFileSync(templatePath + 'controller/extension.js', 'utf8'),
-							parsed = Wee.view.render(template, config.args);
-
-						fs.outputFileSync(target, parsed);
-
-						message = 'Api interface controller generated at "' + target + '"';
 					}
 				},
 				module: function() {
