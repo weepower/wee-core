@@ -577,6 +577,16 @@
 		},
 
 		/**
+		 * Check for the existence of a named helper
+		 *
+		 * @param {string} name
+		 * @returns {boolean}
+		 */
+		hasHelper: function(name) {
+			return typeof helpers[name] !== 'undefined';
+		},
+
+		/**
 		 * Add views to store for on-demand reference
 		 *
 		 * @param {object|string} name

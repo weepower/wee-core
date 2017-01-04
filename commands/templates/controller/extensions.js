@@ -1,5 +1,5 @@
-Wee.fn.make('extension', {
-	init: function() {
+Wee.fn.make('extensions', {
+	_construct: function() {
 		var disabled = '{{ disabledClass }}',
 			active = '{{ activeClass }}';
 
