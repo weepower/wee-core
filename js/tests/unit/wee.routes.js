@@ -86,12 +86,12 @@ define(function(require) {
 
 			'set object': function() {
 				Wee.routes.uri({
-				    hash: 'uri',
-				    path: '/js/routes',
-				    history: true,
-				    query: {
-				        success: 'yes'
-				    }
+					hash: 'uri',
+					path: '/js/routes',
+					history: true,
+					query: {
+						success: 'yes'
+					}
 				});
 
 				assert.strictEqual(Wee.routes.uri().hash, 'uri',

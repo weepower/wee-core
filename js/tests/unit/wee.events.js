@@ -205,12 +205,12 @@ define(function(require) {
 				Wee.events.trigger('#wee-inner', 'blur');
 
 				Wee.events.off({
-				    '#wee': {
-				        click: callbackFunctionOne()
-				    },
-				    '#wee-inner': {
-				        blur: callbackFunctionTwo()
-				    }
+					'#wee': {
+						click: callbackFunctionOne()
+					},
+					'#wee-inner': {
+						blur: callbackFunctionTwo()
+					}
 				});
 
 				assert.notOk(Wee.$hasClass($el, 'test-class'),
@@ -226,7 +226,7 @@ define(function(require) {
 			$el.html(
 				'<div class="bound-test">Div 1</div>' +
 				'<div class="bound-test">Div 2</div>' +
-				'<div class="bound-test">Div 3</div>' 
+				'<div class="bound-test">Div 3</div>'
 			);
 
 			$('.bound-test').on('click', function() {
