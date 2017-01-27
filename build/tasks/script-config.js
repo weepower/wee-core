@@ -48,8 +48,8 @@ module.exports = function(grunt) {
 				config.script.core.push(weeScriptRoot + 'wee.assets.js');
 			}
 
-			if (features.data === true) {
-				config.script.core.push(weeScriptRoot + 'wee.data.js');
+			if (features.data === true || features.fetch === true) {
+				config.script.core.push(weeScriptRoot + 'wee.fetch.js');
 			}
 
 			if (features.dom === true) {
