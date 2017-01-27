@@ -95,10 +95,10 @@ var Wee;
 				 * @private
 				 */
 				_get = function(obj, obs, key, fallback, set, options) {
-					var stored = _storage(obj, key);
+					var resp = _storage(obj, key)[2];
 
-					if (stored[2] !== U) {
-						return stored[2];
+					if (resp !== U) {
+						return resp;
 					}
 
 					if (fallback !== U) {
@@ -116,8 +116,11 @@ var Wee;
 				 * @private
 				 */
 				_has = function(obj, key, val) {
-					var stored = _storage(obj, key),
-						resp = stored[0];
+					var resp = _storage(obj, key)[2];
+
+					if (resp === U) {
+						return false;
+					}
 
 					if (val !== U) {
 						if (W.$isObject(resp)) {
@@ -131,7 +134,7 @@ var Wee;
 						return resp === val;
 					}
 
-					return resp !== U;
+					return true;
 				},
 
 				/**
