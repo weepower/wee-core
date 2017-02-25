@@ -1212,11 +1212,11 @@
 	flex-direction: @direction;
 }
 .flex-wrap (@wrap: nowrap) {
-	.check(@wrap) when (@wrap = nowrap) {
+	.check() when (@wrap = nowrap) {
 		-ms-flex-wrap: none;
 	}
 
-	.check(@wrap) when (@wrap = wrap), (@wrap = wrap-reverse) {
+	.check() when (@wrap = wrap), (@wrap = wrap-reverse) {
 		-ms-flex-wrap: @wrap;
 	}
 
