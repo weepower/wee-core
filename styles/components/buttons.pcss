@@ -1,0 +1,64 @@
+.button,
+$(coloredButton.class) {
+	-webkit-appearance: button;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 1em;
+	margin: 0 0 $button.margin.bottom 0;
+	outline: 0;
+	padding: $button.padding.vertical $button.padding.horizontal;
+	text-align: center;
+	text-shadow: none;
+	font($button.family, $button.size, $button.weight);
+	transition($button.transition.property, $button.transition.duration);
+	&:active {
+		transition($button.active.transition.property);
+	}
+	&::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+}
+.button {
+	background-color: $button.background;
+	border-radius: $button.border.radius;
+	color: $button.color;
+	border($button.border.color);
+	&:hover {
+		background-color: $button.hover.background;
+		color: $button.color;
+	}
+	&:active {
+		background-color: $button.active.background;
+		color: $button.color;
+	}
+}
+$(coloredButton.class) {
+	background-color: $coloredButton.background;
+	border-radius: $coloredButton.border.radius;
+	color: $coloredButton.color;
+	border($coloredButton.border.color);
+	&:hover {
+		background-color: $coloredButton.hover.background;
+		color: $coloredButton.color;
+	}
+	&:active {
+		background-color: $coloredButton.active.background;
+		color: $coloredButton.color;
+	}
+}
+.button,
+$(coloredButton.class) {
+	&[disabled],
+	&$(button.disabled.modifier) {
+		background-color: $button.disabled.background;
+		color: $button.disabled.color;
+		cursor: $button.disabled.cursor;
+		border($button.disabled.border.color);
+		&:active,
+		&:hover {
+			background-color: $button.disabled.background;
+			color: $button.disabled.color;
+		}
+	}
+}
