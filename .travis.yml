@@ -1,4 +1,9 @@
 language: node_js
+
+branches:
+  except:
+  - feature/v4
+
 node_js:
   - '6'
 
