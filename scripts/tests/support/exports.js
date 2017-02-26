@@ -6,7 +6,7 @@ define(function(require) {
 	require('intern/order!js/wee.animate.js');
 	require('intern/order!js/wee.assets.js');
 	require('intern/order!js/wee.chain.js');
-	require('intern/order!js/wee.data.js');
+	require('intern/order!js/wee.fetch.js');
 	require('intern/order!js/wee.dom.js');
 	require('intern/order!js/wee.events.js');
 	require('intern/order!js/wee.history.js');

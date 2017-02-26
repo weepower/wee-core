@@ -5,6 +5,9 @@
 
 	var support = H && H.pushState,
 		entries = [],
+		order = [],
+		index = 0,
+		pending = false,
 		settings = {},
 		root = '',
 		path = '',
@@ -73,22 +76,27 @@
 		 *
 		 * @private
 		 * @param {object} conf
+		 * @param {object} options
 		 */
-		_process = function(conf) {
+		_process = function(conf, options) {
 			var request = conf.request,
 				method = request.method;
 
-			if (! method || method == 'get') {
+			if (typeof conf.push == 'string') {
+				conf.path = conf.push;
+			} else if (! method || method == 'get') {
 				conf.path = D._getUrl(request);
 			}
 
 			var key = conf.path.replace(/^\//g, ''),
+				dir = conf.push ? 1 : -1,
 				obj = {
 					args: [
 						{
-							dir: conf.push ? 1 : -1,
+							dir: dir,
 							path: conf.path,
-							prev: path
+							prev: path,
+							conf: conf
 						}
 					]
 				};
@@ -104,39 +112,48 @@
 				W._doc.title = conf.title;
 			}
 
-			if (W.routes) {
-				// Update current path
-				W.routes.uri(conf.path);
-				W.routes.uri({
-					history: true
+			// Update current path
+			W.routes.uri(conf.path);
+			W.routes.uri({
+				history: true
+			});
+
+			order.push(pending);
+			pending = false;
+			index += dir;
+
+			// Evaluate routes against updated path
+			if (conf.run) {
+				W.routes.run({
+					event: 'pop',
+					path: path
 				});
 
-				// Evaluate routes against updated path
-				if (conf.run) {
-					W.routes.run({
-						event: 'pop',
-						path: path
-					});
-
-					W.routes.run({
-						path: conf.path
-					});
-				}
-
-				path = conf.path;
+				W.routes.run({
+					path: conf.path
+				});
 			}
 
-			if (conf.push && conf.pushstate) {
-				W.$exec(conf.pushstate, obj);
+			path = conf.path;
+
+			if (conf.pushstate) {
+				W.$exec([
+					settings.pushstate,
+					options.pushstate
+				], obj);
 			}
 
-			if (conf.pop && conf.popstate) {
-				W.$exec(conf.popstate, obj);
+			if (conf.popstate) {
+				W.$exec([
+					settings.popstate,
+					options.popstate
+				], obj);
 			}
 
-			if (conf.end) {
-				W.$exec(conf.end, obj);
-			}
+			W.$exec([
+				settings.end,
+				options.end
+			], obj);
 		};
 
 	W.history = {
@@ -161,6 +178,7 @@
 					push: true,
 					request: {},
 					run: true,
+					scrollTarget: $._body,
 					scrollTop: 0
 				}, options);
 				root = settings.request.root || '';
@@ -168,6 +186,8 @@
 
 				this.request = settings.request;
 				delete settings.request;
+
+				order.push($.routes.uri());
 
 				if (support) {
 					H.scrollRestoration = 'manual';
@@ -303,6 +323,18 @@
 		},
 
 		/**
+		 * Get History data at optional index offset
+		 *
+		 * @param {(boolean|number)} [offset]
+		 * @returns {object}
+		 */
+		get: function(offset) {
+			return offset === U ? order : (
+				offset === true ? pending : order[index + offset]
+			);
+		},
+
+		/**
 		 * Navigate to a new path or within the browser history
 		 *
 		 * @param {object} options
@@ -313,6 +345,7 @@
 		 * @param {boolean} [options.push=true]
 		 * @param {(boolean|object)} [options.request]
 		 * @param {boolean} [options.run=true]
+		 * @param {($|boolean|HTMLElement|string)} [options.scrollTarget=body]
 		 * @param {($|boolean|HTMLElement|number|string)} [options.scrollTop]
 		 * @param {string} [options.title]
 		 */
@@ -326,15 +359,10 @@
 			var req = scope.request,
 				mock = options.action === false,
 				conf = W.$extend(
-					{},
-					settings,
+					$.copy(settings),
 					options
 				),
-				request = W.$extend(
-					{},
-					req,
-					conf.request || {}
-				),
+				request = conf.request || {},
 				route = conf.run && W.routes;
 
 			request.root = request.root !== U ? request.root : root;
@@ -344,15 +372,9 @@
 			var a = W._doc.createElement('a');
 			a.href = request.root + request.url;
 
-			if (! support || ! _isValid(a)) {
+			if ((! support || ! _isValid(a)) && ! conf.force) {
 				W._win.location = request.url;
 				return false;
-			}
-
-			if (conf.begin && W.$exec(conf.begin, {
-					args: [conf]
-				}) === false) {
-				return;
 			}
 
 			// Set current scroll position
@@ -366,6 +388,15 @@
 			url = _path(a);
 			request.url = url;
 			conf.request = request;
+
+			if (conf.begin && W.$exec(conf.begin, {
+					args: conf
+				}) === false) {
+				pending = false;
+				return;
+			}
+
+			pending = $.routes.parse(url);
 
 			// Evaluate preload routes against target path
 			if (route) {
@@ -393,7 +424,7 @@
 				sendEvents.push(request.send);
 			}
 
-			if (req.send && req.send !== request.send) {
+			if (req.send) {
 				sendEvents.push(req.send);
 			}
 
@@ -401,20 +432,25 @@
 
 			// Compile success events
 			var replaceEvent = function(x) {
-				var html = typeof x == 'string' ? x : x.responseText;
+				var html = x && x.responseText ? x.responseText : x;
 
 				if (conf.replace) {
 					html = W.$exec(conf.replace, {
-						args: [html]
-					}) || html;
+						args: [html, conf]
+					});
+					html = html === false ? false : html;
 				}
 
-				// Evaluate unload routes against updated path
+				// Evaluate unload routes against current path
 				if (route) {
 					W.routes.run({
 						event: 'unload',
 						path: path
 					});
+				}
+
+				if (html === false) {
+					return;
 				}
 
 				if (partials) {
@@ -453,7 +489,7 @@
 				successEvents.push(request.success);
 			}
 
-			if (req.success && req.success !== request.success) {
+			if (req.success) {
 				successEvents.push(req.success);
 			}
 
@@ -469,6 +505,10 @@
 						st = a.hash;
 					}
 
+					if (typeof st == 'function') {
+						st = st();
+					}
+
 					if (typeof st == 'number') {
 						top = st;
 					} else {
@@ -481,11 +521,11 @@
 					}
 
 					if (anim) {
-						anim.tween(W._body, {
+						anim.tween(conf.scrollTarget, {
 							scrollTop: top
 						});
 					} else {
-						W._body.scrollTop = top;
+						$(conf.scrollTarget)[0].scrollTop = top;
 					}
 				}
 			};
@@ -499,7 +539,7 @@
 				errorEvents.push(request.error);
 			}
 
-			if (req.error && req.error !== request.error) {
+			if (req.error) {
 				errorEvents.push(req.error);
 			}
 
@@ -516,7 +556,7 @@
 				completeEvents.push(request.complete);
 			}
 
-			if (req.complete && req.complete !== request.complete) {
+			if (req.complete) {
 				completeEvents.push(req.complete);
 			}
 
@@ -530,7 +570,7 @@
 					}
 
 					if (conf.processErrors || (code >= 200 && code < 400)) {
-						_process(conf);
+						_process(conf, options);
 					}
 				});
 			}
@@ -547,10 +587,10 @@
 					completeEvents
 				));
 
-				_process(conf);
+				_process(conf, options);
 			} else {
 				D.request(request);
 			}
 		}
 	};
-})(Wee, Wee.data, Wee.events, history, undefined);
+})(Wee, Wee.fetch, Wee.events, history, undefined);

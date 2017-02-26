@@ -173,8 +173,8 @@ module.exports = function(grunt) {
 						coreScript.push(root + 'wee.assets.js');
 					}
 
-					if (features.data === true) {
-						coreScript.push(root + 'wee.data.js');
+					if (features.data === true || features.fetch === true) {
+						coreScript.push(root + 'wee.fetch.js');
 					}
 
 					if (features.dom === true) {
