@@ -165,11 +165,11 @@
 						.replace(new RegExp(match[0] + '$'), '');
 				}
 
-				return arg == 'true' ? true :
-					arg == 'false' ? false :
-					arg == 'null' ? null :
-					parseInt(arg).toString() == arg ? parseInt(arg) :
-					_get(data, prev, arg, '', init);
+				arg = W._castString(arg);
+
+				return typeof arg == 'string' ?
+					_get(data, prev, arg, '', init) :
+					arg;
 			});
 		},
 
