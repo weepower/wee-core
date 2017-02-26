@@ -3,7 +3,6 @@
 This repository is part of the [Wee framework](https://github.com/weepower/wee).
 
 [![Build Status](https://travis-ci.org/weepower/wee-core.svg?branch=master)](https://travis-ci.org/weepower/wee-core)
-[![codecov](https://codecov.io/gh/weepower/wee-core/branch/master/graph/badge.svg)](https://codecov.io/gh/weepower/wee-core)
 [![NPM version](https://img.shields.io/npm/v/wee-core.svg?style=flat)](https://www.npmjs.com/package/wee-core)
 
 ## Bugs
