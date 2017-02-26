@@ -669,8 +669,8 @@ define(function(require) {
 				'Value was not properly set to an array'
 			);
 
-			assert.strictEqual(Wee.$has('testArray.key1'), true,
-				'Global storage object should have key of "key1"'
+			assert.strictEqual(Wee.$has('testArray.1'), true,
+				'Global storage object should have key of "1"'
 			);
 
 			Wee.$set('myArray', ['blue', 'red', 'green']);
@@ -717,14 +717,13 @@ define(function(require) {
 					'color2': 'red'
 				});
 
-				assert.strictEqual(Wee.$has('test-has2.0'), true,
+				assert.strictEqual(Wee.$has('test-has2.color1'), true,
 					'Not detecting any value for "test-has2"'
 				);
 			},
 
 			'array as value': function() {
 				Wee.$set('key', [1, 2, 3]);
-				Wee.$has('key', 4);
 
 				assert.isFalse(Wee.$has('key', 4),
 					'Not detecting any value for "test-has2"'
