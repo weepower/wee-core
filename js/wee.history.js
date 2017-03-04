@@ -377,11 +377,6 @@
 				return false;
 			}
 
-			// Set current scroll position
-			H.replaceState({
-				top: W._body.scrollTop
-			}, '');
-
 			// Reset URL to exclude root
 			a.href = request.url;
 
@@ -395,6 +390,11 @@
 				pending = false;
 				return;
 			}
+
+			// Set current scroll position
+			H.replaceState({
+				top: W._body.scrollTop
+			}, '');
 
 			pending = $.routes.parse(url);
 
