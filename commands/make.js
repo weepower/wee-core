@@ -30,13 +30,13 @@
 
 					if (type !== 'base') {
 						name = type;
+					} else if (name === '') {
+						error = 'Missing argument "--name=controllerName" or "--type=controllerType"';
 					}
 
 					target = path.join(sourcePath, 'js/build/' + slugify(name) + '.js');
 
-					if (! name) {
-						error = 'Missing argument "--name=controllerName"';
-					} else if (fs.existsSync(target)) {
+					if (fs.existsSync(target)) {
 						error = 'Controller "' + name + '" already exists';
 					}
 
