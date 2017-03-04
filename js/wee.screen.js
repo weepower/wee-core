@@ -33,7 +33,7 @@
 
 				// Only attach event once
 				if (! bound) {
-					var run = _run.bind(this, false, 0);
+					var run = _run.bind(this, false, 0, null);
 					bound = 1;
 					events = [conf];
 
@@ -55,13 +55,20 @@
 		 * @param {boolean} [init=false] - initial page load
 		 * @param {Array} [rules] - breakpoint rules
 		 */
-		_run = function(init, rules) {
-			var size = W.screen.size();
+		_run = function(init, rules, namespace) {
+			var size = W.screen.size(),
+				evts = rules || events,
+				i;
 
 			// If breakpoint has been hit or resize logic initialized
 			if (size && (init || size !== current)) {
-				var evts = rules || events,
-					i = evts.length;
+				if (namespace) {
+					evts = evts.filter(function(obj) {
+						return obj.namespace === namespace;
+					});
+				}
+
+				i = evts.length;
 
 				while (i--) {
 					var evt = evts[i];
@@ -76,7 +83,7 @@
 							};
 
 						W.$exec(evt.callback, {
-							args: evt.args ? [data].concat(evt.args) : data,
+							args: evt.args ? [data].concat(evt.args) : [data],
 							scope: evt.scope
 						});
 
@@ -174,8 +181,8 @@
 		/**
 		 * Evaluate the current breakpoint
 		 */
-		run: function() {
-			_run(true);
+		run: function(namespace) {
+			_run(true, null, namespace);
 		},
 
 		/**
