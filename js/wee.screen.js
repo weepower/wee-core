@@ -118,6 +118,22 @@
 
 	W.screen = {
 		/**
+		 * Retrieve bound mappings
+		 *
+		 * @param {string} namespace
+		 * @returns {*}
+		 */
+		bound: function(namespace) {
+			if (! namespace) {
+				return events;
+			}
+
+			return events.filter(function(obj) {
+				return obj.namespace === namespace;
+			});
+		},
+
+		/**
 		 * Get current breakpoint value
 		 *
 		 * @returns {number} size
