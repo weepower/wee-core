@@ -12,7 +12,8 @@
   "repository": "weepower/wee-core",
   "bugs": "https://github.com/weepower/wee/issues",
   "scripts": {
-    "test": "karma start ./tests/scripts/karma.conf.js",
+    "test": "npm run test:scripts",
+  	"test:scripts": "karma start ./tests/scripts/karma.conf.js",
     "test:styles": "mocha ./tests/styles/**/*.js"
   },
   "dependencies": {
