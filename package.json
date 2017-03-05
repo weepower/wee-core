@@ -12,10 +12,8 @@
   "repository": "weepower/wee-core",
   "bugs": "https://github.com/weepower/wee/issues",
   "scripts": {
-    "selenium:install": "selenium-standalone install",
-    "selenium": "selenium-standalone start >&/dev/null &",
-    "test": "wdio wdio.conf.js",
-    "test:build": "mocha ./tests/build/**/*.js"
+    "test": "karma start ./tests/scripts/karma.conf.js",
+    "test:styles": "mocha ./tests/styles/**/*.js"
   },
   "dependencies": {
     "fs-extra": "~2.0.0",
