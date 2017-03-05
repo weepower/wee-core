@@ -1,37 +1,37 @@
 const decl = require('postcss-js-mixins/lib/declaration');
 const rule = require('postcss-js-mixins/lib/rule');
-const { isObject, isEmpty, isPercentage, isColor, prefix, isNumber, hexToRgba, calcOpacity, isString, unit } = require('postcss-js-mixins/lib/helpers');
-
+const { isObject, isEmpty, isPercentage, isColor, prefix, isNumber, hexToRgba, calcOpacity, isString, unit, toNumber, toPercentage } = require('postcss-js-mixins/lib/helpers');
 
 module.exports = (vars = {}) => {
 	return {
 		/**
 		 * Absolute positioning
 		 *
-		 * @param {string|number|Object} [args[]] - top or object of positions
-		 *	 @param {string|number} [args[].top]
-		 *	 @param {string|number} [args[].right]
-		 *	 @param {string|number} [args[].bottom]
-		 *	 @param {string|number} [args[].left]
-		 * @param {string|number} [args[]] - right
-		 * @param {string|number} [args[]] - bottom
-		 * @param {string|number} [args[]] - left
-		 * @return {Array}
+		 * @param {string|number} [top]
+		 * @param {string|number} [right]
+		 * @param {string|number} [bottom]
+		 * @param {string|number} [left]
+		 * @returns {Array}
 		 */
-		absolute(...args) {
+		absolute(top, right, bottom, left) {
 			let props = [
 				decl('position', 'absolute')
 			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0]));
-			} else if (! isEmpty(args)) {
-				props = props.concat(decl.createMany([
-					'top',
-					'right',
-					'left',
-					'bottom'
-				], args));
+			if (top) {
+				props.push(decl('top', top));
+			}
+
+			if (right) {
+				props.push(decl('right', right));
+			}
+
+			if (bottom) {
+				props.push(decl('bottom', bottom));
+			}
+
+			if (left) {
+				props.push(decl('left', left));
 			}
 
 			return props;
@@ -40,63 +40,66 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background
 		 *
-		 * @param  {Array} args
-		 *	 @param {string} [args[]] - color
-		 *	 @param {string} [args[]] - opacity or URL
-		 *	 @param {number|string} [args[]] - repeat or attachment
-		 *	 @param {number|string} [args[]] - attachment or position x
-		 *	 @param {number|string} [args[]] - position x or position y
-		 *	 @param {number|string} [args[]] - position y
-		 * @return {Array}
+		 * @param {number|string} [color]
+		 * @param {number|string} [opacity] - Opacity or filename
+		 * @param {string} [repeat] - Repeat or attachment
+		 * @param {number|string} [attachment] - Attachment or x
+		 * @param {number|string} [x] - X or y
+		 * @param {number|string} [y]
+		 * @returns {Object}
 		 */
-		background(...args) {
-			let props = [
-					decl('background', '')
-				],
-				color = args[0];
+		background(color = vars.colors.body.background, opacity, repeat, attachment, x, y) {
+			let prop = color;
 
-			// TODO: Allow for object params? Shorthand needs to be in specific order.
-			if (color) {
-				if (args[1] && isNumber(args[1])) {
-					args[0] = hexToRgba(color, args[1]);
-					args.splice(1, 1);
-				}
-
-				args.forEach(function(arg, i) {
-					if (i) {
-						arg = ' ' + arg;
-					}
-
-					props[0].value += arg;
-				});
+			if (prop === 0) {
+				return decl('background', 'transparent');
 			}
 
-			return props;
+			if (opacity) {
+				if (isNumber(opacity)) {
+					prop = hexToRgba(prop, opacity);
+				} else {
+					prop += ` ${opacity}`;
+				}
+			}
+
+			if (repeat) {
+				prop += ` ${repeat}`;
+			}
+
+			if (attachment) {
+				prop += ` ${attachment}`;
+			}
+
+			if (x) {
+				prop += ` ${x}`;
+			}
+
+			if (y) {
+				prop += ` ${y}`;
+			}
+
+			return decl('background', prop);
 		},
 
 		/**
 		 * Display block
 		 *
-		 * @param {Array} args
-		 * @param {string|number|Object} [args[]] - width or object of properties
-		 *	 @param {string|number} [args[].width]
-		 *	 @param {string|number} [args[].height]
-		 * @param {string|number} [args[]] - height
+		 * @param {number|string} [width]
+		 * @param {number|string} [height]
 		 * @returns {Array}
 		 */
-		block(...args) {
+		block(width, height) {
 			let props = [
 				this.display('block')
 			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0]));
-			} else if (! isEmpty(args)) {
-				props.push(decl('width', args[0]));
+			if (width) {
+				props.push(decl('width', width));
+			}
 
-				if (args[1]) {
-					props.push(decl('height', args[1]));
-				}
+			if (height) {
+				props.push(decl('height', height));
 			}
 
 			return props;
@@ -187,15 +190,24 @@ module.exports = (vars = {}) => {
 		/**
 		 * A block level element, centered with margin
 		 *
-		 * @param  {Array} [args] - Reference 'block' function for param details
-		 * @return {Array}
+		 * @param {number|string} [maxWidth]
+		 * @param {number|string} [margin]
+		 * @returns {Array}
 		 */
-		centeredBlock(...args) {
-			let props = this.block(...args);
+		centeredBlock(maxWidth, margin) {
+			let props = [
+				decl('display', 'block'),
+				decl('margin-left', 'auto'),
+				decl('margin-right', 'auto')
+			];
 
-			props = props.concat(this.margin(
-				{ left: 'auto', right: 'auto' }
-			));
+			if (maxWidth) {
+				props.push(decl('max-width', maxWidth));
+			}
+
+			if (margin) {
+				props.push(decl('margin-bottom', margin));
+			}
 
 			return props;
 		},
@@ -236,34 +248,101 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid column
 		 *
-		 * @param {Array} args
-		 * @param {Array} [args[]] - spaced key word or column share
-		 * @param {Array} [args[]] - column share or grid columns
-		 * @param {Array} [args[]] - grid columns
-		 * @return {Array}
+		 * @param {number|string} [keyword]
+		 * @param {number} [share]
+		 * @param {number} [columns]
+		 * @param {string} [margin]
+		 * @returns {Array}
 		 */
-		column(...args) {
+		column(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
 			let props = [
-				decl('float', 'left')
+					decl('float', 'left')
+				],
+				width = (1 / parseInt(columns)) * parseInt(share);
+
+			if (! keyword) {
+				props.push(decl('width', '100%'));
+
+				return props;
+			}
+
+			if (isPercentage(keyword)) {
+				props.push(decl('width', keyword));
+
+				return props;
+			}
+
+			if (keyword === 'spaced') {
+				return props.concat([
+					decl('margin-left', margin),
+					decl('width', toPercentage((width) - toNumber(margin)))
+				]);
+			}
+
+			// If not 'spaced', arguments are shifted
+			if (isNumber(keyword)) {
+				columns = share || columns;
+				share = keyword;
+			}
+
+			props.push(decl('width', toPercentage((1 / parseInt(columns)) * parseInt(share))));
+
+			return props;
+		},
+
+		/**
+		 * Modify grid column
+		 *
+		 * @param {number|string} keyword
+		 * @param {number} [share]
+		 * @param {number} [columns]
+		 * @param {string} [margin]
+		 * @returns {Array|Object}
+		 */
+		columnModify(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
+			let width = (1 / parseInt(columns)) * parseInt(share);
+
+			if (isPercentage(keyword)) {
+				return decl('width', keyword);
+			}
+
+			if (keyword === 'spaced') {
+				return [
+					decl('margin-left', margin),
+					decl('width', toPercentage((width) - toNumber(margin)))
+				];
+			}
+
+			// If not 'spaced', arguments are shifted
+			if (isNumber(keyword)) {
+				columns = share || columns;
+				share = keyword;
+			}
+
+			return decl('width', toPercentage((1 / parseInt(columns)) * parseInt(share)));
+		},
+
+		/**
+		 * Columns
+		 *
+		 * @param {number} count
+		 * @param {number} gap
+		 * @param {string} style
+		 * @param {number|string} width
+		 * @returns {Array}
+		 */
+		columns(count = 2, gap, style, width = '1px') {
+			let props = [
+				decl('column-count', count),
+				decl('column-rule-width', width)
 			];
 
-			if (! isEmpty(args)) {
-				if (isPercentage(args[0])) {
-					props.push(decl('width', args[0]));
-				} else if (args[0] === 'spaced') {
-					let columns = isEmpty(args[2]) ? vars.grid.columns : args[2],
-						margin = isEmpty(args[3]) ? vars.grid.margin : args[3];
+			if (gap) {
+				props.push(decl('column-gap', gap));
+			}
 
-					props.push(decl('width', (100 / columns) * args[1] + '%'));
-
-					props = props.concat(this.margin({ left: margin }));
-				} else {
-					let columns = isEmpty(args[1]) ? vars.grid.columns : args[1];
-
-					props.push(decl('width', (100 / columns) * args[0] + '%'));
-				}
-			} else {
-				props.push(decl('width', '100%'));
+			if (style) {
+				props.push(decl('column-rule-style', style));
 			}
 
 			return props;
@@ -306,76 +385,223 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Filter
+		 *
+		 * @param {string} value
+		 * @returns {Object}
+		 */
+		filter(value) {
+			return decl('filter', value);
+		},
+
+		/**
+		 * Blur
+		 *
+		 * @param {string} value
+		 * @returns {Object}
+		 */
+		blur(value = '2px') {
+			return this.filter(`blur(${value})`);
+		},
+
+		/**
+		 * Brightness
+		 *
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		brightness(value = 0.5) {
+			return this.filter(`brightness(${value})`);
+		},
+
+		/**
+		 * Contrast
+		 *
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		contrast(value = 1.5) {
+			return this.filter(`contrast(${value})`);
+		},
+
+		/**
+		 * Grayscale
+		 *
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		grayscale(value = 1) {
+			return this.filter(`grayscale(${value})`);
+		},
+
+		/**
+		 * Hue rotate
+		 *
+		 * @param {string} value
+		 * @returns {Object}
+		 */
+		hueRotate(value = '180deg') {
+			return this.filter(`hue-rotate(${value})`);
+		},
+
+		/**
+		 * Invert
+		 *
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		invert(value = 1) {
+			return this.filter(`invert(${value})`);
+		},
+
+		/**
+		 * Saturate
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		saturate(value = 0.5) {
+			return this.filter(`saturate(${value})`);
+		},
+
+		/**
+		 * Sepai
+		 *
+		 * @param {number} value
+		 * @returns {Object}
+		 */
+		sepia(value = 0.5) {
+			return this.filter(`sepia(${value})`);
+		},
+
+		/**
+		 * Drop shadow
+		 *
+		 * @param {string} color
+		 * @param {string} x
+		 * @param {string} y
+		 * @param {number} blur
+		 * @param {number} opacity
+		 * @returns {object}
+		 */
+		dropShadow(color, x = '1px', y = '1px', blur = 0, opacity = vars.default.opacity) {
+			let colorResult = color;
+
+			if (! color) {
+				colorResult = `rgba(0, 0, 0, ${opacity})`;
+			}
+
+			if (color === 'light') {
+				colorResult = `rgba(255, 255, 255, ${opacity})`;
+			} else if (color === 'dark') {
+				colorResult = `rgba(0, 0, 0, ${opacity})`;
+			}
+
+			return this.filter(`drop-shadow(${x} ${y} ${blur} ${colorResult})`);
+		},
+
+		/**
 		 * Fixed positioning
 		 *
-		 * @param {string|number|Object} [args[]] - top or object of positions
-		 *	 @param {string|number} [args[].top]
-		 *	 @param {string|number} [args[].right]
-		 *	 @param {string|number} [args[].bottom]
-		 *	 @param {string|number} [args[].left]
-		 * @param {string|number} [args[]] - right
-		 * @param {string|number} [args[]] - bottom
-		 * @param {string|number} [args[]] - left
-		 * @return {Array}
+		 * @param {number|string} [top]
+		 * @param {number|string} [right]
+		 * @param {number|string} [bottom]
+		 * @param {number|string} [left]
+		 * @returns {Array}
 		 */
-		fixed(...args) {
-			props = [
+		fixed(top, right, bottom, left) {
+			let props = [
 				decl('position', 'fixed')
 			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0]));
-			} else if (! isEmpty(args)) {
-				props = props.concat(decl.createMany([
-					'top',
-					'right',
-					'left',
-					'bottom'
-				], args));
+			if (top) {
+				props.push(decl('top', top));
+			}
+
+			if (right) {
+				props.push(decl('right', right));
+			}
+
+			if (bottom) {
+				props.push(decl('bottom', bottom));
+			}
+
+			if (left) {
+				props.push(decl('left', left));
 			}
 
 			return props;
 		},
 
 		/**
+		 * Flex
+		 *
+		 * @param {number} grow
+		 * @param {number} shrink
+		 * @param {string} basis
+		 * @returns {Array}
+		 */
+		flex(grow = 0, shrink = 0, basis = 'auto') {
+			return [
+				decl('flex-grow', grow),
+				decl('flex-shrink', shrink),
+				decl('flex-basis', basis)
+			];
+		},
+
+		/**
+		 * Flex container
+		 *
+		 * @param {Array|Object} [args]
+		 * 	 @param {string} [args[].direction]
+		 * 	 @param {string} [args[].wrap]
+		 * 	 @param {string} [args[].justify-content]
+		 * 	 @param {string} [args[].align-items]
+		 * 	 @param {string} [args[].align-content]
+		 * @returns {Array}
+		 */
+		flexContainer(...args) {
+			// TODO: Need to figure out how to handle passing parameters as
+			// object with defaults
+
+			return [
+				this.display(args[0] || 'flex'),
+				decl('flex-direction', args[1] || 'row'),
+				decl('flex-wrap', args[2] || 'nowrap'),
+				decl('justify-content', args[3] || 'flex-start'),
+				decl('align-items', args[4] || 'stretch'),
+				decl('align-content', args[5] || 'stretch')
+			];
+		},
+
+		/**
 		 * Font
 		 *
-		 * @param {Array} [args]
-		 * @param {string|number|Object} [args[]] - font-family or object of properties
-		 *	 @param {string|number} [args[].family]
-		 *	 @param {string|number} [args[].size]
-		 *	 @param {string|number} [args[].weight]
-		 *	 @param {string|number} [args[].lineHeight]
-		 *	 @param {string|number} [args[].style]
-		 * @param {string|number} [args[]] - font-size
-		 * @param {string|number} [args[]] - font-weight
-		 * @param {string|number} [args[]] - line-height
-		 * @param {string|number} [args[]] - font-style
-		 * @return {Array}
+		 * @param {string} [family]
+		 * @param {number} size
+		 * @param {number|string} weight
+		 * @param {string} lineHeight
+		 * @param {string} style
+		 * @returns {Array}
 		 */
-		font(...args) {
-			props = [];
+		font(family = vars.font.family, size, weight, lineHeight, style) {
+			let props = [
+				decl('font-family', family)
+			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0], 'font', ['lineHeight']));
-			} else if (! isEmpty(args)) {
-				props.push(decl('font-family', args[0]));
+			if (size) {
+				props.push(decl('font-size', size));
+			}
 
-				if (args[1]) {
-					props.push(decl('font-size', args[1]));
-				}
+			if (weight) {
+				props.push(decl('font-weight', weight));
+			}
 
-				if (args[2]) {
-					props.push(decl('font-weight', args[2]));
-				}
+			if (lineHeight) {
+				props.push(decl('line-height', lineHeight));
+			}
 
-				if (args[3]) {
-					props.push(decl('line-height', args[3]));
-				}
-
-				if (args[4]) {
-					props.push(decl('font-style', args[4]));
-				}
+			if (style) {
+				props.push(decl('font-style', style));
 			}
 
 			return props;
@@ -411,23 +637,21 @@ module.exports = (vars = {}) => {
 		/**
 		 * Display inline block
 		 *
-		 * @param  {Array} [args[]] - width
-		 * @param  {Array} [args[]] - height
-		 * @return {Array}
+		 * @param {number|string} [width]
+		 * @param {number|string} [height]
+		 * @returns {Array}
 		 */
-		inlineBlock(...args) {
+		inlineBlock(width, height) {
 			let props = [
-				this.display('inline-block')
+				decl('display', 'inline-block')
 			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0]));
-			} else if (! isEmpty(args)) {
-				props.push(decl('width', args[0]));
+			if (width) {
+				props.push(decl('width', width));
+			}
 
-				if (args[1]) {
-					props.push(decl('height', args[1]));
-				}
+			if (height) {
+				props.push(decl('height', height));
 			}
 
 			return props;
@@ -475,34 +699,76 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Margin
+		 * Load font
 		 *
-		 * @param {Array} args
-		 * @returns {Array|boolean}
+		 * @param {string} name
+		 * @param {string} [file]
+		 * @param {string} [weight]
+		 * @param {string} [style]
+		 * @returns {*}
 		 */
-		margin(...args) {
-			let keywords = ['horizontal', 'vertical'],
-				result = false;
-
-			if (isObject(args[0])) {
-				return decl.createManyFromObj(args[0], 'margin');
+		loadFont(name, file = name, weight = 'normal', style = 'normal') {
+			if (! name) {
+				return false;
 			}
 
-			if (keywords.includes(args[0])) {
-				let keyword = args.shift();
+			let props = [],
+				filePath = `${vars.font.path}${file}`;
 
-				if (args.length < 2) {
-					args.push(args[0]);
+			props = props.concat(this.font(name, null, weight, null, style));
+			props.push(decl('src', `url('${filePath}.woff2'), url('${filePath}.woff'), url('${filePath}.ttf')`));
+
+			return rule('@font-face', props);
+		},
+
+		/**
+		 * Margin
+		 *
+		 * @param {string} keyword
+		 * @param {number|string} top
+		 * @param {number|string} right
+		 * @param {number|string} bottom
+		 * @param {number|string} left
+		 * @returns {Array|Object}
+		 */
+		margin(keyword, top, right, bottom, left) {
+			let keywords = ['none', 'horizontal', 'vertical'],
+				props = [];
+
+			if (keywords.includes(keyword)) {
+				let bottom = right || top,
+					args = [top, bottom];
+
+				if (keyword === 'none') {
+					return decl('transition', 'none');
 				}
 
 				if (keyword === 'horizontal') {
-					result = decl.createMany(['left', 'right'], args, 'margin');
-				} else if (keyword === 'vertical') {
-					result = decl.createMany(['top', 'bottom'], args, 'margin');
+					return decl.createMany(['left', 'right'], args, 'margin');
+				}
+
+				if (keyword === 'vertical') {
+					return decl.createMany(['top', 'bottom'], args, 'margin');
 				}
 			}
 
-			return result;
+			if (top) {
+				props.push(decl('margin-top', top));
+			}
+
+			if (right) {
+				props.push(decl('margin-right', right));
+			}
+
+			if (bottom) {
+				props.push(this.spaced(bottom));
+			}
+
+			if (left) {
+				props.push(decl('margin-left', left));
+			}
+
+			return props;
 		},
 
 		/**
@@ -551,29 +817,40 @@ module.exports = (vars = {}) => {
 		 * @param {Array} args
 		 * @returns {Array|boolean}
 		 */
-		padding(...args) {
+		padding(keyword, top, right, bottom, left) {
 			let keywords = ['horizontal', 'vertical'],
-				result = false;
+				props = [];
 
-			if (isObject(args[0])) {
-				return decl.createManyFromObj(args[0], 'padding');
-			}
-
-			if (keywords.includes(args[0])) {
-				let keyword = args.shift();
-
-				if (args.length < 2) {
-					args.push(args[0]);
-				}
+			if (keywords.includes(keyword)) {
+				let bottom = right || top,
+					args = [top, bottom];
 
 				if (keyword === 'horizontal') {
-					result = decl.createMany(['left', 'right'], args, 'padding');
-				} else if (keyword === 'vertical') {
-					result = decl.createMany(['top', 'bottom'], args, 'padding');
+					return decl.createMany(['left', 'right'], args, 'padding');
+				}
+
+				if (keyword === 'vertical') {
+					return decl.createMany(['top', 'bottom'], args, 'padding');
 				}
 			}
 
-			return result;
+			if (top) {
+				props.push(decl('padding-top', top));
+			}
+
+			if (right) {
+				props.push(decl('padding-right', right));
+			}
+
+			if (bottom) {
+				props.push(decl('padding-bottom', bottom));
+			}
+
+			if (left) {
+				props.push(decl('padding-left', left));
+			}
+
+			return props;
 		},
 
 		/**
@@ -669,10 +946,10 @@ module.exports = (vars = {}) => {
 			margin = parseInt(margin);
 
 			return [
-				this.margin({ left: (margin * -1) + '%' })[0],
-				decl('max-width', (100 + margin) + '%'),
+				decl('margin-left', `${margin * -1}%`),
+				decl('max-width', `${margin + 100}%`),
 				this.clearfix()
-			]
+			];
 		},
 
 		/**
@@ -685,8 +962,10 @@ module.exports = (vars = {}) => {
 			margin = margin || vars.grid.margin.replace('%', '');
 			margin = parseInt(margin);
 
-			return this.margin({ left: (margin * -1) + '%' })
-				.concat(decl('max-width', (100 + margin) + '%'));
+			return [
+				decl('margin-left', `${margin * -1}%`),
+				decl('max-width', `${margin + 100}%`)
+			];
 		},
 
 		/**
@@ -695,8 +974,45 @@ module.exports = (vars = {}) => {
 		 * @return {Array}
 		 */
 		rowReset() {
-			return this.margin({ left: 0 })
-				.concat(decl('max-width', 'none'));
+			return [
+				decl('margin-left', 0),
+				decl('max-width', 'none')
+			];
+		},
+
+		/**
+		 * Shadow
+		 *
+		 * @param args
+		 * @returns {*}
+		 */
+		shadow(...args) {
+			let keywords = ['dark', 'light'];
+
+			if (isEmpty(args)) {
+				return decl('box-shadow', `1px 1px 0 0 rgba(0, 0, 0, ${vars.default.opacity})`);
+			}
+
+			if (keywords.includes(args[0])) {
+				let keyword = args.shift(),
+					rgb = keyword === 'dark' ?
+						'0, 0, 0' :
+						'255, 255, 255',
+					opacity = args[0] || vars.default.opacity;
+
+				return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`)
+			}
+
+			return false;
+		},
+
+		/**
+		 * Show element
+		 *
+		 * @return {Object}
+		 */
+		show() {
+			return this.display('inherit');
 		},
 
 		/**
@@ -721,49 +1037,34 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Show element
-		 *
-		 * @return {Object}
-		 */
-		show() {
-			return this.display('inherit');
-		},
-
-		/**
 		 * Add a specified margin bottom.
 		 *
 		 * @return {Array}
 		 */
-		spaced(value) {
-			if (isEmpty(value) || isObject(value)) {
-				value = vars.block.margin.bottom;
-			}
-
-			return this.margin({ bottom: value });
+		spaced(value = vars.block.margin.bottom) {
+			return decl('margin-bottom', value);
 		},
 
 		/**
-		 * Add a specified margin bottom, width, height, and display block
+		 * Spaced block
 		 *
-		 * @param {Array} [args]
-		 * @param {string|number|Object} [args[]] - spaced value or object of width/height
-		 *	 @param {string|number} [args[].width]
-		 *	 @param {string|number} [args[].height]
-		 * @param {string|number} [args[]] - width
-		 * @param {string|number} [args[]] - height
-		 * @return {Array}
+		 * @param {number|string} [margin]
+		 * @param {number|string} [width]
+		 * @param {number|string} [height]
+		 * @returns {Array}
 		 */
-		spacedBlock(...args) {
-			let props = this.spaced(...args);
+		spacedBlock(margin = vars.block.margin.bottom, width, height) {
+			let props = [
+				decl('display', 'block'),
+				this.spaced(margin)
+			];
 
-			if (isObject(args[0])) {
-				props = props.concat(decl.createManyFromObj(args[0]));
-				props = props.concat(this.block());
-			} else if (args.length > 1) {
-				args.shift();
-				props = props.concat(this.block(...args));
-			} else {
-				props = props.concat(this.block());
+			if (width) {
+				props.push(decl('width', width));
+			}
+
+			if (height) {
+				props.push(decl('height', height));
 			}
 
 			return props;
@@ -772,46 +1073,18 @@ module.exports = (vars = {}) => {
 		/**
 		 * Transition shorthand declaration
 		 *
-		 * @param {Array} [args]
-		 * @param {string|Object} [args[]] - transition property or object
-		 *	 @param {string} [args[].property]
-		 *	 @param {string} [args[].duration]
-		 *	 @param {string} [args[].timing]
-		 *	 @param {string} [args[].delay]
-		 * @param {string} [args[]] - transition duration
-		 * @param {string} [args[]] - transition timing
-		 * @param {string} [args[]] - transition delay
-		 * @returns {Declaration}
+		 * @param {string} [property]
+		 * @param {string} [duration]
+		 * @param {string} [easing]
+		 * @param {string} [delay]
+		 * @returns {Object}
 		 */
-		transition(...args) {
-			let defaults = {
-					property: 'all',
-					duration: vars.default.duration,
-					timing: vars.default.timing,
-					delay: vars.default.delay
-				},
-				property, duration, timing, delay;
-
-			if (args[0] === false) {
-				return false;
-			}
-
-			if (args[0] === 'none') {
+		transition(property = 'all', duration = vars.default.duration, easing = vars.default.timing, delay = '0s') {
+			if (property === 'none') {
 				return decl('transition', 'none');
 			}
 
-			if (isObject(args[0])) {
-				let config = Object.assign(defaults, args[0]);
-
-				return decl('transition', `${config.property} ${config.duration} ${config.timing} ${config.delay}`);
-			}
-
-			property = args[0] || defaults.property;
-			duration = args[1] || defaults.duration;
-			timing = args[2] || defaults.timing;
-			delay = args[3] || defaults.delay;
-
-			return decl('transition', `${property} ${duration} ${timing} ${delay}`);
+			return decl('transition', `${property} ${duration} ${easing} ${delay}`);
 		},
 
 		/**
@@ -863,7 +1136,7 @@ module.exports = (vars = {}) => {
 			let props = [];
 
 			if (borderColor && borderColor !== false) {
-				props.push(this.border('none'));
+				props = props.concat(this.border('none'));
 			}
 
 			if (blockWrap) {
