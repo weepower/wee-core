@@ -36,6 +36,35 @@ const _val = (val, options) => {
 };
 
 /**
+ * Get current environment or set current environment against
+ * specified object
+ *
+ * @param {object} [rules]
+ * @param {string} [fallback=local]
+ * @returns {string} environment
+ */
+export const $env = (rules, fallback = 'local') => {
+	let env = fallback;
+
+	if (rules) {
+		let host = location.hostname;
+
+		for (let rule in rules) {
+			let val = rules[rule];
+
+			if (val == host || _val(val, {
+					args: host
+				}) === true) {
+				env = rule;
+				break;
+			}
+		}
+	}
+
+	return env;
+};
+
+/**
  * Execute specified function or array of functions
  *
  * @param {array|function} fn
@@ -64,33 +93,4 @@ export const $exec = (fn, options = {}) => {
 			return response;
 		}
 	}
-};
-
-/**
- * Get current environment or set current environment against
- * specified object
- *
- * @param {object} [rules]
- * @param {string} [fallback=local]
- * @returns {string} environment
- */
-export const $env = (rules, fallback = 'local') => {
-	let env = fallback;
-
-	if (rules) {
-		let host = location.hostname;
-
-		for (let rule in rules) {
-			let val = rules[rule];
-
-			if (val == host || _val(val, {
-					args: host
-				}) === true) {
-				env = rule;
-				break;
-			}
-		}
-	}
-
-	return env;
 };
