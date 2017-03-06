@@ -2,6 +2,8 @@ import { $isFunction, $toArray } from 'core/types';
 
 export const isBrowser = typeof window === 'object';
 
+let env;
+
 /**
  * Extend object storage with object or key -> val
  *
@@ -44,8 +46,6 @@ const _val = (val, options) => {
  * @returns {string} environment
  */
 export const $env = (rules, fallback = 'local') => {
-	let env = fallback;
-
 	if (rules) {
 		let host = location.hostname;
 
@@ -59,9 +59,20 @@ export const $env = (rules, fallback = 'local') => {
 				break;
 			}
 		}
+
+		if (! env) {
+			env = fallback;
+		}
 	}
 
-	return env;
+	return env || fallback;
+};
+
+/**
+ * Reset env variable - used for testing
+ */
+export const $envReset = () => {
+	env = undefined;
 };
 
 /**
