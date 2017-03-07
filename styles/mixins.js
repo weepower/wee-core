@@ -1,6 +1,6 @@
 const decl = require('postcss-js-mixins/lib/declaration');
 const rule = require('postcss-js-mixins/lib/rule');
-const { isObject, isEmpty, isPercentage, isColor, prefix, isNumber, hexToRgba, calcOpacity, isString, unit, toNumber, toPercentage } = require('postcss-js-mixins/lib/helpers');
+const { calcOpacity, hexToRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
 
 module.exports = (vars = {}) => {
 	return {
@@ -351,7 +351,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Conditionally add min-width property to both html and body elements
 		 *
-		 * @returns {*}
+		 * @returns {Array|boolean}
 		 */
 		containerMinWidth() {
 			let minWidth = vars.width.min;
@@ -551,25 +551,21 @@ module.exports = (vars = {}) => {
 		/**
 		 * Flex container
 		 *
-		 * @param {Array|Object} [args]
-		 * 	 @param {string} [args[].direction]
-		 * 	 @param {string} [args[].wrap]
-		 * 	 @param {string} [args[].justify-content]
-		 * 	 @param {string} [args[].align-items]
-		 * 	 @param {string} [args[].align-content]
+		 * @param {string} [direction]
+		 * @param {string} [wrap]
+		 * @param {string} [justify]
+		 * @param {string} [align]
+		 * @param {string} [alignContent]
 		 * @returns {Array}
 		 */
-		flexContainer(...args) {
-			// TODO: Need to figure out how to handle passing parameters as
-			// object with defaults
-
+		flexContainer(direction = 'row', wrap = 'nowrap', justify = 'flex-start', align = 'stretch', alignContent = 'stretch') {
 			return [
-				this.display(args[0] || 'flex'),
-				decl('flex-direction', args[1] || 'row'),
-				decl('flex-wrap', args[2] || 'nowrap'),
-				decl('justify-content', args[3] || 'flex-start'),
-				decl('align-items', args[4] || 'stretch'),
-				decl('align-content', args[5] || 'stretch')
+				this.display('flex'),
+				decl('flex-direction', direction),
+				decl('flex-wrap', wrap),
+				decl('justify-content', justify),
+				decl('align-items', align),
+				decl('align-content', alignContent)
 			];
 		},
 
@@ -901,36 +897,39 @@ module.exports = (vars = {}) => {
 		/**
 		 * Border radius
 		 *
-		 * @param args
+		 * @param {number|string} [keyword]
+		 * @param {number|string} [radius]
+		 * @returns {array|boolean}
 		 */
-		rounded(...args) {
+		rounded(keyword, radius = vars.default.radius) {
 			let props = [
 					decl('background-clip', 'border-box')
 				],
-				keywords = ['top', 'right', 'bottom', 'left'],
-				radius = vars.default.radius,
-				keyword = args[0],
-				corners = [];
+				keywords = ['top', 'right', 'bottom', 'left'];
 
-			if (isEmpty(args)) {
-				props.push(decl('border-radius', radius));
-			} else if (args[0] === false) {
+			if (keyword === false) {
 				return false;
-			} else if (! keywords.includes(args[0])) {
-				props.push(decl('border-radius', args[0]));
-			} else {
-				if (keyword === 'top') {
-					corners = ['top-left-radius', 'top-right-radius'];
-				} else if (keyword === 'right') {
-					corners = ['top-right-radius', 'bottom-right-radius'];
-				} else if (keyword === 'bottom') {
-					corners = ['bottom-left-radius', 'bottom-right-radius'];
-				} else if (keyword === 'left') {
-					corners = ['top-left-radius', 'bottom-left-radius'];
+			}
+
+			if (keywords.includes(keyword)) {
+				let corners = [];
+
+				if (keyword === 'left' || keyword === 'right') {
+					corners = [`top-${keyword}-radius`, `bottom-${keyword}-radius`];
+				} else if (keyword === 'top' || keyword === 'bottom') {
+					corners = [`${keyword}-left-radius`, `${keyword}-right-radius`];
 				}
 
-				props = props.concat(decl.createMany(corners, args[1] || radius, 'border'));
+				props = props.concat(decl.createMany(corners, radius, 'border'));
+
+				return props;
 			}
+
+			if (isNumber(keyword) || isUnit(keyword)) {
+				radius = keyword;
+			}
+
+			props.push(decl('border-radius', radius));
 
 			return props;
 		},
@@ -981,29 +980,28 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Shadow
+		 * Box shadow
 		 *
-		 * @param args
-		 * @returns {*}
+		 * @param {number|string} [keyword]
+		 * @param {number} [opacity]
+		 * @returns {Object}
 		 */
-		shadow(...args) {
+		shadow(keyword, opacity = vars.default.opacity) {
 			let keywords = ['dark', 'light'];
 
-			if (isEmpty(args)) {
-				return decl('box-shadow', `1px 1px 0 0 rgba(0, 0, 0, ${vars.default.opacity})`);
-			}
-
-			if (keywords.includes(args[0])) {
-				let keyword = args.shift(),
-					rgb = keyword === 'dark' ?
-						'0, 0, 0' :
-						'255, 255, 255',
-					opacity = args[0] || vars.default.opacity;
+			if (keywords.includes(keyword)) {
+				let rgb = keyword === 'dark' ?
+					'0, 0, 0' :
+					'255, 255, 255';
 
 				return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`)
 			}
 
-			return false;
+			if (isNumber(keyword)) {
+				opacity = keyword;
+			}
+
+			return decl('box-shadow', `1px 1px 0 0 rgba(0, 0, 0, ${opacity})`);
 		},
 
 		/**
@@ -1080,6 +1078,10 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		transition(property = 'all', duration = vars.default.duration, easing = vars.default.timing, delay = '0s') {
+			if (property === false) {
+				return false;
+			}
+
 			if (property === 'none') {
 				return decl('transition', 'none');
 			}
@@ -1122,6 +1124,20 @@ module.exports = (vars = {}) => {
 		 */
 		visibility(value) {
 			return decl('visibility', value);
+		},
+
+		/**
+		 * Container padding
+		 *
+		 * @returns {Array|boolean}
+		 * @private
+		 */
+		_containerPadding() {
+			if (vars.bumper.enabled) {
+				return this.padding('horizontal', vars.bumper.padding);
+			}
+
+			return false;
 		},
 
 		/**

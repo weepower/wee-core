@@ -1253,18 +1253,17 @@ describe('border', () => {
 		);
 	});
 
-	// TODO: Update the mixin in order to pass this test
-	// it('should handle width, style, and color arguments', () => {
-	// 	return process(
-	// 		`.block {
-	// 			border(black, 1px, solid);
-	// 		}`,
-	// 		`.block {
-	// 			border: 1px solid black;
-	// 		}`,
-	// 		{ mixins: mixins }
-	// 	);
-	// });
+	it('should handle width, style, and color arguments', () => {
+		return process(
+			`.block {
+				border(black, 1px, solid);
+			}`,
+			`.block {
+				border: 1px solid black;
+			}`,
+			{ mixins: mixins }
+		);
+	});
 
 	it('should output top border with default properties', () => {
 		return process(
@@ -1672,6 +1671,17 @@ describe('rounded', () => {
 		);
 	});
 
+	it('should not add any declarations', () => {
+		return process(
+			`.block {
+				rounded(false);
+			}`,
+			`.block {
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
 	it('should set bottom border radius', () => {
 		return process(
 			`.block {
@@ -1681,17 +1691,6 @@ describe('rounded', () => {
 				background-clip: border-box;
 				border-bottom-left-radius: 3px;
 				border-bottom-right-radius: 3px;
-			}`,
-			{ mixins: mixins }
-		);
-	});
-
-	it('should not add any declarations', () => {
-		return process(
-			`.block {
-				rounded(false);
-			}`,
-			`.block {
 			}`,
 			{ mixins: mixins }
 		);
@@ -1964,6 +1963,17 @@ describe('transition', () => {
 		);
 	});
 
+	it('should not output when first argument is false', () => {
+		return process(
+			`.block {
+				transition(false);
+			}`,
+			`.block {
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
 	it('should output transition: none when first argument is none', () => {
 		return process(
 			`.block {
@@ -2029,6 +2039,35 @@ describe('_codeBlockDefaults', () => {
 				word-wrap: break-word;
 			}`,
 			{ mixins: mixins }
+		);
+	});
+});
+
+describe('_containerPadding', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				_containerPadding();
+			}`,
+			`.block {
+				padding-left: 6%;
+				padding-right: 6%;
+			}`,
+			{mixins: mixins}
+		);
+	});
+
+	it('should not output when bumper.enabled is false', () => {
+		let newVars = vars();
+		newVars.bumper.enabled = false;
+
+		return process(
+			`.block {
+				_containerPadding();
+			}`,
+			`.block {
+			}`,
+			{mixins: mix(newVars)}
 		);
 	});
 });
