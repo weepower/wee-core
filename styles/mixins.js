@@ -922,17 +922,13 @@ module.exports = (vars = {}) => {
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number|string} [radius]
-		 * @returns {array|boolean}
+		 * @returns {Array}
 		 */
 		rounded(keyword, radius = vars.default.radius) {
 			let props = [
 					decl('background-clip', 'border-box')
 				],
 				keywords = ['top', 'right', 'bottom', 'left'];
-
-			if (keyword === false) {
-				return false;
-			}
 
 			if (keywords.includes(keyword)) {
 				let corners = [];
@@ -1101,10 +1097,6 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		transition(property = 'all', duration = vars.default.duration, easing = vars.default.timing, delay = '0s') {
-			if (property === false) {
-				return false;
-			}
-
 			if (property === 'none') {
 				return decl('transition', 'none');
 			}
