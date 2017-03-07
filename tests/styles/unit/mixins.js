@@ -1377,20 +1377,31 @@ describe('border', () => {
 		);
 	});
 
-	// TODO: Won't pass with current implementation of mixin
-	// it('should output default params not provided', () => {
-	// 	return process(
-	// 		`.block {
-	// 			border(1px);
-	// 			border($border.width, dotted);
-	// 		}`,
-	// 		`.block {
-	// 			border: 1px solid #bfbfbf;
-	// 			border: 1px dotted #bfbfbf;
-	// 		}`,
-	// 		{ mixins: mixins }
-	// 	);
-	// });
+	it('should output top and bottom border with supplied parameters', () => {
+		return process(
+			`.block {
+				border(black, style: dotted);
+			}`,
+			`.block {
+				border: 1px dotted black;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output default params when not provided', () => {
+		return process(
+			`.block {
+				border(blue);
+				border(width: $border.width, style: dotted);
+			}`,
+			`.block {
+				border: 1px solid blue;
+				border: 1px dotted #bfbfbf;
+			}`,
+			{ mixins: mixins }
+		);
+	});
 
 	it('should return border: none if first param is false, 0, none', () => {
 		return process(
