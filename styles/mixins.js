@@ -930,6 +930,10 @@ module.exports = (vars = {}) => {
 				],
 				keywords = ['top', 'right', 'bottom', 'left'];
 
+			if (keyword === false) {
+				return false;
+			}
+
 			if (keywords.includes(keyword)) {
 				let corners = [];
 
@@ -1097,6 +1101,10 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		transition(property = 'all', duration = vars.default.duration, easing = vars.default.timing, delay = '0s') {
+			if (property === false) {
+				return false;
+			}
+
 			if (property === 'none') {
 				return decl('transition', 'none');
 			}
