@@ -1463,9 +1463,7 @@ describe('rowModify', () => {
 			{ mixins: mixins }
 		);
 	});
-});
 
-describe('rowModify', () => {
 	it('should output override margins with override value', () => {
 		return process(
 			`.block {
