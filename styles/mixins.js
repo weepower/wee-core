@@ -83,6 +83,39 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Background Image
+		 *
+		 * @param {string} filename
+		 * @param {string} [repeat]
+		 * @param {string} [position]
+		 * @param {string} [size]
+		 * @param {string} [attachment]
+		 * @returns {Array}
+		 */
+		backgroundImage(filename, repeat = 'no-repeat', position, size, attachment) {
+			let props = [
+				decl('background-image', `url('${vars.image.path}${filename}')`),
+				decl('background-repeat', repeat)
+			];
+
+			if (position) {
+				props.push(decl('background-position', position));
+			}
+
+			if (size) {
+				props.push(decl('background-size', size));
+			}
+
+			if (attachment) {
+				props.push(decl('background-attachment', attachment));
+			}
+
+			return props;
+		},
+
+		backgroundGradient() {},
+
+		/**
 		 * Display block
 		 *
 		 * @param {number|string} [width]

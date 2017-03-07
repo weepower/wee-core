@@ -1228,6 +1228,64 @@ describe('background', () => {
 	});
 });
 
+describe('backgroundImage', () => {
+	it('should handle filename', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle filename with position', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg, position: 10% 25%);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+				background-position: 10% 25%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle filename with size', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg, size: cover);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+				background-size: cover;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				backgroundImage(size: cover, foo.jpg, repeat-x, attachment: fixed);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: repeat-x;
+				background-size: cover;
+				background-attachment: fixed;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('border', () => {
 	it('should output default properties if no args are supplied', () => {
 		return process(
