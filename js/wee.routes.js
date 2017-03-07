@@ -1,4 +1,4 @@
-/* jshint maxdepth: 6 */
+/* jshint maxdepth: 6, maxparams: 5 */
 
 (function(W, U) {
 	'use strict';
@@ -129,14 +129,10 @@
 
 					if (eq) {
 						// If ran is true then execute the route immediately
-						if (ran) {
-							if (object) {
-								_process(child, y, total, event, [opt, seg]);
-							} else {
-								W.$exec(child, {
-									args: seg
-								});
-							}
+						if (ran && ! object) {
+							W.$exec(child, {
+								args: seg
+							});
 						}
 
 						// If push is true then push the route to the any queue
@@ -186,7 +182,9 @@
 		uri: function(value) {
 			if (! value && uri) {
 				return uri;
-			} else if (W.$isObject(value)) {
+			}
+
+			if (W.$isObject(value)) {
 				return W.$extend(this.uri(), value);
 			}
 

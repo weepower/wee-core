@@ -1,7 +1,7 @@
 Wee.fn.make('extensions', {
 	_construct: function() {
-		var disabled = '{{ disabledClass }}',
-			active = '{{ activeClass }}';
+		var disabled = '{{ #disabledClass }}{{ . }}{{ else }}-disabled{{ /disabledClass }}',
+			active = '{{ #activeClass }}{{ . }}{{ else }}-active{{ /activeClass }}';
 
 		$.chain({
 			disable: function() {

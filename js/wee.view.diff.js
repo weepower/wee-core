@@ -136,7 +136,6 @@
 			unmatchedEls = {},
 
 			/**
-			 *
 			 * @param {HTMLElement} node
 			 * @param {boolean} nestedInSavedEl
 			 */
@@ -161,7 +160,6 @@
 			},
 
 			/**
-			 *
 			 * @param {HTMLElement} node
 			 */
 			walkDiscardedChildNodes = function(node) {
@@ -179,7 +177,6 @@
 			},
 
 			/**
-			 *
 			 * @param {HTMLElement} node
 			 * @param {HTMLElement} parentNode
 			 * @param {boolean} alreadyVisited
@@ -197,7 +194,6 @@
 			},
 
 			/**
-			 *
 			 * @param {HTMLElement} fromEl
 			 * @param {HTMLElement} toEl
 			 * @param {boolean} alreadyVisited

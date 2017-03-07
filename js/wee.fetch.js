@@ -151,7 +151,8 @@
 
 			// Prefix root path to url
 			if (conf.root) {
-				conf.url = (conf.root + '/' + conf.url).replace(/\/{2,}/g, '/');
+				conf.url = conf.root.replace(/\/$/, '') + '/' +
+					conf.url.replace(/^\//, '');
 			}
 
 			// Process JSONP
@@ -177,19 +178,18 @@
 
 			var contentTypeHeader = 'Content-Type',
 				method = conf.method.toUpperCase(),
+				str = typeof conf.data == 'string',
 				send = null,
 				headers = [];
+
+			if (! str && ! conf.type) {
+				conf.type = 'json';
+			}
 
 			// Format data based on specified verb
 			if (method == 'GET') {
 				conf.url = this._getUrl(conf);
 			} else {
-				var str = typeof conf.data == 'string';
-
-				if (! str && ! conf.type) {
-					conf.type = 'json';
-				}
-
 				send = str || conf.processData === false ?
 					conf.data :
 					conf.type == 'json' ?
@@ -259,7 +259,7 @@
 					W.$serialize(conf.data);
 			}
 
-			if (url[0] != '/' && ! /^(?:[a-z]+:)?\/\//i.test(url)) {
+			if (url[0] != '/' && ! /^https?:\/\//i.test(url)) {
 				url = '/' + url;
 			}
 
