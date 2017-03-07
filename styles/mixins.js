@@ -117,10 +117,13 @@ module.exports = (vars = {}) => {
 		/**
 		 * Border
 		 *
-		 * @param args
-		 * @returns {*}
+		 * @param {boolean|number|string} keyword
+		 * @param {number|string} [color]
+		 * @param {number|string} [width]
+		 * @param {string} [style]
+		 * @returns {Array}
 		 */
-		border(...args) {
+		border(keyword, color = vars.border.color, width = vars.border.width, style = vars.border.style) {
 			let keywords = [
 					'top',
 					'right',
@@ -129,52 +132,72 @@ module.exports = (vars = {}) => {
 					'vertical',
 					'horizontal'
 				],
-				defaultValues = [
-					vars.border.width,
-					vars.border.style,
-					vars.border.color
-				],
-				borders = [],
-				keyword = null,
-				values = [];
-
-			if (args[0] === false || args[0] === 0 || args[0] === 'none') {
-				return decl('border', 'none');
-			}
-
-			// Default border
-			if (isEmpty(args)) {
-				return decl('border', defaultValues.join(' '));
-			}
-
-			if (keywords.includes(args[0])) {
-				keyword = args[0];
-				args.splice(0, 1);
-			}
-
-			values.push(unit(args[1] || defaultValues[0], 'border-width'));
-			values.push(unit(args[2] || defaultValues[1], 'border-style'));
-			values.push(unit(args[0] || defaultValues[2], 'border-color'));
-
-			if (keyword == 'vertical') {
-				borders = [
-					'border-top',
-					'border-bottom'
+				props = [
+					decl('border', `${width} ${style} ${color}`)
 				];
-			} else if (keyword == 'horizontal') {
-				borders = [
-					'border-left',
-					'border-right'
-				];
-			} else if (keyword) {
-				borders.push(prefix(keyword, 'border'));
+
+			// If resetting
+			if (keyword === 0 || keyword === false || keyword === 'none') {
+				props[0] = decl('border', 'none');
+
+				return props;
 			}
 
-			if (borders.length) {
-				return decl.createMany(borders, values.join(' '));
+			// If using keyword
+			if (keyword && keywords.includes(keyword)) {
+				let value = `${width} ${style} ${color}`;
+
+				if (keyword === 'horizontal') {
+					return decl.createMany([
+						'border-left',
+						'border-right'
+					], value);
+				}
+
+				if (keyword === 'vertical') {
+					return decl.createMany([
+						'border-top',
+						'border-bottom'
+					], value);
+				}
+
+				if (keyword === 'top') {
+					props[0] = decl('border-top', value);
+
+					return props;
+				}
+
+				if (keyword === 'right') {
+					props[0] = decl('border-right', value);
+
+					return props;
+				}
+
+				if (keyword === 'bottom') {
+					props[0] = decl('border-bottom', value);
+
+					return props;
+				}
+
+				if (keyword === 'left') {
+					props[0] = decl('border-left', value);
+
+					return props;
+				}
 			}
 
-			return decl('border', values.join(' '));
+			if (keyword && isColor(keyword)) {
+				let args = [].slice.call(arguments);
+
+				// Shifts arguments down
+				style = args[2] || style;
+				width = args[1] || width;
+				color = args[0] || color;
+
+				props[0] = decl('border', `${width} ${style} ${color}`);
+			}
+
+			return props;
 		},
 
 		/**
