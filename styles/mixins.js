@@ -346,6 +346,77 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Reset grid column
+		 *
+		 * @param {boolean} [resetMargin]
+		 * @returns {Array}
+		 */
+		columnReset(resetMargin = false) {
+			let props = [
+				decl('float', 'none'),
+				decl('width', 'auto')
+			];
+
+			if (resetMargin) {
+				props.push(decl('margin-left', 0));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Pull grid column
+		 *
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @returns {Array}
+		 */
+		columnPull(share, columns = vars.grid.columns) {
+			return [
+				decl('position', 'relative'),
+				decl('right', toPercentage(1 / columns * share))
+			];
+		},
+
+		/**
+		 * Push grid column
+		 *
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @returns {Array}
+		 */
+		columnPush(share, columns = vars.grid.columns) {
+			return [
+				decl('left', toPercentage(1 / columns * share)),
+				decl('position', 'relative')
+			];
+		},
+
+		/**
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @param {number|string} [margin]
+		 * @returns {Object}
+		 */
+		columnOffset(keyword, share, columns = vars.grid.columns, margin = (toPercentage(toNumber(vars.grid.margin) / 2))) {
+			let left = (1 / columns) * share,
+				spacing = toNumber(margin) * 2;
+
+			if (keyword === 'spaced') {
+				return decl('margin-left', toPercentage(left + spacing));
+			}
+
+			if (isNumber(keyword)) {
+				columns = share;
+				share = keyword;
+			}
+
+			return decl('margin-left', toPercentage(1 / columns * share));
+		},
+
+		/**
 		 * Columns
 		 *
 		 * @param {number} count

@@ -1575,6 +1575,226 @@ describe('column', () => {
 	});
 });
 
+describe('columnModify', () => {
+	describe('with keyword', () => {
+		it('should handle share amount', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 2);
+				}`,
+				`.block {
+					margin-left: 5%;
+					width: 20%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle share and columns count', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 2, 4);
+				}`,
+				`.block {
+					margin-left: 5%;
+					width: 45%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 3, margin: 4%);
+				}`,
+				`.block {
+					margin-left: 4%;
+					width: 33.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should handle share and columns count', () => {
+			return process(
+				`.block {
+					columnModify(2, 4);
+				}`,
+				`.block {
+					width: 50%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnModify(columns: 3, 2);
+				}`,
+				`.block {
+					width: 66.66666666666666%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('columnOffset', () => {
+	describe('with keyword', () => {
+		it('should handle share amount', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, 1);
+				}`,
+				`.block {
+					margin-left: 17.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle share and margin', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, 1, margin: 6%);
+				}`,
+				`.block {
+					margin-left: 24.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, columns: 3, share: 1);
+				}`,
+				`.block {
+					margin-left: 38.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should handle share and column', () => {
+			return process(
+				`.block {
+				columnOffset(3, 4);
+			}`,
+				`.block {
+				margin-left: 75%;
+			}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnOffset(columns: 3, share: 1);
+				}`,
+				`.block {
+					margin-left: 33.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('columnPull', () => {
+	it('should handle share amount', () => {
+		return process(
+			`.block {
+				columnPull(2);
+			}`,
+			`.block {
+				position: relative;
+				right: 25%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				columnPull(columns: 4, share: 2);
+			}`,
+			`.block {
+				position: relative;
+				right: 50%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('columnPush', () => {
+	it('should handle share amount', () => {
+		return process(
+			`.block {
+				columnPush(2);
+			}`,
+			`.block {
+				left: 25%;
+				position: relative;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				columnPush(columns: 4, share: 2);
+			}`,
+			`.block {
+				left: 50%;
+				position: relative;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('columnReset', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				columnReset();
+			}`,
+			`.block {
+				float: none;
+				width: auto;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle resetting margin', () => {
+		return process(
+			`.block {
+				columnReset(true);
+			}`,
+			`.block {
+				float: none;
+				width: auto;
+				margin-left: 0;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('boxSizing', () => {
 	it('should output default value', () => {
 		return process(
