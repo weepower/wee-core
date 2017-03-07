@@ -349,15 +349,14 @@ module.exports = (vars = {}) => {
 		 * Columns
 		 *
 		 * @param {number} count
-		 * @param {number} gap
+		 * @param {number|string} gap
 		 * @param {string} style
 		 * @param {number|string} width
 		 * @returns {Array}
 		 */
 		columns(count = 2, gap, style, width = '1px') {
 			let props = [
-				decl('column-count', count),
-				decl('column-rule-width', width)
+				decl('column-count', count)
 			];
 
 			if (gap) {
@@ -367,6 +366,8 @@ module.exports = (vars = {}) => {
 			if (style) {
 				props.push(decl('column-rule-style', style));
 			}
+
+			props.push(decl('column-rule-width', width));
 
 			return props;
 		},

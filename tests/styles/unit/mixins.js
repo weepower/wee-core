@@ -1591,6 +1591,64 @@ describe('boxSizing', () => {
 	});
 });
 
+describe('columns', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				columns();
+			}`,
+			`.block {
+				column-count: 2;
+				column-rule-width: 1px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output declaration with provided arguments', () => {
+		return process(
+			`.block {
+				columns(3, 3px, hidden, medium);
+			}`,
+			`.block {
+				column-count: 3;
+				column-gap: 3px;
+				column-rule-style: hidden;
+				column-rule-width: medium;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				columns(gap: 3px, count: 3);
+			}`,
+			`.block {
+				column-count: 3;
+				column-gap: 3px;
+				column-rule-width: 1px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle different argument types', () => {
+		return process(
+			`.block {
+				columns(3, style: dotted);
+			}`,
+			`.block {
+				column-count: 3;
+				column-rule-style: dotted;
+				column-rule-width: 1px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('containerMinWidth', () => {
 	it('should add min-width to html and body if min width not 0', () => {
 		let newVars = vars();
