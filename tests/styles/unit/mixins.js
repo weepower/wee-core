@@ -1620,6 +1620,48 @@ describe('rowReset', () => {
 	});
 });
 
+describe('inlineRow', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				inlineRow();
+			}`,
+			`.block {
+				margin-left: -5%;
+				max-width: 105%;
+				letter-spacing: -.32em;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			`.block {
+				inlineRow(4%, true);
+			}`,
+			`.block {
+				margin-left: -4%;
+				max-width: 104%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				inlineRow(spaceless: true, margin: 6%);
+			}`,
+			`.block {
+				margin-left: -6%;
+				max-width: 106%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('prefix', () => {
 	it('should output default values', () => {
 		return process(

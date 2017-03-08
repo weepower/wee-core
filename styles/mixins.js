@@ -817,6 +817,26 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Inline grid row
+		 *
+		 * @param {string} [margin]
+		 * @param {boolean} [spaceless]
+		 * @returns {Array}
+		 */
+		inlineRow(margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
+			let props = [
+				decl('margin-left', toPercentage(toNumber(margin) * -1)),
+				decl('max-width', toPercentage(1 + toNumber(margin)))
+			];
+
+			if (! spaceless) {
+				props.push(decl('letter-spacing', '-.32em'));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Font style italic
 		 *
 		 * @return {Object}
