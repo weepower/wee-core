@@ -1551,6 +1551,272 @@ describe('rowReset', () => {
 	});
 });
 
+describe('prefix', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '-';
+						margin-right: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(attr(data-attr), 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: attr(data-attr);
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: .5em;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('suffix', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '-';
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '~';
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(attr(data-attr), 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: attr(data-attr);
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '~';
+						margin-left: .5em;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('bookends', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '-';
+						margin-right: .5em
+					}
+					&:after {
+						content: '-';
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+					&:after {
+						content: '~';
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(attr(data-attr));
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: attr(data-attr);
+						margin-right: .5em
+					}
+					&:after {
+						content: attr(data-attr);
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: .5em;
+						color: blue
+					}
+					&:after {
+						content: '~';
+						margin-left: .5em;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('column', () => {
 	it('should output default width', () => {
 		return process(

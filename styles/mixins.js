@@ -997,6 +997,82 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Prefix
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Object}
+		 */
+		prefix(value = '-', margin = '.5em', font = false, color = false) {
+			let props = [
+				decl('content', `'${value}'`),
+				decl('margin-right', margin)
+			];
+
+			if (value.indexOf('attr') === 0) {
+				props[0] = decl('content', value);
+			}
+
+			if (font) {
+				props.push(decl('font-family', font));
+			}
+
+			if (color) {
+				props.push(decl('color', color));
+			}
+
+			return rule('&:before', props);
+		},
+
+		/**
+		 * Suffix
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Object}
+		 */
+		suffix(value = '-', margin = '.5em', font = false, color = false) {
+			let props = [
+				decl('content', `'${value}'`),
+				decl('margin-left', margin)
+			];
+
+			if (value.indexOf('attr') === 0) {
+				props[0] = decl('content', value);
+			}
+
+			if (font) {
+				props.push(decl('font-family', font));
+			}
+
+			if (color) {
+				props.push(decl('color', color));
+			}
+
+			return rule('&:after', props);
+		},
+
+		/**
+		 * Bookends
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Array}
+		 */
+		bookends(value = '-', margin = '.5em', font = false, color = false) {
+			return [
+				this.prefix(value, margin, font, color),
+				this.suffix(value, margin, font, color)
+			];
+		},
+
+		/**
 		 *
 		 * @param {string} value
 		 * @returns {array}
