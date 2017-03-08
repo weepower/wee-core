@@ -1228,6 +1228,75 @@ describe('background', () => {
 	});
 });
 
+describe('backgroundGradient', () => {
+	describe('with keyword', () => {
+		it('should handle dark', () => {
+			return process(
+				`.block {
+					backgroundGradient(dark);
+				}`,
+				`.block {
+					background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle light with angle', () => {
+			return process(
+				`.block {
+					backgroundGradient(light, angle: 45);
+				}`,
+				`.block {
+					background: linear-gradient(45deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output default values', () => {
+			return process(
+				`.block {
+				backgroundGradient();
+			}`,
+				`.block {
+				background-color: gray;
+				background: linear-gradient(180deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
+			}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle color and angle', () => {
+			return process(
+				`.block {
+					backgroundGradient(blue, angle: 90);
+				}`,
+				`.block {
+					background-color: blue;
+					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					backgroundGradient(angle: 90, end: rgba(0, 0, 0, 0));
+				}`,
+				`.block {
+					background-color: gray;
+					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, 0));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
 describe('backgroundImage', () => {
 	it('should handle filename', () => {
 		return process(

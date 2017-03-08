@@ -113,7 +113,42 @@ module.exports = (vars = {}) => {
 			return props;
 		},
 
-		backgroundGradient() {},
+		/**
+		 * Background gradient
+		 *
+		 * @param {string} [color]
+		 * @param {string} [start]
+		 * @param {string} [end]
+		 * @param {number} [angle]
+		 * @returns {Array}
+		 */
+		backgroundGradient(color = 'gray', start = 'rgba(0, 0, 0, .8)', end = 'rgba(0, 0, 0, .2)', angle = 180) {
+			let props = [
+					decl('background-color', color)
+				],
+				keywords = ['dark', 'light'];
+
+			if (keywords.includes(color)) {
+				let rgb = '0, 0, 0';
+
+				if (color === 'dark') {
+					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+
+					return props;
+				}
+
+				if (color === 'light') {
+					rgb = '255, 255, 255';
+					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+
+					return props;
+				}
+			}
+
+			props.push(decl('background', `linear-gradient(${angle}deg, ${start}, ${end})`));
+
+			return props;
+		},
 
 		/**
 		 * Display block
