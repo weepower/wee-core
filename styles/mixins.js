@@ -1065,6 +1065,34 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Circle
+		 *
+		 * @param {number} diameter
+		 * @param {boolean} [crop]
+		 * @param {string} [display]
+		 * @returns {Array}
+		 */
+		circle(diameter, crop, display = 'block') {
+			let props = [
+				decl('height', diameter),
+				decl('width', diameter),
+				decl('display', display)
+			];
+
+			props = props.concat(this.rounded(diameter / 2));
+
+			if (crop) {
+				props.push(decl('overflow', 'hidden'));
+			}
+
+			if (display === 'inline') {
+				props[2] = decl('display', 'inline-block');
+			}
+
+			return props;
+		},
+
+		/**
 		 * Opacity
 		 *
 		 * @param  {string} value

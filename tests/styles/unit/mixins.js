@@ -1159,6 +1159,57 @@ describe('square', () => {
 	});
 });
 
+describe('circle', () => {
+	it('should handle diameter', () => {
+		return process(
+			`.block {
+				circle(.5);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle diameter and crop', () => {
+		return process(
+			`.block {
+				circle(.5, true);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
+				overflow: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				circle(.5, display: inline);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: inline-block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('bold', () => {
 	it('should output font-weight with default bold font weight', () => {
 		return process(
