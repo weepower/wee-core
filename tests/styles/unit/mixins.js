@@ -3554,3 +3554,49 @@ describe('loadFont', () => {
 		);
 	});
 });
+
+describe('ellipsis', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				ellipsis();
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle max-width', () => {
+		return process(
+			`.block {
+				ellipsis(800px);
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 800px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle max-width with default unit', () => {
+		return process(
+			`.block {
+				ellipsis(80);
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 80rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});

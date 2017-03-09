@@ -722,6 +722,26 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Ellipsis
+		 *
+		 * @param {boolean|number|string} [maxWidth]
+		 * @returns {Array}
+		 */
+		ellipsis(maxWidth = false) {
+			let props = [
+				decl('overflow-x', 'hidden'),
+				decl('text-overflow', 'ellipsis'),
+				decl('white-space', 'nowrap')
+			];
+
+			if (maxWidth) {
+				props.push(decl('max-width', maxWidth));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Fixed positioning
 		 *
 		 * @param {number|string} [top]
