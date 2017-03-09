@@ -1052,6 +1052,19 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Square
+		 *
+		 * @param {number|string} size
+		 * @returns {Array}
+		 */
+		square(size) {
+			return [
+				decl('height', size),
+				decl('width', size)
+			];
+		},
+
+		/**
 		 * Opacity
 		 *
 		 * @param  {string} value

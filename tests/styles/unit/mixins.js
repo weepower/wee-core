@@ -1131,6 +1131,34 @@ describe('minSize', () => {
 	});
 });
 
+describe('square', () => {
+	it('should use argument for width and height', () => {
+		return process(
+			`.block {
+				square(100px);
+			}`,
+			`.block {
+				height: 100px;
+				width: 100px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				square(10);
+			}`,
+			`.block {
+				height: 10rem;
+				width: 10rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('bold', () => {
 	it('should output font-weight with default bold font weight', () => {
 		return process(
