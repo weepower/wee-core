@@ -1264,21 +1264,20 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		shadow(keyword, opacity = vars.default.opacity) {
-			let keywords = ['dark', 'light'];
+			let keywords = ['dark', 'light'],
+				rgb = '0, 0, 0';
 
 			if (keywords.includes(keyword)) {
-				let rgb = keyword === 'dark' ?
-					'0, 0, 0' :
-					'255, 255, 255';
-
-				return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`)
+				if (keyword === 'light') {
+					rgb = '255, 255, 255';
+				}
 			}
 
 			if (isNumber(keyword)) {
 				opacity = keyword;
 			}
 
-			return decl('box-shadow', `1px 1px 0 0 rgba(0, 0, 0, ${opacity})`);
+			return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`);
 		},
 
 		/**
