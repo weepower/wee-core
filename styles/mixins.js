@@ -269,6 +269,24 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Border image
+		 *
+		 * @param filename
+		 * @param {number|string} [slice]
+		 * @param {number|string} [width]
+		 * @param {number|string} [outset]
+		 * @param {string} [repeat]
+		 * @returns {Object}
+		 */
+		borderImage(filename, slice = '100%', width = 1, outset = 0, repeat = 'stretch') {
+			if (! filename) {
+				return false;
+			}
+
+			return decl('border-image', `url('${vars.image.path}${filename}') ${slice} ${width} ${outset} ${repeat}`);
+		},
+
+		/**
 		 * Apply default value to box sizing
 		 *
 		 * @param {string} value

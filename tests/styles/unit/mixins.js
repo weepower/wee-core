@@ -1547,6 +1547,55 @@ describe('border', () => {
 	});
 });
 
+describe('borderImage', () => {
+	it('should output filename with default values', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 100% 1 0 stretch;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output nothing when no values are passed', () => {
+		return process(
+			`.block {
+				borderImage();
+			}`,
+			`.block {
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg, 50%, 3);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 50% 3 0 stretch;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg, outset: 1.5, repeat: round);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 100% 1 1.5 round;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 // Note: Generated rules will not add semi-colon to last declaration.
 // This is supported by the CSS spec.
 describe('clearfix', () => {
