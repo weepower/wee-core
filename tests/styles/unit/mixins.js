@@ -3601,3 +3601,26 @@ describe('ellipsis', () => {
 		);
 	});
 });
+
+describe('noClear', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					noClear();
+				}
+			`,
+			stripIndent`
+				.block {
+					&::-ms-clear {
+						display: none
+					}
+					&::-webkit-search-cancel-button {
+						-webkit-appearance: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});

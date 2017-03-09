@@ -1204,6 +1204,22 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Hide clear/cancel button in search inputs
+		 *
+		 * @returns {Array}
+		 */
+		noClear() {
+			return [
+				rule('&::-ms-clear', [
+					decl('display', 'none')
+				]),
+				rule('&::-webkit-search-cancel-button', [
+					decl('-webkit-appearance', 'none')
+				])
+			];
+		},
+
+		/**
 		 * Opacity
 		 *
 		 * @param  {string} value
