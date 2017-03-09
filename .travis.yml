@@ -3,6 +3,7 @@ language: node_js
 branches:
   except:
   - feature/v4
+  - v4/mixins
 
 node_js:
   - '6'
