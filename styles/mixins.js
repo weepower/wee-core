@@ -819,9 +819,10 @@ module.exports = (vars = {}) => {
 		 * @param {number|string} weight
 		 * @param {string} lineHeight
 		 * @param {string} style
+		 * @param {number|string} spacing
 		 * @returns {Array}
 		 */
-		font(family = vars.font.family, size, weight, lineHeight, style) {
+		font(family = vars.font.family, size, weight, lineHeight, style, spacing) {
 			let props = [
 				decl('font-family', family)
 			];
@@ -840,6 +841,10 @@ module.exports = (vars = {}) => {
 
 			if (style) {
 				props.push(decl('font-style', style));
+			}
+
+			if (spacing) {
+				props.push(decl('letter-spacing', spacing));
 			}
 
 			return props;

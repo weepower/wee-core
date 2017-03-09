@@ -791,12 +791,13 @@ describe('font', () => {
 	it('should output specified values by property', () => {
 		return process(
 			`.block {
-				font(style: italic, weight: 300);
+				font(style: italic, weight: 300, spacing: 1px);
 			}`,
 			`.block {
 				font-family: Arial, Helvetica, sans-serif;
 				font-weight: 300;
 				font-style: italic;
+				letter-spacing: 1px;
 			}`,
 			{ mixins: mixins }
 		);
