@@ -1596,6 +1596,59 @@ describe('borderImage', () => {
 	});
 });
 
+describe('caret', () => {
+	it('should handle up keyword', () => {
+		return process(
+			`.block {
+				caret(up);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-left: 5px solid transparent;
+				border-right: 5px solid transparent;
+				border-bottom: 5px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle left keyword with color and size values', () => {
+		return process(
+			`.block {
+				caret(left, blue, 2px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 2px solid transparent;
+				border-bottom: 2px solid transparent;
+				border-right: 2px solid blue;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				caret(right, size: 3px, width: 4px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 4px solid transparent;
+				border-bottom: 4px solid transparent;
+				border-left: 3px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 // Note: Generated rules will not add semi-colon to last declaration.
 // This is supported by the CSS spec.
 describe('clearfix', () => {

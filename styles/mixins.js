@@ -297,6 +297,47 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Caret
+		 *
+		 * @param keyword
+		 * @param {string} [color]
+		 * @param {number|string} [size]
+		 * @param {number|string} [width]
+		 * @returns {Array}
+		 */
+		caret(keyword, color = vars.colors.darkGray, size = '5px', width = size) {
+			let props = [
+				this.content(),
+				decl('height', 0),
+				decl('width', 0)
+			];
+
+			if (keyword === 'up' || keyword === 'down') {
+				props = props.concat(this.border('horizontal', 'transparent', width));
+
+				if (keyword === 'up') {
+					props = props.concat(this.border('bottom', color, size));
+				} else {
+					props = props.concat(this.border('top', color, size));
+				}
+
+				return props;
+			}
+
+			if (keyword === 'left' || keyword === 'right') {
+				props = props.concat(this.border('vertical', 'transparent', width));
+
+				if (keyword === 'left') {
+					props = props.concat(this.border('right', color, size));
+				} else {
+					props = props.concat(this.border('left', color, size));
+				}
+
+				return props;
+			}
+		},
+
+		/**
 		 * A block level element, centered with margin
 		 *
 		 * @param {number|string} [maxWidth]
