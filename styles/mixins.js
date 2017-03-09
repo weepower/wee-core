@@ -1010,6 +1010,27 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Output max-width and/or max-height
+		 *
+		 * @param {number|string} width
+		 * @param {number|string} [height]
+		 * @returns {Array}
+		 */
+		maxSize(width, height) {
+			let props = [
+				decl('max-width', width)
+			];
+
+			if (! height) {
+				props.push(decl('max-height', width));
+			} else {
+				props.push(decl('max-height', height));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Output min-width and/or min-height
 		 *
 		 * @param {string|number} width

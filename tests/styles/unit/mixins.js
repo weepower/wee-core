@@ -1049,6 +1049,47 @@ describe('size', () => {
 	});
 });
 
+describe('maxSize', () => {
+	it('should use first argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				maxSize(100);
+			}`,
+			`.block {
+				max-width: 100rem;
+				max-height: 100rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use first argument for width and height with override unit', () => {
+		return process(
+			`.block {
+				maxSize(100%);
+			}`,
+			`.block {
+				max-width: 100%;
+				max-height: 100%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use arguments for width and height', () => {
+		return process(
+			`.block {
+				maxSize(100%, 20%);
+			}`,
+			`.block {
+				max-width: 100%;
+				max-height: 20%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('minSize', () => {
 	it('should use first argument for width and height with default unit', () => {
 		return process(
