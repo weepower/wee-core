@@ -876,6 +876,56 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Inline grid column
+		 *
+		 * @param {string} [keyword]
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @param {number|string} [margin]
+		 * @param {boolean} [spaceless]
+		 */
+		inlineColumn(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
+			let props = [
+				decl('display', 'inline-block'),
+				decl('vertical-align', 'top')
+			];
+
+			if (keyword === 'spaced') {
+				props = props.concat([
+					decl('margin-left', margin),
+					decl('width', toPercentage(((1 / columns) * share) - toNumber(margin)))
+				]);
+
+				if (! spaceless) {
+					props.push(decl('letter-spacing', 'normal'));
+				}
+
+				return props;
+			}
+
+			if (keyword && isNumber(keyword)) {
+				let args = [].slice.call(arguments);
+
+				// Shifts arguments down
+				// Margin is replaced by spaceless
+				spaceless = args[2] || spaceless;
+
+				// TODO: Should margin be shifted if it's no longer relevant?
+				// margin = args[2] || margin;
+				columns = args[1] || columns;
+				share = args[0] || share;
+
+				props.push(decl('width', toPercentage((1 / columns) * share)));
+
+				if (! spaceless) {
+					props.push(decl('margin-right', '-.32em'));
+				}
+
+				return props;
+			}
+		},
+
+		/**
 		 * Inline grid row
 		 *
 		 * @param {string} [margin]

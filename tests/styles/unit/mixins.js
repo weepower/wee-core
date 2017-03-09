@@ -1926,6 +1926,102 @@ describe('rowReset', () => {
 	});
 });
 
+describe('inlineColumn', () => {
+	describe('with keyword', () => {
+		it('should output share with default values', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 5%;
+					width: 7.5%;
+					letter-spacing: normal;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should output provided values', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1, 3, 4%, true);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 4%;
+					width: 29.333333333333332%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1, margin: 4%, spaceless: true, columns: 3);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 4%;
+					width: 29.333333333333332%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output share with default values', () => {
+			return process(
+				`.block {
+					inlineColumn(1);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 12.5%;
+					margin-right: -.32em;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should output provided values', () => {
+			return process(
+				`.block {
+					inlineColumn(1, 3, true);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 33.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		// TODO: This test passes despite the value of spaceless
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					inlineColumn(2, columns: 4, spaceless: false);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 50%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
 describe('inlineRow', () => {
 	it('should output default values', () => {
 		return process(
