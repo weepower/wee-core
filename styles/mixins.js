@@ -607,6 +607,18 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Fill
+		 *
+		 * @returns {Array}
+		 */
+		fill() {
+			return [
+				decl('height', '100%'),
+				decl('width', '100%')
+			];
+		},
+
+		/**
 		 * Filter
 		 *
 		 * @param {string} value

@@ -3624,3 +3624,18 @@ describe('noClear', () => {
 		);
 	});
 });
+
+describe('fill', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				fill();
+			}`,
+			`.block {
+				height: 100%;
+				width: 100%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
