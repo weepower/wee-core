@@ -1065,6 +1065,42 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Ratio
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [ratio]
+		 * @returns {Array}
+		 */
+		ratio(keyword, ratio = 16 / 9) {
+			if (keyword === 'embed') {
+				let before = [
+						this.content()
+					],
+					props = [];
+
+				before = before.concat(this.ratio(ratio));
+				props = props.concat([
+					decl('overflow', 'hidden'),
+					decl('position', 'relative')
+				]);
+
+				props.push(rule('&:before', before));
+
+				return props;
+			}
+
+			if (isNumber(keyword)) {
+				ratio = keyword;
+			}
+
+			return [
+				decl('display', 'block'),
+				decl('height', 0),
+				decl('padding-top', toPercentage(1 / ratio))
+			];
+		},
+
+		/**
 		 * Circle
 		 *
 		 * @param {number} diameter

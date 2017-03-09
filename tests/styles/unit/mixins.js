@@ -1159,6 +1159,90 @@ describe('square', () => {
 	});
 });
 
+describe('ratio', () => {
+	describe('with keyword', () => {
+		it('should output default values', () => {
+			return process(
+				stripIndent`
+					.block {
+						ratio(embed);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+						&:before {
+							content: '';
+							display: block;
+							height: 0;
+							padding-top: 56.25%
+						}
+					}
+				`,
+				{ mixins: mixins }
+			);
+		});
+
+		// TODO: Test fails when using a fraction, 4/3, because parser doesn't
+		// handle division
+		it('should handle ratio', () => {
+			return process(
+				stripIndent`
+					.block {
+						ratio(embed, 1);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+						&:before {
+							content: '';
+							display: block;
+							height: 0;
+							padding-top: 100%
+						}
+					}
+				`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output default values', () => {
+			return process(
+				`.block {
+					ratio();
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 56.25%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		// TODO: Test fails when using a fraction, 4/3, because parser doesn't
+		// handle division
+		it('should handle ratio', () => {
+			return process(
+				`.block {
+					ratio(1);
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 100%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
 describe('circle', () => {
 	it('should handle diameter', () => {
 		return process(
