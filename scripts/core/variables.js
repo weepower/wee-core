@@ -1,4 +1,4 @@
-import { isBrowser } from 'core';
+import { isBrowser } from 'core/core';
 
 const D = isBrowser ? window.document : {};
 const scope = isBrowser ? window : global;
