@@ -1,4 +1,4 @@
-import { $env, $envReset } from 'core/core';
+import { $env, $envReset, $exec } from 'core/core';
 
 describe('Core', () => {
 	describe('$env', () => {
@@ -27,6 +27,57 @@ describe('Core', () => {
 				prod: 'notthesite.com'
 			}, 'notLocal');
 			expect($env()).to.equal('notLocal');
+		});
+	});
+
+	describe('$exec', () => {
+		it('should execute supplied function', () => {
+			let count = 0,
+				fn = function() {
+					return ++count;
+				};
+
+			expect($exec(fn)).to.be.equal(1);
+		});
+
+		it('should optionally inject scope', () => {
+			let fn = function() {
+					return this.prop;
+				},
+				scope = {prop: 'value'};
+
+			expect($exec(fn, {
+				scope: scope
+			})).to.equal('value');
+		});
+
+		it('should optionally pass arguments array', () => {
+			let fn = function() {
+					return arguments[1];
+				};
+
+			expect($exec(fn, {
+				args: [0, 1]
+			})).to.equal(1);
+		});
+
+		it('should execute multiple functions', () => {
+			let count = 0,
+				fn = function() {
+					count++;
+				};
+
+			$exec([fn, fn]);
+
+			expect(count).to.equal(2);
+		});
+
+		it('should not return value if executing multiple functions', () => {
+			let fn = function() {
+					return true;
+				};
+
+			expect($exec([fn, fn])).to.equal(undefined);
 		});
 	});
 });
