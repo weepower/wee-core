@@ -432,13 +432,14 @@
 
 			// Compile success events
 			var replaceEvent = function(x) {
-				var html = x && x.responseText ? x.responseText : x;
+				var html = x && x.responseText ? x.responseText : x,
+					modHtml;
 
 				if (conf.replace) {
-					html = W.$exec(conf.replace, {
+					modHtml = W.$exec(conf.replace, {
 						args: [html, conf]
 					});
-					html = html === false ? false : html;
+					html = html === false ? false : modHtml || html;
 				}
 
 				// Evaluate unload routes against current path
