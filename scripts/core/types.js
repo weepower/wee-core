@@ -1,4 +1,14 @@
 /**
+ * Determine if value is an array
+ *
+ * @param {*} obj
+ * @returns {boolean}
+ */
+export const $isArray = obj => {
+	return Array.isArray(obj);
+};
+
+/**
  * Determine if value is a function
  *
  * @param {*} obj

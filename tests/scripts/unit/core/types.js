@@ -1,4 +1,4 @@
-import { $type, $isFunction, $toArray } from 'core/types';
+import { $type, $isArray, $isFunction, $toArray } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$type', () => {
@@ -37,9 +37,17 @@ describe('Core: Types', () => {
 		});
 	});
 
+	describe('$isArray', () => {
+		it('should identify array', () => {
+			expect($isArray([])).to.be.true;
+			expect($isArray({})).to.be.false;
+		});
+	});
+
 	describe('$isFunction', () => {
 		it('should identify functions', () => {
 			expect($isFunction(function(){})).to.be.true;
+			expect($isArray({})).to.be.false;
 		});
 	});
 
