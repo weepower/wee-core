@@ -19,6 +19,34 @@ export const $isFunction = obj => {
 };
 
 /**
+ * Determine if value is a number (optional loose match)
+ *
+ * @param {*} obj
+ * @param {boolean} [strict]
+ * @returns {boolean}
+ */
+export const $isNumber = (obj, strict = true) => {
+	if (! strict) {
+		let value = parseInt(obj);
+
+		// If value = NaN, will not be equal
+		return value === value;
+	}
+
+	return $type(obj) == 'number';
+};
+
+/**
+ * Determine if value is a string
+ *
+ * @param {*} obj
+ * @returns {boolean}
+ */
+export const $isString = obj => {
+	return typeof obj == 'string';
+};
+
+/**
  * Cast value to array if it isn't one
  *
  * @param {*} val

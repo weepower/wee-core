@@ -1,4 +1,4 @@
-import { $type, $isArray, $isFunction, $toArray } from 'core/types';
+import { $type, $isArray, $isFunction, $isNumber, $isString, $toArray } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$type', () => {
@@ -48,6 +48,27 @@ describe('Core: Types', () => {
 		it('should identify functions', () => {
 			expect($isFunction(function(){})).to.be.true;
 			expect($isArray({})).to.be.false;
+		});
+	});
+
+	describe('$isNumber', () => {
+		it('should identify numbers', () => {
+			expect($isNumber(1)).to.be.true;
+			expect($isNumber('1')).to.be.false;
+		});
+
+		it('should identify string number as number when not strict', () => {
+			expect($isNumber('1', false)).to.be.true;
+			expect($isNumber('test', false)).to.be.false;
+			expect($isNumber('1test', false)).to.be.true;
+		});
+	});
+
+	describe('$isString', () => {
+		it('should identify strings', () => {
+			expect($isString('string')).to.be.true;
+			expect($isString('1')).to.be.true;
+			expect($isString(1)).to.be.false;
 		});
 	});
 
