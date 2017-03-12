@@ -1,3 +1,6 @@
+const fs = require('fs');
+const resolve = require('path').resolve;
+
 module.exports = function(config) {
 	config.set({
 		// base path that will be used to resolve all patterns (eg. files, exclude)
@@ -35,7 +38,12 @@ module.exports = function(config) {
 		},
 
 		// web server port
+		protocol: 'http',
 		port: 9876,
+		httpsServerOptions: {
+			key: fs.readFileSync(resolve(__dirname, '../https/server.key'), 'utf8'),
+			cert: fs.readFileSync(resolve(__dirname, '../https/server.crt'), 'utf8')
+		},
 
 		// enable / disable colors in the output (reporters and logs)
 		colors: true,
