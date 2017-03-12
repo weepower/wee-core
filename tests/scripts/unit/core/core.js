@@ -1,6 +1,6 @@
 import { $env, $envReset, $envSecure, $exec, $extend } from 'core/core';
 
-describe('Core', () => {
+describe('Core: Core', () => {
 	describe('$env', () => {
 		beforeEach(() => {
 			$envReset();
