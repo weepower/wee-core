@@ -1,6 +1,35 @@
-import { $type, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray } from 'core/types';
+import { $equals, $type, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray } from 'core/types';
 
 describe('Core: Types', () => {
+	describe('$equals', () => {
+		it('should determine equality of strings', () => {
+			expect($equals('a', 'a')).to.be.true;
+			expect($equals('a', 'b')).to.be.false;
+		});
+
+		it('should determine equality of numbers', () => {
+			expect($equals(2, 2)).to.be.true;
+			expect($equals(2, 3)).to.be.false;
+		});
+
+		it('should determine equality of objects', () => {
+			expect($equals({prop: 1}, {prop: 1})).to.be.true;
+			expect($equals({prop: 1}, {prop: 2})).to.be.false;
+		});
+
+		it('should determine equality of arrays', () => {
+			expect($equals([0, 1], [0, 1])).to.be.true;
+			expect($equals([0, 1], [0, 2])).to.be.false;
+		});
+
+		it('should determine equality of dates', () => {
+			let date = new Date();
+
+			expect($equals(date, date)).to.be.true;
+			expect($equals(date, new Date(2016))).to.be.false;
+		});
+	});
+
 	describe('$isArray', () => {
 		it('should identify array', () => {
 			expect($isArray([])).to.be.true;

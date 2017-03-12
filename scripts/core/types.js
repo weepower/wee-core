@@ -1,4 +1,81 @@
 /**
+ * Compare two arrays for equality
+ *
+ * @private
+ * @param {Array} a
+ * @param {Array} b
+ * @returns {boolean}
+ */
+const _arrEquals = (a, b) => {
+	return a.length == b.length &&
+		a.every(function(el, i) {
+			return _equals(el, b[i]);
+		});
+};
+
+/**
+ * Compare two values for equality
+ *
+ * @private
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
+const _equals = (a, b) => {
+	if (a === b) {
+		return true;
+	}
+
+	let aType = $type(a);
+
+	if (aType != $type(b)) {
+		return false;
+	}
+
+	if (aType == 'array') {
+		return _arrEquals(a, b);
+	}
+
+	if (aType == 'object') {
+		return _objEquals(a, b);
+	}
+
+	if (aType == 'date') {
+		return +a == +b;
+	}
+
+	return false;
+};
+
+/**
+ * Compare two objects for equality
+ *
+ * @private
+ * @param {object} a
+ * @param {object} b
+ * @returns {boolean}
+ */
+const _objEquals = (a, b) => {
+	let aKeys = Object.keys(a);
+
+	return _arrEquals(aKeys.sort(), Object.keys(b).sort()) &&
+		aKeys.every(function(i) {
+			return _equals(a[i], b[i]);
+		});
+};
+
+/**
+ * Compare two values for strict equality
+ *
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
+export const $equals = (a, b) => {
+	return _equals(a, b);
+};
+
+/**
  * Determine if value is an array
  *
  * @param {*} obj
