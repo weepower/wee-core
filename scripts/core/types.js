@@ -14,6 +14,25 @@ const _arrEquals = (a, b) => {
 };
 
 /**
+ * Clone value to a new instance
+ *
+ * @private
+ * @param {*} val
+ * @returns {*}
+ */
+const _copy = val => {
+	let type = $type(val);
+
+	if (type == 'object') {
+		val = _extend({}, val, true);
+	} else if (type == 'array') {
+		val = val.slice(0);
+	}
+
+	return val;
+};
+
+/**
  * Compare two values for equality
  *
  * @private
@@ -107,6 +126,17 @@ const _objEquals = (a, b) => {
 		aKeys.every(function(i) {
 			return _equals(a[i], b[i]);
 		});
+};
+
+/**
+ * Clone value to a new instance
+ *
+ * @private
+ * @param {*} val
+ * @returns {*}
+ */
+export const $copy = val => {
+	return _copy(val);
 };
 
 /**

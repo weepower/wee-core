@@ -1,6 +1,22 @@
-import { $equals, $type, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray } from 'core/types';
+import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray, $type } from 'core/types';
 
 describe('Core: Types', () => {
+	describe('$copy', () => {
+		it('should clone object', () => {
+			let obj = {a: 1, b: 2};
+
+			expect($copy(obj)).to.not.equal(obj);
+			expect($copy(obj)).to.deep.equal(obj);
+		});
+
+		it('should clone array', () => {
+			let arr = [0, 1];
+
+			expect($copy(arr)).to.not.equal(arr);
+			expect($copy(arr)).to.deep.equal(arr);
+		});
+	});
+
 	describe('$equals', () => {
 		it('should determine equality of strings', () => {
 			expect($equals('a', 'a')).to.be.true;
