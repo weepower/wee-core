@@ -37,6 +37,16 @@ export const $isNumber = (obj, strict = true) => {
 };
 
 /**
+ * Determine if value is an object
+ *
+ * @param {*} obj
+ * @returns {boolean}
+ */
+export const $isObject = obj => {
+	return $type(obj) == 'object';
+};
+
+/**
  * Determine if value is a string
  *
  * @param {*} obj

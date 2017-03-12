@@ -1,4 +1,4 @@
-import { $type, $isArray, $isFunction, $isNumber, $isString, $toArray } from 'core/types';
+import { $type, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$type', () => {
@@ -61,6 +61,13 @@ describe('Core: Types', () => {
 			expect($isNumber('1', false)).to.be.true;
 			expect($isNumber('test', false)).to.be.false;
 			expect($isNumber('1test', false)).to.be.true;
+		});
+	});
+
+	describe('$isObject', () => {
+		it('should identify objects', () => {
+			expect($isObject({})).to.be.true;
+			expect($isObject([])).to.be.false;
 		});
 	});
 
