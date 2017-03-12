@@ -32,7 +32,7 @@ describe('Core: Core', () => {
 
 	describe('$envSecure', () => {
 		it('should identify HTTPS protocol', () => {
-			expect($envSecure()).to.equal(false);
+			expect($envSecure()).to.equal(true);
 		});
 	});
 

@@ -38,7 +38,7 @@ module.exports = function(config) {
 		},
 
 		// web server port
-		protocol: 'http',
+		protocol: 'https',
 		port: 9876,
 		httpsServerOptions: {
 			key: fs.readFileSync(resolve(__dirname, '../https/server.key'), 'utf8'),
