@@ -14,6 +14,27 @@ const _arrEquals = (a, b) => {
 };
 
 /**
+ * Cast string to most applicable data type
+ *
+ * @protected
+ * @param {*} val
+ */
+const _castString = val => {
+	if (typeof val == 'string') {
+		try {
+			val = val == 'true' ? true :
+				val == 'false' ? false :
+					val == 'null' ? null :
+						parseInt(val).toString() == val ? parseInt(val) :
+							/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
+								val;
+		} catch (e) {}
+	}
+
+	return val;
+};
+
+/**
  * Clone value to a new instance
  *
  * @private
@@ -254,4 +275,31 @@ export const $type = obj => {
 		Object.prototype.toString.call(obj)
 			.replace(/^\[object (.+)]$/, '$1')
 			.toLowerCase();
+};
+
+/**
+ * Convert serialized string back into an object
+ *
+ * @param {string} str
+ * @returns {object} value
+ */
+export const $unserialize = str => {
+	let obj = {};
+
+	decodeURIComponent(str)
+		.replace(/^\?/, '')
+		.split('&').forEach(function(el) {
+		let split = el.split('='),
+			key = split[0].replace('[]', ''),
+			val = (split[1] || '').replace(/\+/g, ' ') || '';
+
+		if (obj.hasOwnProperty(key)) {
+			obj[key] = $toArray(obj[key]);
+			obj[key].push(_castString(val));
+		} else {
+			obj[key] = _castString(val);
+		}
+	});
+
+	return obj;
 };

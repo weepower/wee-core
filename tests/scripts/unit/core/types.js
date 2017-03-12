@@ -1,4 +1,4 @@
-import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type } from 'core/types';
+import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -145,6 +145,12 @@ describe('Core: Types', () => {
 
 		it('should identify symbols', () => {
 			expect($type(Symbol())).to.equal('symbol');
+		});
+	});
+
+	describe('$unserialize', () => {
+		it('should convert serialized string back to object', () => {
+			expect($unserialize('a=1&b=2&c=3&d[]=0&d[]=1')).to.deep.equal({a: 1, b: 2, c: 3, d: [0, 1]});
 		});
 	});
 });
