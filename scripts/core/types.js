@@ -209,6 +209,31 @@ export const $isString = obj => {
 };
 
 /**
+ * Serialize object
+ *
+ * @param {object} obj
+ * @returns {string} value
+ */
+export const $serialize = obj => {
+	let arr = [];
+
+	Object.keys(obj || {}).forEach(function(key) {
+		let val = obj[key];
+		key = encodeURIComponent(key);
+
+		if (typeof val != 'object') {
+			arr.push(key + '=' + encodeURIComponent(val));
+		} else if (Array.isArray(val)) {
+			val.forEach(function(el) {
+				arr.push(key + '[]=' + encodeURIComponent(el));
+			});
+		}
+	});
+
+	return arr.length ? arr.join('&').replace(/%20/g, '+') : '';
+};
+
+/**
  * Cast value to array if it isn't one
  *
  * @param {*} val

@@ -1,4 +1,4 @@
-import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $toArray, $type } from 'core/types';
+import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -85,6 +85,14 @@ describe('Core: Types', () => {
 			expect($isString('string')).to.be.true;
 			expect($isString('1')).to.be.true;
 			expect($isString(1)).to.be.false;
+		});
+	});
+
+	describe('$serialize', () => {
+		it('should serialize flat object', () => {
+			let obj = {a: 1, b: 2, c: 3, d: [0, 1]};
+
+			expect($serialize(obj)).to.equal('a=1&b=2&c=3&d[]=0&d[]=1');
 		});
 	});
 
