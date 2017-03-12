@@ -48,6 +48,51 @@ const _equals = (a, b) => {
 };
 
 /**
+ * Extend target object with source object(s)
+ *
+ * @private
+ * @param {object} target
+ * @param {object} object
+ * @param {boolean} [deep=false]
+ * @param {Array} [_set=[]]
+ * @returns object
+ */
+export const _extend = (target, object, deep, _set = []) => {
+	if (! object) {
+		return target;
+	}
+
+	for (let key in object) {
+		let src = object[key],
+			type = $type(src);
+
+		if (deep && type == 'object') {
+			let len = _set.length,
+				i = 0,
+				val;
+
+			for (; i < len; i++) {
+				if (_set[i] === src) {
+					val = src;
+					break;
+				}
+			}
+
+			if (val) {
+				target[key] = val;
+			} else {
+				_set.push(src);
+				target[key] = _extend(target[key] || {}, src, deep, _set);
+			}
+		} else if (src !== undefined) {
+			target[key] = type == 'array' ? src.slice(0) : src;
+		}
+	}
+
+	return target;
+};
+
+/**
  * Compare two objects for equality
  *
  * @private
