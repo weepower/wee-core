@@ -96,6 +96,15 @@ export const $env = (rules, fallback = 'local') => {
 };
 
 /**
+ * Determine if the current environment is SSL encrypted
+ *
+ * @returns {boolean} secure
+ */
+export const $envSecure = () => {
+	return location.protocol == 'https:';
+};
+
+/**
  * Reset env variable - used for testing
  */
 export const $envReset = () => {

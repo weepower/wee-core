@@ -1,4 +1,4 @@
-import { $env, $envReset, $exec, $extend } from 'core/core';
+import { $env, $envReset, $envSecure, $exec, $extend } from 'core/core';
 
 describe('Core', () => {
 	describe('$env', () => {
@@ -27,6 +27,12 @@ describe('Core', () => {
 				prod: 'notthesite.com'
 			}, 'notLocal');
 			expect($env()).to.equal('notLocal');
+		});
+	});
+
+	describe('$envSecure', () => {
+		it('should identify HTTPS protocol', () => {
+			expect($envSecure()).to.equal(false);
 		});
 	});
 
