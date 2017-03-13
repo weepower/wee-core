@@ -755,7 +755,7 @@ module.exports = (vars = {}) => {
 		 * @param {string} y
 		 * @param {number} blur
 		 * @param {number} opacity
-		 * @returns {object}
+		 * @returns {Object}
 		 */
 		dropShadow(color, x = '1px', y = '1px', blur = 0, opacity = vars.default.opacity) {
 			let colorResult = color;
@@ -1443,7 +1443,7 @@ module.exports = (vars = {}) => {
 		/**
 		 *
 		 * @param {string} value
-		 * @returns {array}
+		 * @returns {Array}
 		 */
 		resizable(value = 'both') {
 			return [
