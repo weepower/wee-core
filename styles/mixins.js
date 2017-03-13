@@ -297,7 +297,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Caret
+		 * Create a triangle
 		 *
 		 * @param keyword
 		 * @param {string} [color]
