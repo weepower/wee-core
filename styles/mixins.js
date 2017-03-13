@@ -1500,6 +1500,33 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Skew transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [x]
+		 * @param {number} [y]
+		 * @returns {Object}
+		 */
+		skew(keyword, x = 45, y = 45) {
+			if (keyword === 'x') {
+				return decl('transform', `skewX(${x}deg)`);
+			}
+
+			if (keyword === 'y') {
+				y = arguments[1] || y;
+
+				return decl('transform', `skewY(${y}deg)`)
+			}
+
+			if (isNumber(keyword)) {
+				y = arguments[1] || y;
+				x = keyword;
+			}
+
+			return decl('transform', `skew(${x}deg, ${y}deg)`);
+		},
+
+		/**
 		 * Border radius
 		 *
 		 * @param {number|string} [keyword]

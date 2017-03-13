@@ -3872,3 +3872,45 @@ describe('scale', () => {
 		);
 	});
 });
+
+describe('skew', () => {
+	it('should handle keywords with default values', () => {
+		return process(
+			`.block {
+				skew(x);
+				skew(y);
+			}`,
+			`.block {
+				transform: skewX(45deg);
+				transform: skewY(45deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords with provided values', () => {
+		return process(
+			`.block {
+				skew(x, 60);
+				skew(y, 60);
+			}`,
+			`.block {
+				transform: skewX(60deg);
+				transform: skewY(60deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle x and y values', () => {
+		return process(
+			`.block {
+				skew(45, 60);
+			}`,
+			`.block {
+				transform: skew(45deg, 60deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
