@@ -1467,6 +1467,39 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Rotate transform
+		 *
+		 * @param {number} [angle]
+		 * @returns {Object}
+		 */
+		rotate(angle = 45) {
+			return decl('transform', `rotate(${angle}deg)`);
+		},
+
+		/**
+		 * Scale transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [value]
+		 * @returns {Object}
+		 */
+		scale(keyword, value = 1) {
+			if (keyword === 'x') {
+				return decl('transform', `scaleX(${value})`);
+			}
+
+			if (keyword === 'y') {
+				return decl('transform', `scaleY(${value})`);
+			}
+
+			if (isNumber(keyword)) {
+				value = keyword;
+			}
+
+			return decl('transform', `scale(${value})`);
+		},
+
+		/**
 		 * Border radius
 		 *
 		 * @param {number|string} [keyword]

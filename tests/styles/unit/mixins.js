@@ -3808,3 +3808,71 @@ describe('scroll', () => {
 		);
 	});
 });
+
+describe('rotate', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				rotate();
+			}`,
+			`.block {
+				transform: rotate(45deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle numbers', () => {
+		return process(
+			`.block {
+				rotate(90);
+				rotate(-90);
+			}`,
+			`.block {
+				transform: rotate(90deg);
+				transform: rotate(-90deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('scale', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				scale();
+			}`,
+			`.block {
+				transform: scale(1);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle numbers', () => {
+		return process(
+			`.block {
+				scale(.5);
+			}`,
+			`.block {
+				transform: scale(0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords', () => {
+		return process(
+			`.block {
+				scale(x);
+				scale(y, .5);
+			}`,
+			`.block {
+				transform: scaleX(1);
+				transform: scaleY(0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
