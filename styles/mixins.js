@@ -597,6 +597,46 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Hide overflow
+		 *
+		 * @param {string} [keyword]
+		 * @returns {Object}
+		 */
+		crop(keyword) {
+			let hidden = 'hidden';
+
+			if (keyword === 'horizontal') {
+				return decl('overflow-x', hidden);
+			}
+
+			if (keyword === 'vertical') {
+				return decl('overflow-y', hidden);
+			}
+
+			return decl('overflow', hidden);
+		},
+
+		/**
+		 * Scroll overflow
+		 *
+		 * @param {string} [keyword]
+		 * @returns {Object}
+		 */
+		scroll(keyword) {
+			let scroll = 'scroll';
+
+			if (keyword === 'horizontal') {
+				return decl('overflow-x', scroll);
+			}
+
+			if (keyword === 'vertical') {
+				return decl('overflow-y', scroll);
+			}
+
+			return decl('overflow', scroll);
+		},
+
+		/**
 		 * Set display
 		 *
 		 * @param  {string} value

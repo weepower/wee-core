@@ -3732,3 +3732,79 @@ describe('selection', () => {
 		);
 	});
 });
+
+describe('crop', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				crop();
+			}`,
+			`.block {
+				overflow: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle horizontal keyword', () => {
+		return process(
+			`.block {
+				crop(horizontal);
+			}`,
+			`.block {
+				overflow-x: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle vertical keyword', () => {
+		return process(
+			`.block {
+				crop(vertical);
+			}`,
+			`.block {
+				overflow-y: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('scroll', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				scroll();
+			}`,
+			`.block {
+				overflow: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle horizontal keyword', () => {
+		return process(
+			`.block {
+				scroll(horizontal);
+			}`,
+			`.block {
+				overflow-x: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle vertical keyword', () => {
+		return process(
+			`.block {
+				scroll(vertical);
+			}`,
+			`.block {
+				overflow-y: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
