@@ -1185,13 +1185,11 @@ describe('ratio', () => {
 			);
 		});
 
-		// TODO: Test fails when using a fraction, 4/3, because parser doesn't
-		// handle division
 		it('should handle ratio', () => {
 			return process(
 				stripIndent`
 					.block {
-						ratio(embed, 1);
+						ratio(embed, 4/3);
 					}
 				`,
 				stripIndent`
@@ -1202,7 +1200,7 @@ describe('ratio', () => {
 							content: '';
 							display: block;
 							height: 0;
-							padding-top: 100%
+							padding-top: 75%
 						}
 					}
 				`,
@@ -1226,17 +1224,15 @@ describe('ratio', () => {
 			);
 		});
 
-		// TODO: Test fails when using a fraction, 4/3, because parser doesn't
-		// handle division
 		it('should handle ratio', () => {
 			return process(
 				`.block {
-					ratio(1);
+					ratio(4/3);
 				}`,
 				`.block {
 					display: block;
 					height: 0;
-					padding-top: 100%;
+					padding-top: 75%;
 				}`,
 				{ mixins: mixins }
 			);
