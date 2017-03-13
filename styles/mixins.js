@@ -881,6 +881,19 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Hide text
+		 *
+		 * @returns {Array}
+		 */
+		hideText() {
+			return [
+				decl('overflow', 'hidden'),
+				decl('text-indent', '110%'),
+				decl('white-space', 'nowrap')
+			];
+		},
+
+		/**
 		 * Display inline
 		 *
 		 * @return {Object}

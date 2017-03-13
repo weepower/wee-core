@@ -3639,3 +3639,19 @@ describe('fill', () => {
 		);
 	});
 });
+
+describe('hideText', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				hideText();
+			}`,
+			`.block {
+				overflow: hidden;
+				text-indent: 110%;
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
