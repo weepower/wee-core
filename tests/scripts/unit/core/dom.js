@@ -1,5 +1,5 @@
 import { _doc, _win } from 'core/variables';
-import { ready, $each, $parseHTML, $, $setRef } from 'core/dom';
+import { $ready, $each, $parseHTML, $, $setRef } from 'core/dom';
 
 describe('Core: DOM', () => {
 	describe('$', () => {
@@ -134,6 +134,18 @@ describe('Core: DOM', () => {
 		});
 	});
 
+	describe('$ready', () => {
+		it('should execute callback when document has finished loading', done => {
+			let state = false;
+
+			$ready(() => {
+				state = true;
+				expect(state).to.be.true;
+				done();
+			});
+		});
+	});
+
 	describe('$setRef', () => {
 		beforeEach(() => {
 			let div = document.createElement('div');
@@ -169,18 +181,6 @@ describe('Core: DOM', () => {
 			$setRef('.context');
 
 			expect($('ref:testRef').length).to.equal(1);
-		});
-	});
-
-	describe('ready', () => {
-		it('should execute callback when document has finished loading', done => {
-			let state = false;
-
-			ready(() => {
-				state = true;
-				expect(state).to.be.true;
-				done();
-			});
 		});
 	});
 });
