@@ -1512,6 +1512,26 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Selection
+		 *
+		 * @param {string} [color]
+		 * @param {string} [background]
+		 * @returns {Array}
+		 */
+		selection(color = vars.selection.color, background = vars.selection.background) {
+			let props = [
+					decl('background', background),
+					decl('color', color),
+					decl('text-shadow', 'none')
+				];
+
+			return [
+				rule('&::-moz-selection', props),
+				rule('&::selection', props)
+			];
+		},
+
+		/**
 		 * Box shadow
 		 *
 		 * @param {number|string} [keyword]

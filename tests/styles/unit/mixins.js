@@ -3655,3 +3655,80 @@ describe('hideText', () => {
 		);
 	});
 });
+
+describe('selection', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection();
+				}
+			`,
+			stripIndent`
+				.block {
+					&::-moz-selection {
+						background: #349bb9;
+						color: #fff;
+						text-shadow: none
+					}
+					&::selection {
+						background: #349bb9;
+						color: #fff;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle color and background', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection(#000, #fff);
+				}
+			`,
+			stripIndent`
+				.block {
+					&::-moz-selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+					&::selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection(background: #fff, color: #000);
+				}
+			`,
+			stripIndent`
+				.block {
+					&::-moz-selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+					&::selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
