@@ -1,5 +1,5 @@
 import { _doc, _win } from 'core/variables';
-import { $ready, $each, $parseHTML, $, $setRef } from 'core/dom';
+import { $ready, $each, $map, $parseHTML, $, $setRef } from 'core/dom';
 
 describe('Core: DOM', () => {
 	describe('$', () => {
@@ -113,6 +113,93 @@ describe('Core: DOM', () => {
 			});
 
 			expect(count).to.equal(0);
+		});
+
+		it('should inject arguments into callback functions', () => {
+			let arr = [];
+
+			$each('.each', (el, i, first, second) => {
+				arr.push(i + first);
+				arr.push(i + second);
+			}, {
+				args: [1, 2]
+			});
+
+			expect(arr).to.deep.equal([1, 2, 2, 3, 3, 4, 4, 5]);
+		});
+	});
+
+	describe('$map', () => {
+		before(() => {
+			let html = `<div>
+					<div class="each">1</div>
+					<div class="each">2</div>
+					<div class="each">3</div>
+					<div class="context">
+						<div class="each">4</div>
+					</div>
+					</div>`,
+				fragment = document.createRange().createContextualFragment(html);
+
+			document.querySelector('body').appendChild(fragment);
+		});
+
+		after(() => {
+			document.querySelector('body').innerHTML = '';
+		});
+
+		it('should translate items in array into new array', () => {
+			let arr = $map([1, 2, 3], val => {
+				return val + 1;
+			});
+
+			expect(arr).to.deep.equal([2, 3, 4]);
+		});
+
+		it('should execute function for each matching selection', () => {
+			let arr = $map('.each', el => {
+				return el.textContent;
+			});
+
+			expect(arr).to.deep.equal(['1', '2', '3', '4']);
+		});
+
+		it('should accept Wee selection as argument', () => {
+			let arr = $map($('.each'), el => {
+				return el.textContent;
+			});
+
+			expect(arr).to.deep.equal(['1', '2', '3', '4']);
+		});
+
+		it('should inject scope into callback functions', () => {
+			let arr = $map('.each', function(el) {
+				return this.a;
+			}, {
+				scope: {a: 1}
+			});
+
+			expect(arr).to.deep.equal([1, 1, 1, 1]);
+		});
+
+		it('should filter based on context', () => {
+			let arr = $map('.each', (el, i) => {
+				return i;
+			}, {
+				context: '.context'
+			});
+
+			expect(arr).to.deep.equal([0]);
+		});
+
+		it('should inject arguments into callback functions', () => {
+			let arr = $map('.each', (el, i, first, second) => {
+				return [i + first, i + second];
+			}, {
+				args: [1, 2]
+			});
+
+			expect(arr).to.deep.equal([[1, 2], [2, 3], [3, 4], [4, 5]]);
 		});
 	});
 

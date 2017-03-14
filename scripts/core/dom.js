@@ -175,6 +175,42 @@ export const $each = (target, fn, options) => {
 };
 
 /**
+ * Translate items in an array or selection to new array
+ *
+ * @param {($|Array|HTMLElement|string)} target - array or selector
+ * @param {function} fn
+ * @param {object} [options]
+ * @param {Array} [options.args]
+ * @param {object} [options.scope]
+ * @returns {Array}
+ */
+export const $map = (target, fn, options) => {
+	if (! Array.isArray(target)) {
+		target = _selArray(target, options);
+	}
+
+	let conf = _extend({
+			args: []
+		}, options),
+		res = [],
+		i = 0;
+
+	for (; i < target.length; i++) {
+		let el = target[i],
+			val = $exec(fn, {
+				args: [el, i].concat(conf.args),
+				scope: conf.scope || el
+			});
+
+		if (val !== false) {
+			res.push(val);
+		}
+	}
+
+	return res;
+};
+
+/**
  * Create document fragment from an HTML string
  *
  * @param {string} html
