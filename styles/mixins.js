@@ -1778,6 +1778,33 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Capitalize text
+		 *
+		 * @returns {Object}
+		 */
+		capitalize() {
+			return decl('text-transform', 'capitalize');
+		},
+
+		/**
+		 * Make text lowercase
+		 *
+		 * @returns {Object}
+		 */
+		lowercase() {
+			return decl('text-transform', 'lowercase');
+		},
+
+		/**
+		 * Make text uppercase
+		 *
+		 * @returns {Object}
+		 */
+		uppercase() {
+			return decl('text-transform', 'uppercase');
+		},
+
+		/**
 		 * Transition shorthand declaration
 		 *
 		 * @param {string} [property]

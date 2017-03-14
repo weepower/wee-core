@@ -4106,3 +4106,45 @@ describe('stroke', () => {
 		);
 	});
 });
+
+describe('capitalize', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				capitalize();
+			}`,
+			`.block {
+				text-transform: capitalize;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('lowercase', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				lowercase();
+			}`,
+			`.block {
+				text-transform: lowercase;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('uppercase', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				uppercase();
+			}`,
+			`.block {
+				text-transform: uppercase;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
