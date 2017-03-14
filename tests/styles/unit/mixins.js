@@ -3984,3 +3984,67 @@ describe('translate', () => {
 		);
 	});
 });
+
+describe('underline', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				underline();
+			}`,
+			`.block {
+				text-decoration: underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle style with default color', () => {
+		return process(
+			`.block {
+				underline(wavy);
+			}`,
+			`.block {
+				text-decoration: inherit wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle style with color', () => {
+		return process(
+			`.block {
+				underline(wavy, red);
+			}`,
+			`.block {
+				text-decoration: red wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				underline(color: red, style: wavy);
+			}`,
+			`.block {
+				text-decoration: red wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('lineThrough', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				lineThrough();
+			}`,
+			`.block {
+				text-decoration: line-through;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});

@@ -1789,6 +1789,30 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Underline text
+		 *
+		 * @param {string} [style]
+		 * @param {string} [color]
+		 * @returns {Object}
+		 */
+		underline(style, color = 'inherit') {
+			if (! style) {
+				return decl('text-decoration', 'underline');
+			}
+
+			return decl('text-decoration', `${color} ${style} underline`);
+		},
+
+		/**
+		 * Line-through text
+		 *
+		 * @returns {Object}
+		 */
+		lineThrough() {
+			return decl('text-decoration', 'line-through');
+		},
+
+		/**
 		 * List style: none
 		 *
 		 * @return {Object}
