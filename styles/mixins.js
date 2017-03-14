@@ -1527,6 +1527,45 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Translate transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number|string} [x]
+		 * @param {number|string} [y]
+		 * @param {number|string} [z]
+		 * @returns {Object}
+		 */
+		translate(keyword, x = 0, y = 0, z) {
+			if (keyword === 'x') {
+				return decl('transform', `translateX(${x})`);
+			}
+
+			if (keyword === 'y') {
+				y = arguments[1] || y;
+
+				return decl('transform', `translateY(${y})`);
+			}
+
+			if (keyword === 'z') {
+				z = arguments[1] || z;
+
+				return decl('transform', `translateZ(${z})`);
+			}
+
+			if (isNumber(keyword) || isPercentage(keyword)) {
+				x = keyword;
+				y = arguments[1] || y;
+				z = arguments[2] || z;
+			}
+
+			if (z) {
+				return decl('transform', `translate3d(${x}, ${y}, ${z})`);
+			}
+
+			return decl('transform', `translate(${x}, ${y})`);
+		},
+
+		/**
 		 * Border radius
 		 *
 		 * @param {number|string} [keyword]

@@ -3914,3 +3914,73 @@ describe('skew', () => {
 		);
 	});
 });
+
+describe('translate', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				translate();
+			}`,
+			`.block {
+				transform: translate(0, 0);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords', () => {
+		return process(
+			`.block {
+				translate(x, 50%);
+				translate(x, -50%);
+				translate(y, 5rem);
+				translate(z, 15px);
+			}`,
+			`.block {
+				transform: translateX(50%);
+				transform: translateX(-50%);
+				transform: translateY(5rem);
+				transform: translateZ(15px);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle provided values', () => {
+		return process(
+			`.block {
+				translate(25%);
+				translate(-50%, -50%);
+				translate(10%, 10%, 10%);
+			}`,
+			`.block {
+				transform: translate(25%, 0);
+				transform: translate(-50%, -50%);
+				transform: translate3d(10%, 10%, 10%);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				translate(x: 5%);
+				translate(y: 5%);
+				translate(z: 5%);
+				translate(z: 3%, x: 1%);
+				translate(y: 2%, x: 1%);
+				translate(y: 2%, x: 1%, z: 3%);
+			}`,
+			`.block {
+				transform: translate(5%, 0);
+				transform: translate(0, 5%);
+				transform: translate3d(0, 0, 5%);
+				transform: translate3d(1%, 0, 3%);
+				transform: translate(1%, 2%);
+				transform: translate3d(1%, 2%, 3%);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
