@@ -10,7 +10,7 @@ let env;
  *
  * @private
  * @param {*} val
- * @param {object} [options]
+ * @param {Object} [options]
  * @returns {*}
  */
 const _val = (val, options) => {
@@ -23,7 +23,7 @@ const _val = (val, options) => {
  * Get current environment or set current environment against
  * specified object
  *
- * @param {object} [rules]
+ * @param {Object} [rules]
  * @param {string} [fallback=local]
  * @returns {string} environment
  */
@@ -69,10 +69,10 @@ export const $envReset = () => {
 /**
  * Execute specified function or array of functions
  *
- * @param {array|function} fn
- * @param {object} [options]
- * @param {array} [options.args]
- * @param {object} [options.scope]
+ * @param {Array|function} fn
+ * @param {Object} [options]
+ * @param {Array} [options.args]
+ * @param {Object} [options.scope]
  * @returns {*} [response]
  */
 export const $exec = (fn, options = {}) => {

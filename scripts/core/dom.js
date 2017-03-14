@@ -142,11 +142,11 @@ export const $ = (selector, context) => {
  *
  * @param {($|Array|HTMLElement|string)} target
  * @param {function} fn
- * @param {object} [options]
+ * @param {Object} [options]
  * @param {Array} [options.args]
  * @param {($|HTMLElement|string)} [options.context=document]
  * @param {boolean} [options.reverse=false]
- * @param {object} [options.scope]
+ * @param {Object} [options.scope]
  */
 export const $each = (target, fn, options) => {
 	if (target) {

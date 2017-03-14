@@ -93,11 +93,11 @@ const _equals = (a, b) => {
  * Extend target object with source object(s)
  *
  * @private
- * @param {object} target
- * @param {object} object
+ * @param {Object} target
+ * @param {Object} object
  * @param {boolean} [deep=false]
  * @param {Array} [_set=[]]
- * @returns object
+ * @returns {Object}
  */
 export const _extend = (target, object, deep, _set = []) => {
 	if (! object) {
@@ -138,8 +138,8 @@ export const _extend = (target, object, deep, _set = []) => {
  * Compare two objects for equality
  *
  * @private
- * @param {object} a
- * @param {object} b
+ * @param {Object} a
+ * @param {Object} b
  * @returns {boolean}
  */
 const _objEquals = (a, b) => {
@@ -176,10 +176,10 @@ export const $equals = (a, b) => {
 /**
  * Extend target object with source object(s)
  *
- * @param {(boolean|object)} deep - extend nested properties else target object
- * @param {object} [obj] - target object
- * @param {...object} [obj] - merged objects
- * @returns {object}
+ * @param {(boolean|Object)} deep - extend nested properties else target object
+ * @param {Object} [obj] - target object
+ * @param {...Object} [obj] - merged objects
+ * @returns {Object}
  */
 export const $extend = function (deep) {
 	let bool = typeof deep == 'boolean',
@@ -255,7 +255,7 @@ export const $isString = obj => {
 /**
  * Serialize object
  *
- * @param {object} obj
+ * @param {Object} obj
  * @returns {string} value
  */
 export const $serialize = obj => {
@@ -304,7 +304,7 @@ export const $type = obj => {
  * Convert serialized string back into an object
  *
  * @param {string} str
- * @returns {object} value
+ * @returns {Object} value
  */
 export const $unserialize = str => {
 	let obj = {};
