@@ -1841,6 +1841,24 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Wrap
+		 *
+		 * @returns {Object}
+		 */
+		wrap() {
+			return decl('white-space', 'normal');
+		},
+
+		/**
+		 * No wrap
+		 *
+		 * @returns {Object}
+		 */
+		noWrap() {
+			return decl('white-space', 'nowrap');
+		},
+
+		/**
 		 * Container padding
 		 *
 		 * @returns {Array|boolean}

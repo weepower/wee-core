@@ -4048,3 +4048,31 @@ describe('lineThrough', () => {
 		);
 	});
 });
+
+describe('wrap', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				wrap();
+			}`,
+			`.block {
+				white-space: normal;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('noWrap', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				noWrap();
+			}`,
+			`.block {
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
