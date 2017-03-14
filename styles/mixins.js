@@ -1778,6 +1778,30 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Text shadow
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [opacity]
+		 * @returns {Object}
+		 */
+		textShadow(keyword, opacity = vars.default.opacity) {
+			let keywords = ['dark', 'light'],
+				rgb = '0, 0, 0';
+
+			if (keywords.includes(keyword)) {
+				if (keyword === 'light') {
+					rgb = '255, 255, 255';
+				}
+			}
+
+			if (isNumber(keyword)) {
+				opacity = keyword;
+			}
+
+			return decl('text-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`);
+		},
+
+		/**
 		 * Sharpen text
 		 *
 		 * @returns {Object}

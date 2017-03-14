@@ -3246,6 +3246,44 @@ describe('shadow', () => {
 	});
 });
 
+describe('textShadow', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				textShadow();
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.2);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output a dark text-shadow using the provided opacity when using the dark keyword', () => {
+		return process(
+			`.block {
+				textShadow(dark, 0.5);
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output a light text-shadow using the provided opacity when using the light keyword', () => {
+		return process(
+			`.block {
+				textShadow(light, 0.5);
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(255, 255, 255, 0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('flex', () => {
 	it('should output declaration with default values', () => {
 		return process(
