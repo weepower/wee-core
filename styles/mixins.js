@@ -1759,6 +1759,25 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Stroke color and width
+		 *
+		 * @param {string} [color]
+		 * @param {number|string} [width]
+		 * @returns {Array}
+		 */
+		stroke(color, width) {
+			let props = [
+				decl('stroke', color)
+			];
+
+			if (width) {
+				props.push(decl('stroke-width', width));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Transition shorthand declaration
 		 *
 		 * @param {string} [property]

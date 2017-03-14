@@ -4076,3 +4076,33 @@ describe('noWrap', () => {
 		);
 	});
 });
+
+describe('stroke', () => {
+	it('should handle provided values', () => {
+		return process(
+			`.block {
+				stroke(blue);
+				stroke(red, 2px);
+			}`,
+			`.block {
+				stroke: blue;
+				stroke: red;
+				stroke-width: 2px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				stroke(width: 2px, color: blue);
+			}`,
+			`.block {
+				stroke: blue;
+				stroke-width: 2px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
