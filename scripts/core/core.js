@@ -96,24 +96,3 @@ export const $exec = (fn, options = {}) => {
 		}
 	}
 };
-
-/**
- * Extend target object with source object(s)
- *
- * @param {(boolean|object)} deep - extend nested properties else target object
- * @param {object} [obj] - target object
- * @param {...object} [obj] - merged objects
- * @returns {object}
- */
-export const $extend = function (deep) {
-	let bool = typeof deep == 'boolean',
-		args = _slice.call(arguments).slice(bool ? 1 : 0),
-		target = args[0] || {};
-	deep = bool ? deep : false;
-
-	args.slice(1).forEach(function(source) {
-		target = _extend(target, source, deep);
-	});
-
-	return target;
-};

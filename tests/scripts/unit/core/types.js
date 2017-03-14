@@ -1,4 +1,4 @@
-import { $copy, $equals, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
+import { $copy, $equals, $extend, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -43,6 +43,30 @@ describe('Core: Types', () => {
 
 			expect($equals(date, date)).to.be.true;
 			expect($equals(date, new Date(2016))).to.be.false;
+		});
+	});
+
+	describe('$extend', () => {
+		it('should extend two objects', () => {
+			let a = {prop: 1, prop2: 3},
+				b = {prop: 2};
+
+			expect(JSON.stringify($extend(a, b))).to.equal('{"prop":2,"prop2":3}');
+		});
+
+		it('should deeply extend objects', () => {
+			let a = {prop: 1, prop2: {inner: true}, prop3: [0, 1]},
+				b = {prop: 2, prop2: {inner: false}, prop3: [1]};
+
+			expect(JSON.stringify($extend(true, a, b))).to.equal('{"prop":2,"prop2":{"inner":false},"prop3":[1]}');
+		});
+
+		it('should deeply extend variable number of objects', () => {
+			let a = {prop: 1, prop2: 3},
+				b = {prop: 2},
+				c = {prop: 3};
+
+			expect(JSON.stringify($extend(a, b, c))).to.equal('{"prop":3,"prop2":3}');
 		});
 	});
 
