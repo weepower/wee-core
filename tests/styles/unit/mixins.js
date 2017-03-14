@@ -4107,6 +4107,20 @@ describe('stroke', () => {
 	});
 });
 
+describe('textSharpen', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				textSharpen();
+			}`,
+			`.block {
+				font-smoothing: antialiased;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('capitalize', () => {
 	it('should output default value', () => {
 		return process(

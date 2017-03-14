@@ -1778,6 +1778,15 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Sharpen text
+		 *
+		 * @returns {Object}
+		 */
+		textSharpen() {
+			return decl('font-smoothing', 'antialiased');
+		},
+
+		/**
 		 * Capitalize text
 		 *
 		 * @returns {Object}
