@@ -1684,10 +1684,8 @@ module.exports = (vars = {}) => {
 			let keywords = ['dark', 'light'],
 				rgb = '0, 0, 0';
 
-			if (keywords.includes(keyword)) {
-				if (keyword === 'light') {
-					rgb = '255, 255, 255';
-				}
+			if (keywords.includes(keyword) && keyword === 'light') {
+				rgb = '255, 255, 255';
 			}
 
 			if (isNumber(keyword)) {
@@ -1791,10 +1789,8 @@ module.exports = (vars = {}) => {
 			let keywords = ['dark', 'light'],
 				rgb = '0, 0, 0';
 
-			if (keywords.includes(keyword)) {
-				if (keyword === 'light') {
-					rgb = '255, 255, 255';
-				}
+			if (keywords.includes(keyword) && keyword === 'light') {
+				rgb = '255, 255, 255';
 			}
 
 			if (isNumber(keyword)) {
