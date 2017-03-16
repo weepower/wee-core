@@ -1797,11 +1797,11 @@ describe('borderImage', () => {
 	});
 });
 
-describe('caret', () => {
+describe('triangle', () => {
 	it('should handle up keyword', () => {
 		return process(
 			`.block {
-				caret(up);
+				triangle(up);
 			}`,
 			`.block {
 				content: '';
@@ -1818,7 +1818,7 @@ describe('caret', () => {
 	it('should handle left keyword with color and size values', () => {
 		return process(
 			`.block {
-				caret(left, blue, 2px);
+				triangle(left, blue, 2px);
 			}`,
 			`.block {
 				content: '';
@@ -1835,7 +1835,7 @@ describe('caret', () => {
 	it('should handle key value pairs', () => {
 		return process(
 			`.block {
-				caret(right, size: 3px, width: 4px);
+				triangle(right, size: 3px, width: 4px);
 			}`,
 			`.block {
 				content: '';

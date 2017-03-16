@@ -305,7 +305,7 @@ module.exports = (vars = {}) => {
 		 * @param {number|string} [width]
 		 * @returns {Array}
 		 */
-		caret(keyword, color = vars.colors.darkGray, size = '5px', width = size) {
+		triangle(keyword, color = vars.colors.darkGray, size = '5px', width = size) {
 			let props = [
 				this.content(),
 				decl('height', 0),
