@@ -3700,11 +3700,6 @@ describe('selection', () => {
 			`,
 			stripIndent`
 				.block {
-					&::-moz-selection {
-						background: #349bb9;
-						color: #fff;
-						text-shadow: none
-					}
 					&::selection {
 						background: #349bb9;
 						color: #fff;
@@ -3725,11 +3720,6 @@ describe('selection', () => {
 			`,
 			stripIndent`
 				.block {
-					&::-moz-selection {
-						background: #fff;
-						color: #000;
-						text-shadow: none
-					}
 					&::selection {
 						background: #fff;
 						color: #000;
@@ -3750,11 +3740,6 @@ describe('selection', () => {
 			`,
 			stripIndent`
 				.block {
-					&::-moz-selection {
-						background: #fff;
-						color: #000;
-						text-shadow: none
-					}
 					&::selection {
 						background: #fff;
 						color: #000;

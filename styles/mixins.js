@@ -1655,7 +1655,7 @@ module.exports = (vars = {}) => {
 		 *
 		 * @param {string} [color]
 		 * @param {string} [background]
-		 * @returns {Array}
+		 * @returns {Object}
 		 */
 		selection(color = vars.selection.color, background = vars.selection.background) {
 			let props = [
@@ -1664,10 +1664,7 @@ module.exports = (vars = {}) => {
 					decl('text-shadow', 'none')
 				];
 
-			return [
-				rule('&::-moz-selection', props),
-				rule('&::selection', props)
-			];
+			return rule('&::selection', props);
 		},
 
 		/**
