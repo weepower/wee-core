@@ -1503,19 +1503,25 @@ module.exports = (vars = {}) => {
 		 * Skew transform
 		 *
 		 * @param {number|string} [keyword]
-		 * @param {number} [x]
-		 * @param {number} [y]
+		 * @param {number|string} [x]
+		 * @param {number|string} [y]
 		 * @returns {Object}
 		 */
-		skew(keyword, x = 45, y = 45) {
+		skew(keyword, x = '45deg', y = '45deg') {
+			let degrees = value => {
+				return `${value}`.indexOf('deg') === -1 ?
+					`${value}deg` :
+					value;
+			};
+
 			if (keyword === 'x') {
-				return decl('transform', `skewX(${x}deg)`);
+				return decl('transform', `skewX(${degrees(x)})`);
 			}
 
 			if (keyword === 'y') {
 				y = arguments[1] || y;
 
-				return decl('transform', `skewY(${y}deg)`)
+				return decl('transform', `skewY(${degrees(y)})`)
 			}
 
 			if (isNumber(keyword)) {
@@ -1523,7 +1529,7 @@ module.exports = (vars = {}) => {
 				x = keyword;
 			}
 
-			return decl('transform', `skew(${x}deg, ${y}deg)`);
+			return decl('transform', `skew(${degrees(x)}, ${degrees(y)})`);
 		},
 
 		/**

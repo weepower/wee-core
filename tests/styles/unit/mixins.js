@@ -3915,7 +3915,7 @@ describe('skew', () => {
 		return process(
 			`.block {
 				skew(x, 60);
-				skew(y, 60);
+				skew(y, 60deg);
 			}`,
 			`.block {
 				transform: skewX(60deg);
