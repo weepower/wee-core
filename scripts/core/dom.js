@@ -284,3 +284,15 @@ export const $setRef = context => {
 		context: context
 	});
 };
+
+/**
+ * Create new array with only unique values from source array
+ *
+ * @param {Array} array
+ * @returns {Array} unique values
+ */
+export const $unique = array => {
+	return array.reverse().filter((el, i, arr) => {
+		return arr.indexOf(el, i + 1) < 0;
+	}).reverse();
+};

@@ -1,5 +1,5 @@
 import { _doc, _win } from 'core/variables';
-import { $ready, $each, $map, $parseHTML, $, $setRef } from 'core/dom';
+import { $, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'core/dom';
 
 describe('Core: DOM', () => {
 	describe('$', () => {
@@ -268,6 +268,28 @@ describe('Core: DOM', () => {
 			$setRef('.context');
 
 			expect($('ref:testRef').length).to.equal(1);
+		});
+	});
+
+	describe('$unique', () => {
+		it('should remove duplicate values from array', () => {
+			let arr = [1, 2, 3, 3, 4, 4, 5];
+
+			expect($unique(arr)).to.deep.equal([1, 2, 3, 4, 5]);
+		});
+
+		it('should remove duplicate string values from array', () => {
+			let arr = ['val', 'val2', 'val2', 'val3'];
+
+			expect($unique(arr)).to.deep.equal(['val', 'val2', 'val3']);
+		});
+
+		it('should remove duplicate object references', () => {
+			let obj = {a: 1},
+				array = [0, 1],
+				arr = [obj, obj, array, array, {a: 1}];
+
+			expect($unique(arr)).to.deep.equal([{a: 1}, [0, 1], {a: 1}]);
 		});
 	});
 });
