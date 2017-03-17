@@ -223,7 +223,11 @@ export const $isFunction = obj => {
  */
 export const $isNumber = (obj, strict = true) => {
 	if (! strict) {
-		let value = parseInt(obj);
+		if (! obj.match(/^\d*\.?\d*$/g)) {
+			return false;
+		}
+
+		let value = parseFloat(obj);
 
 		// If value = NaN, will not be equal
 		return value === value;
