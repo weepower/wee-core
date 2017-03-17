@@ -265,7 +265,7 @@ export const $isString = obj => {
 export const $serialize = obj => {
 	let arr = [];
 
-	Object.keys(obj || {}).forEach(function(key) {
+	Object.keys(obj || {}).forEach(key => {
 		let val = obj[key];
 		key = encodeURIComponent(key);
 

@@ -212,7 +212,7 @@ describe('Core: DOM', () => {
 			let html = '<div class="container"><ul><li class="child">1</li><li class="child">2</li></ul></div>',
 				fragment = $parseHTML(html);
 
-			// Fragments should be have DOM api accessible, even before on document
+			// Fragments should have DOM API accessible, even before it is on document
 			expect(fragment.querySelector('.child').textContent).to.equal('1');
 
 			document.querySelector('body').appendChild(fragment);

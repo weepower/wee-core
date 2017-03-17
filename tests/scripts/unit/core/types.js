@@ -80,7 +80,7 @@ describe('Core: Types', () => {
 	describe('$isFunction', () => {
 		it('should identify functions', () => {
 			expect($isFunction(function(){})).to.be.true;
-			expect($isArray({})).to.be.false;
+			expect($isFunction({})).to.be.false;
 		});
 	});
 
@@ -93,7 +93,11 @@ describe('Core: Types', () => {
 		it('should identify string number as number when not strict', () => {
 			expect($isNumber('1', false)).to.be.true;
 			expect($isNumber('test', false)).to.be.false;
-			expect($isNumber('1test', false)).to.be.true;
+			expect($isNumber('1test', false)).to.be.false;
+			expect($isNumber('2.01', false)).to.be.true;
+			expect($isNumber('2.', false)).to.be.true;
+			expect($isNumber('1,000', false)).to.be.false;
+			expect($isNumber('.01', false)).to.be.true;
 		});
 	});
 
