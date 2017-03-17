@@ -83,6 +83,74 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Background Image
+		 *
+		 * @param {string} filename
+		 * @param {string} [repeat]
+		 * @param {string} [position]
+		 * @param {string} [size]
+		 * @param {string} [attachment]
+		 * @returns {Array}
+		 */
+		backgroundImage(filename, repeat = 'no-repeat', position, size, attachment) {
+			let props = [
+				decl('background-image', `url('${vars.image.path}${filename}')`),
+				decl('background-repeat', repeat)
+			];
+
+			if (position) {
+				props.push(decl('background-position', position));
+			}
+
+			if (size) {
+				props.push(decl('background-size', size));
+			}
+
+			if (attachment) {
+				props.push(decl('background-attachment', attachment));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Background gradient
+		 *
+		 * @param {string} [color]
+		 * @param {string} [start]
+		 * @param {string} [end]
+		 * @param {number} [angle]
+		 * @returns {Array}
+		 */
+		backgroundGradient(color = 'gray', start = 'rgba(0, 0, 0, .8)', end = 'rgba(0, 0, 0, .2)', angle = 180) {
+			let props = [
+					decl('background-color', color)
+				],
+				keywords = ['dark', 'light'];
+
+			if (keywords.includes(color)) {
+				let rgb = '0, 0, 0';
+
+				if (color === 'dark') {
+					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+
+					return props;
+				}
+
+				if (color === 'light') {
+					rgb = '255, 255, 255';
+					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+
+					return props;
+				}
+			}
+
+			props.push(decl('background', `linear-gradient(${angle}deg, ${start}, ${end})`));
+
+			return props;
+		},
+
+		/**
 		 * Display block
 		 *
 		 * @param {number|string} [width]
@@ -201,6 +269,24 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Border image
+		 *
+		 * @param filename
+		 * @param {number|string} [slice]
+		 * @param {number|string} [width]
+		 * @param {number|string} [outset]
+		 * @param {string} [repeat]
+		 * @returns {Object}
+		 */
+		borderImage(filename, slice = '100%', width = 1, outset = 0, repeat = 'stretch') {
+			if (! filename) {
+				return false;
+			}
+
+			return decl('border-image', `url('${vars.image.path}${filename}') ${slice} ${width} ${outset} ${repeat}`);
+		},
+
+		/**
 		 * Apply default value to box sizing
 		 *
 		 * @param {string} value
@@ -208,6 +294,47 @@ module.exports = (vars = {}) => {
 		 */
 		boxSizing(value = 'border-box') {
 			return decl('box-sizing', value);
+		},
+
+		/**
+		 * Create a triangle
+		 *
+		 * @param keyword
+		 * @param {string} [color]
+		 * @param {number|string} [size]
+		 * @param {number|string} [width]
+		 * @returns {Array}
+		 */
+		triangle(keyword, color = vars.colors.darkGray, size = '5px', width = size) {
+			let props = [
+				this.content(),
+				decl('height', 0),
+				decl('width', 0)
+			];
+
+			if (keyword === 'up' || keyword === 'down') {
+				props = props.concat(this.border('horizontal', 'transparent', width));
+
+				if (keyword === 'up') {
+					props = props.concat(this.border('bottom', color, size));
+				} else {
+					props = props.concat(this.border('top', color, size));
+				}
+
+				return props;
+			}
+
+			if (keyword === 'left' || keyword === 'right') {
+				props = props.concat(this.border('vertical', 'transparent', width));
+
+				if (keyword === 'left') {
+					props = props.concat(this.border('right', color, size));
+				} else {
+					props = props.concat(this.border('left', color, size));
+				}
+
+				return props;
+			}
 		},
 
 		/**
@@ -346,6 +473,77 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Reset grid column
+		 *
+		 * @param {boolean} [resetMargin]
+		 * @returns {Array}
+		 */
+		columnReset(resetMargin = false) {
+			let props = [
+				decl('float', 'none'),
+				decl('width', 'auto')
+			];
+
+			if (resetMargin) {
+				props.push(decl('margin-left', 0));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Pull grid column
+		 *
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @returns {Array}
+		 */
+		columnPull(share, columns = vars.grid.columns) {
+			return [
+				decl('position', 'relative'),
+				decl('right', toPercentage(1 / columns * share))
+			];
+		},
+
+		/**
+		 * Push grid column
+		 *
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @returns {Array}
+		 */
+		columnPush(share, columns = vars.grid.columns) {
+			return [
+				decl('left', toPercentage(1 / columns * share)),
+				decl('position', 'relative')
+			];
+		},
+
+		/**
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @param {number|string} [margin]
+		 * @returns {Object}
+		 */
+		columnOffset(keyword, share, columns = vars.grid.columns, margin = (toPercentage(toNumber(vars.grid.margin) / 2))) {
+			let left = (1 / columns) * share,
+				spacing = toNumber(margin) * 2;
+
+			if (keyword === 'spaced') {
+				return decl('margin-left', toPercentage(left + spacing));
+			}
+
+			if (isNumber(keyword)) {
+				columns = share;
+				share = keyword;
+			}
+
+			return decl('margin-left', toPercentage(1 / columns * share));
+		},
+
+		/**
 		 * Columns
 		 *
 		 * @param {number} count
@@ -399,6 +597,46 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Hide overflow
+		 *
+		 * @param {string} [keyword]
+		 * @returns {Object}
+		 */
+		crop(keyword) {
+			let hidden = 'hidden';
+
+			if (keyword === 'horizontal') {
+				return decl('overflow-x', hidden);
+			}
+
+			if (keyword === 'vertical') {
+				return decl('overflow-y', hidden);
+			}
+
+			return decl('overflow', hidden);
+		},
+
+		/**
+		 * Scroll overflow
+		 *
+		 * @param {string} [keyword]
+		 * @returns {Object}
+		 */
+		scroll(keyword) {
+			let scroll = 'scroll';
+
+			if (keyword === 'horizontal') {
+				return decl('overflow-x', scroll);
+			}
+
+			if (keyword === 'vertical') {
+				return decl('overflow-y', scroll);
+			}
+
+			return decl('overflow', scroll);
+		},
+
+		/**
 		 * Set display
 		 *
 		 * @param  {string} value
@@ -406,6 +644,18 @@ module.exports = (vars = {}) => {
 		 */
 		display(value) {
 			return decl('display', value);
+		},
+
+		/**
+		 * Fill
+		 *
+		 * @returns {Array}
+		 */
+		fill() {
+			return [
+				decl('height', '100%'),
+				decl('width', '100%')
+			];
 		},
 
 		/**
@@ -505,7 +755,7 @@ module.exports = (vars = {}) => {
 		 * @param {string} y
 		 * @param {number} blur
 		 * @param {number} opacity
-		 * @returns {object}
+		 * @returns {Object}
 		 */
 		dropShadow(color, x = '1px', y = '1px', blur = 0, opacity = vars.default.opacity) {
 			let colorResult = color;
@@ -521,6 +771,26 @@ module.exports = (vars = {}) => {
 			}
 
 			return this.filter(`drop-shadow(${x} ${y} ${blur} ${colorResult})`);
+		},
+
+		/**
+		 * Ellipsis
+		 *
+		 * @param {boolean|number|string} [maxWidth]
+		 * @returns {Array}
+		 */
+		ellipsis(maxWidth = false) {
+			let props = [
+				decl('overflow-x', 'hidden'),
+				decl('text-overflow', 'ellipsis'),
+				decl('white-space', 'nowrap')
+			];
+
+			if (maxWidth) {
+				props.push(decl('max-width', maxWidth));
+			}
+
+			return props;
 		},
 
 		/**
@@ -601,9 +871,10 @@ module.exports = (vars = {}) => {
 		 * @param {number|string} weight
 		 * @param {string} lineHeight
 		 * @param {string} style
+		 * @param {number|string} spacing
 		 * @returns {Array}
 		 */
-		font(family = vars.font.family, size, weight, lineHeight, style) {
+		font(family = vars.font.family, size, weight, lineHeight, style, spacing) {
 			let props = [
 				decl('font-family', family)
 			];
@@ -624,6 +895,10 @@ module.exports = (vars = {}) => {
 				props.push(decl('font-style', style));
 			}
 
+			if (spacing) {
+				props.push(decl('letter-spacing', spacing));
+			}
+
 			return props;
 		},
 
@@ -642,6 +917,19 @@ module.exports = (vars = {}) => {
 				rule('small', [
 					decl('font-weight', 'normal')
 				])
+			];
+		},
+
+		/**
+		 * Hide text
+		 *
+		 * @returns {Array}
+		 */
+		hideText() {
+			return [
+				decl('overflow', 'hidden'),
+				decl('text-indent', '110%'),
+				decl('white-space', 'nowrap')
 			];
 		},
 
@@ -672,6 +960,76 @@ module.exports = (vars = {}) => {
 
 			if (height) {
 				props.push(decl('height', height));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Inline grid column
+		 *
+		 * @param {string} [keyword]
+		 * @param {number} share
+		 * @param {number} [columns]
+		 * @param {number|string} [margin]
+		 * @param {boolean} [spaceless]
+		 */
+		inlineColumn(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
+			let props = [
+				decl('display', 'inline-block'),
+				decl('vertical-align', 'top')
+			];
+
+			if (keyword === 'spaced') {
+				props = props.concat([
+					decl('margin-left', margin),
+					decl('width', toPercentage(((1 / columns) * share) - toNumber(margin)))
+				]);
+
+				if (! spaceless) {
+					props.push(decl('letter-spacing', 'normal'));
+				}
+
+				return props;
+			}
+
+			if (keyword && isNumber(keyword)) {
+				let args = [].slice.call(arguments);
+
+				// Shifts arguments down
+				// Margin is replaced by spaceless
+				spaceless = args[2] || spaceless;
+
+				// TODO: Should margin be shifted if it's no longer relevant?
+				// margin = args[2] || margin;
+				columns = args[1] || columns;
+				share = args[0] || share;
+
+				props.push(decl('width', toPercentage((1 / columns) * share)));
+
+				if (! spaceless) {
+					props.push(decl('margin-right', '-.32em'));
+				}
+
+				return props;
+			}
+		},
+
+		/**
+		 * Inline grid row
+		 *
+		 * @param {string} [margin]
+		 * @param {boolean} [spaceless]
+		 * @returns {Array}
+		 */
+		inlineRow(margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
+			let props = [
+				decl('margin-left', toPercentage(toNumber(margin) * -1)),
+				decl('max-width', toPercentage(1 + toNumber(margin)))
+			];
+
+			if (! spaceless) {
+				props.push(decl('letter-spacing', '-.32em'));
 			}
 
 			return props;
@@ -792,6 +1150,27 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Output max-width and/or max-height
+		 *
+		 * @param {number|string} width
+		 * @param {number|string} [height]
+		 * @returns {Array}
+		 */
+		maxSize(width, height) {
+			let props = [
+				decl('max-width', width)
+			];
+
+			if (! height) {
+				props.push(decl('max-height', width));
+			} else {
+				props.push(decl('max-height', height));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Output min-width and/or min-height
 		 *
 		 * @param {string|number} width
@@ -810,6 +1189,99 @@ module.exports = (vars = {}) => {
 			}
 
 			return props;
+		},
+
+		/**
+		 * Square
+		 *
+		 * @param {number|string} size
+		 * @returns {Array}
+		 */
+		square(size) {
+			return [
+				decl('height', size),
+				decl('width', size)
+			];
+		},
+
+		/**
+		 * Ratio
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [ratio]
+		 * @returns {Array}
+		 */
+		ratio(keyword, ratio = 16 / 9) {
+			if (keyword === 'embed') {
+				let before = [
+						this.content()
+					],
+					props = [];
+
+				before = before.concat(this.ratio(ratio));
+				props = props.concat([
+					decl('overflow', 'hidden'),
+					decl('position', 'relative')
+				]);
+
+				props.push(rule('&:before', before));
+
+				return props;
+			}
+
+			if (isNumber(keyword)) {
+				ratio = keyword;
+			}
+
+			return [
+				decl('display', 'block'),
+				decl('height', 0),
+				decl('padding-top', toPercentage(1 / ratio))
+			];
+		},
+
+		/**
+		 * Circle
+		 *
+		 * @param {number} diameter
+		 * @param {boolean} [crop]
+		 * @param {string} [display]
+		 * @returns {Array}
+		 */
+		circle(diameter, crop, display = 'block') {
+			let props = [
+				decl('height', diameter),
+				decl('width', diameter),
+				decl('display', display)
+			];
+
+			props = props.concat(this.rounded(diameter / 2));
+
+			if (crop) {
+				props.push(decl('overflow', 'hidden'));
+			}
+
+			if (display === 'inline') {
+				props[2] = decl('display', 'inline-block');
+			}
+
+			return props;
+		},
+
+		/**
+		 * Hide clear/cancel button in search inputs
+		 *
+		 * @returns {Array}
+		 */
+		noClear() {
+			return [
+				rule('&::-ms-clear', [
+					decl('display', 'none')
+				]),
+				rule('&::-webkit-search-cancel-button', [
+					decl('-webkit-appearance', 'none')
+				])
+			];
 		},
 
 		/**
@@ -893,9 +1365,85 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Prefix
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Object}
+		 */
+		prefix(value = '-', margin = '.5em', font = false, color = false) {
+			let props = [
+				decl('content', `'${value}'`),
+				decl('margin-right', margin)
+			];
+
+			if (value.indexOf('attr') === 0) {
+				props[0] = decl('content', value);
+			}
+
+			if (font) {
+				props.push(decl('font-family', font));
+			}
+
+			if (color) {
+				props.push(decl('color', color));
+			}
+
+			return rule('&:before', props);
+		},
+
+		/**
+		 * Suffix
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Object}
+		 */
+		suffix(value = '-', margin = '.5em', font = false, color = false) {
+			let props = [
+				decl('content', `'${value}'`),
+				decl('margin-left', margin)
+			];
+
+			if (value.indexOf('attr') === 0) {
+				props[0] = decl('content', value);
+			}
+
+			if (font) {
+				props.push(decl('font-family', font));
+			}
+
+			if (color) {
+				props.push(decl('color', color));
+			}
+
+			return rule('&:after', props);
+		},
+
+		/**
+		 * Bookends
+		 *
+		 * @param {string} [value]
+		 * @param {number|string} [margin]
+		 * @param {boolean|string} [font]
+		 * @param {boolean|string} [color]
+		 * @returns {Array}
+		 */
+		bookends(value = '-', margin = '.5em', font = false, color = false) {
+			return [
+				this.prefix(value, margin, font, color),
+				this.suffix(value, margin, font, color)
+			];
+		},
+
+		/**
 		 *
 		 * @param {string} value
-		 * @returns {array}
+		 * @returns {Array}
 		 */
 		resizable(value = 'both') {
 			return [
@@ -916,6 +1464,111 @@ module.exports = (vars = {}) => {
 			}
 
 			return decl('right', value);
+		},
+
+		/**
+		 * Rotate transform
+		 *
+		 * @param {number} [angle]
+		 * @returns {Object}
+		 */
+		rotate(angle = 45) {
+			return decl('transform', `rotate(${angle}deg)`);
+		},
+
+		/**
+		 * Scale transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [value]
+		 * @returns {Object}
+		 */
+		scale(keyword, value = 1) {
+			if (keyword === 'x') {
+				return decl('transform', `scaleX(${value})`);
+			}
+
+			if (keyword === 'y') {
+				return decl('transform', `scaleY(${value})`);
+			}
+
+			if (isNumber(keyword)) {
+				value = keyword;
+			}
+
+			return decl('transform', `scale(${value})`);
+		},
+
+		/**
+		 * Skew transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number|string} [x]
+		 * @param {number|string} [y]
+		 * @returns {Object}
+		 */
+		skew(keyword, x = '45deg', y = '45deg') {
+			let degrees = value => {
+				return `${value}`.indexOf('deg') === -1 ?
+					`${value}deg` :
+					value;
+			};
+
+			if (keyword === 'x') {
+				return decl('transform', `skewX(${degrees(x)})`);
+			}
+
+			if (keyword === 'y') {
+				y = arguments[1] || y;
+
+				return decl('transform', `skewY(${degrees(y)})`)
+			}
+
+			if (isNumber(keyword)) {
+				y = arguments[1] || y;
+				x = keyword;
+			}
+
+			return decl('transform', `skew(${degrees(x)}, ${degrees(y)})`);
+		},
+
+		/**
+		 * Translate transform
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number|string} [x]
+		 * @param {number|string} [y]
+		 * @param {number|string} [z]
+		 * @returns {Object}
+		 */
+		translate(keyword, x = 0, y = 0, z) {
+			if (keyword === 'x') {
+				return decl('transform', `translateX(${x})`);
+			}
+
+			if (keyword === 'y') {
+				y = arguments[1] || y;
+
+				return decl('transform', `translateY(${y})`);
+			}
+
+			if (keyword === 'z') {
+				z = arguments[1] || z;
+
+				return decl('transform', `translateZ(${z})`);
+			}
+
+			if (isNumber(keyword) || isPercentage(keyword)) {
+				x = keyword;
+				y = arguments[1] || y;
+				z = arguments[2] || z;
+			}
+
+			if (z) {
+				return decl('transform', `translate3d(${x}, ${y}, ${z})`);
+			}
+
+			return decl('transform', `translate(${x}, ${y})`);
 		},
 
 		/**
@@ -1004,6 +1657,23 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Selection
+		 *
+		 * @param {string} [color]
+		 * @param {string} [background]
+		 * @returns {Object}
+		 */
+		selection(color = vars.selection.color, background = vars.selection.background) {
+			let props = [
+					decl('background', background),
+					decl('color', color),
+					decl('text-shadow', 'none')
+				];
+
+			return rule('&::selection', props);
+		},
+
+		/**
 		 * Box shadow
 		 *
 		 * @param {number|string} [keyword]
@@ -1011,21 +1681,17 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		shadow(keyword, opacity = vars.default.opacity) {
-			let keywords = ['dark', 'light'];
+			let rgb = '0, 0, 0';
 
-			if (keywords.includes(keyword)) {
-				let rgb = keyword === 'dark' ?
-					'0, 0, 0' :
-					'255, 255, 255';
-
-				return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`)
+			if (keyword === 'light') {
+				rgb = '255, 255, 255';
 			}
 
 			if (isNumber(keyword)) {
 				opacity = keyword;
 			}
 
-			return decl('box-shadow', `1px 1px 0 0 rgba(0, 0, 0, ${opacity})`);
+			return decl('box-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`);
 		},
 
 		/**
@@ -1093,6 +1759,82 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Stroke color and width
+		 *
+		 * @param {string} [color]
+		 * @param {number|string} [width]
+		 * @returns {Array}
+		 */
+		stroke(color, width) {
+			let props = [
+				decl('stroke', color)
+			];
+
+			if (width) {
+				props.push(decl('stroke-width', width));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Text shadow
+		 *
+		 * @param {number|string} [keyword]
+		 * @param {number} [opacity]
+		 * @returns {Object}
+		 */
+		textShadow(keyword, opacity = vars.default.opacity) {
+			let rgb = '0, 0, 0';
+
+			if (keyword === 'light') {
+				rgb = '255, 255, 255';
+			}
+
+			if (isNumber(keyword)) {
+				opacity = keyword;
+			}
+
+			return decl('text-shadow', `1px 1px 0 0 rgba(${rgb}, ${opacity})`);
+		},
+
+		/**
+		 * Sharpen text
+		 *
+		 * @returns {Object}
+		 */
+		textSharpen() {
+			return decl('font-smoothing', 'antialiased');
+		},
+
+		/**
+		 * Capitalize text
+		 *
+		 * @returns {Object}
+		 */
+		capitalize() {
+			return decl('text-transform', 'capitalize');
+		},
+
+		/**
+		 * Make text lowercase
+		 *
+		 * @returns {Object}
+		 */
+		lowercase() {
+			return decl('text-transform', 'lowercase');
+		},
+
+		/**
+		 * Make text uppercase
+		 *
+		 * @returns {Object}
+		 */
+		uppercase() {
+			return decl('text-transform', 'uppercase');
+		},
+
+		/**
 		 * Transition shorthand declaration
 		 *
 		 * @param {string} [property]
@@ -1123,6 +1865,30 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Underline text
+		 *
+		 * @param {string} [style]
+		 * @param {string} [color]
+		 * @returns {Object}
+		 */
+		underline(style, color = 'inherit') {
+			if (! style) {
+				return decl('text-decoration', 'underline');
+			}
+
+			return decl('text-decoration', `${color} ${style} underline`);
+		},
+
+		/**
+		 * Line-through text
+		 *
+		 * @returns {Object}
+		 */
+		lineThrough() {
+			return decl('text-decoration', 'line-through');
+		},
+
+		/**
 		 * List style: none
 		 *
 		 * @return {Object}
@@ -1148,6 +1914,24 @@ module.exports = (vars = {}) => {
 		 */
 		visibility(value) {
 			return decl('visibility', value);
+		},
+
+		/**
+		 * Wrap
+		 *
+		 * @returns {Object}
+		 */
+		wrap() {
+			return decl('white-space', 'normal');
+		},
+
+		/**
+		 * No wrap
+		 *
+		 * @returns {Object}
+		 */
+		noWrap() {
+			return decl('white-space', 'nowrap');
 		},
 
 		/**

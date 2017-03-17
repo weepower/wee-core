@@ -791,12 +791,13 @@ describe('font', () => {
 	it('should output specified values by property', () => {
 		return process(
 			`.block {
-				font(style: italic, weight: 300);
+				font(style: italic, weight: 300, spacing: 1px);
 			}`,
 			`.block {
 				font-family: Arial, Helvetica, sans-serif;
 				font-weight: 300;
 				font-style: italic;
+				letter-spacing: 1px;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1049,6 +1050,47 @@ describe('size', () => {
 	});
 });
 
+describe('maxSize', () => {
+	it('should use first argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				maxSize(100);
+			}`,
+			`.block {
+				max-width: 100rem;
+				max-height: 100rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use first argument for width and height with override unit', () => {
+		return process(
+			`.block {
+				maxSize(100%);
+			}`,
+			`.block {
+				max-width: 100%;
+				max-height: 100%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use arguments for width and height', () => {
+		return process(
+			`.block {
+				maxSize(100%, 20%);
+			}`,
+			`.block {
+				max-width: 100%;
+				max-height: 20%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('minSize', () => {
 	it('should use first argument for width and height with default unit', () => {
 		return process(
@@ -1084,6 +1126,165 @@ describe('minSize', () => {
 			`.block {
 				min-width: 100%;
 				min-height: 20%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('square', () => {
+	it('should use argument for width and height', () => {
+		return process(
+			`.block {
+				square(100px);
+			}`,
+			`.block {
+				height: 100px;
+				width: 100px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should use argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				square(10);
+			}`,
+			`.block {
+				height: 10rem;
+				width: 10rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('ratio', () => {
+	describe('with keyword', () => {
+		it('should output default values', () => {
+			return process(
+				stripIndent`
+					.block {
+						ratio(embed);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+						&:before {
+							content: '';
+							display: block;
+							height: 0;
+							padding-top: 56.25%
+						}
+					}
+				`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle ratio', () => {
+			return process(
+				stripIndent`
+					.block {
+						ratio(embed, 4/3);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+						&:before {
+							content: '';
+							display: block;
+							height: 0;
+							padding-top: 75%
+						}
+					}
+				`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output default values', () => {
+			return process(
+				`.block {
+					ratio();
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 56.25%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle ratio', () => {
+			return process(
+				`.block {
+					ratio(4/3);
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 75%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('circle', () => {
+	it('should handle diameter', () => {
+		return process(
+			`.block {
+				circle(.5);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle diameter and crop', () => {
+		return process(
+			`.block {
+				circle(.5, true);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
+				overflow: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				circle(.5, display: inline);
+			}`,
+			`.block {
+				height: 0.5rem;
+				width: 0.5rem;
+				display: inline-block;
+				background-clip: border-box;
+				border-radius: 0.25rem;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1222,6 +1423,133 @@ describe('background', () => {
 			}`,
 			`.block {
 				background: #fff url('/test/test.jpg') center center no-repeat fixed;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('backgroundGradient', () => {
+	describe('with keyword', () => {
+		it('should handle dark', () => {
+			return process(
+				`.block {
+					backgroundGradient(dark);
+				}`,
+				`.block {
+					background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle light with angle', () => {
+			return process(
+				`.block {
+					backgroundGradient(light, angle: 45);
+				}`,
+				`.block {
+					background: linear-gradient(45deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output default values', () => {
+			return process(
+				`.block {
+				backgroundGradient();
+			}`,
+				`.block {
+				background-color: gray;
+				background: linear-gradient(180deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
+			}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle color and angle', () => {
+			return process(
+				`.block {
+					backgroundGradient(blue, angle: 90);
+				}`,
+				`.block {
+					background-color: blue;
+					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					backgroundGradient(angle: 90, end: rgba(0, 0, 0, 0));
+				}`,
+				`.block {
+					background-color: gray;
+					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, 0));
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('backgroundImage', () => {
+	it('should handle filename', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle filename with position', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg, position: 10% 25%);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+				background-position: 10% 25%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle filename with size', () => {
+		return process(
+			`.block {
+				backgroundImage(foo.jpg, size: cover);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: no-repeat;
+				background-size: cover;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				backgroundImage(size: cover, foo.jpg, repeat-x, attachment: fixed);
+			}`,
+			`.block {
+				background-image: url('../images/foo.jpg');
+				background-repeat: repeat-x;
+				background-size: cover;
+				background-attachment: fixed;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1420,6 +1748,108 @@ describe('border', () => {
 	});
 });
 
+describe('borderImage', () => {
+	it('should output filename with default values', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 100% 1 0 stretch;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output nothing when no values are passed', () => {
+		return process(
+			`.block {
+				borderImage();
+			}`,
+			`.block {
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg, 50%, 3);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 50% 3 0 stretch;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				borderImage(foo.jpg, outset: 1.5, repeat: round);
+			}`,
+			`.block {
+				border-image: url('../images/foo.jpg') 100% 1 1.5 round;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('triangle', () => {
+	it('should handle up keyword', () => {
+		return process(
+			`.block {
+				triangle(up);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-left: 5px solid transparent;
+				border-right: 5px solid transparent;
+				border-bottom: 5px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle left keyword with color and size values', () => {
+		return process(
+			`.block {
+				triangle(left, blue, 2px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 2px solid transparent;
+				border-bottom: 2px solid transparent;
+				border-right: 2px solid blue;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				triangle(right, size: 3px, width: 4px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 4px solid transparent;
+				border-bottom: 4px solid transparent;
+				border-left: 3px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 // Note: Generated rules will not add semi-colon to last declaration.
 // This is supported by the CSS spec.
 describe('clearfix', () => {
@@ -1463,9 +1893,7 @@ describe('rowModify', () => {
 			{ mixins: mixins }
 		);
 	});
-});
 
-describe('rowModify', () => {
 	it('should output override margins with override value', () => {
 		return process(
 			`.block {
@@ -1490,6 +1918,410 @@ describe('rowReset', () => {
 				margin-left: 0;
 				max-width: none;
 			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('inlineColumn', () => {
+	describe('with keyword', () => {
+		it('should output share with default values', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 5%;
+					width: 7.5%;
+					letter-spacing: normal;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should output provided values', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1, 3, 4%, true);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 4%;
+					width: 29.333333333333332%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					inlineColumn(spaced, 1, margin: 4%, spaceless: true, columns: 3);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 4%;
+					width: 29.333333333333332%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output share with default values', () => {
+			return process(
+				`.block {
+					inlineColumn(1);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 12.5%;
+					margin-right: -.32em;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should output provided values', () => {
+			return process(
+				`.block {
+					inlineColumn(1, 3, true);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 33.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		// TODO: This test passes despite the value of spaceless
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					inlineColumn(2, columns: 4, spaceless: false);
+				}`,
+				`.block {
+					display: inline-block;
+					vertical-align: top;
+					width: 50%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('inlineRow', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				inlineRow();
+			}`,
+			`.block {
+				margin-left: -5%;
+				max-width: 105%;
+				letter-spacing: -.32em;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			`.block {
+				inlineRow(4%, true);
+			}`,
+			`.block {
+				margin-left: -4%;
+				max-width: 104%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				inlineRow(spaceless: true, margin: 6%);
+			}`,
+			`.block {
+				margin-left: -6%;
+				max-width: 106%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('prefix', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '-';
+						margin-right: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(attr(data-attr), 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: attr(data-attr);
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					prefix(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: .5em;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('suffix', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '-';
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '~';
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(attr(data-attr), 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: attr(data-attr);
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					suffix(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:after {
+						content: '~';
+						margin-left: .5em;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('bookends', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends();
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '-';
+						margin-right: .5em
+					}
+					&:after {
+						content: '-';
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(~, 2, foo, blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: 2rem;
+						font-family: foo;
+						color: blue
+					}
+					&:after {
+						content: '~';
+						margin-left: 2rem;
+						font-family: foo;
+						color: blue
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle attr function', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(attr(data-attr));
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: attr(data-attr);
+						margin-right: .5em
+					}
+					&:after {
+						content: attr(data-attr);
+						margin-left: .5em
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					bookends(~, color: blue);
+				}
+			`,
+			stripIndent`
+				.block {
+					&:before {
+						content: '~';
+						margin-right: .5em;
+						color: blue
+					}
+					&:after {
+						content: '~';
+						margin-left: .5em;
+						color: blue
+					}
+				}
+			`,
 			{ mixins: mixins }
 		);
 	});
@@ -1571,6 +2403,226 @@ describe('column', () => {
 				float: left;
 				margin-left: 10%;
 				width: 40%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('columnModify', () => {
+	describe('with keyword', () => {
+		it('should handle share amount', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 2);
+				}`,
+				`.block {
+					margin-left: 5%;
+					width: 20%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle share and columns count', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 2, 4);
+				}`,
+				`.block {
+					margin-left: 5%;
+					width: 45%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnModify(spaced, 3, margin: 4%);
+				}`,
+				`.block {
+					margin-left: 4%;
+					width: 33.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should handle share and columns count', () => {
+			return process(
+				`.block {
+					columnModify(2, 4);
+				}`,
+				`.block {
+					width: 50%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnModify(columns: 3, 2);
+				}`,
+				`.block {
+					width: 66.66666666666666%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('columnOffset', () => {
+	describe('with keyword', () => {
+		it('should handle share amount', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, 1);
+				}`,
+				`.block {
+					margin-left: 17.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle share and margin', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, 1, margin: 6%);
+				}`,
+				`.block {
+					margin-left: 24.5%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnOffset(spaced, columns: 3, share: 1);
+				}`,
+				`.block {
+					margin-left: 38.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should handle share and column', () => {
+			return process(
+				`.block {
+				columnOffset(3, 4);
+			}`,
+				`.block {
+				margin-left: 75%;
+			}`,
+				{ mixins: mixins }
+			);
+		});
+
+		it('should handle key value pairs', () => {
+			return process(
+				`.block {
+					columnOffset(columns: 3, share: 1);
+				}`,
+				`.block {
+					margin-left: 33.33333333333333%;
+				}`,
+				{ mixins: mixins }
+			);
+		});
+	});
+});
+
+describe('columnPull', () => {
+	it('should handle share amount', () => {
+		return process(
+			`.block {
+				columnPull(2);
+			}`,
+			`.block {
+				position: relative;
+				right: 25%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				columnPull(columns: 4, share: 2);
+			}`,
+			`.block {
+				position: relative;
+				right: 50%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('columnPush', () => {
+	it('should handle share amount', () => {
+		return process(
+			`.block {
+				columnPush(2);
+			}`,
+			`.block {
+				left: 25%;
+				position: relative;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				columnPush(columns: 4, share: 2);
+			}`,
+			`.block {
+				left: 50%;
+				position: relative;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('columnReset', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				columnReset();
+			}`,
+			`.block {
+				float: none;
+				width: auto;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle resetting margin', () => {
+		return process(
+			`.block {
+				columnReset(true);
+			}`,
+			`.block {
+				float: none;
+				width: auto;
+				margin-left: 0;
 			}`,
 			{ mixins: mixins }
 		);
@@ -2194,6 +3246,44 @@ describe('shadow', () => {
 	});
 });
 
+describe('textShadow', () => {
+	it('should output declaration with default values', () => {
+		return process(
+			`.block {
+				textShadow();
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.2);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output a dark text-shadow using the provided opacity when using the dark keyword', () => {
+		return process(
+			`.block {
+				textShadow(dark, 0.5);
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output a light text-shadow using the provided opacity when using the light keyword', () => {
+		return process(
+			`.block {
+				textShadow(light, 0.5);
+			}`,
+			`.block {
+				text-shadow: 1px 1px 0 0 rgba(255, 255, 255, 0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('flex', () => {
 	it('should output declaration with default values', () => {
 		return process(
@@ -2495,6 +3585,602 @@ describe('loadFont', () => {
 					}
 				}
 			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('ellipsis', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				ellipsis();
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle max-width', () => {
+		return process(
+			`.block {
+				ellipsis(800px);
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 800px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle max-width with default unit', () => {
+		return process(
+			`.block {
+				ellipsis(80);
+			}`,
+			`.block {
+				overflow-x: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 80rem;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('noClear', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					noClear();
+				}
+			`,
+			stripIndent`
+				.block {
+					&::-ms-clear {
+						display: none
+					}
+					&::-webkit-search-cancel-button {
+						-webkit-appearance: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('fill', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				fill();
+			}`,
+			`.block {
+				height: 100%;
+				width: 100%;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('hideText', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				hideText();
+			}`,
+			`.block {
+				overflow: hidden;
+				text-indent: 110%;
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('selection', () => {
+	it('should output default values', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection();
+				}
+			`,
+			stripIndent`
+				.block {
+					&::selection {
+						background: #349bb9;
+						color: #fff;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle color and background', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection(#000, #fff);
+				}
+			`,
+			stripIndent`
+				.block {
+					&::selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			stripIndent`
+				.block {
+					selection(background: #fff, color: #000);
+				}
+			`,
+			stripIndent`
+				.block {
+					&::selection {
+						background: #fff;
+						color: #000;
+						text-shadow: none
+					}
+				}
+			`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('crop', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				crop();
+			}`,
+			`.block {
+				overflow: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle horizontal keyword', () => {
+		return process(
+			`.block {
+				crop(horizontal);
+			}`,
+			`.block {
+				overflow-x: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle vertical keyword', () => {
+		return process(
+			`.block {
+				crop(vertical);
+			}`,
+			`.block {
+				overflow-y: hidden;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('scroll', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				scroll();
+			}`,
+			`.block {
+				overflow: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle horizontal keyword', () => {
+		return process(
+			`.block {
+				scroll(horizontal);
+			}`,
+			`.block {
+				overflow-x: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle vertical keyword', () => {
+		return process(
+			`.block {
+				scroll(vertical);
+			}`,
+			`.block {
+				overflow-y: scroll;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('rotate', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				rotate();
+			}`,
+			`.block {
+				transform: rotate(45deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle numbers', () => {
+		return process(
+			`.block {
+				rotate(90);
+				rotate(-90);
+			}`,
+			`.block {
+				transform: rotate(90deg);
+				transform: rotate(-90deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('scale', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				scale();
+			}`,
+			`.block {
+				transform: scale(1);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle numbers', () => {
+		return process(
+			`.block {
+				scale(.5);
+			}`,
+			`.block {
+				transform: scale(0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords', () => {
+		return process(
+			`.block {
+				scale(x);
+				scale(y, .5);
+			}`,
+			`.block {
+				transform: scaleX(1);
+				transform: scaleY(0.5);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('skew', () => {
+	it('should handle keywords with default values', () => {
+		return process(
+			`.block {
+				skew(x);
+				skew(y);
+			}`,
+			`.block {
+				transform: skewX(45deg);
+				transform: skewY(45deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords with provided values', () => {
+		return process(
+			`.block {
+				skew(x, 60);
+				skew(y, 60deg);
+			}`,
+			`.block {
+				transform: skewX(60deg);
+				transform: skewY(60deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle x and y values', () => {
+		return process(
+			`.block {
+				skew(45, 60);
+			}`,
+			`.block {
+				transform: skew(45deg, 60deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('translate', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				translate();
+			}`,
+			`.block {
+				transform: translate(0, 0);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle keywords', () => {
+		return process(
+			`.block {
+				translate(x, 50%);
+				translate(x, -50%);
+				translate(y, 5rem);
+				translate(z, 15px);
+			}`,
+			`.block {
+				transform: translateX(50%);
+				transform: translateX(-50%);
+				transform: translateY(5rem);
+				transform: translateZ(15px);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle provided values', () => {
+		return process(
+			`.block {
+				translate(25%);
+				translate(-50%, -50%);
+				translate(10%, 10%, 10%);
+			}`,
+			`.block {
+				transform: translate(25%, 0);
+				transform: translate(-50%, -50%);
+				transform: translate3d(10%, 10%, 10%);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				translate(x: 5%);
+				translate(y: 5%);
+				translate(z: 5%);
+				translate(z: 3%, x: 1%);
+				translate(y: 2%, x: 1%);
+				translate(y: 2%, x: 1%, z: 3%);
+			}`,
+			`.block {
+				transform: translate(5%, 0);
+				transform: translate(0, 5%);
+				transform: translate3d(0, 0, 5%);
+				transform: translate3d(1%, 0, 3%);
+				transform: translate(1%, 2%);
+				transform: translate3d(1%, 2%, 3%);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('underline', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				underline();
+			}`,
+			`.block {
+				text-decoration: underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle style with default color', () => {
+		return process(
+			`.block {
+				underline(wavy);
+			}`,
+			`.block {
+				text-decoration: inherit wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle style with color', () => {
+		return process(
+			`.block {
+				underline(wavy, red);
+			}`,
+			`.block {
+				text-decoration: red wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				underline(color: red, style: wavy);
+			}`,
+			`.block {
+				text-decoration: red wavy underline;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('lineThrough', () => {
+	it('should output default values', () => {
+		return process(
+			`.block {
+				lineThrough();
+			}`,
+			`.block {
+				text-decoration: line-through;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('wrap', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				wrap();
+			}`,
+			`.block {
+				white-space: normal;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('noWrap', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				noWrap();
+			}`,
+			`.block {
+				white-space: nowrap;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('stroke', () => {
+	it('should handle provided values', () => {
+		return process(
+			`.block {
+				stroke(blue);
+				stroke(red, 2px);
+			}`,
+			`.block {
+				stroke: blue;
+				stroke: red;
+				stroke-width: 2px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle named arguments', () => {
+		return process(
+			`.block {
+				stroke(width: 2px, color: blue);
+			}`,
+			`.block {
+				stroke: blue;
+				stroke-width: 2px;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('textSharpen', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				textSharpen();
+			}`,
+			`.block {
+				font-smoothing: antialiased;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('capitalize', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				capitalize();
+			}`,
+			`.block {
+				text-transform: capitalize;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('lowercase', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				lowercase();
+			}`,
+			`.block {
+				text-transform: lowercase;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('uppercase', () => {
+	it('should output default value', () => {
+		return process(
+			`.block {
+				uppercase();
+			}`,
+			`.block {
+				text-transform: uppercase;
+			}`,
 			{ mixins: mixins }
 		);
 	});
