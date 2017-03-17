@@ -14,15 +14,12 @@
   "main": "dist/wee.js",
   "module": "scripts/index.js",
   "scripts": {
-  	"dist": "webpack --config=webpack.config.js",
+    "dist": "webpack --config=webpack.config.js",
     "test": "npm run test:scripts",
-  	"test:scripts": "karma start ./tests/scripts/karma.conf.js",
+    "test:scripts": "karma start ./tests/scripts/karma.conf.js",
     "test:styles": "mocha ./tests/styles/**/*.js"
   },
-  "dependencies": {
-    "fs-extra": "~2.0.0",
-    "glob": "~7.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^3.5.0",
     "common-tags": "^1.4.0",
