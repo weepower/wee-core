@@ -1681,10 +1681,9 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		shadow(keyword, opacity = vars.default.opacity) {
-			let keywords = ['dark', 'light'],
-				rgb = '0, 0, 0';
+			let rgb = '0, 0, 0';
 
-			if (keywords.includes(keyword) && keyword === 'light') {
+			if (keyword === 'light') {
 				rgb = '255, 255, 255';
 			}
 
@@ -1786,10 +1785,9 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		textShadow(keyword, opacity = vars.default.opacity) {
-			let keywords = ['dark', 'light'],
-				rgb = '0, 0, 0';
+			let rgb = '0, 0, 0';
 
-			if (keywords.includes(keyword) && keyword === 'light') {
+			if (keyword === 'light') {
 				rgb = '255, 255, 255';
 			}
 
