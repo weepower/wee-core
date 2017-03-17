@@ -27,7 +27,7 @@ const _contains = (source, target) => {
  * @param {(HTMLElement|string)} [options.context=document]
  * @returns {($|Array)} nodes
  */
-export const _selArray = (selector, options) => {
+const _selArray = (selector, options) => {
 	if (selector && selector._$) {
 		return selector;
 	}
