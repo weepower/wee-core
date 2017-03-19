@@ -41,8 +41,8 @@ module.exports = function(config) {
 		protocol: 'https',
 		port: 9876,
 		httpsServerOptions: {
-			key: fs.readFileSync(resolve(__dirname, '../https/server.key'), 'utf8'),
-			cert: fs.readFileSync(resolve(__dirname, '../https/server.crt'), 'utf8')
+			key: fs.readFileSync(resolve(__dirname, './https/server.key'), 'utf8'),
+			cert: fs.readFileSync(resolve(__dirname, './https/server.crt'), 'utf8')
 		},
 
 		// enable / disable colors in the output (reporters and logs)

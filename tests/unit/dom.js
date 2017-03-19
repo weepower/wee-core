@@ -1,8 +1,8 @@
-import { _doc, _win } from 'core/variables';
-import { $, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'core/dom';
+import { _doc, _win } from 'variables';
+import { $sel, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'dom';
 
 describe('Core: DOM', () => {
-	describe('$', () => {
+	describe('$sel', () => {
 		before(() => {
 			let div = document.createElement('div');
 
@@ -17,36 +17,36 @@ describe('Core: DOM', () => {
 		});
 
 		it('should return cached response when selecting window', () => {
-			expect($('window')[0]).to.equal(_win);
+			expect($sel('window')[0]).to.equal(_win);
 		});
 
 		it('should return cached response when selecting document', () => {
-			expect($('document')[0]).to.equal(_doc);
+			expect($sel('document')[0]).to.equal(_doc);
 		});
 
 		it('should select elements by passing dom node', () => {
 			let span = document.createElement('span');
 			document.querySelector('body').appendChild(span);
 
-			expect($(span)[0]).to.equal(span);
+			expect($sel(span)[0]).to.equal(span);
 		});
 
 		it('should select elements by element name', () => {
-			expect($('div')[0].textContent).to.equal('test');
+			expect($sel('div')[0].textContent).to.equal('test');
 		});
 
 		it('should select elements by class name', () => {
-			expect($('.test')[0].textContent).to.equal('test');
+			expect($sel('.test')[0].textContent).to.equal('test');
 		});
 
 		it('should select elements with context', () => {
-			expect($('.test', 'body')[0].textContent).to.equal('test');
-			expect($('.test', 'div')[0]).to.be.undefined;
+			expect($sel('.test', 'body')[0].textContent).to.equal('test');
+			expect($sel('.test', 'div')[0]).to.be.undefined;
 		});
 
 		it('should select elements by data ref', () => {
 			$setRef();
-			expect($('ref:testRef')[0].textContent).to.equal('test');
+			expect($sel('ref:testRef')[0].textContent).to.equal('test');
 		});
 	});
 
@@ -72,7 +72,7 @@ describe('Core: DOM', () => {
 		it('should execute function for each matching selection', () => {
 			let count = 0;
 
-			$each($('.each'), el => {
+			$each($sel('.each'), el => {
 				count = el.textContent;
 			});
 
@@ -82,7 +82,7 @@ describe('Core: DOM', () => {
 		it('should iterate in reverse', () => {
 			let count = 0;
 
-			$each($('.each'), el => {
+			$each($sel('.each'), el => {
 				count = el.textContent;
 			}, {
 				reverse: true
@@ -94,7 +94,7 @@ describe('Core: DOM', () => {
 		it('should inject scope into callback functions', () => {
 			let scope = 0;
 
-			$each($('.each'), function(el) {
+			$each($sel('.each'), function(el) {
 				scope = this.a;
 			}, {
 				scope: {a: 1}
@@ -165,7 +165,7 @@ describe('Core: DOM', () => {
 		});
 
 		it('should accept Wee selection as argument', () => {
-			let arr = $map($('.each'), el => {
+			let arr = $map($sel('.each'), el => {
 				return el.textContent;
 			});
 
@@ -251,9 +251,9 @@ describe('Core: DOM', () => {
 		});
 
 		it('should register elements with data-ref attribute', () => {
-			expect($('ref:testRef').length).to.equal(0);
+			expect($sel('ref:testRef').length).to.equal(0);
 			$setRef();
-			expect($('ref:testRef').length).to.equal(1);
+			expect($sel('ref:testRef').length).to.equal(1);
 		});
 
 		it('should register elements within provided context', () => {
@@ -267,7 +267,7 @@ describe('Core: DOM', () => {
 			document.querySelector('body').appendChild(fragment);
 			$setRef('.context');
 
-			expect($('ref:testRef').length).to.equal(1);
+			expect($sel('ref:testRef').length).to.equal(1);
 		});
 	});
 

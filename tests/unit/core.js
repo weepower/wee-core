@@ -1,4 +1,4 @@
-import { $env, $envReset, $envSecure, $exec, $extend } from 'core/core';
+import { $env, $envReset, $envSecure, $exec, $extend } from 'core';
 
 describe('Core: Core', () => {
 	describe('$env', () => {
