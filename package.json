@@ -11,16 +11,16 @@
   ],
   "repository": "weepower/wee-core",
   "bugs": "https://github.com/weepower/wee/issues",
-  "main": "dist/wee.js",
-  "module": "scripts/index.js",
   "scripts": {
     "dist": "webpack --config=webpack.config.js",
     "test": "npm run test:scripts",
-    "test:scripts": "karma start ./tests/scripts/karma.conf.js",
-    "test:styles": "mocha ./tests/styles/**/*.js"
+    "test:scripts": "karma start ./tests/karma.conf.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "7.0.0-beta.1",
+    "babel-preset-es2015": "^6.24.0",
     "chai": "^3.5.0",
     "common-tags": "^1.4.0",
     "istanbul": "^0.4.5",
