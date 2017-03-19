@@ -1,4 +1,4 @@
-let env = process.env.NODE_ENV;
+var env = process.env.NODE_ENV;
 
 module.exports = function(config) {
 	config.set({
