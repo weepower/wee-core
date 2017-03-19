@@ -12,21 +12,23 @@
   "repository": "weepower/wee-core",
   "bugs": "https://github.com/weepower/wee/issues",
   "scripts": {
+    "codecov": "codecov",
     "dist": "webpack --config=webpack.config.js",
-    "test": "npm run test:scripts",
-    "test:scripts": "karma start ./tests/karma.conf.js"
+    "test": "karma start ./tests/karma.conf.js",
+    "test:ci": "NODE_ENV='ci' karma start ./tests/karma.conf.js"
   },
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "7.0.0-beta.1",
+    "babel-plugin-istanbul": "^4.0.0",
     "babel-preset-es2015": "^6.24.0",
     "chai": "^3.5.0",
-    "common-tags": "^1.4.0",
-    "istanbul": "^0.4.5",
+    "codecov": "^2.1.0",
     "karma": "^1.5.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.1",
     "karma-ie-launcher": "^1.0.0",
     "karma-mocha": "^1.3.0",
@@ -34,11 +36,6 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
-    "postcss": "^5.2.11",
-    "postcss-js-mixins": "^2.1.1",
-    "postcss-variables": "^1.0.0",
-    "postcss-wee-syntax": "^2.0.0",
-    "selenium-standalone": "^6.0.1",
     "webpack": "^2.2.1"
   }
 }
