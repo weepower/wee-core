@@ -68,7 +68,7 @@ module.exports = function(config) {
 				flags: ['--no-sandbox']
 			}
 		},
-		browsers: env === 'ci' ? ['Chrome_travis_ci'] : ['Chrome'],
+		browsers: env === 'ci' ? ['Firefox'] : ['Chrome'],
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
