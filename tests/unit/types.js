@@ -170,10 +170,6 @@ describe('Core: Types', () => {
 		it('should identify undefined', () => {
 			expect($type(undefined)).to.equal('undefined');
 		});
-
-		it('should identify symbols', () => {
-			expect($type(Symbol())).to.equal('symbol');
-		});
 	});
 
 	describe('$unserialize', () => {
