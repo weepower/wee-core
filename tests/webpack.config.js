@@ -14,10 +14,12 @@ module.exports = {
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				options: {
+					presets: [['es2015', { modules: false }]],
 					plugins: [
 						['istanbul', {
 							exclude: [
-								'tests/**'
+								'tests/*.js',
+								'tests/unit/*.js'
 							]
 						}]
 					]

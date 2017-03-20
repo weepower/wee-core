@@ -6,8 +6,8 @@ describe('Core: DOM', () => {
 		before(() => {
 			let div = document.createElement('div');
 
-			div.textContent = 'test';
-			div.classList = 'test';
+			div.innerHTML = 'test';
+			div.className = 'test';
 			div.setAttribute('data-ref', 'testRef');
 			document.querySelector('body').appendChild(div);
 		});

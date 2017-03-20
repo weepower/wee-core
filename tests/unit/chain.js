@@ -5,8 +5,8 @@ describe('Core: Chain', () => {
 	before(() => {
 		let div = document.createElement('div');
 
-		div.textContent = 'test';
-		div.classList = 'test';
+		div.innerHTML = 'test';
+		div.className = 'test';
 		document.querySelector('body').appendChild(div);
 	});
 
