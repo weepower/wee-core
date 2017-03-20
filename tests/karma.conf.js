@@ -20,7 +20,7 @@ module.exports = function(config) {
 			'./index.js': ['webpack']
 		},
 		webpackMiddleware: {
-			stats: 'errors-only'
+			noInfo: true
 		},
 		webpack: require('./webpack.config.js'),
 
