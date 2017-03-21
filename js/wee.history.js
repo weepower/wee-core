@@ -11,7 +11,6 @@
 		settings = {},
 		root = '',
 		path = '',
-		url = '',
 
 		/**
 		 * Return current path
@@ -32,17 +31,13 @@
 		 * @param {HTMLElement} el
 		 */
 		_isValid = function(el) {
-			var host = el.host,
-				path = el.pathname,
-				loc = location;
-
 			if (! el.href ||
 				el.target == '_blank' ||
 				! /https?:/.test(el.href) ||
 				el.hasAttribute('download') ||
 				el.hasAttribute('data-static') ||
-				(host && host != loc.host) ||
-				(el.hash && path == loc.pathname)
+				(el.host && el.host != location.host) ||
+				(el.hash && el.pathname == path)
 			) {
 				return false;
 			}
@@ -88,7 +83,7 @@
 				conf.path = D._getUrl(request);
 			}
 
-			var key = conf.path.replace(/^\//g, ''),
+			var key = conf.path,
 				dir = conf.push ? 1 : -1,
 				obj = {
 					args: [
@@ -171,23 +166,25 @@
 		 * @param {boolean} [options.useResponseURL=true]
 		 */
 		init: function(options) {
-			if (! this.request) {
-				path = _path();
+			var scope = this;
+
+			if (! scope.request) {
+				var uri = W.routes.uri();
+				path = uri.full;
 				settings = W.$extend({
 					partials: 'title,main',
 					push: true,
 					request: {},
 					run: true,
-					scrollTarget: $._body,
+					scrollTarget: W._body,
 					scrollTop: 0
 				}, options);
 				root = settings.request.root || '';
-				url = W.routes.uri().full;
 
-				this.request = settings.request;
+				scope.request = settings.request;
 				delete settings.request;
 
-				order.push($.routes.uri());
+				order.push(uri);
 
 				if (support) {
 					H.scrollRestoration = 'manual';
@@ -199,11 +196,11 @@
 					E.on(W._win, 'popstate.history', function(e) {
 						if (e.state !== null) {
 							var url = _path(),
-								prevConf = entries[path.replace(/^\//g, '')];
+								prev = entries[path];
 
-							if (prevConf) {
+							if (prev) {
 								var conf = W.$extend(
-									entries[url.replace(/^\//g, '')] || {
+									entries[url] || {
 										request: {
 											root: ''
 										}
@@ -213,7 +210,7 @@
 										pop: true
 									}
 								);
-								conf.partials = prevConf.partials;
+								conf.partials = prev.partials;
 
 								// Restore previous scroll position
 								if (e.state.top) {
@@ -229,7 +226,7 @@
 				}
 
 				// Bind PJAX actions
-				this.bind();
+				scope.bind();
 			}
 		},
 
@@ -359,7 +356,7 @@
 			var req = scope.request,
 				mock = options.action === false,
 				conf = W.$extend(
-					$.copy(settings),
+					W.$copy(settings),
 					options
 				),
 				request = conf.request || {},
@@ -380,8 +377,8 @@
 			// Reset URL to exclude root
 			a.href = request.url;
 
-			url = _path(a);
-			request.url = url;
+			var url = W.routes.parse(request.url);
+			request.url = url.full;
 			conf.request = request;
 
 			if (conf.begin && W.$exec(conf.begin, {
@@ -396,13 +393,13 @@
 				top: W._body.scrollTop
 			}, '');
 
-			pending = $.routes.parse(url);
+			pending = url;
 
 			// Evaluate preload routes against target path
 			if (route) {
 				W.routes.run({
 					event: 'preload',
-					path: url
+					path: request.url
 				});
 			}
 
