@@ -1,5 +1,5 @@
-import { $, $chain } from 'chain';
-import { $each } from 'dom';
+import { $, $chain } from 'core/chain';
+import { $each } from 'core/dom';
 
 describe('Core: Chain', () => {
 	before(() => {

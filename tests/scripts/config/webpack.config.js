@@ -4,7 +4,6 @@ module.exports = {
 	resolve: {
 		modules: [
 			path.resolve(__dirname, '../../../scripts'),
-			path.resolve(__dirname, '../../../scripts/core'),
 			path.resolve(__dirname, '../../../node_modules')
 		]
 	},

@@ -1,5 +1,5 @@
-import { _doc, _win } from 'variables';
-import { $sel, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'dom';
+import { _doc, _win } from 'core/variables';
+import { $sel, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'core/dom';
 
 describe('Core: DOM', () => {
 	describe('$sel', () => {

@@ -1,4 +1,4 @@
-import { $copy, $equals, $extend, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'types';
+import { $copy, $equals, $extend, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
