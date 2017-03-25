@@ -12,11 +12,11 @@ let env;
  * @param {Object} [options]
  * @returns {*}
  */
-const _val = (val, options) => {
+function _val(val, options) {
 	return $isFunction(val) ?
 		$exec(val, options) :
 		val;
-};
+}
 
 /**
  * Get current environment or set current environment against
@@ -26,7 +26,7 @@ const _val = (val, options) => {
  * @param {string} [fallback=local]
  * @returns {string} environment
  */
-export const $env = (rules, fallback = 'local') => {
+export function $env(rules, fallback = 'local') {
 	if (rules) {
 		let host = location.hostname;
 
@@ -47,23 +47,23 @@ export const $env = (rules, fallback = 'local') => {
 	}
 
 	return env || fallback;
-};
+}
 
 /**
  * Determine if the current environment is SSL encrypted
  *
  * @returns {boolean} secure
  */
-export const $envSecure = () => {
+export function $envSecure() {
 	return location.protocol == 'https:';
-};
+}
 
 /**
  * Reset env variable - used for testing
  */
-export const $envReset = () => {
+export function $envReset() {
 	env = undefined;
-};
+}
 
 /**
  * Execute specified function or array of functions
@@ -74,7 +74,7 @@ export const $envReset = () => {
  * @param {Object} [options.scope]
  * @returns {*} [response]
  */
-export const $exec = (fn, options = {}) => {
+export function $exec(fn, options = {}) {
 	let fns = $toArray(fn),
 		len = fns.length,
 		i = 0,
@@ -94,4 +94,4 @@ export const $exec = (fn, options = {}) => {
 			return response;
 		}
 	}
-};
+}
