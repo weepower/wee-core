@@ -8,12 +8,12 @@ export const _slice = [].slice;
  * @param {Array} b
  * @returns {boolean}
  */
-const _arrEquals = (a, b) => {
+function _arrEquals(a, b) {
 	return a.length == b.length &&
 		a.every(function(el, i) {
 			return _equals(el, b[i]);
 		});
-};
+}
 
 /**
  * Cast string to most applicable data type
@@ -21,7 +21,7 @@ const _arrEquals = (a, b) => {
  * @protected
  * @param {*} val
  */
-const _castString = val => {
+function _castString(val) {
 	if (typeof val == 'string') {
 		try {
 			val = val == 'true' ? true :
@@ -34,7 +34,7 @@ const _castString = val => {
 	}
 
 	return val;
-};
+}
 
 /**
  * Clone value to a new instance
@@ -43,7 +43,7 @@ const _castString = val => {
  * @param {*} val
  * @returns {*}
  */
-const _copy = val => {
+function _copy(val) {
 	let type = $type(val);
 
 	if (type == 'object') {
@@ -53,7 +53,7 @@ const _copy = val => {
 	}
 
 	return val;
-};
+}
 
 /**
  * Compare two values for equality
@@ -63,7 +63,7 @@ const _copy = val => {
  * @param {*} b
  * @returns {boolean}
  */
-const _equals = (a, b) => {
+function _equals(a, b) {
 	if (a === b) {
 		return true;
 	}
@@ -87,7 +87,7 @@ const _equals = (a, b) => {
 	}
 
 	return false;
-};
+}
 
 /**
  * Extend target object with source object(s)
@@ -99,7 +99,7 @@ const _equals = (a, b) => {
  * @param {Array} [_set=[]]
  * @returns {Object}
  */
-export const _extend = (target, object, deep, _set = []) => {
+export function _extend(target, object, deep, _set = []) {
 	if (! object) {
 		return target;
 	}
@@ -132,7 +132,7 @@ export const _extend = (target, object, deep, _set = []) => {
 	}
 
 	return target;
-};
+}
 
 /**
  * Compare two objects for equality
@@ -142,14 +142,14 @@ export const _extend = (target, object, deep, _set = []) => {
  * @param {Object} b
  * @returns {boolean}
  */
-const _objEquals = (a, b) => {
+function _objEquals(a, b) {
 	let aKeys = Object.keys(a);
 
 	return _arrEquals(aKeys.sort(), Object.keys(b).sort()) &&
 		aKeys.every(function(i) {
 			return _equals(a[i], b[i]);
 		});
-};
+}
 
 /**
  * Clone value to a new instance
@@ -158,9 +158,9 @@ const _objEquals = (a, b) => {
  * @param {*} val
  * @returns {*}
  */
-export const $copy = val => {
+export function $copy(val) {
 	return _copy(val);
-};
+}
 
 /**
  * Compare two values for strict equality
@@ -169,9 +169,9 @@ export const $copy = val => {
  * @param {*} b
  * @returns {boolean}
  */
-export const $equals = (a, b) => {
+export function $equals(a, b) {
 	return _equals(a, b);
-};
+}
 
 /**
  * Extend target object with source object(s)
@@ -181,7 +181,7 @@ export const $equals = (a, b) => {
  * @param {...Object} [obj] - merged objects
  * @returns {Object}
  */
-export const $extend = function (deep) {
+export function $extend(deep) {
 	let bool = typeof deep == 'boolean',
 		args = _slice.call(arguments).slice(bool ? 1 : 0),
 		target = args[0] || {};
@@ -192,7 +192,7 @@ export const $extend = function (deep) {
 	});
 
 	return target;
-};
+}
 
 /**
  * Determine if value is an array
@@ -200,9 +200,9 @@ export const $extend = function (deep) {
  * @param {*} obj
  * @returns {boolean}
  */
-export const $isArray = obj => {
+export function $isArray(obj) {
 	return Array.isArray(obj);
-};
+}
 
 /**
  * Determine if value is a function
@@ -210,9 +210,9 @@ export const $isArray = obj => {
  * @param {*} obj
  * @returns {boolean}
  */
-export const $isFunction = obj => {
+export function $isFunction(obj) {
 	return $type(obj) == 'function';
-};
+}
 
 /**
  * Determine if value is a number (optional loose match)
@@ -221,7 +221,7 @@ export const $isFunction = obj => {
  * @param {boolean} [strict]
  * @returns {boolean}
  */
-export const $isNumber = (obj, strict = true) => {
+export function $isNumber(obj, strict = true) {
 	if (! strict) {
 		if (! obj.match(/^\d*\.?\d*$/g)) {
 			return false;
@@ -234,7 +234,7 @@ export const $isNumber = (obj, strict = true) => {
 	}
 
 	return $type(obj) == 'number';
-};
+}
 
 /**
  * Determine if value is an object
@@ -242,9 +242,9 @@ export const $isNumber = (obj, strict = true) => {
  * @param {*} obj
  * @returns {boolean}
  */
-export const $isObject = obj => {
+export function $isObject(obj) {
 	return $type(obj) == 'object';
-};
+}
 
 /**
  * Determine if value is a string
@@ -252,9 +252,9 @@ export const $isObject = obj => {
  * @param {*} obj
  * @returns {boolean}
  */
-export const $isString = obj => {
+export function $isString(obj) {
 	return typeof obj == 'string';
-};
+}
 
 /**
  * Serialize object
@@ -262,7 +262,7 @@ export const $isString = obj => {
  * @param {Object} obj
  * @returns {string} value
  */
-export const $serialize = obj => {
+export function $serialize(obj) {
 	let arr = [];
 
 	Object.keys(obj || {}).forEach(key => {
@@ -279,7 +279,7 @@ export const $serialize = obj => {
 	});
 
 	return arr.length ? arr.join('&').replace(/%20/g, '+') : '';
-};
+}
 
 /**
  * Cast value to array if it isn't one
@@ -287,9 +287,9 @@ export const $serialize = obj => {
  * @param {*} val
  * @returns {Array} value
  */
-export const $toArray = val => {
+export function $toArray(val) {
 	return val !== undefined ? (Array.isArray(val) ? val : [val]) : [];
-};
+}
 
 /**
  * Determine the JavaScript type of an object
@@ -297,12 +297,12 @@ export const $toArray = val => {
  * @param {*} obj
  * @returns string
  */
-export const $type = obj => {
+export function $type(obj) {
 	return obj === undefined ? 'undefined' :
 		Object.prototype.toString.call(obj)
 			.replace(/^\[object (.+)]$/, '$1')
 			.toLowerCase();
-};
+}
 
 /**
  * Convert serialized string back into an object
@@ -310,7 +310,7 @@ export const $type = obj => {
  * @param {string} str
  * @returns {Object} value
  */
-export const $unserialize = str => {
+export function $unserialize(str) {
 	let obj = {};
 
 	decodeURIComponent(str)
@@ -329,4 +329,4 @@ export const $unserialize = str => {
 	});
 
 	return obj;
-};
+}

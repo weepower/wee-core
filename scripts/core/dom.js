@@ -13,10 +13,10 @@ let range,
  * @param {HTMLElement} target
  * @returns {boolean} match
  */
-const _contains = (source, target) => {
+function _contains(source, target) {
 	return (source === _doc ? _html : source)
 		.contains(target);
-};
+}
 
 /**
  * Convert selection to array
@@ -27,7 +27,7 @@ const _contains = (source, target) => {
  * @param {(HTMLElement|string)} [options.context=document]
  * @returns {($|Array)} nodes
  */
-const _selArray = (selector, options) => {
+function _selArray(selector, options) {
 	if (selector && selector._$) {
 		return selector;
 	}
@@ -39,7 +39,7 @@ const _selArray = (selector, options) => {
 		selector;
 
 	return $toArray(el);
-};
+}
 
 /**
  * Get matches to specified selector or return parsed HTML
@@ -48,7 +48,7 @@ const _selArray = (selector, options) => {
  * @param {($|HTMLElement|string)} [context=document]
  * @returns {Array} elements
  */
-export const $sel = (selector, context) => {
+export function $sel(selector, context) {
 	let el = null,
 		ref = [];
 
@@ -135,7 +135,7 @@ export const $sel = (selector, context) => {
 
 	// Join references if available
 	return ref.length ? el.concat(ref) : el;
-};
+}
 
 /**
  * Execute function for each matching selection
@@ -148,7 +148,7 @@ export const $sel = (selector, context) => {
  * @param {boolean} [options.reverse=false]
  * @param {Object} [options.scope]
  */
-export const $each = (target, fn, options) => {
+export function $each(target, fn, options) {
 	if (target) {
 		let conf = _extend({
 				args: []
@@ -172,7 +172,7 @@ export const $each = (target, fn, options) => {
 			}
 		}
 	}
-};
+}
 
 /**
  * Translate items in an array or selection to new array
@@ -184,7 +184,7 @@ export const $each = (target, fn, options) => {
  * @param {object} [options.scope]
  * @returns {Array}
  */
-export const $map = (target, fn, options) => {
+export function $map(target, fn, options) {
 	if (! Array.isArray(target)) {
 		target = _selArray(target, options);
 	}
@@ -208,7 +208,7 @@ export const $map = (target, fn, options) => {
 	}
 
 	return res;
-};
+}
 
 /**
  * Create document fragment from an HTML string
@@ -216,7 +216,7 @@ export const $map = (target, fn, options) => {
  * @param {string} html
  * @returns {HTMLElement} element
  */
-export const $parseHTML = html => {
+export function $parseHTML(html) {
 	let el;
 	html = html.trim();
 
@@ -240,27 +240,27 @@ export const $parseHTML = html => {
 	}
 
 	return el;
-};
+}
 
 /**
  * Execute specified function when document is ready
  *
  * @param {(Array|function|string)} fn
  */
-export const $ready = fn => {
+export function $ready(fn) {
 	_doc.readyState == 'complete' ?
 		$exec(fn) :
 		_doc.addEventListener('DOMContentLoaded', function() {
 			$exec(fn);
 		});
-};
+}
 
 /**
  * Add ref elements to datastore
  *
  * @param {(HTMLElement|string)} [context=document]
  */
-export const $setRef = context => {
+export function $setRef(context) {
 	context = context ? $sel(context)[0] : _doc;
 
 	// Clear existing refs if reset
@@ -283,7 +283,7 @@ export const $setRef = context => {
 	}, {
 		context: context
 	});
-};
+}
 
 /**
  * Create new array with only unique values from source array
@@ -291,8 +291,8 @@ export const $setRef = context => {
  * @param {Array} array
  * @returns {Array} unique values
  */
-export const $unique = array => {
+export function $unique(array) {
 	return array.reverse().filter((el, i, arr) => {
 		return arr.indexOf(el, i + 1) < 0;
 	}).reverse();
-};
+}
