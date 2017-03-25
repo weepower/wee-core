@@ -8,6 +8,7 @@ describe('Core: DOM', () => {
 
 			div.innerHTML = 'test';
 			div.className = 'test';
+			div.id = 'test';
 			div.setAttribute('data-ref', 'testRef');
 			document.querySelector('body').appendChild(div);
 		});
@@ -37,6 +38,10 @@ describe('Core: DOM', () => {
 
 		it('should select elements by class name', () => {
 			expect($sel('.test')[0].textContent).to.equal('test');
+		});
+
+		it('should select elements by id', () => {
+			expect($sel('#test')[0].textContent).to.equal('test');
 		});
 
 		it('should select elements with context', () => {
