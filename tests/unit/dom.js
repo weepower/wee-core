@@ -61,6 +61,10 @@ describe('Core: DOM', () => {
 		it('should select combination of ref and selectors', () => {
 			expect($sel('ref:testRef, .test').length).to.equal(2);
 		});
+
+		it('should parse html', () => {
+			expect($sel('<div>new</div>')[0].innerHTML).to.equal('new');
+		});
 	});
 
 	describe('$each', () => {
