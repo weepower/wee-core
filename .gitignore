@@ -7,6 +7,7 @@ out/
 temp/
 lcov.info
 tests/coverage/
+coverage/
 
 
 #------------------------------------
