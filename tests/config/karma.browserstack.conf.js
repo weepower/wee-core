@@ -16,13 +16,13 @@ module.exports = function(config) {
 			},
 			bs_firefox_mac: {
 				base: 'BrowserStack',
-				device: 'firefox',
+				browser: 'firefox',
 				os: 'OS X',
 				os_version: 'Sierra'
 			},
 			bs_chrome_mac: {
 				base: 'BrowserStack',
-				device: 'chrome',
+				browser: 'chrome',
 				os: 'OS X',
 				os_version: 'Sierra'
 			}
@@ -30,6 +30,7 @@ module.exports = function(config) {
 
 		browsers: ['bs_safari_mac', 'bs_firefox_mac', 'bs_chrome_mac'],
 		autoWatch: true,
-		singleRun: false
+		singleRun: false,
+		reporters: ['dots', 'BrowserStack']
 	}));
 };
