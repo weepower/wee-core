@@ -18,7 +18,8 @@ module.exports = {
 					plugins: [
 						['istanbul', {
 							exclude: [
-								'tests/**/*.js'
+								'tests/**/*.js',
+								'scripts/dom/index.js'
 							]
 						}]
 					]
