@@ -10,7 +10,7 @@ function singleDiv() {
 	document.querySelector('body').appendChild(div);
 }
 
-singleDiv.remove = () => {
+function resetDOM() {
 	document.querySelector('body').innerHTML = '';
 };
 
@@ -18,7 +18,7 @@ singleDiv.remove = () => {
 describe('DOM', () => {
 	describe('$addClass', () => {
 		before(singleDiv);
-		after(singleDiv.remove);
+		after(resetDOM);
 
 		it('should add a class to selection', () => {
 			let $el = $('.test').addClass('another-class');
@@ -57,9 +57,14 @@ describe('DOM', () => {
 		let div = createAfterDiv();
 
 		before(singleDiv);
-		after(singleDiv.remove);
+		after(resetDOM);
 		afterEach(() => {
-			document.querySelector('.after').remove();
+			let div = document.querySelector('.after');
+
+			if (div) {
+				div.remove();
+			}
+
 		});
 
 		it('should append element after target', () => {
@@ -93,6 +98,53 @@ describe('DOM', () => {
 			expect(document.body.children.length).to.equal(1);
 			expect($('.test').length).to.equal(0);
 			expect(document.body.firstChild.className).to.equal('after');
+
+			singleDiv();
+		});
+
+		it('should dynamically generate markup to move after target', () => {
+			let el = $('.test')[0];
+
+			el.innerHTML = 'dynamic';
+			$('.test').after(function(i, html) {
+				return `<div class="after">${html} - ${i}</div>`;
+			});
+
+			expect(el.nextSibling.className).to.equal('after');
+			expect(el.nextSibling.innerHTML).to.equal('dynamic - 0');
+		});
+
+		it('should move element after multiple targets', () => {
+			document.body.insertBefore(div, document.querySelector('.test'));
+			singleDiv();
+			$('.test').after('<div class="after"></div>');
+
+			expect($('.test')[0].nextSibling.className).to.equal('after');
+			expect($('.test')[1].nextSibling.className).to.equal('after');
+		});
+	});
+
+	describe('$clone', () => {
+		before(singleDiv);
+		after(resetDOM);
+
+		it('should clone selection', () => {
+			let $clone = $('.test').clone();
+
+			document.body.appendChild($clone[0]);
+
+			expect($clone[0].className).to.equal('test');
+			expect(document.body.children.length).to.equal(2);
+		});
+	});
+
+	describe('$remove', () => {
+		before(singleDiv);
+		after(resetDOM);
+		it('should remove selection from document', () => {
+			$('.test').remove();
+
+			expect($('.test').length).to.equal(0);
 		});
 	});
 });
