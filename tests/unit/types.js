@@ -44,6 +44,10 @@ describe('Core: Types', () => {
 			expect($equals(date, date)).to.be.true;
 			expect($equals(date, new Date(2016))).to.be.false;
 		});
+
+		it('should determine equality of differing types', () => {
+			expect($equals([], {})).to.be.false;
+		});
 	});
 
 	describe('$extend', () => {
@@ -55,10 +59,12 @@ describe('Core: Types', () => {
 		});
 
 		it('should deeply extend objects', () => {
-			let a = {prop: 1, prop2: {inner: true}, prop3: [0, 1]},
-				b = {prop: 2, prop2: {inner: false}, prop3: [1]};
+			// Reference 'obj' twice for code coverage
+			let obj = {inner: false},
+				a = {prop: 1, prop2: {inner: true}, prop3: [0, 1]},
+				b = {prop: 2, prop2: obj, prop3: [1], prop4: obj};
 
-			expect(JSON.stringify($extend(true, a, b))).to.equal('{"prop":2,"prop2":{"inner":false},"prop3":[1]}');
+			expect($extend(true, a, b)).to.deep.equal({prop:2, prop2:{inner:false}, prop3:[1], prop4: {inner: false}});
 		});
 
 		it('should deeply extend variable number of objects', () => {
