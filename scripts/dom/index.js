@@ -1,6 +1,6 @@
 import { $exec } from '../core/core';
 import { $isFunction } from '../core/types';
-import { $each } from '../core/dom';
+import { $each, $map, $parseHTML, $sel, $setRef } from '../core/dom';
 
 /**
  * Get class value of element
@@ -57,4 +57,84 @@ export function $addClass(target, value) {
 			_setClass(el, upd.join(' '));
 		}
 	});
+}
+
+/**
+ * Insert selection or markup after each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|function|HTMLElement|string)} source
+ * @param {boolean} [remove=false]
+ */
+export function $after(target, source, remove) {
+	const func = $isFunction(source);
+
+	$each(target, function(el, i) {
+		let aft = func ?
+			$exec(source, {
+				args: [i, el.innerHTML],
+				scope: el
+			}) :
+			source;
+
+		if (typeof aft == 'string') {
+			aft = $sel(aft);
+		}
+
+		if (aft) {
+			let par = el.parentNode;
+
+			$each(aft, function(cel) {
+				if (i > 0) {
+					cel = $clone(cel)[0];
+				}
+
+				par.insertBefore(cel, el.nextSibling);
+
+				$setRef(par);
+			}, {
+				reverse: true
+			});
+		}
+
+		if (remove) {
+			$remove(el);
+		}
+	});
+}
+
+/**
+ * Clone each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @returns {Array}
+ */
+export function $clone(target) {
+	return $map(target, function(el) {
+		return el.cloneNode(true);
+	});
+}
+
+/**
+ * Remove each matching selection from the document
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|HTMLElement|string)} [context=document]
+ */
+export function $remove(target, context) {
+	let arr = [];
+
+	$each(target, function(el) {
+		let par = el.parentNode;
+
+		arr.push(el);
+
+		par.removeChild(el);
+
+		$setRef(par);
+	}, {
+		context: context
+	});
+
+	return arr;
 }

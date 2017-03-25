@@ -13,6 +13,40 @@ $chain({
 		W.$addClass(this, value);
 
 		return this;
+	},
+
+	/**
+	 * Insert selection or markup after each matching selection
+	 *
+	 * @param {($|function|HTMLElement|string)} source
+	 * @param {boolean} [remove=false]
+	 * @returns {$}
+	 */
+	after: function(source, remove) {
+		W.$after(this, source, remove);
+
+		return this;
+	},
+
+	/**
+	 * Clone each matching selection
+	 *
+	 * @returns {$}
+	 */
+	clone: function() {
+		return $(W.$clone(this));
+	},
+
+	/**
+	 * Remove each matching selection from the document
+	 *
+	 * @returns {$}
+	 * @param {($|HTMLElement|string)} [context=document]
+	 */
+	remove: function(context) {
+		W.$remove(this, context);
+
+		return this;
 	}
 });
 
