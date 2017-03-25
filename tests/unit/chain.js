@@ -42,33 +42,49 @@ describe('Core: Chain', () => {
 
 	describe('each', () => {
 		it('should be chainable method', () => {
-			let fn = $('.test').each;
+			let count = 0;
 
-			expect(fn).to.not.be.undefined;
+			$('.test').each(() => {
+				count++;
+			});
+
+			expect(count).to.equal(1);
 		});
 	});
 
 	describe('map', () => {
 		it('should be chainable method', () => {
-			let fn = $('.test').map;
+			let arr = $('.test').map((el, i) => {
+				return i;
+			});
 
-			expect(fn).to.not.be.undefined;
+			expect(arr).to.deep.equal([0]);
 		});
 	});
 
 	describe('reverse', () => {
-		it('should be chainable method', () => {
-			let fn = $('.test').reverse;
+		before(() => {
+			let html = `<div>
+					<div class="each">1</div>
+					<div class="each">2</div>
+					<div class="each">3</div>
+				</div>`,
+				fragment = document.createRange().createContextualFragment(html);
 
-			expect(fn).to.not.be.undefined;
+			document.querySelector('body').appendChild(fragment);
+		});
+
+		it('should be chainable method', () => {
+			let $reversed = $('.each').reverse();
+
+			expect($reversed[0].innerHTML).to.deep.equal('3');
+			expect($reversed[2].innerHTML).to.deep.equal('1');
 		});
 	});
 
 	describe('toArray', () => {
 		it('should be chainable method', () => {
-			let fn = $('.test').toArray;
-
-			expect(fn).to.not.be.undefined;
+			expect($('.test').toArray()).to.be.array;
 		});
 	});
 });
