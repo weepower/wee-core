@@ -52,6 +52,10 @@ describe('Core: DOM', () => {
 		it('should return empty array if no context', () => {
 			expect($sel('.nothing', '.nocontext')).to.deep.equal([]);
 		});
+
+		it('should select combination of ref and selectors', () => {
+			expect($sel('ref:testRef, .test').length).to.equal(2);
+		});
 	});
 
 	describe('$each', () => {
