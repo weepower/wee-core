@@ -14,7 +14,8 @@
   "scripts": {
     "codecov": "codecov",
     "dist": "webpack --config=webpack.config.js",
-    "test": "karma start ./tests/config/karma.dev.conf.js",
+    "test:js": "karma start ./tests/scripts/config/karma.dev.conf.js",
+  	"test": "npm run test:js",
     "test:ci": "NODE_ENV='ci' karma start ./tests/config/karma.browserstack.conf.js"
   },
   "dependencies": {},

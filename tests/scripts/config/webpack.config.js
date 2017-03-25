@@ -3,8 +3,9 @@ const path = require('path');
 module.exports = {
 	resolve: {
 		modules: [
-			path.resolve(__dirname, '../../lib'),
-			path.resolve(__dirname, '../../node_modules')
+			path.resolve(__dirname, '../../../scripts'),
+			path.resolve(__dirname, '../../../scripts/core'),
+			path.resolve(__dirname, '../../../node_modules')
 		]
 	},
 	module: {
@@ -18,8 +19,7 @@ module.exports = {
 					plugins: [
 						['istanbul', {
 							exclude: [
-								'tests/*.js',
-								'tests/unit/*.js'
+								'tests/**/*.js'
 							]
 						}]
 					]

@@ -30,7 +30,7 @@ module.exports = {
 		reporters: [
 			{
 				type: 'lcovonly',
-				dir: '../../coverage',
+				dir: '../../../coverage',
 				subdir: '.'
 			},
 			{
