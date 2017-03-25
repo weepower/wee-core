@@ -48,6 +48,10 @@ describe('Core: DOM', () => {
 			$setRef();
 			expect($sel('ref:testRef')[0].textContent).to.equal('test');
 		});
+
+		it('should return empty array if no context', () => {
+			expect($sel('.nothing', '.nocontext')).to.deep.equal([]);
+		});
 	});
 
 	describe('$each', () => {
