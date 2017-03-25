@@ -31,6 +31,6 @@ module.exports = function(config) {
 		browsers: ['bs_safari_mac', 'bs_firefox_mac', 'bs_chrome_mac'],
 		autoWatch: false,
 		singleRun: true,
-		reporters: ['dots', 'BrowserStack']
+		reporters: ['dots', 'BrowserStack', 'coverage']
 	}));
 };
