@@ -121,6 +121,15 @@ $chain({
 	},
 
 	/**
+	 * Get unique content of each matching selection
+	 *
+	 * @returns {$}
+	 */
+	contents() {
+		return $(W.$contents(this));
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter

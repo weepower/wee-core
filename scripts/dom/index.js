@@ -298,6 +298,22 @@ export function $contains(parent, descendant) {
 }
 
 /**
+ * Get unique content of each matching selection
+ *
+ * @param {($|HTMLElement|string)} parent
+ * @returns {Array}
+ */
+export function $contents(parent) {
+	let arr = [];
+
+	$each(parent, el => {
+		arr = arr.concat(_slice.call(el.childNodes));
+	});
+
+	return $unique(arr);
+}
+
+/**
  * Return a filtered subset of elements from a matching selection
  *
  * @param {($|HTMLElement|string)} target

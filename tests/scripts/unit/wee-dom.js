@@ -339,6 +339,24 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$contents', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should get unique contents of selection', () => {
+			let result = '';
+
+			$('.parent').contents().each(el => {
+				// This is to account for the indentation text nodes
+				// that exist because of the format of the createMultiDiv result
+				result += el.innerHTML || 'indent';
+			});
+
+			expect($('.parent').contents().length).to.equal(7);
+			expect(result).to.equal('indent1indent2indent3indent');
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();
