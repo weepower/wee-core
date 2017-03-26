@@ -42,6 +42,18 @@ $chain({
 	},
 
 	/**
+	 * Append selection or markup to each matching selection
+	 *
+	 * @param {($|function|HTMLElement|string)} target
+	 * @returns {$}
+	 */
+	appendTo: function(target) {
+		W.$append(target, this);
+
+		return this;
+	},
+
+	/**
 	 * Get attribute of first matching selection or set attribute
 	 * of each matching selection
 	 *

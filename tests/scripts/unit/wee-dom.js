@@ -12,6 +12,17 @@ function singleDiv() {
 	return div;
 }
 
+function multiDiv() {
+	let html = `<div class="parent">
+						<div id="first" class="child">1</div>
+						<div class="child">2</div>
+						<div class="child">3</div>
+					</div>`,
+		fragment = document.createRange().createContextualFragment(html);
+
+	document.querySelector('body').appendChild(fragment);
+}
+
 function resetDOM() {
 	document.querySelector('body').innerHTML = '';
 };
@@ -122,16 +133,7 @@ describe('DOM', () => {
 	});
 
 	describe('$append', () => {
-		before(() => {
-			let html = `<div class="parent">
-						<div id="first" class="child">1</div>
-						<div class="child">2</div>
-						<div class="child">3</div>
-					</div>`,
-				fragment = document.createRange().createContextualFragment(html);
-
-			document.querySelector('body').appendChild(fragment);
-		});
+		before(multiDiv);
 		after(resetDOM);
 
 		it('should append markup to end of parent target', () => {
@@ -145,6 +147,17 @@ describe('DOM', () => {
 			$('.parent').append($('#first'));
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('1');
+		});
+	});
+
+	describe('appendTo', () => {
+		before(multiDiv);
+		after(resetDOM);
+
+		it('should append selection to target', () => {
+			$('#first').appendTo($('.parent'));
+
+			expect($('.parent')[0].children[2].id).to.equal('first');
 		});
 	});
 
