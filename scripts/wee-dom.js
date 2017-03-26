@@ -100,6 +100,18 @@ $chain({
 	},
 
 	/**
+	 * Determine if at least one matching selection matches
+	 * a specified criteria
+	 *
+	 * @param filter
+	 * @param [options]
+	 * @returns {boolean}
+	 */
+	is(filter, options) {
+		return W.$is(this, filter, options);
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

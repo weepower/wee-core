@@ -280,7 +280,7 @@ describe('DOM', () => {
 	});
 
 	describe('$clone', () => {
-		before(singleDiv);
+		before(createSingleDiv);
 		after(resetDOM);
 
 		it('should clone selection', () => {
@@ -293,8 +293,26 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$is', () => {
+		before(() => {
+			createList();
+			createMultiDiv();
+			$setRef();
+		});
+		after(resetDOM);
+
+		it('should determine if at least one element meets criteria', () => {
+			expect($('.child').is('li')).to.be.true;
+			expect($('.child').is('.parent')).to.be.false;
+		});
+
+		it('should handle data-ref as filter criteria', () => {
+			expect($('li').is('ref:last')).to.be.true;
+		});
+	});
+
 	describe('$remove', () => {
-		before(singleDiv);
+		before(createSingleDiv);
 		after(resetDOM);
 		it('should remove selection from document', () => {
 			$('.test').remove();
