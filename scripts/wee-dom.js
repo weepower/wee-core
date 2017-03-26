@@ -29,6 +29,18 @@ $chain({
 	},
 
 	/**
+	 * Append selection or markup after each matching selection
+	 *
+	 * @param {($|function|HTMLElement|string)} source
+	 * @returns {$}
+	 */
+	append: function(source) {
+		W.$append(this, source);
+
+		return this;
+	},
+
+	/**
 	 * Clone each matching selection
 	 *
 	 * @returns {$}

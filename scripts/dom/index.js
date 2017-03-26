@@ -37,7 +37,7 @@ function _setClass(el, className) {
 export function $addClass(target, value) {
 	let func = $isFunction(value);
 
-	$each(target, function(el, i) {
+	$each(target, (el, i) => {
 		let cn = _getClass(el),
 			name = func ?
 				$exec(value, {
@@ -48,7 +48,7 @@ export function $addClass(target, value) {
 
 		if (name) {
 			let names = cn.split(' '),
-				upd = name.split(' ').filter(function(val) {
+				upd = name.split(' ').filter(val => {
 					return names.indexOf(val) < 0;
 				});
 
@@ -69,7 +69,7 @@ export function $addClass(target, value) {
 export function $after(target, source, remove) {
 	const func = $isFunction(source);
 
-	$each(target, function(el, i) {
+	$each(target, (el, i) => {
 		let aft = func ?
 			$exec(source, {
 				args: [i, el.innerHTML],
@@ -78,13 +78,13 @@ export function $after(target, source, remove) {
 			source;
 
 		if (typeof aft == 'string') {
-			aft = $sel(aft);
+			aft = $parseHTML(aft);
 		}
 
 		if (aft) {
 			let par = el.parentNode;
 
-			$each(aft, function(cel) {
+			$each(aft, cel => {
 				if (i > 0) {
 					cel = $clone(cel)[0];
 				}
@@ -104,13 +104,44 @@ export function $after(target, source, remove) {
 }
 
 /**
+ * Append selection or markup after each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|function|HTMLElement|string)} source
+ */
+export function $append(target, source) {
+	let func = $isFunction(source);
+
+	$each(target, (el, i) => {
+		let app = func ?
+			$exec(source, {
+				args: [i, el.innerHTML],
+				scope: el
+			}) :
+			source;
+
+		if (typeof app == 'string') {
+			app = $parseHTML(app);
+		}
+
+		if (app) {
+			$each(app, cel => {
+				el.appendChild(cel);
+			});
+
+			$setRef(el);
+		}
+	});
+}
+
+/**
  * Clone each matching selection
  *
  * @param {($|HTMLElement|string)} target
  * @returns {Array}
  */
 export function $clone(target) {
-	return $map(target, function(el) {
+	return $map(target, el => {
 		return el.cloneNode(true);
 	});
 }
@@ -124,7 +155,7 @@ export function $clone(target) {
 export function $remove(target, context) {
 	let arr = [];
 
-	$each(target, function(el) {
+	$each(target, el => {
 		let par = el.parentNode;
 
 		arr.push(el);

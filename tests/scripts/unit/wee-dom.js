@@ -36,12 +36,16 @@ describe('DOM', () => {
 			expect($el[0].className).to.equal('test another-class third-class');
 		});
 
-		it('should have standalone method', () => {
-			let el = document.querySelector('.test');
+		it('should add multiple classes', () => {
+			$('.test').addClass('fourth-class fifth-class');
 
-			W.$addClass(el, 'fourth-class');
+			expect($('.test')[0].className).to.equal('test another-class third-class fourth-class fifth-class');
+		});
 
-			expect(el.className).to.equal('test another-class third-class fourth-class');
+		it('should not duplicate classes', () => {
+			$('.test').addClass('fourth-class');
+
+			expect($('.test')[0].className).to.equal('test another-class third-class fourth-class fifth-class');
 		});
 	});
 
@@ -67,7 +71,7 @@ describe('DOM', () => {
 
 		});
 
-		it('should append element after target', () => {
+		it('should append markup after target', () => {
 			$('.test').after('<div class="after"></div>');
 
 			expect($('.test')[0].nextSibling.className).to.equal('after');
@@ -78,15 +82,6 @@ describe('DOM', () => {
 
 			document.body.insertBefore(div, document.querySelector('.test'));
 			$('.test').after($('.after'));
-
-			expect(el.nextSibling.className).to.equal('after');
-		});
-
-		it('should move element selection when provided with string selector', () => {
-			let el = $('.test')[0];
-
-			document.body.insertBefore(div, document.querySelector('.test'));
-			$('.test').after('.after');
 
 			expect(el.nextSibling.className).to.equal('after');
 		});
@@ -121,6 +116,33 @@ describe('DOM', () => {
 
 			expect($('.test')[0].nextSibling.className).to.equal('after');
 			expect($('.test')[1].nextSibling.className).to.equal('after');
+		});
+	});
+
+	describe('$append', () => {
+		before(() => {
+			let html = `<div class="parent">
+						<div id="first" class="child">1</div>
+						<div class="child">2</div>
+						<div class="child">3</div>
+					</div>`,
+				fragment = document.createRange().createContextualFragment(html);
+
+			document.querySelector('body').appendChild(fragment);
+		});
+		after(resetDOM);
+
+		it('should append markup to end of parent target', () => {
+			$('.parent').append('<div class="child">4</div>');
+
+			expect($('.child').length).to.equal(4);
+			expect($('.child')[3].innerHTML).to.equal('4');
+		});
+
+		it('should append selection to end of parent target', () => {
+			$('.parent').append($('#first'));
+
+			expect($('div', '.parent')[3].innerHTML).to.equal('1');
 		});
 	});
 
