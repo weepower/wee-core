@@ -278,6 +278,26 @@ export function $closest(target, filter, context) {
 }
 
 /**
+ * Determine if any matching parent contains descendant selection
+ *
+ * @param {($|HTMLElement|string)} parent
+ * @param descendant
+ * @returns {boolean}
+ */
+export function $contains(parent, descendant) {
+	let b = false;
+
+	$each(parent, function(el) {
+		if ($sel(descendant, el).length) {
+			b = true;
+			return false;
+		}
+	});
+
+	return b;
+}
+
+/**
  * Return a filtered subset of elements from a matching selection
  *
  * @param {($|HTMLElement|string)} target

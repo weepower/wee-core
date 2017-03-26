@@ -111,6 +111,16 @@ $chain({
 	},
 
 	/**
+	 * Determine if any matching parent selection contains descendant selection
+	 *
+	 * @param descendant
+	 * @returns {boolean}
+	 */
+	contains(descendant) {
+		return W.$contains(this, descendant);
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter

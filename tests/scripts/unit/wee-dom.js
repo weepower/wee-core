@@ -329,6 +329,16 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$contains', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should determine if selection contains children elements', () => {
+			expect($('.grandparent').contains('.child')).to.be.true;
+			expect($('.grandparent').contains('span')).to.be.false;
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();
