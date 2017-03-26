@@ -1,6 +1,6 @@
 import { $exec } from '../core/core';
 import { _slice, $extend, $isFunction, $isObject } from '../core/types';
-import { _html } from '../core/variables';
+import { _html, U } from '../core/variables';
 import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
 
 /**
@@ -147,7 +147,7 @@ export function $append(target, source) {
 export function $attr(target, a, b) {
 	let obj = $isObject(a);
 
-	if (b !== undefined || obj) {
+	if (b !== U || obj) {
 		let func = ! obj && $isFunction(b);
 
 		$each(target, function(el, i) {
