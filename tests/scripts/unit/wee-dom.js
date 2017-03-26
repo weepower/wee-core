@@ -429,7 +429,7 @@ describe('DOM', () => {
 			$('.child').data('long-Prop', 'test');
 			let data = $('.child').data();
 
-			expect(data).to.deep.equal({type: 'child', longProp: 'test'});
+			expect(data).to.deep.equal({type: 'child', 'long-prop': 'test'});
 		});
 	});
 
