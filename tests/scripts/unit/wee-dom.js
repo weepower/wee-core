@@ -1,8 +1,9 @@
 import $ from 'wee-dom';
+import { $setRef } from 'core/dom';
 import * as W from 'dom/index';
 
 // Test scaffolding methods
-function singleDiv() {
+function createSingleDiv() {
 	let div = document.createElement('div');
 
 	div.textContent = 'test';
@@ -12,12 +13,23 @@ function singleDiv() {
 	return div;
 }
 
-function multiDiv() {
+function createMultiDiv() {
 	let html = `<div class="parent">
 						<div id="first" class="child">1</div>
 						<div class="child">2</div>
 						<div class="child">3</div>
 					</div>`,
+		fragment = document.createRange().createContextualFragment(html);
+
+	document.querySelector('body').appendChild(fragment);
+}
+
+function createList() {
+	let html = `<ul class="parent">
+						<li id="first" class="child">1</li>
+						<li class="child">2</li>
+						<li class="child" data-ref="last">3</li>
+					</ul>`,
 		fragment = document.createRange().createContextualFragment(html);
 
 	document.querySelector('body').appendChild(fragment);
@@ -30,7 +42,7 @@ function resetDOM() {
 // Tests
 describe('DOM', () => {
 	describe('$addClass', () => {
-		before(singleDiv);
+		before(createSingleDiv);
 		after(resetDOM);
 
 		it('should add a class to selection', () => {
@@ -73,7 +85,7 @@ describe('DOM', () => {
 
 		let div = createAfterDiv();
 
-		before(singleDiv);
+		before(createSingleDiv);
 		after(resetDOM);
 		afterEach(() => {
 			let div = document.querySelector('.after');
@@ -107,7 +119,7 @@ describe('DOM', () => {
 			expect($('.test').length).to.equal(0);
 			expect(document.body.firstChild.className).to.equal('after');
 
-			singleDiv();
+			createSingleDiv();
 		});
 
 		it('should dynamically generate markup to move after target', () => {
@@ -124,7 +136,7 @@ describe('DOM', () => {
 
 		it('should move element after multiple targets', () => {
 			document.body.insertBefore(div, document.querySelector('.test'));
-			singleDiv();
+			createSingleDiv();
 			$('.test').after('<div class="after"></div>');
 
 			expect($('.test')[0].nextSibling.className).to.equal('after');
@@ -133,7 +145,7 @@ describe('DOM', () => {
 	});
 
 	describe('$append', () => {
-		before(multiDiv);
+		before(createMultiDiv);
 		after(resetDOM);
 
 		it('should append markup to end of parent target', () => {
@@ -151,7 +163,7 @@ describe('DOM', () => {
 	});
 
 	describe('appendTo', () => {
-		before(multiDiv);
+		before(createMultiDiv);
 		after(resetDOM);
 
 		it('should append selection to target', () => {
@@ -163,7 +175,7 @@ describe('DOM', () => {
 
 	describe('$attr', () => {
 		before(() => {
-			let div = singleDiv();
+			let div = createSingleDiv();
 
 			div.setAttribute('data-ref', 'testRef');
 		});
@@ -203,7 +215,7 @@ describe('DOM', () => {
 
 		let div = createBeforeDiv();
 
-		before(singleDiv);
+		before(createSingleDiv);
 		after(resetDOM);
 		afterEach(() => {
 			let div = document.querySelector('.before');
@@ -236,7 +248,7 @@ describe('DOM', () => {
 			expect($('.test').length).to.equal(0);
 			expect(document.body.firstChild.className).to.equal('before');
 
-			singleDiv();
+			createSingleDiv();
 		});
 
 		it('should dynamically generate markup to move before target', () => {
@@ -253,7 +265,7 @@ describe('DOM', () => {
 
 		it('should move element before multiple targets', () => {
 			document.body.appendChild(div);
-			singleDiv();
+			createSingleDiv();
 			$('.test').before('<div class="before"></div>');
 
 			expect($('.test')[0].previousSibling.className).to.equal('before');
@@ -262,8 +274,8 @@ describe('DOM', () => {
 	});
 
 	describe('$children', () => {
-		beforeEach(multiDiv);
-		afterEach(resetDOM);
+		before(createMultiDiv);
+		after(resetDOM);
 
 		it('should select direct children of selection', () => {
 			let $children = $('.parent').children();
