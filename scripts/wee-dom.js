@@ -23,7 +23,7 @@ $chain({
 	 * @param {boolean} [remove=false]
 	 * @returns {$}
 	 */
-	after: function(source, remove) {
+	after(source, remove) {
 		W.$after(this, source, remove);
 
 		return this;
@@ -35,7 +35,7 @@ $chain({
 	 * @param {($|function|HTMLElement|string)} source
 	 * @returns {$}
 	 */
-	append: function(source) {
+	append(source) {
 		W.$append(this, source);
 
 		return this;
@@ -47,7 +47,7 @@ $chain({
 	 * @param {($|function|HTMLElement|string)} target
 	 * @returns {$}
 	 */
-	appendTo: function(target) {
+	appendTo(target) {
 		W.$append(target, this);
 
 		return this;
@@ -61,10 +61,23 @@ $chain({
 	 * @param b
 	 * @returns {($|string)}
 	 */
-	attr: function(a, b) {
+	attr(a, b) {
 		let resp = W.$attr(this, a, b);
 
 		return b !== undefined || $isObject(a) ? this : resp;
+	},
+
+	/**
+	 * Insert selection or markup before each matching selection
+	 *
+	 * @param {($|function|HTMLElement|string)} source
+	 * @param {boolean} [remove=false]
+	 * @returns {$}
+	 */
+	before(source, remove) {
+		W.$before(this, source, remove);
+
+		return this;
 	},
 
 	/**
@@ -72,7 +85,7 @@ $chain({
 	 *
 	 * @returns {$}
 	 */
-	clone: function() {
+	clone() {
 		return $(W.$clone(this));
 	},
 
@@ -82,7 +95,7 @@ $chain({
 	 * @returns {$}
 	 * @param {($|HTMLElement|string)} [context=document]
 	 */
-	remove: function(context) {
+	remove(context) {
 		W.$remove(this, context);
 
 		return this;

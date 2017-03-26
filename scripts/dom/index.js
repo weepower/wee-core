@@ -168,6 +168,50 @@ export function $attr(target, a, b) {
 }
 
 /**
+ * Insert selection or markup before each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|function|HTMLElement|string)} source
+ * @param {boolean} [remove=false]
+ */
+export function $before(target, source, remove) {
+	let func = $isFunction(source);
+
+	$each(target, function(el, i) {
+		let bef = func ?
+			$exec(source, {
+				args: [i, el.innerHTML],
+				scope: el
+			}) :
+			source;
+
+		if (typeof bef == 'string') {
+			bef = $parseHTML(bef);
+		}
+
+		if (bef) {
+			let par = el.parentNode;
+
+			$each(bef, function(cel) {
+				if (i > 0) {
+					cel = $clone(cel)[0];
+				}
+
+				par.insertBefore(cel, el);
+
+				$setRef(par);
+			}, {
+				reverse: true
+			});
+		}
+
+		if (remove) {
+			$remove(el);
+		}
+	});
+}
+
+/**
  * Clone each matching selection
  *
  * @param {($|HTMLElement|string)} target

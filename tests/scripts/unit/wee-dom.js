@@ -192,6 +192,75 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$before', () => {
+		function createBeforeDiv() {
+			let div = document.createElement('div');
+
+			div.className = 'before';
+
+			return div;
+		}
+
+		let div = createBeforeDiv();
+
+		before(singleDiv);
+		after(resetDOM);
+		afterEach(() => {
+			let div = document.querySelector('.before');
+
+			if (div) {
+				div.remove();
+			}
+		});
+
+		it('should prepend markup after target', () => {
+			$('.test').before('<div class="before"></div>');
+
+			expect($('.test')[0].previousSibling.className).to.equal('before');
+		});
+
+		it('should move existing element before target', () => {
+			let el = $('.test')[0];
+
+			document.body.appendChild(div);
+			$('.test').before($('.before'));
+
+			expect(el.previousSibling.className).to.equal('before');
+		});
+
+		it('should remove target after moving element selection', () => {
+			document.body.appendChild(div);
+			$('.test').before($('.before'), true);
+
+			expect(document.body.children.length).to.equal(1);
+			expect($('.test').length).to.equal(0);
+			expect(document.body.firstChild.className).to.equal('before');
+
+			singleDiv();
+		});
+
+		it('should dynamically generate markup to move before target', () => {
+			let el = $('.test')[0];
+
+			el.innerHTML = 'dynamic';
+			$('.test').before(function(i, html) {
+				return `<div class="before">${html} - ${i}</div>`;
+			});
+
+			expect(el.previousSibling.className).to.equal('before');
+			expect(el.previousSibling.innerHTML).to.equal('dynamic - 0');
+		});
+
+		it('should move element before multiple targets', () => {
+			document.body.appendChild(div);
+			singleDiv();
+			$('.test').before('<div class="before"></div>');
+
+			expect($('.test')[0].previousSibling.className).to.equal('before');
+			expect($('.test')[1].previousSibling.className).to.equal('before');
+		});
+	});
+
 	describe('$clone', () => {
 		before(singleDiv);
 		after(resetDOM);
