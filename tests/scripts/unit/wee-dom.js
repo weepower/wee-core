@@ -6,8 +6,10 @@ function singleDiv() {
 	let div = document.createElement('div');
 
 	div.textContent = 'test';
-	div.classList = 'test';
+	div.className = 'test';
 	document.querySelector('body').appendChild(div);
+
+	return div;
 }
 
 function resetDOM() {
@@ -143,6 +145,37 @@ describe('DOM', () => {
 			$('.parent').append($('#first'));
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('1');
+		});
+	});
+
+	describe('$attr', () => {
+		before(() => {
+			let div = singleDiv();
+
+			div.setAttribute('data-ref', 'testRef');
+		});
+		after(resetDOM);
+
+		it('should get attribute of first matching selection', () => {
+			expect($('.test').attr('data-ref')).to.equal('testRef');
+		});
+
+		it('should set attribute of selection', () => {
+			$('.test').attr('id', 'test');
+
+			expect($('.test')[0].id).to.equal('test');
+		});
+
+		it('should set a group of attributes on selection', () => {
+			let $el = $('.test');
+
+			$el.attr({
+				id: 'multiAttr',
+				'data-index': 1
+			});
+
+			expect($el[0].id).to.equal('multiAttr');
+			expect($el[0].getAttribute('data-index')).to.equal('1');
 		});
 	});
 

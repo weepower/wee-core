@@ -1,4 +1,5 @@
 import { $, $chain } from './core/chain';
+import { $isObject } from './core/types';
 import * as W from './dom/index';
 
 // Add chainable methods to $
@@ -38,6 +39,20 @@ $chain({
 		W.$append(this, source);
 
 		return this;
+	},
+
+	/**
+	 * Get attribute of first matching selection or set attribute
+	 * of each matching selection
+	 *
+	 * @param a
+	 * @param b
+	 * @returns {($|string)}
+	 */
+	attr: function(a, b) {
+		let resp = W.$attr(this, a, b);
+
+		return b !== undefined || $isObject(a) ? this : resp;
 	},
 
 	/**

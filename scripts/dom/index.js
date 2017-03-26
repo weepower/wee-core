@@ -1,5 +1,5 @@
 import { $exec } from '../core/core';
-import { $isFunction } from '../core/types';
+import { $isFunction, $isObject } from '../core/types';
 import { $each, $map, $parseHTML, $sel, $setRef } from '../core/dom';
 
 /**
@@ -132,6 +132,39 @@ export function $append(target, source) {
 			$setRef(el);
 		}
 	});
+}
+
+/**
+ * Get attribute of first matching selection or set attribute
+ * of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param a
+ * @param b
+ * @returns {(string|undefined)}
+ */
+export function $attr(target, a, b) {
+	let obj = $isObject(a);
+
+	if (b !== undefined || obj) {
+		let func = ! obj && $isFunction(b);
+
+		$each(target, function(el, i) {
+			obj ?
+				Object.keys(a).forEach(function(key) {
+					el.setAttribute(key, a[key]);
+				}) :
+				el.setAttribute(a, func ?
+					$exec(b, {
+						args: [i, el],
+						scope: el
+					}) :
+					b
+				);
+		});
+	} else {
+		return $sel(target)[0].getAttribute(a);
+	}
 }
 
 /**
