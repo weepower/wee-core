@@ -100,6 +100,17 @@ $chain({
 	},
 
 	/**
+	 * Return a filtered subset of elements from a matching selection
+	 *
+	 * @param filter
+	 * @param [options]
+	 * @returns {$}
+	 */
+	filter(filter, options) {
+		return $(W.$filter(this, filter, options));
+	},
+
+	/**
 	 * Determine if at least one matching selection matches
 	 * a specified criteria
 	 *

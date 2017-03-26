@@ -305,6 +305,37 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$filter', () => {
+		before(() => {
+			createList();
+			createMultiDiv();
+			$setRef();
+		});
+		after(resetDOM);
+
+		it('should return a filtered subset of elements', () => {
+			let $els = $('.child'),
+				$result = $els.filter('li');
+
+			expect($els.length).to.equal(6);
+			expect($result.length).to.equal(3);
+		});
+
+		it('should handle data-ref as filter', () => {
+			let $result = $('.child').filter('ref:last');
+
+			expect($result.length).to.equal(1);
+		});
+
+		it('should handle selection as criteria', () => {
+			let $els = $('.child'),
+				$result = $els.filter($('ref:last'));
+
+			expect($els.length).to.equal(6);
+			expect($result.length).to.equal(1);
+		});
+	});
+
 	describe('$is', () => {
 		before(() => {
 			createList();
@@ -320,6 +351,22 @@ describe('DOM', () => {
 
 		it('should handle data-ref as filter criteria', () => {
 			expect($('li').is('ref:last')).to.be.true;
+		});
+
+		it('should handle array of elements as criteria', () => {
+			let array = [$('ref:last')[0]];
+
+			expect($('li').is(array)).to.be.true;
+		});
+
+		it('should handle wee selection as criteria', () => {
+			expect($('.child').is($('li'))).to.be.true;
+		});
+
+		it('should accept function as criteria', () => {
+			expect($('.child').is((i, el) => {
+				return el.getAttribute('data-ref') === 'last';
+			})).to.be.true;
 		});
 	});
 
