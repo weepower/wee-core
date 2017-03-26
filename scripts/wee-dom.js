@@ -145,6 +145,20 @@ $chain({
 	},
 
 	/**
+	 * Get data of first matching selection or set data
+	 * of each matching selection
+	 *
+	 * @param a
+	 * @param [b]
+	 * @returns {($|string)}
+	 */
+	data(a, b) {
+		let resp = W.$data(this, a, b);
+
+		return b !== U || $isObject(a) ? this : resp;
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter

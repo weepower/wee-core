@@ -1,5 +1,5 @@
 import { $exec } from '../core/core';
-import { _slice, $extend, $isFunction, $isObject } from '../core/types';
+import { _castString, _slice, $extend, $isFunction, $isObject } from '../core/types';
 import { _html, U } from '../core/variables';
 import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
 
@@ -27,6 +27,33 @@ function _setClass(el, className) {
 	el instanceof SVGElement ?
 		el.setAttribute('class', className) :
 		el.className = className;
+}
+
+/**
+ * Convert dash-separated string to camel-case
+ *
+ * @private
+ * @param {string} name
+ * @returns {string}
+ */
+function _toCamel (name) {
+	return name.toLowerCase()
+		.replace(/-(.)/g, (match, val) => {
+			return val.toUpperCase();
+		});
+}
+
+/**
+ * Convert camel-cased string to dash-separated
+ *
+ * @private
+ * @param {string} name
+ * @returns {string}
+ */
+function _toDashed(name) {
+	return name.replace(/[A-Z]/g, function(match) {
+		return '-' + match[0].toLowerCase();
+	});
 }
 
 /**
@@ -345,6 +372,45 @@ export function $css(target, a, b) {
 
 		return getComputedStyle(el, null)[a];
 	}
+}
+
+/**
+ * Get data of first matching selection or set data
+ * of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param a
+ * @param [b]
+ * @returns {(object|string|undefined)}
+ */
+export function $data(target, a, b) {
+	if (a === U) {
+		let el = $sel(target)[0],
+			arr = {};
+
+		_slice.call(el.attributes).forEach(function(attr) {
+			if (attr.name.substr(0, 5) == 'data-') {
+				arr[_toCamel(attr.name.substr(5))] =
+					_castString(attr.value);
+			}
+		});
+
+		return arr;
+	}
+
+	if ($isObject(a)) {
+		let obj = {};
+
+		Object.keys(a).forEach(function(key) {
+			obj['data-' + _toDashed(key)] = a[key];
+		});
+
+		a = obj;
+	} else {
+		a = 'data-' + _toDashed(a);
+	}
+
+	return _castString($attr(target, a, b));
 }
 
 /**

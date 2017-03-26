@@ -21,7 +21,7 @@ function _arrEquals(a, b) {
  * @protected
  * @param {*} val
  */
-function _castString(val) {
+export function _castString(val) {
 	if (typeof val == 'string') {
 		try {
 			val = val == 'true' ? true :

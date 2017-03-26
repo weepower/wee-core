@@ -391,6 +391,48 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$data', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should set data property on selection', () => {
+			let count = 0;
+
+			$('.child').data('type', 'child');
+
+			$('.child').each(el => {
+				count++;
+				expect(el.getAttribute('data-type')).to.equal('child');
+			});
+
+			expect(count).to.equal(3);
+		});
+
+		it('should get data property on selection', () => {
+			expect($('.child').data('type')).to.equal('child');
+		});
+
+		it('should handle an object of data properties', () => {
+			$('.parent').data({
+				type: 'parent',
+				id: 1
+			});
+
+			$('.parent').each(el => {
+				expect(el.getAttribute('data-type')).to.equal('parent');
+				expect(el.getAttribute('data-id')).to.equal('1');
+			});
+		});
+
+		it('should retrieve all data properties if no property is provided', () => {
+			// Adding the capital P was for executing _toDashed
+			$('.child').data('long-Prop', 'test');
+			let data = $('.child').data();
+
+			expect(data).to.deep.equal({type: 'child', longProp: 'test'});
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();
