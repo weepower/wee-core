@@ -1,5 +1,6 @@
 import { $, $chain } from './core/chain';
 import { $isObject } from './core/types';
+import { U } from './core/variables';
 import * as W from './dom/index';
 
 // Add chainable methods to $
@@ -127,6 +128,20 @@ $chain({
 	 */
 	contents() {
 		return $(W.$contents(this));
+	},
+
+	/**
+	 * Get CSS value of first matching selection or set value
+	 * of each matching selection
+	 *
+	 * @param {(object|string)} a
+	 * @param {(function|string)} [b]
+	 * @returns {($|string)}
+	 */
+	css(a, b) {
+		let r = W.$css(this, a, b);
+
+		return b !== U || $isObject(a) ? this : r;
 	},
 
 	/**

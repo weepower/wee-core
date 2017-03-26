@@ -357,6 +357,40 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$css', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should set css property on selection', () => {
+			let count = 0;
+
+			$('.child').css('display', 'inline');
+
+			$('.child').each(el => {
+				count++;
+				expect(el.style.display).to.equal('inline');
+			});
+
+			expect(count).to.equal(3);
+		});
+
+		it('should get the css value of first matching selection', () => {
+			expect($('.child').css('display')).to.equal('inline');
+		});
+
+		it('should handle an object of css properties', () => {
+			$('.child').css({
+				display: 'inline-block',
+				color: 'blue'
+			});
+
+			$('.child').each(el => {
+				expect(el.style.display).to.equal('inline-block');
+				expect(el.style.color).to.equal('blue');
+			});
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();

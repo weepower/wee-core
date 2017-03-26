@@ -314,6 +314,40 @@ export function $contents(parent) {
 }
 
 /**
+ * Get CSS value of first matching selection or set value
+ * of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(object|string)} a
+ * @param {(function|string)} [b]
+ * @returns {(string|undefined)}
+ */
+export function $css(target, a, b) {
+	let obj = $isObject(a);
+
+	if (b !== U || obj) {
+		let func = ! obj && $isFunction(b);
+
+		$each(target, (el, i) => {
+			obj ?
+				Object.keys(a).forEach(key => {
+					el.style[key] = a[key];
+				}) :
+				el.style[a] = func ?
+					$exec(b, {
+						args: [i, el.style[a]],
+						scope: el
+					}) :
+					b;
+		});
+	} else {
+		let el = $sel(target)[0];
+
+		return getComputedStyle(el, null)[a];
+	}
+}
+
+/**
  * Return a filtered subset of elements from a matching selection
  *
  * @param {($|HTMLElement|string)} target
