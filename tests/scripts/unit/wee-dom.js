@@ -261,6 +261,24 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$children', () => {
+		beforeEach(multiDiv);
+		afterEach(resetDOM);
+
+		it('should select direct children of selection', () => {
+			let $children = $('.parent').children();
+
+			expect($children.length).to.equal(3);
+		});
+
+		it('should select a filtered subset of direct children', () => {
+			let $children = $('.parent').children('#first');
+
+			expect($children.length).to.equal(1);
+			expect($children[0].innerHTML).to.equal('1');
+		});
+	});
+
 	describe('$clone', () => {
 		before(singleDiv);
 		after(resetDOM);

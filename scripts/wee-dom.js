@@ -81,6 +81,16 @@ $chain({
 	},
 
 	/**
+	 * Get unique direct children of each matching selection
+	 *
+	 * @param filter
+	 * @returns {$}
+	 */
+	children(filter) {
+		return $(W.$children(this, filter));
+	},
+
+	/**
 	 * Clone each matching selection
 	 *
 	 * @returns {$}

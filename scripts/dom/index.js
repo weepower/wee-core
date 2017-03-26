@@ -1,6 +1,6 @@
 import { $exec } from '../core/core';
-import { $isFunction, $isObject } from '../core/types';
-import { $each, $map, $parseHTML, $sel, $setRef } from '../core/dom';
+import { _slice, $extend, $isFunction, $isObject } from '../core/types';
+import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
 
 /**
  * Get class value of element
@@ -212,6 +212,29 @@ export function $before(target, source, remove) {
 }
 
 /**
+ * Get unique direct children of each matching selection
+ *
+ * @param {($|HTMLElement|string)} parent
+ * @param filter
+ * @returns {Array}
+ */
+export function $children(parent, filter) {
+	let arr = [];
+
+	$each(parent, function(el) {
+		let children = _slice.call(el.children);
+
+		arr = arr.concat(
+			filter ?
+				$filter(children, filter) :
+				children
+		);
+	});
+
+	return $unique(arr);
+}
+
+/**
  * Clone each matching selection
  *
  * @param {($|HTMLElement|string)} target
@@ -221,6 +244,74 @@ export function $clone(target) {
 	return $map(target, el => {
 		return el.cloneNode(true);
 	});
+}
+
+/**
+ * Return a filtered subset of elements from a matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param [options]
+ * @returns {Array} elements
+ */
+export function $filter(target, filter, options) {
+	let func = $isFunction(filter);
+
+	return $map(target, function(el, i) {
+		let match = func ?
+			$exec(filter, {
+				args: [i, el],
+				scope: el
+			}) :
+			$is(el, filter, options);
+
+		return match ? el : false;
+	});
+}
+
+/**
+ * Determine if at least one matching selection matches
+ * a specified criteria
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param [options]
+ * @returns {boolean}
+ */
+export function $is(target, filter, options) {
+	return $map(target, function(el, i) {
+			if (typeof filter == 'string' && filter.slice(0, 4) == 'ref:') {
+				return $sel(filter).indexOf(el) > -1;
+			}
+
+			if ($isObject(filter)) {
+				for (let key in filter) {
+					if (filter[key] === el) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			if (Array.isArray(filter)) {
+				return filter.indexOf(el) > -1;
+			}
+
+			if ($isFunction(filter)) {
+				return $exec(filter, $extend({
+					args: [i, el],
+					scope: el
+				}, options));
+			}
+
+			return (
+				el.matches ||
+				el.msMatchesSelector ||
+				el.webkitMatchesSelector ||
+				el.mozMatchesSelector
+			).call(el, filter);
+		}).length > 0;
 }
 
 /**
