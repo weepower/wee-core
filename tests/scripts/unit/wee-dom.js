@@ -16,9 +16,9 @@ function createSingleDiv() {
 function createMultiDiv() {
 	let html = `<main class="grandparent">
 					<div class="parent">
-							<div id="first" class="child">1</div>
-							<div class="child">2</div>
-							<div class="child">3</div>
+						<div id="first" class="child">1</div>
+						<div class="child">2</div>
+						<div class="child">3</div>
 					</div>
 				</main>`,
 		fragment = document.createRange().createContextualFragment(html);
