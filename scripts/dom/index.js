@@ -1,5 +1,6 @@
 import { $exec } from '../core/core';
 import { _slice, $extend, $isFunction, $isObject } from '../core/types';
+import { _html } from '../core/variables';
 import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
 
 /**
@@ -244,6 +245,36 @@ export function $clone(target) {
 	return $map(target, el => {
 		return el.cloneNode(true);
 	});
+}
+
+/**
+ * Get unique closest ancestors of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param context
+ * @returns {HTMLElement|boolean}
+ */
+export function $closest(target, filter, context) {
+	return $unique($map(target, function(el) {
+		if ($is(el, filter)) {
+			return el;
+		}
+
+		while (el !== null) {
+			el = el.parentNode;
+
+			if (el === _html || el === document) {
+				return false;
+			}
+
+			if ($is(el, filter)) {
+				return el;
+			}
+		}
+	}, {
+		context: context
+	}));
 }
 
 /**

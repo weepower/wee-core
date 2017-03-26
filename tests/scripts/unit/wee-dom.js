@@ -14,11 +14,13 @@ function createSingleDiv() {
 }
 
 function createMultiDiv() {
-	let html = `<div class="parent">
-						<div id="first" class="child">1</div>
-						<div class="child">2</div>
-						<div class="child">3</div>
-					</div>`,
+	let html = `<main class="grandparent">
+					<div class="parent">
+							<div id="first" class="child">1</div>
+							<div class="child">2</div>
+							<div class="child">3</div>
+					</div>
+				</main>`,
 		fragment = document.createRange().createContextualFragment(html);
 
 	document.querySelector('body').appendChild(fragment);
@@ -302,6 +304,28 @@ describe('DOM', () => {
 
 			expect($clone[0].className).to.equal('test');
 			expect(document.body.children.length).to.equal(2);
+		});
+	});
+
+	describe('$closest', () => {
+		before(() => {
+			createMultiDiv();
+			createList();
+			$setRef();
+		});
+		after(resetDOM);
+
+		it('should return closest ancestor', () => {
+			expect($('.child').closest('.parent').length).to.equal(2);
+		});
+
+		it('should return closest ancestor starting with itself', () => {
+			expect($('#first').closest('div')[0].id).to.equal('first');
+		});
+
+		it('should return empty wee selection if selection is html element', () => {
+			expect($('html').closest('.nothing').length).to.equal(0);
+			expect($('body').closest('.nothing').length).to.equal(0);
 		});
 	});
 

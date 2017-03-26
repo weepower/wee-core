@@ -100,6 +100,17 @@ $chain({
 	},
 
 	/**
+	 * Get unique closest ancestors of each matching selection
+	 *
+	 * @param filter
+	 * @param context
+	 * @returns {$}
+	 */
+	closest(filter, context) {
+		return $(W.$closest(this, filter, context));
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter
