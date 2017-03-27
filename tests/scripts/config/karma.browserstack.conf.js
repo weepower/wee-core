@@ -25,6 +25,13 @@ module.exports = function(config) {
 				browser: 'chrome',
 				os: 'OS X',
 				os_version: 'Sierra'
+			},
+			bs_ie10_windows: {
+				base: 'BrowserStack',
+				browser: 'IE',
+				browser_version : '10',
+				os: 'Windows',
+				os_version: '7'
 			}
 		},
 
