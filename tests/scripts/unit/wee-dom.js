@@ -93,9 +93,8 @@ describe('DOM', () => {
 			let div = document.querySelector('.after');
 
 			if (div) {
-				div.remove();
+				div.parentNode.removeChild(div);
 			}
-
 		});
 
 		it('should append markup after target', () => {
