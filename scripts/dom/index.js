@@ -466,6 +466,23 @@ export function $filter(target, filter, options) {
 }
 
 /**
+ * Get unique filtered descendants from each matching selection
+ *
+ * @param {($|HTMLElement|string)} parent
+ * @param filter
+ * @returns {Array} elements
+ */
+export function $find(parent, filter) {
+	let arr = [];
+
+	$each(parent, function(el) {
+		arr = arr.concat($sel(filter, el));
+	});
+
+	return $unique(arr);
+}
+
+/**
  * Determine if at least one matching selection matches
  * a specified criteria
  *

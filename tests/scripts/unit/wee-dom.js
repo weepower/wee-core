@@ -484,6 +484,16 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$find', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should find unique descendents', () => {
+			expect($('.grandparent').find('#first').length).to.equal(1);
+			expect($('.grandparent').find('div').length).to.equal(4);
+		});
+	});
+
 	describe('$is', () => {
 		before(() => {
 			createList();

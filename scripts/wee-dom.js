@@ -192,6 +192,16 @@ $chain({
 	},
 
 	/**
+	 * Get unique filtered descendants from each matching selection
+	 *
+	 * @param filter
+	 * @returns {$}
+	 */
+	find(filter) {
+		return $(W.$find(this, filter));
+	},
+
+	/**
 	 * Determine if at least one matching selection matches
 	 * a specified criteria
 	 *
