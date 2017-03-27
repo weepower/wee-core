@@ -223,7 +223,7 @@ describe('DOM', () => {
 			let div = document.querySelector('.before');
 
 			if (div) {
-				div.remove();
+				div.parentNode.removeChild(div);
 			}
 		});
 
