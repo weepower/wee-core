@@ -433,6 +433,17 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$empty', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should empty selection contents', () => {
+			$('.parent').empty();
+
+			expect($('.parent')[0].outerHTML).to.equal('<ul class="parent"></ul>');
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();

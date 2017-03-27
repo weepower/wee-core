@@ -414,6 +414,21 @@ export function $data(target, a, b) {
 }
 
 /**
+ * Remove child nodes from each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ */
+export function $empty(target) {
+	$each(target, el => {
+		while (el.firstChild) {
+			el.removeChild(el.firstChild);
+		}
+
+		$setRef(el);
+	});
+}
+
+/**
  * Return a filtered subset of elements from a matching selection
  *
  * @param {($|HTMLElement|string)} target

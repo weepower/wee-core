@@ -159,6 +159,17 @@ $chain({
 	},
 
 	/**
+	 * Remove child nodes from each matching selection
+	 *
+	 * @returns {$}
+	 */
+	empty: function() {
+		W.$empty(this);
+
+		return this;
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter
