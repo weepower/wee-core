@@ -8,25 +8,25 @@ module.exports = function(config) {
 		},
 
 		customLaunchers: {
-			bs_safari_mac: {
+			safari_mac: {
 				base: 'BrowserStack',
 				browser: 'safari',
 				os: 'OS X',
 				os_version: 'Sierra'
 			},
-			bs_firefox_mac: {
+			firefox_mac: {
 				base: 'BrowserStack',
 				browser: 'firefox',
 				os: 'OS X',
 				os_version: 'Sierra'
 			},
-			bs_chrome_mac: {
+			chrome_mac: {
 				base: 'BrowserStack',
 				browser: 'chrome',
 				os: 'OS X',
 				os_version: 'Sierra'
 			},
-			bs_ie10_windows: {
+			ie10_windows: {
 				base: 'BrowserStack',
 				browser: 'IE',
 				browser_version : '10',
@@ -35,7 +35,7 @@ module.exports = function(config) {
 			}
 		},
 
-		browsers: ['bs_safari_mac', 'bs_firefox_mac', 'bs_chrome_mac'],
+		browsers: ['safari_mac', 'firefox_mac', 'chrome_mac', 'ie10_windows'],
 		autoWatch: false,
 		singleRun: true,
 		reporters: ['dots', 'BrowserStack', 'coverage']
