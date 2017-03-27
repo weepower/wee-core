@@ -429,6 +429,20 @@ export function $empty(target) {
 }
 
 /**
+ * Get indexed node of matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {int} index
+ * @param {($|HTMLElement|string)} [context=document]
+ * @returns {HTMLElement}
+ */
+export function $eq(target, index, context) {
+	let el = $sel(target, context);
+
+	return el[index < 0 ? el.length + index : index];
+}
+
+/**
  * Return a filtered subset of elements from a matching selection
  *
  * @param {($|HTMLElement|string)} target

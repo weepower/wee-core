@@ -444,6 +444,15 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$eq', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should return indexed node', () => {
+			expect($('li').eq(1)[0].outerHTML).to.equal('<li class="child">2</li>');
+		});
+	});
+
 	describe('$filter', () => {
 		before(() => {
 			createList();

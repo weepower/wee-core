@@ -170,6 +170,17 @@ $chain({
 	},
 
 	/**
+	 * Get indexed node of matching selection
+	 *
+	 * @param index
+	 * @param {($|HTMLElement|string)} [context=document]
+	 * @returns {$}
+	 */
+	eq: function(index, context) {
+		return $(W.$eq(this, index, context));
+	},
+
+	/**
 	 * Return a filtered subset of elements from a matching selection
 	 *
 	 * @param filter
