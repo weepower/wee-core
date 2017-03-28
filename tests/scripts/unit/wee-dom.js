@@ -8,6 +8,7 @@ function createSingleDiv() {
 
 	div.textContent = 'test';
 	div.className = 'test';
+	div.setAttribute('data-ref', 'test');
 	document.querySelector('body').appendChild(div);
 
 	return div;
@@ -16,9 +17,9 @@ function createSingleDiv() {
 function createMultiDiv() {
 	let html = `<main class="grandparent">
 					<div class="parent">
-						<div id="first" class="child">1</div>
-						<div class="child">2</div>
-						<div class="child">3</div>
+						<div id="first" class="child" data-ref="child">1</div>
+						<div class="child" data-ref="child">2</div>
+						<div class="child other-class" data-ref="child">3</div>
 					</div>
 				</main>`,
 		fragment = document.createRange().createContextualFragment(html);
@@ -428,7 +429,7 @@ describe('DOM', () => {
 			$('.child').data('long-Prop', 'test');
 			let data = $('.child').data();
 
-			expect(data).to.deep.equal({type: 'child', 'long-prop': 'test'});
+			expect(data).to.deep.equal({type: 'child', ref: 'child', 'long-prop': 'test'});
 		});
 	});
 
@@ -506,6 +507,16 @@ describe('DOM', () => {
 
 		it('should return raw dom node when using non-chained version of method', () => {
 			expect(W.$first('li').id).to.equal('first');
+		});
+	});
+
+	describe('$hasClass', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should identify if selection has a particular class', () => {
+			expect($('div').hasClass('test')).to.be.true;
+			expect($('div').hasClass('other-class')).to.be.false;
 		});
 	});
 

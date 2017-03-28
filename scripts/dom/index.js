@@ -494,6 +494,20 @@ export function $first(target, context) {
 }
 
 /**
+ * Determine if the matching selection has a class
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {string} className
+ * @returns {boolean}
+ */
+export function $hasClass(target, className) {
+	return $sel(target).some(function(el) {
+		return new RegExp('(^| )' + className + '($| )', 'gim')
+			.test(_getClass(el));
+	});
+}
+
+/**
  * Determine if at least one matching selection matches
  * a specified criteria
  *

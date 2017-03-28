@@ -211,6 +211,16 @@ $chain({
 	},
 
 	/**
+	 * Determine if the matching selection has a class
+	 *
+	 * @param className
+	 * @returns {boolean}
+	 */
+	hasClass(className) {
+		return W.$hasClass(this, className);
+	},
+
+	/**
 	 * Determine if at least one matching selection matches
 	 * a specified criteria
 	 *
