@@ -163,7 +163,7 @@ $chain({
 	 *
 	 * @returns {$}
 	 */
-	empty: function() {
+	empty() {
 		W.$empty(this);
 
 		return this;
@@ -176,7 +176,7 @@ $chain({
 	 * @param {($|HTMLElement|string)} [context=document]
 	 * @returns {$}
 	 */
-	eq: function(index, context) {
+	eq(index, context) {
 		return $(W.$eq(this, index, context));
 	},
 
@@ -199,6 +199,15 @@ $chain({
 	 */
 	find(filter) {
 		return $(W.$find(this, filter));
+	},
+
+	/**
+	 * Get the first element of a matching selection
+	 *
+	 * @returns {$}
+	 */
+	first() {
+		return this.eq(0);
 	},
 
 	/**

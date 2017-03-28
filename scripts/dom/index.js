@@ -483,6 +483,17 @@ export function $find(parent, filter) {
 }
 
 /**
+ * Get the first element of a matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|HTMLElement|string)} [context=document]
+ * @returns {HTMLElement}
+ */
+export function $first(target, context) {
+	return $sel(target, context)[0];
+}
+
+/**
  * Determine if at least one matching selection matches
  * a specified criteria
  *

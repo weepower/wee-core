@@ -493,6 +493,22 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$first', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should get the first of a matching selection', () => {
+			let $el = $('li').first();
+
+			expect($el.length).to.equal(1);
+			expect($el[0].id).to.equal('first');
+		});
+
+		it('should return raw dom node when using non-chained version of method', () => {
+			expect(W.$first('li').id).to.equal('first');
+		});
+	});
+
 	describe('$is', () => {
 		before(() => {
 			createList();
