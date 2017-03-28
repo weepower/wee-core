@@ -211,6 +211,15 @@ $chain({
 	},
 
 	/**
+	 * Return node from Wee object at specific index
+	 *
+	 * @returns {HTMLElement}
+	 */
+	get: function(index) {
+		return W.$eq(this, index);
+	},
+
+	/**
 	 * Determine if the matching selection has a class
 	 *
 	 * @param className

@@ -510,6 +510,15 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('get', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return raw node based on provided index', () => {
+			expect($('.child').get(1).innerHTML).to.equal('2');
+		})
+	});
+
 	describe('$hasClass', () => {
 		before(createSingleDiv);
 		after(resetDOM);
