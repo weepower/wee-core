@@ -1,5 +1,9 @@
-import { _doc, _win } from 'core/variables';
+import { _doc, _win, U } from 'core/variables';
 import { $sel, $ready, $each, $map, $parseHTML, $setRef, $unique } from 'core/dom';
+
+function weeSelector(target, context) {
+	return null;
+}
 
 describe('Core: DOM', () => {
 	describe('$sel', () => {
@@ -69,6 +73,13 @@ describe('Core: DOM', () => {
 
 		it('should parse html', () => {
 			expect($sel('<div>new</div>')[0].innerHTML).to.equal('new');
+		});
+
+		it('should be able to have custom selector engine', () => {
+			window.WeeSelector = weeSelector;
+
+			expect($sel('.test')).to.deep.equal([]);
+			window.WeeSelector = U;
 		});
 	});
 
