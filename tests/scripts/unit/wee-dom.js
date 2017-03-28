@@ -554,11 +554,11 @@ describe('DOM', () => {
 		});
 
 		it('should find height of window', () => {
-			expect($('window').height()).to.equal(759);
+			expect($('window').height()).to.equal(window.innerHeight);
 		});
 
 		it('should find height of document', () => {
-			expect($(document).height()).to.equal(68);
+			expect($(document).height()).to.equal(document.documentElement.scrollHeight);
 		});
 	});
 
