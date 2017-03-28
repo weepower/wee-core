@@ -230,6 +230,18 @@ $chain({
 	},
 
 	/**
+	 * Get or set the height of each matching selection
+	 *
+	 * @param {(function|number|string)} value
+	 * @returns {($|number)}
+	 */
+	height(value) {
+		let r = W.$height(this, value);
+
+		return value === U || value === true ? r : this;
+	},
+
+	/**
 	 * Determine if at least one matching selection matches
 	 * a specified criteria
 	 *

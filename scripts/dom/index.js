@@ -1,6 +1,6 @@
 import { $exec } from '../core/core';
 import { _castString, _slice, $extend, $isFunction, $isObject } from '../core/types';
-import { _html, U } from '../core/variables';
+import { _doc, _html, _win, U } from '../core/variables';
 import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
 
 /**
@@ -504,6 +504,55 @@ export function $hasClass(target, className) {
 	return $sel(target).some(function(el) {
 		return new RegExp('(^| )' + className + '($| )', 'gim')
 			.test(_getClass(el));
+	});
+}
+
+/**
+ * Get or set the height of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(boolean|function|number|string)} value
+ * @returns {number}
+ */
+export function $height(target, value) {
+	let func = value && $isFunction(value),
+		height;
+
+	if (value === U || value === true || func) {
+		let el = $sel(target)[0];
+
+		if (el === _win) {
+			height = el.innerHeight;
+		} else if (el === _doc) {
+			height = el.documentElement.scrollHeight;
+		} else {
+			height = el.offsetHeight;
+
+			if (value === true) {
+				let style = getComputedStyle(el);
+				height += parseFloat(style.marginTop) +
+					parseFloat(style.marginBottom);
+			}
+		}
+
+		if (! func) {
+			return height;
+		}
+	}
+
+	$each(target, function(el, i) {
+		value = func ?
+			$exec(value, {
+				args: [i, height],
+				scope: el
+			}) :
+			value;
+
+		if (typeof value === 'number') {
+			value += 'px';
+		}
+
+		$css(el, 'height', value);
 	});
 }
 

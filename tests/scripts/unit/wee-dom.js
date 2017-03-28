@@ -9,6 +9,10 @@ function createSingleDiv() {
 	div.textContent = 'test';
 	div.className = 'test';
 	div.setAttribute('data-ref', 'test');
+	div.style.width = '100px';
+	div.style.height = '80px';
+	div.style.border = '1px solid';
+	div.style.padding = '15px 10px';
 	document.querySelector('body').appendChild(div);
 
 	return div;
@@ -526,6 +530,35 @@ describe('DOM', () => {
 		it('should identify if selection has a particular class', () => {
 			expect($('div').hasClass('test')).to.be.true;
 			expect($('div').hasClass('other-class')).to.be.false;
+		});
+	});
+
+	describe('$height', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should find height of element', () => {
+			expect($('.test').height()).to.equal(112);
+		});
+
+		it('should include margin into calculation when passing true', () => {
+			document.querySelector('.test').style.margin = '5px';
+
+			expect($('.test').height(true)).to.equal(122);
+		});
+
+		it('should set height of selection', () => {
+			$('.test').height(20);
+
+			expect($('.test').height()).to.equal(52);
+		});
+
+		it('should find height of window', () => {
+			expect($('window').height()).to.equal(759);
+		});
+
+		it('should find height of document', () => {
+			expect($(document).height()).to.equal(68);
 		});
 	});
 
