@@ -54,6 +54,11 @@ describe('Core: DOM', () => {
 			expect($sel('ref:testRef')[0].textContent).to.equal('test');
 		});
 
+		it('should select elements by data ref and context', () => {
+			$setRef();
+			expect($sel('ref:testRef', 'body')[0].textContent).to.equal('test');
+		});
+
 		it('should return empty array if no context', () => {
 			expect($sel('.nothing', '.nocontext')).to.deep.equal([]);
 		});

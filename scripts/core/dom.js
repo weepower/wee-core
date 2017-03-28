@@ -52,14 +52,14 @@ export function $sel(selector, context) {
 	let el = null,
 		ref = [];
 
-	if (typeof selector != 'string') {
+	if (typeof selector !== 'string') {
 		el = selector;
 	} else {
-		if (selector == 'window') {
+		if (selector === 'window') {
 			return [_win];
 		}
 
-		if (selector == 'document') {
+		if (selector === 'document') {
 			return [_doc];
 		}
 
@@ -75,7 +75,7 @@ export function $sel(selector, context) {
 			let split = selector.split(',').filter(function(sel) {
 				sel = sel.trim();
 
-				if (sel.slice(0, 4) == 'ref:') {
+				if (sel.slice(0, 4) === 'ref:') {
 					sel = sel.slice(4);
 					sel = refs[sel];
 
