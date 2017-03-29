@@ -731,8 +731,35 @@ describe('spacedBlock', () => {
 	});
 });
 
+describe('opacity', () => {
+	it('should output provided value', () => {
+		return process(
+			`.block {
+				opacity(.5);
+			}`,
+			`.block {
+				opacity: 0.5;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle backface visibility', () => {
+		return process(
+			`.block {
+				opacity(.5, true);
+			}`,
+			`.block {
+				-webkit-backface-visibility: hidden;
+				opacity: 0.5;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
 describe('opaque', () => {
-	it('output opacity: 0', () => {
+	it('should output opacity: 1', () => {
 		return process(
 			`.block {
 				opaque();
@@ -743,15 +770,41 @@ describe('opaque', () => {
 			{ mixins: mixins }
 		);
 	});
+
+	it('should handle backface visibility', () => {
+		return process(
+			`.block {
+				opaque(true);
+			}`,
+			`.block {
+				-webkit-backface-visibility: hidden;
+				opacity: 1;
+			}`,
+			{ mixins: mixins }
+		);
+	});
 });
 
 describe('transparent', () => {
-	it('output opacity: 0', () => {
+	it('should output opacity: 0', () => {
 		return process(
 			`.block {
 				transparent();
 			}`,
 			`.block {
+				opacity: 0;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle backface visibility', () => {
+		return process(
+			`.block {
+				transparent(true);
+			}`,
+			`.block {
+				-webkit-backface-visibility: hidden;
 				opacity: 0;
 			}`,
 			{ mixins: mixins }
