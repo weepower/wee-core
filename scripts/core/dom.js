@@ -233,9 +233,9 @@ export function $parseHTML(html) {
  * @param {(Array|function|string)} fn
  */
 export function $ready(fn) {
-	_doc.readyState == 'complete' ?
+	_doc.readyState === 'complete' ?
 		$exec(fn) :
-		_doc.addEventListener('DOMContentLoaded', function() {
+		_doc.addEventListener('DOMContentLoaded', () => {
 			$exec(fn);
 		});
 }
