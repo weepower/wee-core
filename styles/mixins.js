@@ -1287,20 +1287,30 @@ module.exports = (vars = {}) => {
 		/**
 		 * Opacity
 		 *
-		 * @param  {string} value
-		 * @return {Object}
+		 * @param {number|string} value
+		 * @param {boolean} hideBackface
+		 * @return {Array}
 		 */
-		opacity(value) {
-			return decl('opacity', calcOpacity(value));
+		opacity(value, hideBackface = false) {
+			let props = [];
+
+			if (hideBackface) {
+				props.push(decl('-webkit-backface-visibility', 'hidden'));
+			}
+
+			props.push(decl('opacity', calcOpacity(value)));
+
+			return props;
 		},
 
 		/**
 		 * Set opacity to 1
 		 *
-		 * @return {Object}
+		 * @param {boolean} hideBackface
+		 * @return {Array}
 		 */
-		opaque() {
-			return this.opacity(1);
+		opaque(hideBackface = false) {
+			return this.opacity(1, hideBackface);
 		},
 
 		/**
@@ -1665,10 +1675,10 @@ module.exports = (vars = {}) => {
 		 */
 		selection(color = vars.selection.color, background = vars.selection.background) {
 			let props = [
-					decl('background', background),
-					decl('color', color),
-					decl('text-shadow', 'none')
-				];
+				decl('background', background),
+				decl('color', color),
+				decl('text-shadow', 'none')
+			];
 
 			return rule('&::selection', props);
 		},
@@ -1858,10 +1868,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set opacity to 0
 		 *
-		 * @return {Object}
+		 * @param {boolean} hideBackface
+		 * @return {Array}
 		 */
-		transparent() {
-			return this.opacity(0);
+		transparent(hideBackface = false) {
+			return this.opacity(0, hideBackface);
 		},
 
 		/**
