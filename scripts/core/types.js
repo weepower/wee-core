@@ -22,12 +22,12 @@ function _arrEquals(a, b) {
  * @param {*} val
  */
 export function _castString(val) {
-	if (typeof val == 'string') {
+	if (typeof val === 'string') {
 		try {
-			val = val == 'true' ? true :
-				val == 'false' ? false :
-					val == 'null' ? null :
-						parseInt(val).toString() == val ? parseInt(val) :
+			val = val === 'true' ? true :
+				val === 'false' ? false :
+					val === 'null' ? null :
+						parseInt(val).toString() === val ? parseInt(val) :
 							/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
 								val;
 		} catch (e) {}
