@@ -217,7 +217,6 @@ export function $map(target, fn, options) {
  * @returns {HTMLElement} element
  */
 export function $parseHTML(html) {
-	let el;
 	html = html.trim();
 
 	if (! range) {
@@ -225,21 +224,7 @@ export function $parseHTML(html) {
 		range.selectNode(_body);
 	}
 
-	if (range && range.createContextualFragment) {
-		el = range.createContextualFragment(html);
-	} else {
-		let div = _doc.createElement('div'),
-			child;
-		el = _doc.createDocumentFragment();
-
-		div.innerHTML = html;
-
-		while (child = div.firstChild) {
-			el.appendChild(child);
-		}
-	}
-
-	return el;
+	return range.createContextualFragment(html);
 }
 
 /**
