@@ -12,9 +12,9 @@ install:
 
 script:
   - npm run test:ci
-  - bash <(curl -s https://codecov.io/bash) -c -F unit
+  - bash <(curl -s https://codecov.io/bash) -F unit
   - npm run test:ci-ie
-  - bash <(curl -s https://codecov.io/bash) -c -F unit-ie
+  - bash <(curl -s https://codecov.io/bash) -F unit_ie
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/.bin/codecov
