@@ -526,4 +526,4 @@ variables.table = {
 	}
 };
 
-module.exports = register(variables);
+module.exports = variables;
