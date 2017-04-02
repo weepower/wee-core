@@ -41,7 +41,7 @@
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
     "postcss": "^5.2.16",
-    "postcss-js-mixins": "^2.2.0",
+    "postcss-js-mixins": "^2.2.1",
     "postcss-variables": "^1.0.1",
     "postcss-wee-syntax": "^2.0.0",
     "webpack": "^2.2.1"
