@@ -1103,16 +1103,12 @@ module.exports = (vars = {}) => {
 		 * @returns {Array|Object}
 		 */
 		margin(keyword, top, right, bottom, left) {
-			let keywords = ['none', 'horizontal', 'vertical'],
+			let keywords = ['horizontal', 'vertical'],
 				props = [];
 
 			if (keywords.includes(keyword)) {
 				let bottom = right || top,
 					args = [top, bottom];
-
-				if (keyword === 'none') {
-					return decl('transition', 'none');
-				}
 
 				if (keyword === 'horizontal') {
 					return decl.createMany(['left', 'right'], args, 'margin');
