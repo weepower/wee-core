@@ -387,15 +387,6 @@ module.exports = (vars = {}) => {
 			]);
 		},
 
-		/**
-		 * Color
-		 *
-		 * @param  {string} value
-		 * @return {Object}
-		 */
-		color(value) {
-			return decl('color', value);
-		},
 
 		/**
 		 * Grid column
