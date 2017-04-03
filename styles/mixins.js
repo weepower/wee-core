@@ -59,7 +59,9 @@ module.exports = (vars = {}) => {
 				if (isNumber(opacity)) {
 					prop = hexToRgba(prop, opacity);
 				} else {
-					prop += ` ${opacity}`;
+					prop += opacity.indexOf('url(') >= 0 ?
+						` ${opacity}` :
+						` url('${vars.image.path}${opacity.replace(/'/g, '')}')`;
 				}
 			}
 

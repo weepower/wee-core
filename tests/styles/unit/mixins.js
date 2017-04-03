@@ -1401,9 +1401,11 @@ describe('background', () => {
 		return process(
 			`.block {
 				background(#fff, .4);
+				background(blue, .5);
 			}`,
 			`.block {
 				background: rgba(255, 255, 255, 0.4);
+				background: rgba(0, 0, 255, 0.5);
 			}`,
 			{ mixins: mixins }
 		);
@@ -1424,10 +1426,22 @@ describe('background', () => {
 	it('should output url() as second parameter', () => {
 		return process(
 			`.block {
-				background(#fff, url('/test/test.jpg'));
+				background(#fff, url('../path/file.ext'));
 			}`,
 			`.block {
-				background: #fff url('/test/test.jpg');
+				background: #fff url('../path/file.ext');
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output url() as second parameter with default file path', () => {
+		return process(
+			`.block {
+				background(#fff, 'test.jpg');
+			}`,
+			`.block {
+				background: #fff url('../images/test.jpg');
 			}`,
 			{ mixins: mixins }
 		);
@@ -1436,10 +1450,10 @@ describe('background', () => {
 	it('should output x position as third parameter', () => {
 		return process(
 			`.block {
-				background(#fff, url('/test/test.jpg'), center);
+				background(#fff, 'test.jpg', center);
 			}`,
 			`.block {
-				background: #fff url('/test/test.jpg') center;
+				background: #fff url('../images/test.jpg') center;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1448,10 +1462,10 @@ describe('background', () => {
 	it('should output y position as forth parameter', () => {
 		return process(
 			`.block {
-				background(#fff, url('/test/test.jpg'), center, center);
+				background(#fff, 'test/test.jpg', center, center);
 			}`,
 			`.block {
-				background: #fff url('/test/test.jpg') center center;
+				background: #fff url('../images/test/test.jpg') center center;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1460,10 +1474,10 @@ describe('background', () => {
 	it('should output repeat as fifth parameter', () => {
 		return process(
 			`.block {
-				background(#fff, url('/test/test.jpg'), center, center, no-repeat);
+				background(#fff, 'test.jpg', center, center, no-repeat);
 			}`,
 			`.block {
-				background: #fff url('/test/test.jpg') center center no-repeat;
+				background: #fff url('../images/test.jpg') center center no-repeat;
 			}`,
 			{ mixins: mixins }
 		);
@@ -1472,10 +1486,10 @@ describe('background', () => {
 	it('should output attachment as sixth parameter', () => {
 		return process(
 			`.block {
-				background(#fff, url('/test/test.jpg'), center, center, no-repeat, fixed);
+				background(#fff, 'test.jpg', center, center, no-repeat, fixed);
 			}`,
 			`.block {
-				background: #fff url('/test/test.jpg') center center no-repeat fixed;
+				background: #fff url('../images/test.jpg') center center no-repeat fixed;
 			}`,
 			{ mixins: mixins }
 		);
