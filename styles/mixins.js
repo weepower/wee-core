@@ -1,6 +1,6 @@
 const decl = require('postcss-js-mixins/lib/declaration');
 const rule = require('postcss-js-mixins/lib/rule');
-const { calcOpacity, toRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
+const { calcOpacity, toRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isProvided, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
 
 module.exports = (vars = {}) => {
 	return {
@@ -18,19 +18,19 @@ module.exports = (vars = {}) => {
 				decl('position', 'absolute')
 			];
 
-			if (top) {
+			if (isProvided(top)) {
 				props.push(decl('top', top));
 			}
 
-			if (right) {
+			if (isProvided(right)) {
 				props.push(decl('right', right));
 			}
 
-			if (bottom) {
+			if (isProvided(bottom)) {
 				props.push(decl('bottom', bottom));
 			}
 
-			if (left) {
+			if (isProvided(left)) {
 				props.push(decl('left', left));
 			}
 
@@ -800,19 +800,19 @@ module.exports = (vars = {}) => {
 				decl('position', 'fixed')
 			];
 
-			if (top) {
+			if (isProvided(top)) {
 				props.push(decl('top', top));
 			}
 
-			if (right) {
+			if (isProvided(right)) {
 				props.push(decl('right', right));
 			}
 
-			if (bottom) {
+			if (isProvided(bottom)) {
 				props.push(decl('bottom', bottom));
 			}
 
-			if (left) {
+			if (isProvided(left)) {
 				props.push(decl('left', left));
 			}
 
@@ -1119,19 +1119,19 @@ module.exports = (vars = {}) => {
 				}
 			}
 
-			if (top) {
+			if (isProvided(top)) {
 				props.push(decl('margin-top', top));
 			}
 
-			if (right) {
+			if (isProvided(right)) {
 				props.push(decl('margin-right', right));
 			}
 
-			if (bottom) {
+			if (isProvided(bottom)) {
 				props.push(this.spaced(bottom));
 			}
 
-			if (left) {
+			if (isProvided(left)) {
 				props.push(decl('margin-left', left));
 			}
 
@@ -1325,19 +1325,19 @@ module.exports = (vars = {}) => {
 				}
 			}
 
-			if (top) {
+			if (isProvided(top)) {
 				props.push(decl('padding-top', top));
 			}
 
-			if (right) {
+			if (isProvided(right)) {
 				props.push(decl('padding-right', right));
 			}
 
-			if (bottom) {
+			if (isProvided(bottom)) {
 				props.push(decl('padding-bottom', bottom));
 			}
 
-			if (left) {
+			if (isProvided(left)) {
 				props.push(decl('padding-left', left));
 			}
 
