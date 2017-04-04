@@ -98,8 +98,8 @@ variables.h6 = '1.6rem';
 variables.image = {
 	path: '../images/',
 	class: {
-		left: 'img-left',
-		right: 'img-right'
+		left: '.img-left',
+		right: '.img-right'
 	},
 	margin: {
 		bottom: '2rem',
