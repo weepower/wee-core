@@ -1,6 +1,6 @@
 const decl = require('postcss-js-mixins/lib/declaration');
 const rule = require('postcss-js-mixins/lib/rule');
-const { calcOpacity, hexToRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
+const { calcOpacity, toRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
 
 module.exports = (vars = {}) => {
 	return {
@@ -57,7 +57,7 @@ module.exports = (vars = {}) => {
 
 			if (opacity) {
 				if (isNumber(opacity)) {
-					prop = hexToRgba(prop, opacity);
+					prop = toRgba(prop, opacity);
 				} else {
 					prop += opacity.indexOf('url(') >= 0 ?
 						` ${opacity}` :
@@ -1103,16 +1103,12 @@ module.exports = (vars = {}) => {
 		 * @returns {Array|Object}
 		 */
 		margin(keyword, top, right, bottom, left) {
-			let keywords = ['none', 'horizontal', 'vertical'],
+			let keywords = ['horizontal', 'vertical'],
 				props = [];
 
 			if (keywords.includes(keyword)) {
 				let bottom = right || top,
 					args = [top, bottom];
-
-				if (keyword === 'none') {
-					return decl('transition', 'none');
-				}
 
 				if (keyword === 'horizontal') {
 					return decl.createMany(['left', 'right'], args, 'margin');
