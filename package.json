@@ -1,6 +1,6 @@
 {
   "name": "wee-core",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Core Wee library and build scripts",
   "homepage": "https://www.weepower.com",
   "license": "Apache-2.0",
@@ -41,7 +41,7 @@
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
     "postcss": "^5.2.16",
-    "postcss-js-mixins": "^2.3.0",
+    "postcss-js-mixins": "^2.4.0",
     "postcss-variables": "^1.0.1",
     "postcss-wee-syntax": "^2.0.0",
     "webpack": "^2.2.1"
