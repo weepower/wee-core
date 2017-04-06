@@ -1070,6 +1070,67 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Output font icon
+		 *
+		 * @param {string} icon
+		 * @param {number|string} [size]
+		 * @param {boolean|number} [rotate]
+		 * @param {number|string} [weight]
+		 * @param {string} [font]
+		 * @returns {Array}
+		 */
+		icon(icon, size = 'inherit', rotate = false, weight = 'normal', font = vars.icon.family) {
+			let props = [
+				decl('font-variant', 'normal'),
+				decl('speak', 'none'),
+				decl('content', icon),
+				this.textSharpen()
+			];
+
+			props = props.concat(
+				this.font(font, size, weight, 0, 'normal'),
+				this.inlineBlock()
+			);
+
+			if (rotate) {
+				props.push(this.rotate(rotate));
+			}
+
+			return props;
+		},
+
+		/**
+		 * Modify font icon
+		 *
+		 * @param {boolean|string} [icon]
+		 * @param {boolean|number|string} [size]
+		 * @param {boolean|number} [rotate]
+		 * @param {boolean|number|string} [weight]
+		 * @returns {Array}
+		 */
+		iconModify(icon = false, size = false, rotate = false, weight = false) {
+			let props = [];
+
+			if (icon) {
+				props.push(decl('content', icon));
+			}
+
+			if (size) {
+				props.push(decl('font-size', size));
+			}
+
+			if (rotate) {
+				props.push(this.rotate(rotate));
+			}
+
+			if (weight) {
+				props.push(decl('font-weight', weight));
+			}
+
+			return props;
+		},
+
+		/**
 		 * Load font
 		 *
 		 * @param {string} name

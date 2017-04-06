@@ -4253,3 +4253,98 @@ describe('uppercase', () => {
 		);
 	});
 });
+
+describe('icon', () => {
+	it('should output icon with default values', () => {
+		return process(
+			`.block {
+				icon('\\e800');
+			}`,
+			`.block {
+				font-variant: normal;
+				speak: none;
+				content: '\\e800';
+				font-smoothing: antialiased;
+				font-family: fontello;
+				font-size: inherit;
+				font-weight: normal;
+				line-height: 0;
+				font-style: normal;
+				display: inline-block;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output icon with provided values', () => {
+		return process(
+			`.block {
+				icon('\\e800', 1.5, 90deg, 300);
+			}`,
+			`.block {
+				font-variant: normal;
+				speak: none;
+				content: '\\e800';
+				font-smoothing: antialiased;
+				font-family: fontello;
+				font-size: 1.5rem;
+				font-weight: 300;
+				line-height: 0;
+				font-style: normal;
+				display: inline-block;
+				transform: rotate(90deg);
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should update font-family when passing font argument', () => {
+		return process(
+			`.block {
+				icon('\\e800', font: 'test');
+			}`,
+			`.block {
+				font-variant: normal;
+				speak: none;
+				content: '\\e800';
+				font-smoothing: antialiased;
+				font-family: 'test';
+				font-size: inherit;
+				font-weight: normal;
+				line-height: 0;
+				font-style: normal;
+				display: inline-block;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
+
+describe('iconModify', () => {
+	it('should output new icon', () => {
+		return process(
+			`.block {
+				iconModify('\\e801');
+			}`,
+			`.block {
+				content: '\\e801';
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should output provided values', () => {
+		return process(
+			`.block {
+				iconModify('\\e801', 1.8, 45deg, 700);
+			}`,
+			`.block {
+				content: '\\e801';
+				font-size: 1.8rem;
+				transform: rotate(45deg);
+				font-weight: 700;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
