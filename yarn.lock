@@ -1938,8 +1938,8 @@ js-tokens@^3.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
 
 js-yaml@3.x:
-  version "3.8.2"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.2.tgz#02d3e2c0f6beab20248d412c352203827d786721"
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.3.tgz#33a05ec481c850c8875929166fe1beb61c728766"
   dependencies:
     argparse "^1.0.7"
     esprima "^3.1.1"
@@ -2065,8 +2065,8 @@ karma-webpack@^2.0.2:
     webpack-dev-middleware "^1.0.11"
 
 karma@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/karma/-/karma-1.5.0.tgz#9c4c14f0400bef2c04c8e8e6bff59371025cc009"
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/karma/-/karma-1.6.0.tgz#0e871d4527d5eac56c41d181f03c5c0a7e6dbf3e"
   dependencies:
     bluebird "^3.3.0"
     body-parser "^1.16.1"
@@ -2085,7 +2085,7 @@ karma@^1.5.0:
     lodash "^3.8.0"
     log4js "^0.6.31"
     mime "^1.3.4"
-    minimatch "^3.0.0"
+    minimatch "^3.0.2"
     optimist "^0.6.1"
     qjobs "^1.1.4"
     range-parser "^1.2.0"
@@ -2369,8 +2369,8 @@ ms@0.7.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
 nan@^2.3.0:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.5.1.tgz#d5b01691253326a97a2bbee9e61c55d8d60351e2"
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.1.tgz#8c84f7b14c96b89f57fbc838012180ec8ca39a01"
 
 natives@^1.1.0:
   version "1.1.0"
@@ -2670,9 +2670,9 @@ pkg-dir@^1.0.0:
   dependencies:
     find-up "^1.0.0"
 
-postcss-js-mixins@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/postcss-js-mixins/-/postcss-js-mixins-2.4.0.tgz#a9b5561ae6fa874572a27a160d1b0279d3f083b4"
+postcss-js-mixins@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/postcss-js-mixins/-/postcss-js-mixins-2.5.0.tgz#76ad36a681c960c743abf78f42598851854c2e51"
   dependencies:
     postcss "^5.2.6"
     tinycolor2 "^1.4.1"
@@ -2683,9 +2683,9 @@ postcss-variables@^1.0.1:
   dependencies:
     postcss "^5.2.6"
 
-postcss-wee-syntax@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/postcss-wee-syntax/-/postcss-wee-syntax-2.0.0.tgz#312265dcc87bf0cd13986c7d23c4592de0b6c143"
+postcss-wee-syntax@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-wee-syntax/-/postcss-wee-syntax-2.0.1.tgz#d5e8ff2d4ac88fbfe12bc96c14406ae3f6aa3604"
   dependencies:
     postcss "^5.2.6"
 
