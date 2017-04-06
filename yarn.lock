@@ -2683,9 +2683,9 @@ postcss-variables@^1.0.1:
   dependencies:
     postcss "^5.2.6"
 
-postcss-wee-syntax@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/postcss-wee-syntax/-/postcss-wee-syntax-2.0.0.tgz#312265dcc87bf0cd13986c7d23c4592de0b6c143"
+postcss-wee-syntax@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-wee-syntax/-/postcss-wee-syntax-2.0.1.tgz#d5e8ff2d4ac88fbfe12bc96c14406ae3f6aa3604"
   dependencies:
     postcss "^5.2.6"
 
