@@ -102,7 +102,7 @@ $.fn = Get.prototype = {
  * Register a new chainable method
  *
  * @param {(object|string)} a - method name or object
- * @param {function} b
+ * @param {function} [b]
  */
 export function $chain(a, b) {
 	if (typeof a == 'string') {
