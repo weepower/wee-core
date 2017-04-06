@@ -1,6 +1,6 @@
 const decl = require('postcss-js-mixins/lib/declaration');
 const rule = require('postcss-js-mixins/lib/rule');
-const { calcOpacity, toRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isProvided, isString, isUnit, prefix, toNumber, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
+const { calcOpacity, toRgba, isColor, isEmpty, isNumber, isObject, isPercentage, isProvided, isString, isUnit, prefix, toNumber, toDegrees, toPercentage, unit } = require('postcss-js-mixins/lib/helpers');
 
 module.exports = (vars = {}) => {
 	return {
@@ -134,20 +134,20 @@ module.exports = (vars = {}) => {
 				let rgb = '0, 0, 0';
 
 				if (color === 'dark') {
-					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+					props[0] = decl('background', `linear-gradient(${toDegrees(angle)}, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
 
 					return props;
 				}
 
 				if (color === 'light') {
 					rgb = '255, 255, 255';
-					props[0] = decl('background', `linear-gradient(${angle}deg, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
+					props[0] = decl('background', `linear-gradient(${toDegrees(angle)}, rgba(${rgb}, 0), rgba(${rgb}, 1))`);
 
 					return props;
 				}
 			}
 
-			props.push(decl('background', `linear-gradient(${angle}deg, ${start}, ${end})`));
+			props.push(decl('background', `linear-gradient(${toDegrees(angle)}, ${start}, ${end})`));
 
 			return props;
 		},
@@ -708,7 +708,7 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		hueRotate(value = '180deg') {
-			return this.filter(`hue-rotate(${value})`);
+			return this.filter(`hue-rotate(${toDegrees(value)})`);
 		},
 
 		/**
@@ -1472,7 +1472,7 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		rotate(angle = 45) {
-			return decl('transform', `rotate(${angle}deg)`);
+			return decl('transform', `rotate(${toDegrees(angle)})`);
 		},
 
 		/**
@@ -1507,20 +1507,14 @@ module.exports = (vars = {}) => {
 		 * @returns {Object}
 		 */
 		skew(keyword, x = '45deg', y = '45deg') {
-			let degrees = value => {
-				return `${value}`.indexOf('deg') === -1 ?
-					`${value}deg` :
-					value;
-			};
-
 			if (keyword === 'x') {
-				return decl('transform', `skewX(${degrees(x)})`);
+				return decl('transform', `skewX(${toDegrees(x)})`);
 			}
 
 			if (keyword === 'y') {
 				y = arguments[1] || y;
 
-				return decl('transform', `skewY(${degrees(y)})`)
+				return decl('transform', `skewY(${toDegrees(y)})`)
 			}
 
 			if (isNumber(keyword)) {
@@ -1528,7 +1522,7 @@ module.exports = (vars = {}) => {
 				x = keyword;
 			}
 
-			return decl('transform', `skew(${degrees(x)}, ${degrees(y)})`);
+			return decl('transform', `skew(${toDegrees(x)}, ${toDegrees(y)})`);
 		},
 
 		/**
