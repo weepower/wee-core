@@ -1086,7 +1086,7 @@ module.exports = (vars = {}) => {
 			let props = [],
 				filePath = `${vars.font.path}${file}`;
 
-			props = props.concat(this.font(name, null, weight, null, style));
+			props = props.concat(this.font(name, false, weight, false, style));
 			props.push(decl('src', `url('${filePath}.woff2'), url('${filePath}.woff'), url('${filePath}.ttf')`));
 
 			return rule('@font-face', props);
