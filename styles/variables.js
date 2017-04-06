@@ -95,6 +95,10 @@ variables.h4 = '2.4rem';
 variables.h5 = '2rem';
 variables.h6 = '1.6rem';
 
+variables.icon = {
+	family: 'fontello'
+};
+
 variables.image = {
 	path: '../images/',
 	class: {
