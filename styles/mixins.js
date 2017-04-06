@@ -862,7 +862,7 @@ module.exports = (vars = {}) => {
 		 * @param {string} [family]
 		 * @param {number} size
 		 * @param {number|string} weight
-		 * @param {string} lineHeight
+		 * @param {number|string} lineHeight
 		 * @param {string} style
 		 * @param {number|string} spacing
 		 * @returns {Array}
@@ -880,7 +880,7 @@ module.exports = (vars = {}) => {
 				props.push(decl('font-weight', weight));
 			}
 
-			if (lineHeight) {
+			if (isProvided(lineHeight)) {
 				props.push(decl('line-height', lineHeight));
 			}
 
