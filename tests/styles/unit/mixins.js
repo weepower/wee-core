@@ -4205,7 +4205,8 @@ describe('textSharpen', () => {
 				textSharpen();
 			}`,
 			`.block {
-				font-smoothing: antialiased;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}`,
 			{ mixins: mixins }
 		);
@@ -4261,16 +4262,15 @@ describe('icon', () => {
 				icon('\\e800');
 			}`,
 			`.block {
-				font-variant: normal;
-				speak: none;
 				content: '\\e800';
-				font-smoothing: antialiased;
 				font-family: fontello;
 				font-size: inherit;
 				font-weight: normal;
 				line-height: 0;
 				font-style: normal;
 				display: inline-block;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}`,
 			{ mixins: mixins }
 		);
@@ -4282,10 +4282,7 @@ describe('icon', () => {
 				icon('\\e800', 1.5, 90deg, 300);
 			}`,
 			`.block {
-				font-variant: normal;
-				speak: none;
 				content: '\\e800';
-				font-smoothing: antialiased;
 				font-family: fontello;
 				font-size: 1.5rem;
 				font-weight: 300;
@@ -4293,6 +4290,8 @@ describe('icon', () => {
 				font-style: normal;
 				display: inline-block;
 				transform: rotate(90deg);
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}`,
 			{ mixins: mixins }
 		);
@@ -4304,16 +4303,15 @@ describe('icon', () => {
 				icon('\\e800', font: 'test');
 			}`,
 			`.block {
-				font-variant: normal;
-				speak: none;
 				content: '\\e800';
-				font-smoothing: antialiased;
 				font-family: 'test';
 				font-size: inherit;
 				font-weight: normal;
 				line-height: 0;
 				font-style: normal;
 				display: inline-block;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}`,
 			{ mixins: mixins }
 		);

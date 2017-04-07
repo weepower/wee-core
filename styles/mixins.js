@@ -1076,15 +1076,13 @@ module.exports = (vars = {}) => {
 		 * @param {number|string} [size]
 		 * @param {boolean|number} [rotate]
 		 * @param {number|string} [weight]
+		 * @param {boolean} [sharpen]
 		 * @param {string} [font]
 		 * @returns {Array}
 		 */
-		icon(icon, size = 'inherit', rotate = false, weight = 'normal', font = vars.icon.family) {
+		icon(icon, size = 'inherit', rotate = false, weight = 'normal', sharpen = true, font = vars.icon.family) {
 			let props = [
-				decl('font-variant', 'normal'),
-				decl('speak', 'none'),
 				decl('content', icon),
-				this.textSharpen()
 			];
 
 			props = props.concat(
@@ -1094,6 +1092,10 @@ module.exports = (vars = {}) => {
 
 			if (rotate) {
 				props.push(this.rotate(rotate));
+			}
+
+			if (sharpen) {
+				props = props.concat(this.textSharpen());
 			}
 
 			return props;
@@ -1106,9 +1108,10 @@ module.exports = (vars = {}) => {
 		 * @param {boolean|number|string} [size]
 		 * @param {boolean|number} [rotate]
 		 * @param {boolean|number|string} [weight]
+		 * @param {boolean} [sharpen]
 		 * @returns {Array}
 		 */
-		iconModify(icon = false, size = false, rotate = false, weight = false) {
+		iconModify(icon = false, size = false, rotate = false, weight = false, sharpen = false) {
 			let props = [];
 
 			if (icon) {
@@ -1125,6 +1128,10 @@ module.exports = (vars = {}) => {
 
 			if (weight) {
 				props.push(decl('font-weight', weight));
+			}
+
+			if (sharpen) {
+				props = props.concat(this.textSharpen());
 			}
 
 			return props;
@@ -1855,10 +1862,13 @@ module.exports = (vars = {}) => {
 		/**
 		 * Sharpen text
 		 *
-		 * @returns {Object}
+		 * @returns {Array}
 		 */
 		textSharpen() {
-			return decl('font-smoothing', 'antialiased');
+			return [
+				decl('-webkit-font-smoothing', 'antialiased'),
+				decl('-moz-osx-font-smoothing', 'grayscale')
+			];
 		},
 
 		/**
