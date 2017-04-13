@@ -6,7 +6,7 @@
 	var fs = require('fs-extra'),
 		glob = require('glob'),
 		path = require('path'),
-		notify = require('./notify'),
+		utils = require('./utils'),
 
 		/**
 		 * Parse arguments from command array
@@ -90,7 +90,7 @@
 				project: project
 			});
 		} else {
-			notify({
+			utils.notify({
 				title: 'Command Error',
 				message: 'Command not found'
 			}, 'error');
