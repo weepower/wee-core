@@ -39,7 +39,7 @@ module.exports = {
 	 * @param {string} message
 	 * @param {string} [details]
 	 */
-	logError(position, message, details) => {
+	logError(position, message, details) {
 		console.log(
 			chalk.bgBlack.bold('[' + position + '] ') +
 			message + ' ' + (details || '')
