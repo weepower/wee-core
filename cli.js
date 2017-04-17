@@ -69,7 +69,7 @@ module.exports = function(rootPath, program) {
 	Object.keys(commands).forEach(name => {
 		let command = commands[name];
 
-		// TODO: Remove
+		// TODO: Remove once all default commands are updated
 		if (! command.name) {
 			return;
 		}
@@ -84,6 +84,6 @@ module.exports = function(rootPath, program) {
 			});
 		}
 
-		result.action(command.action);
+		result.action(command.action.bind(null, {rootPath: rootPath, project: project}));
 	});
 };
