@@ -12,8 +12,6 @@ module.exports = {
 		['-s, --static', 'serve static files']
 	],
 	action(config, options) {
-		// TODO: run local or static - set properties in bs-config and call npm run
-		// TODO: Look at https://dzone.com/articles/execute-unix-command-nodejs for exec example
 		let project = config.project,
 			projectUpdated = false;
 
