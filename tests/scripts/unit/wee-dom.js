@@ -963,7 +963,11 @@ describe('DOM', () => {
 		});
 
 		it('should execute callback', () => {
-			$('.test').toggleClass(() => {
+			$('.test').toggleClass((i, className, state) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test');
+				// TODO: what is state supposed to be at this point?
+				expect(state).to.equal(undefined);
 				return 'test-class';
 			});
 
@@ -1064,7 +1068,12 @@ describe('DOM', () => {
 		});
 
 		it('should set the width with callback', () => {
-			$('.test').width(() => 300);
+			$('.test').width((i, width) => {
+				expect(i).to.equal(0);
+				expect(width).to.equal(222);
+
+				return 300;
+			});
 
 			expect($('.test').width()).to.equal(322);
 		});
