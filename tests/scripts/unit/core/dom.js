@@ -264,6 +264,24 @@ describe('Core: DOM', () => {
 				done();
 			});
 		});
+
+		it('should execute callback when document has not yet finished loading', done => {
+			let registry = {},
+				state = false;
+
+			$ready.call({
+				readyState: 'loading',
+				addEventListener: function(key, cb) {
+					registry[key] = cb;
+				}
+			}, () => {
+				state = true;
+				expect(state).to.be.true;
+				done();
+			});
+
+			registry['DOMContentLoaded']();
+		});
 	});
 
 	describe('$setRef', () => {
