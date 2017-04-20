@@ -744,10 +744,8 @@ export function $remove(target, context) {
  * @param {string} name
  */
 export function $removeAttr(target, name) {
-	$each(target, function(el) {
-		name.split(/\s+/).forEach(value => {
-			el.removeAttribute(value);
-		});
+	$each(target, el => {
+		name.split(/\s+/).forEach(value => el.removeAttribute(value));
 	});
 }
 
