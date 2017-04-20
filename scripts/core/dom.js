@@ -71,29 +71,32 @@ export function $sel(selector, context) {
 		}
 
 		// Check for pre-cached elements
-		if (selector.indexOf('ref:') > -1) {
+		if (selector.indexOf(':') === 0 || selector.indexOf('ref:') > -1) {
 			let split = selector.split(',').filter(function(sel) {
 				sel = sel.trim();
 
-				if (sel.slice(0, 4) === 'ref:') {
+				if (sel.slice(0, 1) === ':') {
+					sel = sel.slice(1);
+				} else if (sel.slice(0, 4) === 'ref:') {
 					sel = sel.slice(4);
-					sel = refs[sel];
-
-					// Apply context filter if not document
-					if (sel) {
-						ref = ref.concat(
-							context === _doc ?
-								sel :
-								sel.filter(function(el) {
-									return _contains(context, el);
-								})
-						);
-					}
-
-					return false;
+				} else {
+					return true;
 				}
 
-				return true;
+				sel = refs[sel];
+
+				// Apply context filter if not document
+				if (sel) {
+					ref = ref.concat(
+						context === _doc ?
+							sel :
+							sel.filter(function(el) {
+								return _contains(context, el);
+							})
+					);
+				}
+
+				return false;
 			});
 
 			if (split.length) {
