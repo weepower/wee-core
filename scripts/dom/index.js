@@ -1134,7 +1134,7 @@ export function $wrapInner(target, html) {
 			wrap = markup ? $sel(markup)[0] : null;
 
 		if (wrap) {
-			var children = $children(el);
+			let children = $children(el);
 
 			if (! children.length) {
 				children = $html(el);
