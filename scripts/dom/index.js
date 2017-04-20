@@ -646,10 +646,10 @@ export function $removeAttr(target, name) {
  * @param {(function|string)} value
  */
 export function $removeClass(target, value) {
-	var func = $isFunction(value);
+	let func = $isFunction(value);
 
 	$each(target, (el, i) => {
-		var cn = _getClass(el),
+		let cn = _getClass(el),
 			name = func ?
 				$exec(value, {
 					args: [i, cn],
@@ -658,7 +658,7 @@ export function $removeClass(target, value) {
 				value;
 
 		if (name) {
-			var names = name.split(' ');
+			let names = name.split(' ');
 
 			_setClass(el, cn.split(' ').filter(val => {
 					return names.indexOf(val) < 0
