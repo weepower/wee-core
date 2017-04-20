@@ -31,6 +31,38 @@ function createMultiDiv() {
 	document.querySelector('body').appendChild(fragment);
 }
 
+function createForm() {
+	let html = `<form action="#" id="form">
+					<input type="text" name="input" value="inputValue">
+					<input type="checkbox" name="checkbox" value="checkboxValue" checked>
+					<input type="radio" name="radio1" value="radioValue" checked>
+					<input type="text" name="name[]" value="name1">
+					<input type="text" name="email[]" value="email1">
+					<input type="text" name="name[]" value="name2">
+					<input type="text" name="email[]" value="email2">
+					<select name="select">
+						<option value="selectValue1" selected>Option 1</option>
+						<option value="selectValue2">Option 2</option>
+					</select>
+					<select name="select-multiple" multiple>
+						<option value="selectValue1" selected>Option 1</option>
+						<option value="selectValue2" selected>Option 2</option>
+					</select>
+					<select name="optgroup">
+						<optgroup>
+							<option value="optgroupValue1" selected>Optgroup 1</option>
+							<option value="optgroupValue2">Optgroup 2</option>
+						</optgroup>
+					</select>
+					<textarea name="textarea">
+					Text Area
+					</textarea>
+				</form>`,
+		fragment = document.createRange().createContextualFragment(html);
+
+	document.querySelector('body').appendChild(fragment);
+}
+
 function createList() {
 	let html = `<ul class="parent">
 						<li id="first" class="child">1</li>
@@ -662,6 +694,120 @@ describe('DOM', () => {
 
 			expect($('.child').length).to.equal(0);
 			expect($('.test').length).to.equal(1);
+		});
+	});
+
+	describe('$scrollLeft', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+		it('should return scroll left as unitless pixel value', () => {
+			expect($('body').scrollLeft()).to.equal(0);
+		});
+
+		it('should set scroll left value', () => {
+			$('body')[0].style.width = '15000px';
+			$('body').scrollLeft(10);
+
+			expect($('body').scrollLeft()).to.equal(10);
+		});
+	});
+
+	describe('$scrollTop', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+		it('should return scroll top as unitless pixel value', () => {
+			expect($('body').scrollTop()).to.equal(0);
+		});
+
+		it('should set scroll top value', () => {
+			$('body')[0].style.height = '15000px';
+
+			$('body').scrollTop(10)
+
+			expect($('body').scrollTop()).to.equal(10);
+		});
+	});
+
+	describe('$serializeForm', () => {
+		before(createForm);
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should serialize form value', () => {
+			let serializedValue = 'input=inputValue&checkbox=checkboxValue' +
+				'&radio1=radioValue&name[]=name1&name[]=name2&email[]=emai' +
+				'l1&email[]=email2&select=selectValue1&select-multiple[]=s' +
+				'electValue1&select-multiple[]=selectValue2&optgroup=optgr' +
+				'oupValue1&textarea=%09%09%09%09%09Text+Area%0A%09%09%09%09%09';
+
+			expect($('#form').serialize()).to.equal(serializedValue);
+		});
+
+		it('should serialize form value to json object', () => {
+			let serializedValue = JSON.stringify({
+					"input": "inputValue",
+					"checkbox": "checkboxValue",
+					"radio1": "radioValue",
+					"name": [
+						"name1",
+						"name2",
+					],
+					"email": [
+						"email1",
+						"email2",
+					],
+					"select": "selectValue1",
+					"select-multiple": [
+						"selectValue1",
+						"selectValue2",
+					],
+					"input": "inputValue",
+					"optgroup": "optgroupValue1",
+					"textarea": "\t\t\t\t\tText Area\n\t\t\t\t\t"
+				});
+
+			expect(JSON.stringify($('#form').serialize(true))).to.equal(serializedValue);
+		});
+
+		it('should not attempt to serialize a non form element', () => {
+			expect($('.test').serialize()).to.equal('');
+		});
+	});
+
+	describe('$show', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should remove js-hide class', () => {
+			$('.test')[0].className = 'test js-hide';
+
+			$('.test').show();
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$siblings', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return all siblings', () => {
+			expect($('.child').siblings().length).to.equal(3);
+			expect($('.child').siblings()[2].id).to.equal('first');
+		});
+
+		it('should return filtered siblings', () => {
+			expect($('.child').siblings('#first').length).to.equal(1);
+		});
+	});
+
+	describe('$slice', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should return subset from specified range', () => {
+			expect($('.child').slice(0, 2).length).to.equal(2);
+			expect($('.child').slice(0, 1)[0].innerText).to.equal('1');
 		});
 	});
 });

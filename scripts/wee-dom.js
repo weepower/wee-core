@@ -300,6 +300,72 @@ $chain({
 
 		return this;
 	},
+
+	/**
+	 * Get or set the X scroll position of each matching selection
+	 *
+	 * @param value
+	 * @returns {($|number)}
+	 */
+	scrollLeft(value) {
+		let r = W.$scrollLeft(this, value);
+
+		return value === U || value === true ? r : this;
+	},
+
+	/**
+	 * Get or set the Y scroll position of each matching selection
+	 *
+	 * @param value
+	 * @returns {($|number)}
+	 */
+	scrollTop(value) {
+		let r = W.$scrollTop(this, value);
+
+		return value === U || value === true ? r : this;
+	},
+
+	/**
+	 * Serialize input values from first matching form selection
+	 *
+	 * @param {boolean} json
+	 * @returns {string}
+	 */
+	serialize(json) {
+		return W.$serializeForm(this, json);
+	},
+
+	/**
+	 * Show each matching selection
+	 *
+	 * @returns {$}
+	 */
+	show() {
+		W.$show(this);
+
+		return this;
+	},
+
+	/**
+	 * Get unique siblings of each matching selection
+	 *
+	 * @param filter
+	 * @returns {$}
+	 */
+	siblings(filter) {
+		return $(W.$siblings(this, filter));
+	},
+
+	/**
+	 * Get subset of selection matches from specified range
+	 *
+	 * @param start
+	 * @param end
+	 * @returns {$}
+	 */
+	slice: function(start, end) {
+		return $(W.$slice(this, start, end));
+	}
 });
 
 export default $;

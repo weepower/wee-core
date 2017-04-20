@@ -1,7 +1,7 @@
 import { $exec } from '../core/core';
-import { _castString, _slice, $extend, $isFunction, $isObject } from '../core/types';
+import { _castString, _slice, $extend, $isFunction, $isObject, $serialize, $toArray } from '../core/types';
 import { _doc, _html, _win, U } from '../core/variables';
-import { $each, $map, $parseHTML, $sel, $setRef, $unique } from '../core/dom';
+import { $each, $map, $parseHTML, $sel, $setRef, $unique, _selArray } from '../core/dom';
 
 /**
  * Get class value of element
@@ -54,6 +54,25 @@ function _toDashed(name) {
 	return name.replace(/[A-Z]/g, function(match) {
 		return '-' + match[0].toLowerCase();
 	});
+}
+
+/**
+ * Get the selected options from a select
+ *
+ * @private
+ * @param {HTMLElement} select
+ * @returns {Array} selected
+ */
+ function _getSelected(select) {
+	var arr = [];
+
+	_slice.call(select.options).map(function(el) {
+		if (el.selected) {
+			arr.push(el.value);
+		}
+	});
+
+	return arr;
 }
 
 /**
@@ -676,4 +695,143 @@ export function $removeClass(target, value) {
  */
 export function $replaceWith(target, source) {
 	$after(target, source, true);
+}
+
+/**
+ * Get or set the X scroll position of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {number} value
+ * @returns {number}
+ */
+export function $scrollLeft(target, value) {
+	if (value === U) {
+		let el = target ? $sel(target)[0] : _win;
+
+		return el === _win ?
+			el.pageXOffset :
+			el.scrollLeft;
+	}
+
+	$each(target, function(el) {
+		el.scrollLeft = value;
+	});
+}
+
+/**
+ * Get or set the Y scroll position of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {number} value
+ * @returns {number}
+ */
+export function $scrollTop(target, value) {
+	if (value === U) {
+		let el = target ? $sel(target)[0] : _win;
+
+		return el === _win ?
+			el.pageYOffset :
+			el.scrollTop;
+	}
+
+	$each(target, function(el) {
+		el.scrollTop = value;
+	});
+}
+
+/**
+ * Serialize input values from first matching form selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {boolean} json
+ * @returns {string}
+ */
+export function $serializeForm(target, json) {
+	let el = $sel(target)[0],
+		obj = {},
+		i = 0;
+
+	if (el.nodeName != 'FORM') {
+		return '';
+	}
+
+	for (; i < el.elements.length; i++) {
+		let child = el.elements[i],
+			name = child.name,
+			type = child.type;
+
+		if (name && type != 'file' && type != 'reset') {
+			let arr = name.slice(-2) == '[]';
+
+			if (arr) {
+				name = name.slice(0, -2);
+			}
+
+			if (type == 'select-multiple') {
+				obj[name] = _getSelected(child);
+			} else if (
+				type != 'submit' && type != 'button' &&
+				((type != 'checkbox' && type != 'radio') ||
+				child.checked)) {
+				if (arr || (type == 'checkbox' && obj[name])) {
+					obj[name] = $toArray(obj[name]);
+					obj[name].push(child.value);
+				} else {
+					obj[name] = child.value;
+				}
+			}
+		}
+	}
+
+	return json ? obj : $serialize(obj);
+}
+
+/**
+ * Show each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ */
+export function $show(target) {
+	$removeClass(target, 'js-hide');
+}
+
+/**
+ * Get unique siblings of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @returns {Array} elements
+ */
+export function $siblings(target, filter) {
+	let arr = [];
+
+	$each(target, el => {
+		let siblings = _slice.call(el.parentNode.children)
+			.filter(a => a !== el);
+
+		arr = arr.concat(
+			filter ?
+				$filter(siblings, filter) :
+				siblings
+		);
+	});
+
+	return $unique(arr);
+}
+
+/**
+ * Get subset of selection matches from specified range
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {int} start
+ * @param {int} end
+ * @returns {Array} elements
+ */
+export function $slice(target, start, end) {
+	// TODO: What does this do and when will this be false?
+	if (! target._$) {
+		target = _selArray(target);
+	}
+
+	return _slice.call(target, start, end);
 }
