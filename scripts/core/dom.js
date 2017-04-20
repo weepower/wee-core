@@ -21,13 +21,12 @@ function _contains(source, target) {
 /**
  * Convert selection to array
  *
- * @protected
  * @param {($|HTMLElement|string)} selector
  * @param {object} [options]
  * @param {(HTMLElement|string)} [options.context=document]
  * @returns {($|Array)} nodes
  */
-function _selArray(selector, options) {
+export function _selArray(selector, options) {
 	if (selector && selector._$) {
 		return selector;
 	}
