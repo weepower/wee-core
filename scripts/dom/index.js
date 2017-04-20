@@ -64,9 +64,9 @@ function _toDashed(name) {
  * @returns {Array} selected
  */
  function _getSelected(select) {
-	var arr = [];
+	let arr = [];
 
-	_slice.call(select.options).map(function(el) {
+	_slice.call(select.options).map(el => {
 		if (el.selected) {
 			arr.push(el.value);
 		}
@@ -527,6 +527,99 @@ export function $hasClass(target, className) {
 }
 
 /**
+ * Hide each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ */
+export function $hide(target) {
+	$addClass(target, 'js-hide');
+}
+
+/**
+ * Get inner HTML of first selection or set each matching selection HTML
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} value
+ * @returns {(string|undefined)}
+ */
+export function $html(target, value) {
+	if (value === U) {
+		return $sel(target)[0].innerHTML;
+	}
+
+	let func = $isFunction(value);
+
+	$each(target, (el, i) => {
+		let html = func ?
+			$exec(value, {
+				args: [el, i, el.innerHTML],
+				scope: el
+			}) :
+			value;
+
+		if (html !== false && html !== U) {
+			if (el.nodeName == 'SELECT' && ! _win.atob) {
+				el.outerHTML = el.outerHTML.replace(
+					el.innerHTML + '</s', html + '</s'
+				);
+			} else {
+				el.innerHTML = html;
+			}
+
+			$setRef(el);
+		}
+	});
+}
+
+/**
+ * Get the zero-based index of a matching selection relative
+ * to it's siblings
+ *
+ * @param {($|HTMLElement|string)} target
+ * @returns {int}
+ */
+export function $index(target) {
+	let el = $sel(target)[0],
+		i = 0,
+		children;
+
+	if (! el) {
+		return -1;
+	}
+
+	children = _slice.call(el.parentNode.children);
+
+	for (; i < children.length; i++) {
+		if (children[i] === el) {
+			return i;
+		}
+	}
+}
+
+/**
+ * Insert each matching source selection element after
+ * each matching target selection
+ *
+ * @param {($|HTMLElement|string)} source
+ * @param {($|HTMLElement|string)} target
+ */
+export function $insertAfter(source, target) {
+	$each(target, (el, i) => {
+		let par = el.parentNode;
+
+		$each(source, cel => {
+			if (i > 0) {
+				cel = $clone(cel)[0];
+			}
+
+			par.insertBefore(cel, el.nextSibling);
+
+			$setRef(par);
+		});
+	});
+}
+
+/**
  * Get or set the height of each matching selection
  *
  * @param {($|HTMLElement|string)} target
@@ -834,4 +927,230 @@ export function $slice(target, start, end) {
 	}
 
 	return _slice.call(target, start, end);
+}
+
+/**
+ * Get inner text of first selection or set each matching selection text
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} value
+ * @returns {string}
+ */
+export function $text(target, value) {
+	if (value === U) {
+		return $map(target, el => el.textContent.trim()).join('');
+	}
+
+	let func = $isFunction(value);
+
+	$each(target, (el, i) => {
+		el.textContent = func ?
+			$exec(value, {
+				args: [i, el.textContent.trim()],
+				scope: el
+			}) :
+			value;
+	});
+}
+
+/**
+ * Toggle the display of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ */
+export function $toggle(target) {
+	$each(target, el => {
+		! $hasClass(el, 'js-hide') ?
+			$hide(el) :
+			$show(el);
+	});
+}
+
+/**
+ * Toggle adding and removing class(es) from the specified element
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} className
+ * @param {boolean} [state]
+ */
+export function $toggleClass(target, className, state) {
+	let func = $isFunction(className);
+
+	$each(target, (el, i) => {
+		if (func) {
+			className = $exec(className, {
+				args: [i, _getClass(el), state],
+				scope: el
+			});
+		}
+
+		if (className) {
+			className.split(/\s+/).forEach(value => {
+				state === false ||
+				(state === U && $hasClass(el, value)) ?
+					$removeClass(el, value) :
+					$addClass(el, value);
+			});
+		}
+	});
+}
+
+/**
+ * Get value of first matching selection or set match values
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} value
+ * @returns {(Array|string)}
+ */
+export function $val(target, value) {
+	if (value === U) {
+		let el = $sel(target)[0];
+
+		if (el.type == 'select-multiple') {
+			return _getSelected(el);
+		}
+
+		return el.value;
+	}
+
+	let func = $isFunction(value);
+
+	$each(target, (el, i) => {
+		if (el.type == 'select-multiple') {
+			value = $toArray(value);
+
+			_slice.call(el.options).forEach(a => {
+				if (value.indexOf(a.value) > -1) {
+					a.selected = true;
+				}
+			});
+		} else {
+			el.value = func ?
+				$exec(value, {
+					args: [i, el.value],
+					scope: el
+				}) :
+				value;
+		}
+	});
+}
+
+/**
+ * Get or set the width of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(boolean|function|number|string)} value
+ * @returns {number}
+ */
+export function $width(target, value) {
+	let func = value && $isFunction(value),
+		width;
+
+	if (value === U || value === true || func) {
+		let el = $sel(target)[0];
+
+		if (el === _win) {
+			width = el.innerWidth;
+		} else if (el === _doc) {
+			width = el.documentElement.scrollWidth;
+		} else {
+			width = el.offsetWidth;
+
+			if (value === true) {
+				let style = getComputedStyle(el);
+				width += parseFloat(style.marginLeft) +
+					parseFloat(style.marginRight);
+			}
+		}
+
+		if (! func) {
+			return width;
+		}
+	}
+
+	$each(target, (el, i) => {
+		value = func ?
+			$exec(value, {
+				args: [i, width],
+				scope: el
+			}) :
+			value;
+
+		if (typeof value == 'number') {
+			value += 'px';
+		}
+
+		$css(el, 'width', value);
+	});
+}
+
+/**
+ * Wrap markup around each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} html
+ */
+export function $wrap(target, html) {
+	let func = $isFunction(html);
+
+	$each(target, (el, i) => {
+		let wrap = $sel(
+			func ?
+				$exec(html, {
+					args: i,
+					scope: el
+				}) :
+				html
+		);
+
+		if (wrap) {
+			let par = el.parentNode;
+
+			$each(wrap, cel => {
+				cel = cel.cloneNode(true);
+
+				par.insertBefore(cel, el);
+				cel.appendChild(el);
+
+				$setRef(par);
+			});
+		}
+	});
+}
+
+/**
+ * Wrap markup around the content of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} html
+ */
+export function $wrapInner(target, html) {
+	let func = $isFunction(html);
+
+	$each(target, (el, i) => {
+		let markup = func ?
+				$exec(html, {
+					args: i,
+					scope: el
+				}) :
+				html,
+			wrap = markup ? $sel(markup)[0] : null;
+
+		if (wrap) {
+			var children = $children(el);
+
+			if (! children.length) {
+				children = $html(el);
+
+				$empty(el);
+				$html(wrap, children);
+			} else {
+				$each(children, cel => {
+					wrap.appendChild(cel);
+				});
+			}
+
+			$append(el, wrap);
+		}
+	});
 }

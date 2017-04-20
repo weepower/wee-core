@@ -230,6 +230,52 @@ $chain({
 	},
 
 	/**
+	 * Hide each matching selection
+	 *
+	 * @returns {$}
+	 */
+	hide() {
+		W.$hide(this);
+
+		return this;
+	},
+
+	/**
+	 * Get inner HTML of first selection or set each matching selection's HTML
+	 *
+	 * @param {(function|string)} value
+	 * @returns {($|string)}
+	 */
+	html(value) {
+		let r = W.$html(this, value);
+
+		return value !== U ? this : r;
+	},
+
+	/**
+	 * Get the zero-based index of a matching selection relative
+	 * to it's siblings
+	 *
+	 * @returns {int}
+	 */
+	index() {
+		return W.$index(this);
+	},
+
+	/**
+	 * Insert each matching source selection element after
+	 * each matching target selection
+	 *
+	 * @param {($|HTMLElement|string)} target
+	 * @returns {$}
+	 */
+	insertAfter(target) {
+		W.$insertAfter(this, target);
+
+		return this;
+	},
+
+	/**
 	 * Get or set the height of each matching selection
 	 *
 	 * @param {(function|number|string)} value
@@ -363,8 +409,92 @@ $chain({
 	 * @param end
 	 * @returns {$}
 	 */
-	slice: function(start, end) {
+	slice(start, end) {
 		return $(W.$slice(this, start, end));
+	},
+
+	/**
+	 * Get inner text of first selection or set each matching selection's text
+	 *
+	 * @param {(function|string)} value
+	 * @returns {($|string)}
+	 */
+	text(value) {
+		let r = W.$text(this, value);
+		return value !== U ? this : r;
+	},
+
+	/**
+	 * Toggle the display of each matching selection
+	 *
+	 * @returns {$}
+	 */
+	toggle() {
+		W.$toggle(this);
+
+		return this;
+	},
+
+	/**
+	 * Toggle adding and removing class(es) from the specified element
+	 *
+	 * @param {(function|string)} className
+	 * @param {boolean} [state]
+	 * @returns {$}
+	 */
+	toggleClass(className, state) {
+		W.$toggleClass(this, className, state);
+
+		return this;
+	},
+
+	/**
+	 * Get value of first matching selection or set values of
+	 * each matching selection
+	 *
+	 * @param {(function|string)} value
+	 * @returns {($|string)}
+	 */
+	val(value) {
+		let r = W.$val(this, value);
+
+		return value !== U ? this : r;
+	},
+
+	/**
+	 * Get or set the width of each matching selection
+	 *
+	 * @param {(function|number|string)} value
+	 * @returns {($|number)}
+	 */
+	width(value) {
+		let r = W.$width(this, value);
+
+		return value === U || value === true ? r : this;
+	},
+
+	/**
+	 * Wrap markup around each matching selection
+	 *
+	 * @param {(function|string)} html
+	 * @returns {$}
+	 */
+	wrap(html) {
+		W.$wrap(this, html);
+
+		return this;
+	},
+
+	/**
+	 * Wrap markup around the content of each matching selection
+	 *
+	 * @param {(function|string)} html
+	 * @returns {$}
+	 */
+	wrapInner(html) {
+		W.$wrapInner(this, html);
+
+		return this;
 	}
 });
 

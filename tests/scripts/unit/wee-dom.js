@@ -13,6 +13,7 @@ function createSingleDiv() {
 	div.style.height = '80px';
 	div.style.border = '1px solid';
 	div.style.padding = '15px 10px';
+	div.style.margin = '10px';
 	document.querySelector('body').appendChild(div);
 
 	return div;
@@ -33,30 +34,28 @@ function createMultiDiv() {
 
 function createForm() {
 	let html = `<form action="#" id="form">
-					<input type="text" name="input" value="inputValue">
-					<input type="checkbox" name="checkbox" value="checkboxValue" checked>
-					<input type="radio" name="radio1" value="radioValue" checked>
-					<input type="text" name="name[]" value="name1">
+					<input class="input" type="text" name="input" value="inputValue">
+					<input class="checkbox" type="checkbox" name="checkbox" value="checkboxValue" checked>
+					<input class="radio" type="radio" name="radio1" value="radioValue" checked>
+					<input class="array-input" type="text" name="name[]" value="name1">
 					<input type="text" name="email[]" value="email1">
-					<input type="text" name="name[]" value="name2">
+					<input class="array-input" type="text" name="name[]" value="name2">
 					<input type="text" name="email[]" value="email2">
-					<select name="select">
+					<select class="select" name="select">
 						<option value="selectValue1" selected>Option 1</option>
 						<option value="selectValue2">Option 2</option>
 					</select>
-					<select name="select-multiple" multiple>
+					<select class="multi-select" name="select-multiple" multiple>
 						<option value="selectValue1" selected>Option 1</option>
 						<option value="selectValue2" selected>Option 2</option>
 					</select>
-					<select name="optgroup">
+					<select class="optgroup-select" name="optgroup">
 						<optgroup>
 							<option value="optgroupValue1" selected>Optgroup 1</option>
 							<option value="optgroupValue2">Optgroup 2</option>
 						</optgroup>
 					</select>
-					<textarea name="textarea">
-					Text Area
-					</textarea>
+					<textarea name="textarea" class="textarea">Text Area</textarea>
 				</form>`,
 		fragment = document.createRange().createContextualFragment(html);
 
@@ -65,17 +64,20 @@ function createForm() {
 
 function createList() {
 	let html = `<ul class="parent">
-						<li id="first" class="child">1</li>
-						<li class="child">2</li>
-						<li class="child" data-ref="last">3</li>
-					</ul>`,
+					<li id="first" class="child"><span>1</span></li>
+					<li class="child">2</li>
+					<li class="child" data-ref="last">3</li>
+				</ul>`,
 		fragment = document.createRange().createContextualFragment(html);
 
 	document.querySelector('body').appendChild(fragment);
 }
 
 function resetDOM() {
-	document.querySelector('body').innerHTML = '';
+	let body = document.querySelector('body');
+
+	body.innerHTML = '';
+	body.style.width = '500px';
 };
 
 // Tests
@@ -565,6 +567,80 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$hide', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should apply the js-hide class', () => {
+			$('.test').hide();
+
+			expect($('.test')[0].className).to.equal('test js-hide');
+		});
+	});
+
+	describe('$html', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should return inner html', () => {
+			expect($('#first').html()).to.equal('<span>1</span>');
+		});
+
+		it('should pass element, index, and html to callback', () => {
+			$('#first').html((el, i, html) => {
+				expect(el.id).to.equal('first');
+				expect(i).to.equal(0);
+				expect(html).to.equal('<span>1</span>');
+
+				return `<h1>1</h1>`;
+			});
+
+			expect($('#first').html()).to.equal('<h1>1</h1>');
+		});
+
+		it('should set inner html', () => {
+			$('#first').html(`<div>1</div>`);
+			expect($('#first').html()).to.equal('<div>1</div>');
+		});
+
+		// TODO: I'm not quite sure what this is supposed to do
+		it('should', () => {
+			createForm();
+
+			// TODO: do we need to do this?
+			window.atob = false;
+
+			$('.select').html('<div>test</div>');
+
+			expect($('.select').html()).to.equal('test');
+		});
+	});
+
+	describe('$index', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return index of selection', () => {
+			expect($('#first').index()).to.equal(0);
+			expect($('.other-class').index()).to.equal(2);
+		});
+
+		it('should return negative index when no selection is found', () => {
+			expect($('#none').index()).to.equal(-1);
+		});
+	});
+
+	describe('$insertAfter', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should insert matching source after selection', () => {
+			$('#first').insertAfter('.other-class');
+
+			expect($('#first')[0].previousElementSibling.className).to.equal('child other-class');
+		});
+	});
+
 	describe('$height', () => {
 		before(createSingleDiv);
 		after(resetDOM);
@@ -738,7 +814,7 @@ describe('DOM', () => {
 				'&radio1=radioValue&name[]=name1&name[]=name2&email[]=emai' +
 				'l1&email[]=email2&select=selectValue1&select-multiple[]=s' +
 				'electValue1&select-multiple[]=selectValue2&optgroup=optgr' +
-				'oupValue1&textarea=%09%09%09%09%09Text+Area%0A%09%09%09%09%09';
+				'oupValue1&textarea=Text+Area';
 
 			expect($('#form').serialize()).to.equal(serializedValue);
 		});
@@ -763,7 +839,7 @@ describe('DOM', () => {
 					],
 					"input": "inputValue",
 					"optgroup": "optgroupValue1",
-					"textarea": "\t\t\t\t\tText Area\n\t\t\t\t\t"
+					"textarea": "Text Area"
 				});
 
 			expect(JSON.stringify($('#form').serialize(true))).to.equal(serializedValue);
@@ -808,6 +884,216 @@ describe('DOM', () => {
 		it('should return subset from specified range', () => {
 			expect($('.child').slice(0, 2).length).to.equal(2);
 			expect($('.child').slice(0, 1)[0].innerText).to.equal('1');
+		});
+	});
+
+	describe('$text', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should return the inner text of selection', () => {
+			expect($('.test').text()).to.equal('test');
+		});
+
+		it('should set the inner text of selection', () => {
+			$('.test').text('new text')
+			expect($('.test').text()).to.equal('new text');
+		});
+	});
+
+	describe('$toggle', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should add the js-hide class if not present', () => {
+			$('.test').toggle();
+
+			expect($('.test')[0].className).to.equal('test js-hide');
+		});
+
+		it('should remove the js-hide class if not present', () => {
+			$('.test')[0].className = 'test js-hide';
+			$('.test').toggle();
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$toggleClass', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should add a class if not present', () => {
+			$('.test').toggleClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test test-class');
+		});
+
+		it('should remove a class if not present', () => {
+			$('.test')[0].className = 'test test-class';
+			$('.test').toggleClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should pass index and className to callback', () => {
+			$('.test').toggleClass((i, className) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test');
+			});
+		});
+
+		it('should execute callback', () => {
+			$('.test').toggleClass(() => {
+				return 'test-class';
+			});
+
+			expect($('.test')[0].className).to.equal('test test-class');
+		});
+	});
+
+	describe('$val', () => {
+		before(createForm);
+		after(resetDOM);
+
+		it('should get the value of an input', () => {
+			expect($('.input').val()).to.equal('inputValue');
+		});
+
+		it('should get the value of a textarea', () => {
+			expect($('.textarea').val()).to.equal('Text Area');
+		});
+
+		it('should get the value of a checkbox', () => {
+			expect($('.checkbox').val()).to.equal('checkboxValue');
+		});
+
+		it('should get the value of a radio', () => {
+			expect($('.radio').val()).to.equal('radioValue');
+		});
+
+		it('should get the value of a select', () => {
+			expect($('.select').val()).to.equal('selectValue1');
+		});
+
+		it('should get the values of a multi-select', () => {
+			expect($('.multi-select').val().length).to.equal(2);
+			expect($('.multi-select').val()).to.contain('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue2');
+		});
+
+		it('should get the value of an optgroup select', () => {
+			expect($('.optgroup-select').val()).to.equal('optgroupValue1');
+			expect($('.optgroup-select').val()).to.contain('optgroupValue1');
+		});
+
+		it('should set the value of an input', () => {
+			$('.input').val('new value');
+			expect($('.input').val()).to.equal('new value');
+		});
+
+		it('should set the value of an input with callback', () => {
+			$('.input').val((i, val) => {
+				expect(i).to.equal(0);
+				expect(val).to.equal('new value');
+
+				return 'second new value'
+			});
+			expect($('.input').val()).to.equal('second new value');
+		});
+
+		it('should set the value of a textarea', () => {
+			$('.textarea').val('new value');
+			expect($('.textarea').val()).to.equal('new value');
+		});
+
+		it('should set the values of a multi-select by string', () => {
+			$('.multi-select').val('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue1');
+		});
+
+		it('should set the values of a multi-select by array', () => {
+			$('.multi-select').val(['selectValue1', 'selectValue2']);
+			expect($('.multi-select').val()).to.contain('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue2');
+		});
+	});
+
+	describe('$width', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should return the width of selection', () => {
+			expect($('.test').width()).to.equal(122);
+		});
+
+		it('should return the outer width of selection', () => {
+			expect($('.test').width(true)).to.equal(142);
+		});
+
+		it('should return the width of window', () => {
+			expect($('window').width()).to.equal(1050);
+		});
+
+		it('should return the width of document', () => {
+			expect($('document').width()).to.equal(1050);
+		});
+
+		it('should set the width of selection', () => {
+			$('.test').width(200);
+			expect($('.test').width()).to.equal(222);
+		});
+
+		it('should set the width with callback', () => {
+			$('.test').width(() => 300);
+
+			expect($('.test').width()).to.equal(322);
+		});
+	});
+
+	describe('$wrap', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should wrap markup around selector', () => {
+			$('.parent').wrap(`<div class="new-parent" />`);
+
+			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
+		});
+
+		it('should wrap markup around selector with a callback', () => {
+			$('.parent').wrap(i => {
+				expect(i).to.equal(0);
+
+				return `<div class="new-parent" />`;
+			});
+
+			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
+		});
+	});
+
+	describe('$wrapInner', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should wrap markup even if no children nodes exist', () => {
+			$('#first').wrapInner(`<div class="first-inner" />`)
+		});
+
+		it('should wrap markup around inner selection', () => {
+			$('.parent').wrapInner(`<div class="test" />`);
+
+			expect($('#first')[0].parentNode.className).to.equal('test');
+		});
+
+		it('should wrap markup around inner selection from a callback', () => {
+			$('.parent').wrapInner(i => {
+				expect(i).to.equal(0);
+
+				return `<div class="test" />`;
+			});
+
+			expect($('#first')[0].parentNode.className).to.equal('test');
 		});
 	});
 });
