@@ -895,7 +895,15 @@ describe('DOM', () => {
 
 		it('should return subset from specified range', () => {
 			expect($('.child').slice(0, 2).length).to.equal(2);
-			expect($('.child').slice(0, 1)[0].innerText).to.equal('1');
+			expect($('.child').slice(1, 2)[0].innerText).to.equal('2');
+		});
+
+		it('should handle string target', () => {
+			let $result = W.$slice('.child', 0, 2);
+
+			expect($result.length).to.equal(2);
+			expect($result).to.be.array;
+			expect($result[0].innerText).to.equal('1');
 		});
 	});
 

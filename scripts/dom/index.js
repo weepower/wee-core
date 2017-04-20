@@ -921,7 +921,6 @@ export function $siblings(target, filter) {
  * @returns {Array} elements
  */
 export function $slice(target, start, end) {
-	// TODO: What does this do and when will this be false?
 	if (! target._$) {
 		target = _selArray(target);
 	}
