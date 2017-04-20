@@ -639,6 +639,18 @@ describe('DOM', () => {
 
 			expect($('#first')[0].previousElementSibling.className).to.equal('child other-class');
 		});
+
+		it('should insert matching source after each matching selection', () => {
+			let $targets = $('.child');
+
+			createSingleDiv();
+
+			$('.test').insertAfter('.child');
+
+			expect($targets[0].nextSibling.className).to.equal('test');
+			expect($targets[1].nextSibling.className).to.equal('test');
+			expect($targets[2].nextSibling.className).to.equal('test');
+		});
 	});
 
 	describe('$height', () => {
