@@ -603,16 +603,15 @@ describe('DOM', () => {
 			expect($('#first').html()).to.equal('<div>1</div>');
 		});
 
-		// TODO: I'm not quite sure what this is supposed to do
-		it('should', () => {
+		it('should set inner html of select', () => {
 			createForm();
 
 			// TODO: do we need to do this?
 			window.atob = false;
 
-			$('.select').html('<div>test</div>');
+			$('.select').html('<option>test</option>');
 
-			expect($('.select').html()).to.equal('test');
+			expect($('.select').html()).to.equal('<option>test</option>');
 		});
 	});
 
