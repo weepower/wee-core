@@ -605,4 +605,63 @@ describe('DOM', () => {
 			expect($('.test').length).to.equal(0);
 		});
 	});
+
+	describe('$removeAttr', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should remove specified attribute from selection', () => {
+			$('.test').removeAttr('data-ref');
+
+			expect($('.test')[0].getAttribute('data-ref')).to.equal(null);
+		});
+	});
+
+	describe('$removeClass', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should remove specified class from selection', () => {
+			$('.test')[0].className = 'test test-class';
+
+			expect($('.test')[0].className).to.equal('test test-class');
+
+			$('.test').removeClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should remove multiple classes from selection', () => {
+			$('.test')[0].className = 'test test-class test-class-two';
+
+			expect($('.test')[0].className).to.equal('test test-class test-class-two');
+
+			$('.test').removeClass('test-class test-class-two');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should pass index and className to callback and remove class', () => {
+			$('.test')[0].className = 'test test-class';
+
+			$('.test').removeClass((i, className) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test test-class');
+
+				return 'test-class';
+			});
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$replaceWith', () => {
+		before(createMultiDiv);
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should replace first matching selection with selection', () => {
+			$('.child').replaceWith('.test');
+
+			expect($('.child').length).to.equal(0);
+			expect($('.test').length).to.equal(1);
+		});
+	});
 });

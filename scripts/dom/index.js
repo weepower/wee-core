@@ -624,3 +624,56 @@ export function $remove(target, context) {
 
 	return arr;
 }
+
+/**
+ * Remove specified attribute of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {string} name
+ */
+export function $removeAttr(target, name) {
+	$each(target, function(el) {
+		name.split(/\s+/).forEach(value => {
+			el.removeAttribute(value);
+		});
+	});
+}
+
+/**
+ * Remove classes from each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|string)} value
+ */
+export function $removeClass(target, value) {
+	var func = $isFunction(value);
+
+	$each(target, (el, i) => {
+		var cn = _getClass(el),
+			name = func ?
+				$exec(value, {
+					args: [i, cn],
+					scope: el
+				}) :
+				value;
+
+		if (name) {
+			var names = name.split(' ');
+
+			_setClass(el, cn.split(' ').filter(val => {
+					return names.indexOf(val) < 0
+				}).join(' ')
+			);
+		}
+	});
+}
+
+/**
+ * Replace each matching selection with selection or markup
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|HTMLElement|string)} source
+ */
+export function $replaceWith(target, source) {
+	$after(target, source, true);
+}

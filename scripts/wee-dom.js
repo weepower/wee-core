@@ -263,7 +263,43 @@ $chain({
 		W.$remove(this, context);
 
 		return this;
-	}
+	},
+
+	/**
+	 * Remove specified attribute of each matching selection
+	 *
+	 * @param {string} name
+	 * @returns {$}
+	 */
+	removeAttr(name) {
+		W.$removeAttr(this, name);
+
+		return this;
+	},
+
+	/**
+	 * Remove classes from each matching selection
+	 *
+	 * @param {(function|string)} value
+	 * @returns {$}
+	 */
+	removeClass(value) {
+		W.$removeClass(this, value);
+
+		return this;
+	},
+
+	/**
+	 * Replace each matching selection with selection or markup
+	 *
+	 * @param {($|HTMLElement|string)} source
+	 * @returns {$}
+	 */
+	replaceWith(source) {
+		W.$replaceWith(this, source);
+
+		return this;
+	},
 });
 
 export default $;
