@@ -78,7 +78,27 @@ function resetDOM() {
 
 	body.innerHTML = '';
 	body.style.width = '500px';
-};
+}
+
+function isIE() {
+	if (navigator.appName == 'Microsoft Internet Explorer') {
+		let ua = navigator.userAgent,
+			re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+
+		if (re.exec(ua) !== null) {
+			return true;
+		}
+	} else if (navigator.appName == 'Netscape') {
+		let ua = navigator.userAgent,
+			re  = new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+
+		if (re.exec(ua) !== null) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 // Tests
 describe('DOM', () => {
