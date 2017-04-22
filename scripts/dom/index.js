@@ -796,17 +796,29 @@ export function $replaceWith(target, source) {
  * @returns {number}
  */
 export function $scrollLeft(target, value) {
-	if (value === U) {
-		let el = target ? $sel(target)[0] : _win;
+    if (value === U) {
+        let el = target ? $sel(target)[0] : _win;
 
-		return el === _win ?
-			el.pageXOffset :
-			el.scrollLeft;
-	}
+        if (el.nodeType === 9) {
+            el = el.defaultView;
+        }
 
-	$each(target, function(el) {
-		el.scrollLeft = value;
-	});
+        return el === _win ?
+            el.pageXOffset :
+            el.scrollLeft;
+    }
+
+    $each(target, function(el) {
+        if (el.nodeType === 9) {
+            el = el.defaultView;
+        }
+
+        if (el === _win) {
+            el.scrollTo(value, el.pageYOffset);
+        } else {
+            el.scrollLeft = value;
+        }
+    });
 }
 
 /**
@@ -817,17 +829,29 @@ export function $scrollLeft(target, value) {
  * @returns {number}
  */
 export function $scrollTop(target, value) {
-	if (value === U) {
-		let el = target ? $sel(target)[0] : _win;
+    if (value === U) {
+        let el = target ? $sel(target)[0] : _win;
 
-		return el === _win ?
-			el.pageYOffset :
-			el.scrollTop;
-	}
+        if (el.nodeType === 9) {
+            el = el.defaultView;
+        }
 
-	$each(target, function(el) {
-		el.scrollTop = value;
-	});
+        return el === _win ?
+            el.pageYOffset :
+            el.scrollTop;
+    }
+
+    $each(target, function(el) {
+        if (el.nodeType === 9) {
+            el = el.defaultView;
+        }
+
+        if (el === _win) {
+            el.scrollTo(el.pageXOffset, value);
+        } else {
+            el.scrollTop = value;
+        }
+    });
 }
 
 /**

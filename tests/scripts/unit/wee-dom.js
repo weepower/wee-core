@@ -808,14 +808,34 @@ describe('DOM', () => {
 		before(createMultiDiv);
 		after(resetDOM);
 		it('should return scroll left as unitless pixel value', () => {
-			expect($('body').scrollLeft()).to.equal(0);
+			expect($(window).scrollLeft()).to.equal(0);
+		});
+
+		it('should return scroll left from window', () => {
+			expect($(window).scrollLeft()).to.equal(0);
 		});
 
 		it('should set scroll left value', () => {
 			$('body')[0].style.width = '15000px';
-			$('body').scrollLeft(10);
+			$(window).scrollLeft(10);
 
-			expect($('body').scrollLeft()).to.equal(10);
+			expect($(window).scrollLeft()).to.equal(10);
+		});
+
+		it('should scroll left value when selecting document', () => {
+			$('body')[0].style.width = '15000px';
+			$(document).scrollLeft(10);
+
+			expect($(document).scrollLeft()).to.equal(10);
+		});
+
+		it('should set scroll left value of parent div', () => {
+			$('.parent')[0].style.width = '500px';
+			$('.parent')[0].style.overflow = 'scroll';
+			$('#first')[0].style.width = '1000px';
+
+			$('.parent').scrollLeft(10);
+			expect($('.parent').scrollLeft()).to.equal(10);
 		});
 	});
 
@@ -823,15 +843,32 @@ describe('DOM', () => {
 		before(createMultiDiv);
 		after(resetDOM);
 		it('should return scroll top as unitless pixel value', () => {
-			expect($('body').scrollTop()).to.equal(0);
+			expect($(window).scrollTop()).to.equal(0);
 		});
 
 		it('should set scroll top value', () => {
 			$('body')[0].style.height = '15000px';
 
-			$('body').scrollTop(10)
+			$(window).scrollTop(10);
 
-			expect($('body').scrollTop()).to.equal(10);
+			expect($(window).scrollTop()).to.equal(10);
+		});
+
+		it('should set scroll top value of window when document is selected', () => {
+			$('body')[0].style.height = '15000px';
+
+			$(document).scrollTop(10);
+
+			expect($(document).scrollTop()).to.equal(10);
+		});
+
+		it('should set scroll top value of parent div', () => {
+			$('.parent')[0].style.height = '500px';
+			$('.parent')[0].style.overflow = 'scroll';
+			$('#first')[0].style.height = '1000px';
+
+			$('.parent').scrollTop(10);
+			expect($('.parent').scrollTop()).to.equal(10);
 		});
 	});
 
@@ -1063,8 +1100,22 @@ describe('DOM', () => {
 	});
 
 	describe('$width', () => {
-		before(createSingleDiv);
-		after(resetDOM);
+		let windowSize = {
+			width: window.outerWidth,
+			height: window.outerHeight
+		};
+
+		before(() => {
+			if (isIE()) {
+				window.resizeTo(1000, 1000);
+			}
+
+			createSingleDiv();
+		});
+		after(() => {
+			resetDOM();
+			window.resizeTo(windowSize.width, windowSize.height);
+		});
 
 		it('should return the width of selection', () => {
 			expect($('.test').width()).to.equal(122);
@@ -1074,13 +1125,23 @@ describe('DOM', () => {
 			expect($('.test').width(true)).to.equal(142);
 		});
 
-		it('should return the width of window', () => {
-			expect($('window').width()).to.equal(1050);
-		});
+		if (isIE()) {
+			it('should return the width of window', () => {
+				expect($('window').width()).to.equal(1000);
+			});
 
-		it('should return the width of document', () => {
-			expect($('document').width()).to.equal(1050);
-		});
+			it('should return the width of document', () => {
+				expect($('document').width()).to.equal(983);
+			});
+		} else {
+			it('should return the width of window', () => {
+				expect($('window').width()).to.equal(927);
+			});
+
+			it('should return the width of document', () => {
+				expect($('document').width()).to.equal(927);
+			});
+		}
 
 		it('should set the width of selection', () => {
 			$('.test').width(200);
