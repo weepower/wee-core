@@ -73,6 +73,17 @@ function createList() {
 	document.querySelector('body').appendChild(fragment);
 }
 
+function resetBaseStyling() {
+	let block = `<style>
+					* {
+						margin: 0;
+						padding: 0;
+						border: 0;
+				</style>`,
+	fragment = document.createRange().createContextualFragment(block);
+	document.head.appendChild(fragment);
+}
+
 function resetDOM() {
 	let body = document.querySelector('body');
 
