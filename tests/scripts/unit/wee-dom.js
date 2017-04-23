@@ -849,6 +849,10 @@ describe('DOM', () => {
 			expect($('.child').parent()[0].className).to.equal('parent');
 		});
 
+		it('should only return a single selection', () => {
+			expect($('.child').parent().length).to.equal(1);
+		});
+
 		it('should return the filtered parent of the selection', () => {
 			expect($('.child').parent('div')[0].className).to.equal('parent');
 		});
