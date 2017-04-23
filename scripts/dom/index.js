@@ -38,9 +38,7 @@ function _setClass(el, className) {
  */
 function _toCamel (name) {
 	return name.toLowerCase()
-		.replace(/-(.)/g, (match, val) => {
-			return val.toUpperCase();
-		});
+		.replace(/-(.)/g, (match, val) => val.toUpperCase());
 }
 
 /**
@@ -51,9 +49,7 @@ function _toCamel (name) {
  * @returns {string}
  */
 function _toDashed(name) {
-	return name.replace(/[A-Z]/g, function(match) {
-		return '-' + match[0].toLowerCase();
-	});
+	return name.replace(/[A-Z]/g, match => '-' + match[0].toLowerCase());
 }
 
 /**
