@@ -89,7 +89,7 @@ function _getSibling(target, dir, filter, options) {
 
 		$children($parent(el)).forEach((el, i) => {
 			if (i === index &&
-				(! filter || filter && W.$is(el, filter, options))) {
+				(! filter || filter && $is(el, filter, options))) {
 				match = el;
 			}
 		});
