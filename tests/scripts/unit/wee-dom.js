@@ -83,21 +83,22 @@ function resetDOM() {
 function isIE() {
 	if (navigator.appName == 'Microsoft Internet Explorer') {
 		let ua = navigator.userAgent,
-			re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+			re  = new RegExp('MSIE ([0-9]{1,}[\.0-9]{0,})');
 
-		if (re.exec(ua) !== null) {
-			return true;
-		}
+		return re.test(ua);
 	} else if (navigator.appName == 'Netscape') {
 		let ua = navigator.userAgent,
-			re  = new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+			re  = new RegExp('Trident/.*rv:([0-9]{1,}[\.0-9]{0,})');
 
-		if (re.exec(ua) !== null) {
-			return true;
-		}
+		return re.test(ua);
 	}
 
 	return false;
+}
+
+function isEdge() {
+	return navigator.appName == 'Netscape' &&
+		/Edge/.test(navigator.userAgent);
 }
 
 // Tests
@@ -1100,22 +1101,8 @@ describe('DOM', () => {
 	});
 
 	describe('$width', () => {
-		let windowSize = {
-			width: window.outerWidth,
-			height: window.outerHeight
-		};
-
-		before(() => {
-			if (isIE()) {
-				window.resizeTo(1000, 1000);
-			}
-
-			createSingleDiv();
-		});
-		after(() => {
-			resetDOM();
-			window.resizeTo(windowSize.width, windowSize.height);
-		});
+		before(createSingleDiv);
+		after(resetDOM);
 
 		it('should return the width of selection', () => {
 			expect($('.test').width()).to.equal(122);
@@ -1127,19 +1114,27 @@ describe('DOM', () => {
 
 		if (isIE()) {
 			it('should return the width of window', () => {
-				expect($('window').width()).to.equal(1000);
+				expect($(window).width()).to.equal(1007);
 			});
 
 			it('should return the width of document', () => {
-				expect($('document').width()).to.equal(983);
+				expect($(document).width()).to.equal(990);
+			});
+		} else if (isEdge()) {
+			it('should return the width of window', () => {
+				expect($(window).width()).to.equal(788);
+			});
+
+			it('should return the width of document', () => {
+				expect($(document).width()).to.equal(776);
 			});
 		} else {
 			it('should return the width of window', () => {
-				expect($('window').width()).to.equal(927);
+				expect($(window).width()).to.equal(1024);
 			});
 
 			it('should return the width of document', () => {
-				expect($('document').width()).to.equal(927);
+				expect($(document).width()).to.equal(1024);
 			});
 		}
 
