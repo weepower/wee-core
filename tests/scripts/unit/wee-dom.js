@@ -923,6 +923,18 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('prependTo', () => {
+		before(createMultiDiv);
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should prepend selection to target', () => {
+			$('.test').prependTo($('.parent'));
+
+			expect($('.parent')[0].childNodes[0].className).to.equal('test');
+		});
+	});
+
 	describe('$prev', () => {
 		before(createMultiDiv);
 		after(resetDOM);

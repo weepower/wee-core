@@ -395,6 +395,12 @@ $chain({
 		return this;
 	},
 
+	prependTo(target) {
+		W.$prepend(target, this.reverse());
+
+		return this;
+	},
+
 	/**
 	 * Get the unique previous sibling of each matching selection
 	 *
