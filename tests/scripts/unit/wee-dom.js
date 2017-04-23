@@ -221,6 +221,17 @@ describe('DOM', () => {
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('1');
 		});
+
+		it('should execute callback and append return value', () => {
+			$('#first').append((i, html) => {
+				expect(i).to.equal(0);
+				expect(html).to.equal('1');
+
+				return '2';
+			});
+
+			expect($('#first')[0].innerText).to.equal('12');
+		});
 	});
 
 	describe('appendTo', () => {
