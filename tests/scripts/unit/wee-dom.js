@@ -673,6 +673,28 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$insertBefore', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should insert matching source before selection', () => {
+			$('#first').insertBefore('.other-class');
+
+			expect($('#first')[0].nextElementSibling.className).to.equal('child other-class');
+		});
+
+		it('should insert matching source before each matching selection', () => {
+			let $targets = $('.child');
+
+			createSingleDiv();
+
+			$('.test').insertBefore('.child');
+
+			expect($targets[0].nextElementSibling.className).to.equal('child');
+			expect($targets[1].nextElementSibling.className).to.equal('test');
+		});
+	})
+
 	describe('$height', () => {
 		before(createSingleDiv);
 		after(resetDOM);

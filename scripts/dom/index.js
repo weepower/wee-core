@@ -620,6 +620,21 @@ export function $insertAfter(source, target) {
 }
 
 /**
+ * Insert each matching source selection element before
+ * each matching target selection
+ *
+ * @param {($|HTMLElement|string)} source
+ * @param {($|HTMLElement|string)} target
+ */
+export function $insertBefore(source, target) {
+	$each(target, el => {
+		$each(source, cel => {
+			el.parentNode.insertBefore(cel, el);
+		});
+	});
+}
+
+/**
  * Get or set the height of each matching selection
  *
  * @param {($|HTMLElement|string)} target

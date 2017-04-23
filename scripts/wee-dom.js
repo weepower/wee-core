@@ -276,6 +276,19 @@ $chain({
 	},
 
 	/**
+	 * Insert each matching source selection element before
+	 * each matching target selection
+	 *
+	 * @param {($|HTMLElement|string)} target
+	 * @returns {$}
+	 */
+	insertBefore(target) {
+		W.$insertBefore(this, target);
+
+		return this;
+	},
+
+	/**
 	 * Get or set the height of each matching selection
 	 *
 	 * @param {(function|number|string)} value
