@@ -613,14 +613,14 @@ describe('DOM', () => {
 				expect(i).to.equal(0);
 				expect(html).to.equal('<span>1</span>');
 
-				return `<h1>1</h1>`;
+				return '<h1>1</h1>';
 			});
 
 			expect($('#first').html()).to.equal('<h1>1</h1>');
 		});
 
 		it('should set inner html', () => {
-			$('#first').html(`<div>1</div>`);
+			$('#first').html('<div>1</div>');
 			expect($('#first').html()).to.equal('<div>1</div>');
 		});
 
@@ -1160,7 +1160,7 @@ describe('DOM', () => {
 		after(resetDOM);
 
 		it('should wrap markup around selector', () => {
-			$('.parent').wrap(`<div class="new-parent" />`);
+			$('.parent').wrap('<div class="new-parent" />');
 
 			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
 		});
@@ -1169,7 +1169,7 @@ describe('DOM', () => {
 			$('.parent').wrap(i => {
 				expect(i).to.equal(0);
 
-				return `<div class="new-parent" />`;
+				return '<div class="new-parent" />';
 			});
 
 			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
@@ -1181,11 +1181,11 @@ describe('DOM', () => {
 		after(resetDOM);
 
 		it('should wrap markup even if no children nodes exist', () => {
-			$('#first').wrapInner(`<div class="first-inner" />`)
+			$('#first').wrapInner('<div class="first-inner" />');
 		});
 
 		it('should wrap markup around inner selection', () => {
-			$('.parent').wrapInner(`<div class="test" />`);
+			$('.parent').wrapInner('<div class="test" />');
 
 			expect($('#first')[0].parentNode.className).to.equal('test');
 		});
@@ -1194,7 +1194,7 @@ describe('DOM', () => {
 			$('.parent').wrapInner(i => {
 				expect(i).to.equal(0);
 
-				return `<div class="test" />`;
+				return '<div class="test" />';
 			});
 
 			expect($('#first')[0].parentNode.className).to.equal('test');
