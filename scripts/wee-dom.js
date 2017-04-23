@@ -396,6 +396,17 @@ $chain({
 	},
 
 	/**
+	 * Get the unique previous sibling of each matching selection
+	 *
+	 * @param filter
+	 * @param {object} [options]
+	 * @returns {$}
+	 */
+	prev(filter, options) {
+		return $(W.$prev(this, filter, options));
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

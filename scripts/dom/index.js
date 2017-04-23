@@ -898,6 +898,18 @@ export function $prepend(target, source) {
 }
 
 /**
+ * Get the unique previous sibling of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param {object} [options]
+ * @returns {Array} elements
+ */
+export function $prev(target, filter, options) {
+	return $unique($map(target, el => _getSibling(el, -1, filter, options)));
+}
+
+/**
  * Get unique ancestors of each matching selection
  *
  * @param {($|HTMLElement|string)} child

@@ -923,6 +923,19 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$prev', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return next element from selection', () => {
+			expect($('.other-class').prev()[0].innerText).to.equal('2');
+		});
+
+		it('should return next filtered element from selection', () => {
+			expect($('.other-class').prev('div')[0].innerText).to.equal('2');
+		});
+	});
+
 	describe('$remove', () => {
 		before(createSingleDiv);
 		after(resetDOM);
