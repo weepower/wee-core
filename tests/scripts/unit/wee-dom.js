@@ -819,6 +819,7 @@ describe('DOM', () => {
 	describe('$offset', () => {
 		before(() => {
 			createMultiDiv();
+			resetBaseStyling();
 
 			let $child = $('.child');
 
@@ -838,8 +839,8 @@ describe('DOM', () => {
 		})
 
 		it('should return the offset of selection', () => {
-			expect($('.child').offset().top).to.equal(108);
-			expect($('.child').offset().left).to.equal(108);
+			expect($('.child').offset().top).to.equal(100);
+			expect($('.child').offset().left).to.equal(100);
 		});
 
 		it('should set the offset left of selection', () => {
@@ -848,8 +849,8 @@ describe('DOM', () => {
 				left: 10
 			});
 
-			expect($('.child').offset().top).to.equal(18);
-			expect($('.child').offset().left).to.equal(18);
+			expect($('.child').offset().top).to.equal(10);
+			expect($('.child').offset().left).to.equal(10);
 		});
 	});
 
