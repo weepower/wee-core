@@ -13,6 +13,7 @@ function createSingleDiv() {
 	div.style.height = '80px';
 	div.style.border = '1px solid';
 	div.style.padding = '15px 10px';
+	div.style.margin = '10px';
 	document.querySelector('body').appendChild(div);
 
 	return div;
@@ -31,20 +32,74 @@ function createMultiDiv() {
 	document.querySelector('body').appendChild(fragment);
 }
 
+function createForm() {
+	let html = `<form action="#" id="form">
+					<input class="input" type="text" name="input" value="inputValue">
+					<input class="checkbox" type="checkbox" name="checkbox" value="checkboxValue" checked required>
+					<input class="radio" type="radio" name="radio1" value="radioValue" checked>
+					<input class="array-input" type="text" name="name[]" value="name1">
+					<input type="text" name="email[]" value="email1">
+					<input class="array-input" type="text" name="name[]" value="name2">
+					<input type="text" name="email[]" value="email2">
+					<select class="select" name="select">
+						<option value="selectValue1" selected>Option 1</option>
+						<option value="selectValue2">Option 2</option>
+					</select>
+					<select class="multi-select" name="select-multiple" multiple>
+						<option value="selectValue1" selected>Option 1</option>
+						<option value="selectValue2" selected>Option 2</option>
+					</select>
+					<select class="optgroup-select" name="optgroup">
+						<optgroup>
+							<option value="optgroupValue1" selected>Optgroup 1</option>
+							<option value="optgroupValue2">Optgroup 2</option>
+						</optgroup>
+					</select>
+					<textarea name="textarea" class="textarea">Text Area</textarea>
+				</form>`,
+		fragment = document.createRange().createContextualFragment(html);
+
+	document.querySelector('body').appendChild(fragment);
+}
+
 function createList() {
 	let html = `<ul class="parent">
-						<li id="first" class="child">1</li>
-						<li class="child">2</li>
-						<li class="child" data-ref="last">3</li>
-					</ul>`,
+					<li id="first" class="child"><span>1</span></li>
+					<li class="child">2</li>
+					<li class="child" data-ref="last">3</li>
+				</ul>`,
 		fragment = document.createRange().createContextualFragment(html);
 
 	document.querySelector('body').appendChild(fragment);
 }
 
 function resetDOM() {
-	document.querySelector('body').innerHTML = '';
-};
+	let body = document.querySelector('body');
+
+	body.innerHTML = '';
+	body.style.width = '500px';
+}
+
+function isIE() {
+	if (navigator.appName == 'Microsoft Internet Explorer') {
+		let ua = navigator.userAgent,
+			re  = new RegExp('MSIE ([0-9]{1,}[\.0-9]{0,})');
+
+		return re.test(ua);
+	} else if (navigator.appName == 'Netscape') {
+		let ua = navigator.userAgent,
+			re  = new RegExp('Trident/.*rv:([0-9]{1,}[\.0-9]{0,})');
+
+		return re.test(ua);
+	}
+
+	return false;
+}
+
+function isEdge() {
+	return navigator.appName == 'Netscape' &&
+		/Edge/.test(navigator.userAgent);
+}
 
 // Tests
 describe('DOM', () => {
@@ -165,6 +220,17 @@ describe('DOM', () => {
 			$('.parent').append($('#first'));
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('1');
+		});
+
+		it('should execute callback and append return value', () => {
+			$('#first').append((i, html) => {
+				expect(i).to.equal(0);
+				expect(html).to.equal('1');
+
+				return '2';
+			});
+
+			expect($('#first')[0].innerText).to.equal('12');
 		});
 	});
 
@@ -533,6 +599,113 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$hide', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should apply the js-hide class', () => {
+			$('.test').hide();
+
+			expect($('.test')[0].className).to.equal('test js-hide');
+		});
+	});
+
+	describe('$html', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should return inner html', () => {
+			expect($('#first').html()).to.equal('<span>1</span>');
+		});
+
+		it('should pass element, index, and html to callback', () => {
+			$('#first').html((el, i, html) => {
+				expect(el.id).to.equal('first');
+				expect(i).to.equal(0);
+				expect(html).to.equal('<span>1</span>');
+
+				return '<h1>1</h1>';
+			});
+
+			expect($('#first').html()).to.equal('<h1>1</h1>');
+		});
+
+		it('should set inner html', () => {
+			$('#first').html('<div>1</div>');
+			expect($('#first').html()).to.equal('<div>1</div>');
+		});
+
+		it('should set inner html of select', () => {
+			createForm();
+
+			// TODO: do we need to do this?
+			window.atob = false;
+
+			$('.select').html('<option>test</option>');
+
+			expect($('.select').html()).to.equal('<option>test</option>');
+		});
+	});
+
+	describe('$index', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return index of selection', () => {
+			expect($('#first').index()).to.equal(0);
+			expect($('.other-class').index()).to.equal(2);
+		});
+
+		it('should return negative index when no selection is found', () => {
+			expect($('#none').index()).to.equal(-1);
+		});
+	});
+
+	describe('$insertAfter', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should insert matching source after selection', () => {
+			$('#first').insertAfter('.other-class');
+
+			expect($('#first')[0].previousElementSibling.className).to.equal('child other-class');
+		});
+
+		it('should insert matching source after each matching selection', () => {
+			let $targets = $('.child');
+
+			createSingleDiv();
+
+			$('.test').insertAfter('.child');
+
+			expect($targets[0].nextSibling.className).to.equal('test');
+			expect($targets[1].nextSibling.className).to.equal('test');
+			expect($targets[2].nextSibling.className).to.equal('test');
+		});
+	});
+
+	describe('$insertBefore', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should insert matching source before selection', () => {
+			$('#first').insertBefore('.other-class');
+
+			expect($('#first')[0].nextElementSibling.className).to.equal('child other-class');
+		});
+
+		it('should insert matching source before each matching selection', () => {
+			let $targets = $('.child');
+
+			createSingleDiv();
+
+			$('.test').insertBefore('.child');
+
+			expect($targets[0].nextElementSibling.className).to.equal('child');
+			expect($targets[1].nextElementSibling.className).to.equal('test');
+		});
+	})
+
 	describe('$height', () => {
 		before(createSingleDiv);
 		after(resetDOM);
@@ -596,6 +769,210 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$last', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return the last element from selection', () => {
+			expect($('.child').last()[0].innerText).to.equal('3');
+		});
+	});
+
+	describe('$next', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return next element from selection', () => {
+			expect($('.child').next()[0].innerText).to.equal('2');
+		});
+
+		it('should return next filtered element from selection', () => {
+			expect($('.child').next('div')[0].innerText).to.equal('2');
+		});
+	});
+
+	describe('$not', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should filter selected elements', () => {
+			expect($('.child').not('#first').length).to.equal(2);
+		});
+
+		it('should return empty selection when no elements reutnred', () => {
+			expect($('.child').not('div').length).to.equal(0);
+		});
+	});
+
+	describe('$offset', () => {
+		before(() => {
+			createMultiDiv();
+
+			let $child = $('.child');
+
+			$('.parent')[0].style.position = 'relative';
+			$child[0].style.position = 'absolute';;
+			$child[0].style.left = '100px';
+			$child[0].style.top = '100px';
+		});
+		after(resetDOM);
+
+		it('should return an object of offset properties', () => {
+			expect($('.child').offset()).to.be.an('object');
+		});
+
+		it('should return an object with keys top and left', () => {
+			expect($('.child').offset()).to.include.keys(['top', 'left']);
+		})
+
+		it('should return the offset of selection', () => {
+			expect($('.child').offset().top).to.equal(108);
+			expect($('.child').offset().left).to.equal(108);
+		});
+
+		it('should set the offset left of selection', () => {
+			$('.child').offset({
+				top: 10,
+				left: 10
+			});
+
+			expect($('.child').offset().top).to.equal(18);
+			expect($('.child').offset().left).to.equal(18);
+		});
+	});
+
+	describe('$parent', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return the parent of the selection', () => {
+			expect($('.child').parent()[0].className).to.equal('parent');
+		});
+
+		it('should return the filtered parent of the selection', () => {
+			expect($('.child').parent('div')[0].className).to.equal('parent');
+		});
+	});
+
+	describe('$parents', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return the parents of the selection', () => {
+			expect($('.child').parents()[0].className).to.equal('parent');
+		});
+
+		it('should return the filtered parents of the selection', () => {
+			expect($('.child').parents('div')[0].className).to.equal('parent');
+		});
+	});
+
+	describe('$position', () => {
+		before(() => {
+			createMultiDiv();
+
+			let $child = $('.child');
+
+			$('.parent')[0].style.position = 'relative';
+			$child[0].style.position = 'absolute';;
+			$child[0].style.left = '100px';
+			$child[0].style.top = '100px';
+		});
+		after(resetDOM);
+
+		it('should return an object', () => {
+			expect($('.child').position()).to.be.an('object');
+		});
+
+		it('should return an object with the keys top and left', () => {
+			expect($('.child').position()).to.include.keys(['top', 'left']);
+		})
+
+		it('should return an object with the position values', () => {
+			expect($('.child').position().top).to.equal(100);
+			expect($('.child').position().left).to.equal(100);
+		});
+	});
+
+	describe('$prepend', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should prepend markup to end of parent target', () => {
+			$('.parent').prepend('<div class="child">4</div>');
+
+			expect($('.child').length).to.equal(4);
+			expect($('.child')[3].innerHTML).to.equal('3');
+		});
+
+		it('should prepend selection to end of parent target', () => {
+			$('.parent').prepend($('#first'));
+
+			expect($('div', '.parent')[3].innerHTML).to.equal('3');
+		});
+
+		it('should execute callback and append return value', () => {
+			$('#first').prepend((i, html) => {
+				expect(i).to.equal(0);
+				expect(html).to.equal('1');
+
+				return '2';
+			});
+
+			expect($('#first')[0].innerText).to.equal('21');
+		});
+	});
+
+	describe('prependTo', () => {
+		before(createMultiDiv);
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should prepend selection to target', () => {
+			$('.test').prependTo($('.parent'));
+
+			expect($('.parent')[0].childNodes[0].className).to.equal('test');
+		});
+	});
+
+	describe('$prev', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return next element from selection', () => {
+			expect($('.other-class').prev()[0].innerText).to.equal('2');
+		});
+
+		it('should return next filtered element from selection', () => {
+			expect($('.other-class').prev('div')[0].innerText).to.equal('2');
+		});
+	});
+
+	describe('$prop', () => {
+		before(createForm);
+		after(resetDOM);
+
+		it('should return specified property from selection', () => {
+			expect($('.checkbox').prop('checked')).to.equal(true);
+		});
+
+		it('should set specified property on selection', () => {
+			$('.checkbox').prop('checked', false);
+
+			expect($('.checkbox').prop('checked')).to.equal(false);
+		});
+
+		it('should set multiple properties on selection', () => {
+			$('.checkbox').prop({
+				checked: true,
+				required: true
+			});
+
+			expect($('.checkbox').prop('checked')).to.equal(true);
+			expect($('.checkbox').prop('required')).to.equal(true);
+		});
+	});
+
 	describe('$remove', () => {
 		before(createSingleDiv);
 		after(resetDOM);
@@ -603,6 +980,461 @@ describe('DOM', () => {
 			$('.test').remove();
 
 			expect($('.test').length).to.equal(0);
+		});
+	});
+
+	describe('$removeAttr', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should remove specified attribute from selection', () => {
+			$('.test').removeAttr('data-ref');
+
+			expect($('.test')[0].getAttribute('data-ref')).to.equal(null);
+		});
+	});
+
+	describe('$removeClass', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should remove specified class from selection', () => {
+			$('.test')[0].className = 'test test-class';
+
+			expect($('.test')[0].className).to.equal('test test-class');
+
+			$('.test').removeClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should remove multiple classes from selection', () => {
+			$('.test')[0].className = 'test test-class test-class-two';
+
+			expect($('.test')[0].className).to.equal('test test-class test-class-two');
+
+			$('.test').removeClass('test-class test-class-two');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should pass index and className to callback and remove class', () => {
+			$('.test')[0].className = 'test test-class';
+
+			$('.test').removeClass((i, className) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test test-class');
+
+				return 'test-class';
+			});
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$replaceWith', () => {
+		before(createMultiDiv);
+		before(createSingleDiv);
+		after(resetDOM);
+		it('should replace first matching selection with selection', () => {
+			$('.child').replaceWith('.test');
+
+			expect($('.child').length).to.equal(0);
+			expect($('.test').length).to.equal(1);
+		});
+	});
+
+	describe('$scrollLeft', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+		it('should return scroll left as unitless pixel value', () => {
+			expect($(window).scrollLeft()).to.equal(0);
+		});
+
+		it('should return scroll left from window', () => {
+			expect($(window).scrollLeft()).to.equal(0);
+		});
+
+		it('should set scroll left value', () => {
+			$('body')[0].style.width = '15000px';
+			$(window).scrollLeft(10);
+
+			expect($(window).scrollLeft()).to.equal(10);
+		});
+
+		it('should scroll left value when selecting document', () => {
+			$('body')[0].style.width = '15000px';
+			$(document).scrollLeft(10);
+
+			expect($(document).scrollLeft()).to.equal(10);
+		});
+
+		it('should set scroll left value of parent div', () => {
+			$('.parent')[0].style.width = '500px';
+			$('.parent')[0].style.overflow = 'scroll';
+			$('#first')[0].style.width = '1000px';
+
+			$('.parent').scrollLeft(10);
+			expect($('.parent').scrollLeft()).to.equal(10);
+		});
+	});
+
+	describe('$scrollTop', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+		it('should return scroll top as unitless pixel value', () => {
+			expect($(window).scrollTop()).to.equal(0);
+		});
+
+		it('should set scroll top value', () => {
+			$('body')[0].style.height = '15000px';
+
+			$(window).scrollTop(10);
+
+			expect($(window).scrollTop()).to.equal(10);
+		});
+
+		it('should set scroll top value of window when document is selected', () => {
+			$('body')[0].style.height = '15000px';
+
+			$(document).scrollTop(10);
+
+			expect($(document).scrollTop()).to.equal(10);
+		});
+
+		it('should set scroll top value of parent div', () => {
+			$('.parent')[0].style.height = '500px';
+			$('.parent')[0].style.overflow = 'scroll';
+			$('#first')[0].style.height = '1000px';
+
+			$('.parent').scrollTop(10);
+			expect($('.parent').scrollTop()).to.equal(10);
+		});
+	});
+
+	describe('$serializeForm', () => {
+		before(createForm);
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should serialize form value', () => {
+			let serializedValue = 'input=inputValue&checkbox=checkboxValue' +
+				'&radio1=radioValue&name[]=name1&name[]=name2&email[]=emai' +
+				'l1&email[]=email2&select=selectValue1&select-multiple[]=s' +
+				'electValue1&select-multiple[]=selectValue2&optgroup=optgr' +
+				'oupValue1&textarea=Text+Area';
+
+			expect($('#form').serialize()).to.equal(serializedValue);
+		});
+
+		it('should serialize form value to json object', () => {
+			let serializedValue = JSON.stringify({
+					"input": "inputValue",
+					"checkbox": "checkboxValue",
+					"radio1": "radioValue",
+					"name": [
+						"name1",
+						"name2",
+					],
+					"email": [
+						"email1",
+						"email2",
+					],
+					"select": "selectValue1",
+					"select-multiple": [
+						"selectValue1",
+						"selectValue2",
+					],
+					"input": "inputValue",
+					"optgroup": "optgroupValue1",
+					"textarea": "Text Area"
+				});
+
+			expect(JSON.stringify($('#form').serialize(true))).to.equal(serializedValue);
+		});
+
+		it('should not attempt to serialize a non form element', () => {
+			expect($('.test').serialize()).to.equal('');
+		});
+	});
+
+	describe('$show', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should remove js-hide class', () => {
+			$('.test')[0].className = 'test js-hide';
+
+			$('.test').show();
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$siblings', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return all siblings', () => {
+			expect($('.child').siblings().length).to.equal(3);
+			expect($('.child').siblings()[2].id).to.equal('first');
+		});
+
+		it('should return filtered siblings', () => {
+			expect($('.child').siblings('#first').length).to.equal(1);
+		});
+	});
+
+	describe('$slice', () => {
+		before(createList);
+		after(resetDOM);
+
+		it('should return subset from specified range', () => {
+			expect($('.child').slice(0, 2).length).to.equal(2);
+			expect($('.child').slice(1, 2)[0].innerText).to.equal('2');
+		});
+
+		it('should handle string target', () => {
+			let $result = W.$slice('.child', 0, 2);
+
+			expect($result.length).to.equal(2);
+			expect($result).to.be.array;
+			expect($result[0].innerText).to.equal('1');
+		});
+	});
+
+	describe('$text', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should return the inner text of selection', () => {
+			expect($('.test').text()).to.equal('test');
+		});
+
+		it('should set the inner text of selection', () => {
+			$('.test').text('new text')
+			expect($('.test').text()).to.equal('new text');
+		});
+	});
+
+	describe('$toggle', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should add the js-hide class if not present', () => {
+			$('.test').toggle();
+
+			expect($('.test')[0].className).to.equal('test js-hide');
+		});
+
+		it('should remove the js-hide class if not present', () => {
+			$('.test')[0].className = 'test js-hide';
+			$('.test').toggle();
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+	});
+
+	describe('$toggleClass', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should add a class if not present', () => {
+			$('.test').toggleClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test test-class');
+		});
+
+		it('should remove a class if not present', () => {
+			$('.test')[0].className = 'test test-class';
+			$('.test').toggleClass('test-class');
+
+			expect($('.test')[0].className).to.equal('test');
+		});
+
+		it('should pass index and className to callback', () => {
+			$('.test').toggleClass((i, className) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test');
+			});
+		});
+
+		it('should execute callback', () => {
+			$('.test').toggleClass((i, className, state) => {
+				expect(i).to.equal(0);
+				expect(className).to.equal('test');
+				expect(state).to.equal(true);
+
+				return 'test-class';
+			}, true);
+
+			expect($('.test')[0].className).to.equal('test test-class');
+		});
+	});
+
+	describe('$val', () => {
+		before(createForm);
+		after(resetDOM);
+
+		it('should get the value of an input', () => {
+			expect($('.input').val()).to.equal('inputValue');
+		});
+
+		it('should get the value of a textarea', () => {
+			expect($('.textarea').val()).to.equal('Text Area');
+		});
+
+		it('should get the value of a checkbox', () => {
+			expect($('.checkbox').val()).to.equal('checkboxValue');
+		});
+
+		it('should get the value of a radio', () => {
+			expect($('.radio').val()).to.equal('radioValue');
+		});
+
+		it('should get the value of a select', () => {
+			expect($('.select').val()).to.equal('selectValue1');
+		});
+
+		it('should get the values of a multi-select', () => {
+			expect($('.multi-select').val().length).to.equal(2);
+			expect($('.multi-select').val()).to.contain('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue2');
+		});
+
+		it('should get the value of an optgroup select', () => {
+			expect($('.optgroup-select').val()).to.equal('optgroupValue1');
+			expect($('.optgroup-select').val()).to.contain('optgroupValue1');
+		});
+
+		it('should set the value of an input', () => {
+			$('.input').val('new value');
+			expect($('.input').val()).to.equal('new value');
+		});
+
+		it('should set the value of an input with callback', () => {
+			$('.input').val((i, val) => {
+				expect(i).to.equal(0);
+				expect(val).to.equal('new value');
+
+				return 'second new value'
+			});
+			expect($('.input').val()).to.equal('second new value');
+		});
+
+		it('should set the value of a textarea', () => {
+			$('.textarea').val('new value');
+			expect($('.textarea').val()).to.equal('new value');
+		});
+
+		it('should set the values of a multi-select by string', () => {
+			$('.multi-select').val('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue1');
+		});
+
+		it('should set the values of a multi-select by array', () => {
+			$('.multi-select').val(['selectValue1', 'selectValue2']);
+			expect($('.multi-select').val()).to.contain('selectValue1');
+			expect($('.multi-select').val()).to.contain('selectValue2');
+		});
+	});
+
+	describe('$width', () => {
+		before(createSingleDiv);
+		after(resetDOM);
+
+		it('should return the width of selection', () => {
+			expect($('.test').width()).to.equal(122);
+		});
+
+		it('should return the outer width of selection', () => {
+			expect($('.test').width(true)).to.equal(142);
+		});
+
+		if (isIE()) {
+			it('should return the width of window', () => {
+				expect($(window).width()).to.equal(1007);
+			});
+
+			it('should return the width of document', () => {
+				expect($(document).width()).to.equal(990);
+			});
+		} else if (isEdge()) {
+			it('should return the width of window', () => {
+				expect($(window).width()).to.equal(788);
+			});
+
+			it('should return the width of document', () => {
+				expect($(document).width()).to.equal(776);
+			});
+		} else {
+			it('should return the width of window', () => {
+				expect($(window).width()).to.equal(1024);
+			});
+
+			it('should return the width of document', () => {
+				expect($(document).width()).to.equal(1024);
+			});
+		}
+
+		it('should set the width of selection', () => {
+			$('.test').width(200);
+			expect($('.test').width()).to.equal(222);
+		});
+
+		it('should set the width with callback', () => {
+			$('.test').width((i, width) => {
+				expect(i).to.equal(0);
+				expect(width).to.equal(222);
+
+				return 300;
+			});
+
+			expect($('.test').width()).to.equal(322);
+		});
+	});
+
+	describe('$wrap', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should wrap markup around selector', () => {
+			$('.parent').wrap('<div class="new-parent" />');
+
+			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
+		});
+
+		it('should wrap markup around selector with a callback', () => {
+			$('.parent').wrap(i => {
+				expect(i).to.equal(0);
+
+				return '<div class="new-parent" />';
+			});
+
+			expect($('.parent')[0].parentNode.className).to.equal('new-parent');
+		});
+	});
+
+	describe('$wrapInner', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should wrap markup even if no children nodes exist', () => {
+			$('#first').wrapInner('<div class="first-inner" />');
+		});
+
+		it('should wrap markup around inner selection', () => {
+			$('.parent').wrapInner('<div class="test" />');
+
+			expect($('#first')[0].parentNode.className).to.equal('test');
+		});
+
+		it('should wrap markup around inner selection from a callback', () => {
+			$('.parent').wrapInner(i => {
+				expect(i).to.equal(0);
+
+				return '<div class="test" />';
+			});
+
+			expect($('#first')[0].parentNode.className).to.equal('test');
 		});
 	});
 });

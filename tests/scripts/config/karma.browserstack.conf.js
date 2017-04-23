@@ -7,29 +7,25 @@ module.exports = function(config) {
 				base: 'BrowserStack',
 				browser: 'safari',
 				os: 'OS X',
-				os_version: 'Sierra',
-				resolution: '1280x800'
+				os_version: 'Sierra'
 			},
 			firefox_mac: {
 				base: 'BrowserStack',
 				browser: 'firefox',
 				os: 'OS X',
-				os_version: 'Sierra',
-				resolution: '1280x800'
+				os_version: 'Sierra'
 			},
 			chrome_mac: {
 				base: 'BrowserStack',
 				browser: 'chrome',
 				os: 'OS X',
-				os_version: 'Sierra',
-				resolution: '1280x800'
+				os_version: 'Sierra'
 			},
 			edge_windows: {
 				base: 'BrowserStack',
 				browser: 'Edge',
 				os: 'Windows',
-				os_version: '10',
-				resolution: '1280x800'
+				os_version: '10'
 			}
 		},
 
