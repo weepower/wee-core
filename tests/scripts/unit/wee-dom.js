@@ -776,6 +776,19 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$not', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should filter selected elements', () => {
+			expect($('.child').not('#first').length).to.equal(2);
+		});
+
+		it('should return empty selection when no elements reutnred', () => {
+			expect($('.child').not('div').length).to.equal(0);
+		});
+	})
+
 	describe('$parent', () => {
 		before(createMultiDiv);
 		after(resetDOM);

@@ -775,6 +775,27 @@ export function $next(target, filter, options) {
 }
 
 /**
+ * Returns elements not matching the filtered selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param {object} [options]
+ * @returns {Array} elements
+ */
+export function $not(target, filter, options) {
+	let func = $isFunction(filter);
+
+	return $map(target, (el, i) => {
+		return (func ?
+			$exec(filter, {
+				args: [i, el],
+				scope: el
+			}) :
+			$is(el, filter, options)) ? false : el;
+	});
+}
+
+/**
  * Get unique parent from each matching selection
  *
  * @param {($|HTMLElement|string)} child

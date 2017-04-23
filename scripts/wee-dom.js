@@ -334,6 +334,17 @@ $chain({
 	},
 
 	/**
+	 * Returns elements not matching the filtered selection
+	 *
+	 * @param filter
+	 * @param {object} [options]
+	 * @returns {$}
+	 */
+	not(filter, options) {
+		return $(W.$not(this, filter, options));
+	},
+
+	/**
 	 * Get unique parent from each matching selection
 	 *
 	 * @returns {$}
