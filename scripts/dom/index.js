@@ -698,7 +698,7 @@ export function $height(target, value) {
 			}) :
 			value;
 
-		if (typeof value === 'number') {
+		if ($isNumber(value)) {
 			value += 'px';
 		}
 
