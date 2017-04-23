@@ -1024,10 +1024,10 @@ describe('DOM', () => {
 			$('.test').toggleClass((i, className, state) => {
 				expect(i).to.equal(0);
 				expect(className).to.equal('test');
-				// TODO: what is state supposed to be at this point?
-				expect(state).to.equal(undefined);
+				expect(state).to.equal(true);
+
 				return 'test-class';
-			});
+			}, true);
 
 			expect($('.test')[0].className).to.equal('test test-class');
 		});
