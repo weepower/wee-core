@@ -313,6 +313,16 @@ $chain({
 	},
 
 	/**
+	 * Get the last element of a matching selection
+	 *
+	 * @param {($|HTMLElement|string)} [context=document]
+	 * @returns {$}
+	 */
+	last(context) {
+		return $(W.$last(this, context));
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

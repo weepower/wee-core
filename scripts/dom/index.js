@@ -729,6 +729,17 @@ export function $is(target, filter, options) {
 }
 
 /**
+ * Get the last element of a matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|HTMLElement|string)} [context=document]
+ * @returns {HTMLElement}
+ */
+export function $last(target, context) {
+	return $eq(target, -1, context);
+}
+
+/**
  * Remove each matching selection from the document
  *
  * @param {($|HTMLElement|string)} target

@@ -758,6 +758,14 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$last', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+		it('should return the last element from selection', () => {
+			expect($('.child').last()[0].innerText).to.equal('3');
+		});
+	});
+
 	describe('$remove', () => {
 		before(createSingleDiv);
 		after(resetDOM);
