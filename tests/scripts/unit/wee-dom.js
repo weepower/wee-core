@@ -920,12 +920,14 @@ describe('DOM', () => {
 
 			expect($('.child').length).to.equal(4);
 			expect($('.child')[3].innerHTML).to.equal('3');
+			expect($('.child')[3].parentNode.className).to.equal('parent');
 		});
 
 		it('should prepend selection to end of parent target', () => {
 			$('.parent').prepend($('#first'));
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('3');
+			expect($('#first')[0].parentNode.className).to.equal('parent');
 		});
 
 		it('should execute callback and append return value', () => {
