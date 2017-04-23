@@ -323,6 +323,15 @@ $chain({
 	},
 
 	/**
+	 * Get unique parent from each matching selection
+	 *
+	 * @returns {$}
+	 */
+	parent(filter) {
+		return $(W.$parent(this, filter));
+	},
+
+		/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

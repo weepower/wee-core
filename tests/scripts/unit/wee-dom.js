@@ -761,8 +761,18 @@ describe('DOM', () => {
 	describe('$last', () => {
 		before(createMultiDiv);
 		after(resetDOM);
+
 		it('should return the last element from selection', () => {
 			expect($('.child').last()[0].innerText).to.equal('3');
+		});
+	});
+
+	describe('$parent', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return the parent of the selection', () => {
+			expect($('.child').parent()[0].className).to.equal('parent');
 		});
 	});
 

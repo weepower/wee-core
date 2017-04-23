@@ -740,6 +740,20 @@ export function $last(target, context) {
 }
 
 /**
+ * Get unique parent from each matching selection
+ *
+ * @param {($|HTMLElement|string)} child
+ * @param filter
+ * @returns {Array} elements
+ */
+export function $parent(child, filter) {
+	return $unique($map(child, el => {
+		let parent = el.parentNode;
+		return ! filter || W.$is(parent, filter) ? parent : false;
+	}));
+}
+
+/**
  * Remove each matching selection from the document
  *
  * @param {($|HTMLElement|string)} target
