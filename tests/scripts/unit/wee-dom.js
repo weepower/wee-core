@@ -890,6 +890,35 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$prepend', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should prepend markup to end of parent target', () => {
+			$('.parent').prepend('<div class="child">4</div>');
+
+			expect($('.child').length).to.equal(4);
+			expect($('.child')[3].innerHTML).to.equal('3');
+		});
+
+		it('should prepend selection to end of parent target', () => {
+			$('.parent').prepend($('#first'));
+
+			expect($('div', '.parent')[3].innerHTML).to.equal('3');
+		});
+
+		it('should execute callback and append return value', () => {
+			$('#first').prepend((i, html) => {
+				expect(i).to.equal(0);
+				expect(html).to.equal('1');
+
+				return '2';
+			});
+
+			expect($('#first')[0].innerText).to.equal('21');
+		});
+	});
+
 	describe('$remove', () => {
 		before(createSingleDiv);
 		after(resetDOM);

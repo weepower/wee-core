@@ -867,6 +867,37 @@ export function $position(target) {
 }
 
 /**
+ * Prepend selection or markup before each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {($|function|HTMLElement|string)} source
+ */
+export function $prepend(target, source) {
+	let func = $isFunction(source);
+
+	$each(target, (el, i) => {
+		let pre = func ?
+			$exec(source, {
+				args: [i, el.innerHTML],
+				scope: el
+			}) :
+			source;
+
+		if (typeof pre == 'string') {
+			pre = $parseHTML(pre);
+		}
+
+		if (pre) {
+			$each(pre, cel => {
+				el.insertBefore(cel, el.firstChild);
+			});
+
+			$setRef(el);
+		}
+	});
+}
+
+/**
  * Get unique ancestors of each matching selection
  *
  * @param {($|HTMLElement|string)} child

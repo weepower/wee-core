@@ -384,6 +384,18 @@ $chain({
 	},
 
 	/**
+	 * Prepend selection or markup before each matching selection
+	 *
+	 * @param {($|function|HTMLElement|string)} source
+	 * @returns {$}
+	 */
+	prepend(source) {
+		W.$prepend(this, source);
+
+		return this;
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}
