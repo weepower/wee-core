@@ -323,6 +323,17 @@ $chain({
 	},
 
 	/**
+	 * Get the unique next sibling of each matching selection
+	 *
+	 * @param filter
+	 * @param {object} [options]
+	 * @returns {$}
+	 */
+	next(filter, options) {
+		return $(W.$next(this, filter, options));
+	},
+
+	/**
 	 * Get unique parent from each matching selection
 	 *
 	 * @returns {$}

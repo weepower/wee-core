@@ -767,6 +767,15 @@ describe('DOM', () => {
 		});
 	});
 
+	describe('$next', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return next element from selection', () => {
+			expect($('.child').next()[0].innerText).to.equal('2');
+		});
+	});
+
 	describe('$parent', () => {
 		before(createMultiDiv);
 		after(resetDOM);

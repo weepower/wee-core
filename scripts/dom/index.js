@@ -763,6 +763,18 @@ export function $last(target, context) {
 }
 
 /**
+ * Get the unique next sibling of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param filter
+ * @param {object} [options]
+ * @returns {Array} elements
+ */
+export function $next(target, filter, options) {
+	return $unique($map(target, el => _getSibling(el, 1, filter, options)));
+}
+
+/**
  * Get unique parent from each matching selection
  *
  * @param {($|HTMLElement|string)} child
