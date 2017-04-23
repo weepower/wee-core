@@ -787,7 +787,44 @@ describe('DOM', () => {
 		it('should return empty selection when no elements reutnred', () => {
 			expect($('.child').not('div').length).to.equal(0);
 		});
-	})
+	});
+
+	describe('$offset', () => {
+		before(() => {
+			createMultiDiv();
+
+			let $child = $('.child');
+
+			$('.parent')[0].style.position = 'relative';
+			$child[0].style.position = 'absolute';;
+			$child[0].style.left = '100px';
+			$child[0].style.top = '100px';
+		});
+		after(resetDOM);
+
+		it('should return an object of offset properties', () => {
+			expect($('.child').offset()).to.be.an('object');
+		});
+
+		it('should return an object with keys top and left', () => {
+			expect($('.child').offset()).to.include.keys(['top', 'left']);
+		})
+
+		it('should return the offset of selection', () => {
+			expect($('.child').offset().top).to.equal(108);
+			expect($('.child').offset().left).to.equal(108);
+		});
+
+		it('should set the offset left of selection', () => {
+			$('.child').offset({
+				top: 10,
+				left: 10
+			});
+
+			expect($('.child').offset().top).to.equal(18);
+			expect($('.child').offset().left).to.equal(18);
+		});
+	});
 
 	describe('$parent', () => {
 		before(createMultiDiv);
@@ -795,6 +832,23 @@ describe('DOM', () => {
 
 		it('should return the parent of the selection', () => {
 			expect($('.child').parent()[0].className).to.equal('parent');
+		});
+
+		it('should return the filtered parent of the selection', () => {
+			expect($('.child').parent('div')[0].className).to.equal('parent');
+		});
+	});
+
+	describe('$parent', () => {
+		before(createMultiDiv);
+		after(resetDOM);
+
+		it('should return the parents of the selection', () => {
+			expect($('.child').parents()[0].className).to.equal('parent');
+		});
+
+		it('should return the filtered parents of the selection', () => {
+			expect($('.child').parents('div')[0].className).to.equal('parent');
 		});
 	});
 

@@ -345,6 +345,16 @@ $chain({
 	},
 
 	/**
+	 * Get the offset position of a matching selection relative to the document
+	 *
+	 * @param {(function|number)} value
+	 * @returns {number}
+	 */
+	offset(value) {
+		return W.$offset(this, value);
+	},
+
+	/**
 	 * Get unique parent from each matching selection
 	 *
 	 * @returns {$}
@@ -353,7 +363,17 @@ $chain({
 		return $(W.$parent(this, filter));
 	},
 
-		/**
+	/**
+	 * Get unique ancestors of each matching selection
+	 *
+	 * @param filter
+	 * @returns {$}
+	 */
+	parents(filter) {
+		return $(W.$parents(this, filter));
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

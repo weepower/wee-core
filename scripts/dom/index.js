@@ -796,6 +796,46 @@ export function $not(target, filter, options) {
 }
 
 /**
+ * Get the position of a matching selection relative to the document
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {(function|number)} value
+ * @returns {{top: number, left: number}}
+ */
+export function $offset(target, value) {
+	let rect = $sel(target)[0].getBoundingClientRect(),
+		offset = {
+			top: rect.top + _win.pageYOffset,
+			left: rect.left + _win.pageXOffset
+		};
+
+	if (value) {
+		let func = $isFunction(value);
+
+		$each(target, (el, i) => {
+			let set = func ?
+				$exec(value, {
+					args: [i, offset],
+					scope: el
+				}) :
+				value;
+
+			if ($isNumber(set.top)) {
+				set.top = set.top + 'px';
+			}
+
+			if ($isNumber(set.left)) {
+				set.left = set.left + 'px';
+			}
+
+			$css(el, set);
+		});
+	} else {
+		return offset;
+	}
+}
+
+/**
  * Get unique parent from each matching selection
  *
  * @param {($|HTMLElement|string)} child
@@ -805,8 +845,35 @@ export function $not(target, filter, options) {
 export function $parent(child, filter) {
 	return $unique($map(child, el => {
 		let parent = el.parentNode;
-		return ! filter || W.$is(parent, filter) ? parent : false;
+		return ! filter || $is(parent, filter) ? parent : false;
 	}));
+}
+
+/**
+ * Get unique ancestors of each matching selection
+ *
+ * @param {($|HTMLElement|string)} child
+ * @param filter
+ * @returns {Array} elements
+ */
+export function $parents(child, filter) {
+	let arr = [];
+
+	$each(child, el => {
+		while (el !== null) {
+			el = el.parentNode;
+
+			if (! filter || (filter && $is(el, filter))) {
+				arr.push(el);
+			}
+
+			if (el === _html) {
+				return false;
+			}
+		}
+	});
+
+	return $unique(arr);
 }
 
 /**
