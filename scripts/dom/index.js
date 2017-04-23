@@ -147,7 +147,7 @@ export function $after(target, source, remove) {
 			}) :
 			source;
 
-		if (typeof aft == 'string') {
+		if ($isString(aft)) {
 			aft = $parseHTML(aft);
 		}
 
@@ -190,7 +190,7 @@ export function $append(target, source) {
 			}) :
 			source;
 
-		if (typeof app == 'string') {
+		if ($isString(app)) {
 			app = $parseHTML(app);
 		}
 
@@ -255,7 +255,7 @@ export function $before(target, source, remove) {
 			}) :
 			source;
 
-		if (typeof bef == 'string') {
+		if ($isString(bef)) {
 			bef = $parseHTML(bef);
 		}
 
