@@ -850,6 +850,22 @@ export function $parent(child, filter) {
 }
 
 /**
+ * Get the position of the first matching selection relative
+ * to its offset parent
+ *
+ * @param {($|HTMLElement|string)} target
+ * @returns {{top: number, left: number}}
+ */
+export function $position(target) {
+	let el = $sel(target)[0];
+
+	return {
+		top: el.offsetTop,
+		left: el.offsetLeft
+	};
+}
+
+/**
  * Get unique ancestors of each matching selection
  *
  * @param {($|HTMLElement|string)} child

@@ -374,6 +374,16 @@ $chain({
 	},
 
 	/**
+	 * Get the position of the first matching selection relative
+	 * to its offset parent
+	 *
+	 * @returns {{top, left}}
+	 */
+	position() {
+		return W.$position(this);
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}

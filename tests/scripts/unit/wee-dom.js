@@ -839,7 +839,7 @@ describe('DOM', () => {
 		});
 	});
 
-	describe('$parent', () => {
+	describe('$parents', () => {
 		before(createMultiDiv);
 		after(resetDOM);
 
@@ -849,6 +849,33 @@ describe('DOM', () => {
 
 		it('should return the filtered parents of the selection', () => {
 			expect($('.child').parents('div')[0].className).to.equal('parent');
+		});
+	});
+
+	describe('$position', () => {
+		before(() => {
+			createMultiDiv();
+
+			let $child = $('.child');
+
+			$('.parent')[0].style.position = 'relative';
+			$child[0].style.position = 'absolute';;
+			$child[0].style.left = '100px';
+			$child[0].style.top = '100px';
+		});
+		after(resetDOM);
+
+		it('should return an object', () => {
+			expect($('.child').position()).to.be.an('object');
+		});
+
+		it('should return an object with the keys top and left', () => {
+			expect($('.child').position()).to.include.keys(['top', 'left']);
+		})
+
+		it('should return an object with the position values', () => {
+			expect($('.child').position().top).to.equal(100);
+			expect($('.child').position().left).to.equal(100);
 		});
 	});
 
