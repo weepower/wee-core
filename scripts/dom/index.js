@@ -910,6 +910,40 @@ export function $prev(target, filter, options) {
 }
 
 /**
+ * Get property of first matching selection or set property of
+ * each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param a
+ * @param b
+ * @returns {*}
+ */
+export function $prop(target, a, b) {
+	let obj = $isObject(a);
+
+	if (b !== U || obj) {
+		let func = ! obj && $isFunction(b);
+
+		$each(target, (el, i) => {
+			obj ?
+				Object.keys(a).forEach(key => {
+					el[key] = a[key];
+				}) :
+				el[a] = func ?
+					$exec(b, {
+						args: [i, el],
+						scope: el
+					}) :
+					b;
+		});
+	} else {
+		let el = $sel(target)[0];
+
+		return el[a];
+	}
+}
+
+/**
  * Get unique ancestors of each matching selection
  *
  * @param {($|HTMLElement|string)} child

@@ -35,7 +35,7 @@ function createMultiDiv() {
 function createForm() {
 	let html = `<form action="#" id="form">
 					<input class="input" type="text" name="input" value="inputValue">
-					<input class="checkbox" type="checkbox" name="checkbox" value="checkboxValue" checked>
+					<input class="checkbox" type="checkbox" name="checkbox" value="checkboxValue" checked required>
 					<input class="radio" type="radio" name="radio1" value="radioValue" checked>
 					<input class="array-input" type="text" name="name[]" value="name1">
 					<input type="text" name="email[]" value="email1">
@@ -933,6 +933,31 @@ describe('DOM', () => {
 
 		it('should return next filtered element from selection', () => {
 			expect($('.other-class').prev('div')[0].innerText).to.equal('2');
+		});
+	});
+
+	describe('$prop', () => {
+		before(createForm);
+		after(resetDOM);
+
+		it('should return specified property from selection', () => {
+			expect($('.checkbox').prop('checked')).to.equal(true);
+		});
+
+		it('should set specified property on selection', () => {
+			$('.checkbox').prop('checked', false);
+
+			expect($('.checkbox').prop('checked')).to.equal(false);
+		});
+
+		it('should set multiple properties on selection', () => {
+			$('.checkbox').prop({
+				checked: true,
+				required: true
+			});
+
+			expect($('.checkbox').prop('checked')).to.equal(true);
+			expect($('.checkbox').prop('required')).to.equal(true);
 		});
 	});
 

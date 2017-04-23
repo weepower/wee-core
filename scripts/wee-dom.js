@@ -407,6 +407,20 @@ $chain({
 	},
 
 	/**
+	 * Get property of first matching selection or set property of
+	 * each matching selection
+	 *
+	 * @param a
+	 * @param b
+	 * @returns {($|string)}
+	 */
+	prop(a, b) {
+		var r = W.$prop(this, a, b);
+
+		return b !== U || $isObject(a) ? this : r;
+	},
+
+	/**
 	 * Remove each matching selection from the document
 	 *
 	 * @returns {$}
