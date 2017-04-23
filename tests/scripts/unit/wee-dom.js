@@ -799,8 +799,9 @@ describe('DOM', () => {
 			expect($('.child').not('#first').length).to.equal(2);
 		});
 
-		it('should return empty selection when no elements reutnred', () => {
+		it('should return empty selection when no elements returned', () => {
 			expect($('.child').not('div').length).to.equal(0);
+			expect($('.child').not('div')._$).to.equal(true);
 		});
 	});
 
