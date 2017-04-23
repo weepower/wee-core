@@ -329,9 +329,7 @@ export function $children(parent, filter) {
  * @returns {Array}
  */
 export function $clone(target) {
-	return $map(target, el => {
-		return el.cloneNode(true);
-	});
+	return $map(target, el => el.cloneNode(true));
 }
 
 /**
@@ -448,7 +446,7 @@ export function $data(target, a, b) {
 		let el = $sel(target)[0],
 			arr = {};
 
-		_slice.call(el.attributes).forEach(function(attr) {
+		_slice.call(el.attributes).forEach(attr => {
 			if (attr.name.substr(0, 5) == 'data-') {
 				arr[_toCamel(attr.name.substr(5))] =
 					_castString(attr.value);
@@ -461,7 +459,7 @@ export function $data(target, a, b) {
 	if ($isObject(a)) {
 		let obj = {};
 
-		Object.keys(a).forEach(function(key) {
+		Object.keys(a).forEach(key => {
 			obj['data-' + _toDashed(key)] = a[key];
 		});
 
@@ -513,7 +511,7 @@ export function $eq(target, index, context) {
 export function $filter(target, filter, options) {
 	let func = $isFunction(filter);
 
-	return $map(target, function(el, i) {
+	return $map(target, (el, i) => {
 		let match = func ?
 			$exec(filter, {
 				args: [i, el],
@@ -561,10 +559,8 @@ export function $first(target, context) {
  * @returns {boolean}
  */
 export function $hasClass(target, className) {
-	return $sel(target).some(function(el) {
-		return new RegExp('(^| )' + className + '($| )', 'gim')
-			.test(_getClass(el));
-	});
+	return $sel(target).some(el => new RegExp('(^| )' + className + '($| )', 'gim')
+			.test(_getClass(el)));
 }
 
 /**
@@ -901,7 +897,7 @@ export function $prepend(target, source) {
 			}) :
 			source;
 
-		if (typeof pre == 'string') {
+		if ($isString(pre)) {
 			pre = $parseHTML(pre);
 		}
 
@@ -1045,10 +1041,8 @@ export function $removeClass(target, value) {
 		if (name) {
 			let names = name.split(' ');
 
-			_setClass(el, cn.split(' ').filter(val => {
-					return names.indexOf(val) < 0
-				}).join(' ')
-			);
+			_setClass(el, cn.split(' ').filter(val => names.indexOf(val) < 0)
+				.join(' '));
 		}
 	});
 }
@@ -1116,7 +1110,7 @@ export function $scrollTop(target, value) {
             el.scrollTop;
     }
 
-    $each(target, function(el) {
+    $each(target, el => {
         if (el.nodeType === 9) {
             el = el.defaultView;
         }
