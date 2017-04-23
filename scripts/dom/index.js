@@ -72,6 +72,33 @@ function _toDashed(name) {
 }
 
 /**
+ * Return either direct previous or next sibling
+ *
+ * @private
+ * @param {($|HTMLElement|string)} target
+ * @param {int} dir
+ * @param filter
+ * @param {object} [options]
+ * @returns {HTMLElement}
+ */
+function _getSibling(target, dir, filter, options) {
+	let match;
+
+	$each(target, el => {
+		let index = $index(el) + dir;
+
+		$children($parent(el)).forEach((el, i) => {
+			if (i === index &&
+				(! filter || filter && W.$is(el, filter, options))) {
+				match = el;
+			}
+		});
+	});
+
+	return match;
+}
+
+/**
  * Add classes to each matching selection
  *
  * @param {($|HTMLElement|string)} target
