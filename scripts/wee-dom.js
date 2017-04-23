@@ -415,7 +415,7 @@ $chain({
 	 * @returns {($|string)}
 	 */
 	prop(a, b) {
-		var r = W.$prop(this, a, b);
+		let r = W.$prop(this, a, b);
 
 		return b !== U || $isObject(a) ? this : r;
 	},
