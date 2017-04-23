@@ -785,6 +785,10 @@ describe('DOM', () => {
 		it('should return next element from selection', () => {
 			expect($('.child').next()[0].innerText).to.equal('2');
 		});
+
+		it('should return next filtered element from selection', () => {
+			expect($('.child').next('div')[0].innerText).to.equal('2');
+		});
 	});
 
 	describe('$not', () => {
