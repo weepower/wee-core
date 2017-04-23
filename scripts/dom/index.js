@@ -716,8 +716,9 @@ export function $height(target, value) {
  * @returns {boolean}
  */
 export function $is(target, filter, options) {
-	return $map(target, function(el, i) {
-			if (typeof filter == 'string' && filter.slice(0, 4) == 'ref:') {
+	return $map(target, (el, i) => {
+			if ($isString(filter) &&
+				(filter.slice(0, 4) == 'ref:' || filter.slice(0, 1) == ':')) {
 				return $sel(filter).indexOf(el) > -1;
 			}
 
