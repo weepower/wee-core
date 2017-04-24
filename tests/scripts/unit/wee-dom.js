@@ -73,6 +73,17 @@ function createList() {
 	document.querySelector('body').appendChild(fragment);
 }
 
+function resetBaseStyling() {
+	let block = `<style>
+					* {
+						margin: 0;
+						padding: 0;
+						border: 0;
+				</style>`,
+	fragment = document.createRange().createContextualFragment(block);
+	document.head.appendChild(fragment);
+}
+
 function resetDOM() {
 	let body = document.querySelector('body');
 
@@ -799,14 +810,16 @@ describe('DOM', () => {
 			expect($('.child').not('#first').length).to.equal(2);
 		});
 
-		it('should return empty selection when no elements reutnred', () => {
+		it('should return empty selection when no elements returned', () => {
 			expect($('.child').not('div').length).to.equal(0);
+			expect($('.child').not('div')._$).to.equal(true);
 		});
 	});
 
 	describe('$offset', () => {
 		before(() => {
 			createMultiDiv();
+			resetBaseStyling();
 
 			let $child = $('.child');
 
@@ -826,8 +839,8 @@ describe('DOM', () => {
 		})
 
 		it('should return the offset of selection', () => {
-			expect($('.child').offset().top).to.equal(108);
-			expect($('.child').offset().left).to.equal(108);
+			expect($('.child').offset().top).to.equal(100);
+			expect($('.child').offset().left).to.equal(100);
 		});
 
 		it('should set the offset left of selection', () => {
@@ -836,8 +849,8 @@ describe('DOM', () => {
 				left: 10
 			});
 
-			expect($('.child').offset().top).to.equal(18);
-			expect($('.child').offset().left).to.equal(18);
+			expect($('.child').offset().top).to.equal(10);
+			expect($('.child').offset().left).to.equal(10);
 		});
 	});
 
@@ -847,6 +860,10 @@ describe('DOM', () => {
 
 		it('should return the parent of the selection', () => {
 			expect($('.child').parent()[0].className).to.equal('parent');
+		});
+
+		it('should only return a single selection', () => {
+			expect($('.child').parent().length).to.equal(1);
 		});
 
 		it('should return the filtered parent of the selection', () => {
@@ -903,12 +920,14 @@ describe('DOM', () => {
 
 			expect($('.child').length).to.equal(4);
 			expect($('.child')[3].innerHTML).to.equal('3');
+			expect($('.child')[3].parentNode.className).to.equal('parent');
 		});
 
 		it('should prepend selection to end of parent target', () => {
 			$('.parent').prepend($('#first'));
 
 			expect($('div', '.parent')[3].innerHTML).to.equal('3');
+			expect($('#first')[0].parentNode.className).to.equal('parent');
 		});
 
 		it('should execute callback and append return value', () => {
@@ -939,11 +958,11 @@ describe('DOM', () => {
 		before(createMultiDiv);
 		after(resetDOM);
 
-		it('should return next element from selection', () => {
+		it('should return previous element from selection', () => {
 			expect($('.other-class').prev()[0].innerText).to.equal('2');
 		});
 
-		it('should return next filtered element from selection', () => {
+		it('should return previous filtered element from selection', () => {
 			expect($('.other-class').prev('div')[0].innerText).to.equal('2');
 		});
 	});
