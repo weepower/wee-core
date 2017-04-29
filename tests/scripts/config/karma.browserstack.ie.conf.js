@@ -8,16 +8,14 @@ module.exports = function(config) {
 				browser: 'IE',
 				browser_version : '10',
 				os: 'Windows',
-				os_version: '7',
-				resolution: '1024x768'
+				os_version: '7'
 			},
 			ie11_windows: {
 				base: 'BrowserStack',
 				browser: 'IE',
 				browser_version : '11',
 				os: 'Windows',
-				os_version: '10',
-				resolution: '1024x768'
+				os_version: '10'
 			}
 		},
 
