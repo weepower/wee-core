@@ -38,7 +38,9 @@ function _setClass(el, className) {
  */
 function _toCamel (name) {
 	return name.toLowerCase()
-		.replace(/-(.)/g, (match, val) => val.toUpperCase());
+		.replace(/-(.)/g, (match, val) => {
+			return val.toUpperCase();
+		});
 }
 
 /**
@@ -49,7 +51,9 @@ function _toCamel (name) {
  * @returns {string}
  */
 function _toDashed(name) {
-	return name.replace(/[A-Z]/g, match => '-' + match[0].toLowerCase());
+	return name.replace(/[A-Z]/g, match => {
+		return '-' + match[0].toLowerCase();
+	});
 }
 
 /**
@@ -311,7 +315,9 @@ export function $children(parent, filter) {
  * @returns {Array}
  */
 export function $clone(target) {
-	return $map(target, el => el.cloneNode(true));
+	return $map(target, el => {
+		return el.cloneNode(true);
+	});
 }
 
 /**
@@ -541,8 +547,10 @@ export function $first(target, context) {
  * @returns {boolean}
  */
 export function $hasClass(target, className) {
-	return $sel(target).some(el => new RegExp('(^| )' + className + '($| )', 'gim')
-			.test(_getClass(el)));
+	return $sel(target).some(el => {
+		return new RegExp('(^| )' + className + '($| )', 'gim')
+			.test(_getClass(el));
+	});
 }
 
 /**
@@ -768,7 +776,9 @@ export function $last(target, context) {
  * @returns {Array} elements
  */
 export function $next(target, filter, options) {
-	return $unique($map(target, el => _getSibling(el, 1, filter, options)));
+	return $unique($map(target, el => {
+		return _getSibling(el, 1, filter, options)
+	}));
 }
 
 /**
@@ -902,7 +912,9 @@ export function $prepend(target, source) {
  * @returns {Array} elements
  */
 export function $prev(target, filter, options) {
-	return $unique($map(target, el => _getSibling(el, -1, filter, options)));
+	return $unique($map(target, el => {
+		return _getSibling(el, -1, filter, options);
+	}));
 }
 
 /**
@@ -998,7 +1010,9 @@ export function $remove(target, context) {
  */
 export function $removeAttr(target, name) {
 	$each(target, el => {
-		name.split(/\s+/).forEach(value => el.removeAttribute(value));
+		name.split(/\s+/).forEach(value => {
+			el.removeAttribute(value);
+		});
 	});
 }
 
@@ -1023,8 +1037,9 @@ export function $removeClass(target, value) {
 		if (name) {
 			let names = name.split(' ');
 
-			_setClass(el, cn.split(' ').filter(val => names.indexOf(val) < 0)
-				.join(' '));
+			_setClass(el, cn.split(' ').filter(val => {
+				return names.indexOf(val) < 0;
+			}).join(' '));
 		}
 	});
 }
@@ -1210,7 +1225,9 @@ export function $slice(target, start, end) {
  */
 export function $text(target, value) {
 	if (value === U) {
-		return $map(target, el => el.textContent.trim()).join('');
+		return $map(target, el => {
+			return el.textContent.trim();
+		}).join('');
 	}
 
 	let func = $isFunction(value);
