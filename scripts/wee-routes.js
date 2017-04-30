@@ -1,12 +1,8 @@
-import { $unserialize } from 'core/types';
+import pathToRegExp from 'path-to-regexp';
+import { _castString, $isArray, $unserialize } from 'core/types';
 import { _doc } from 'core/variables';
+import { $exec } from 'core/core';
 
-const PARAMETER_REGEXP = /([:*])(\w+)/g;
-const WILDCARD_REGEXP = /\*/g;
-const REPLACE_VARIABLE_REGEXP = '([^\/]+)';
-const REPLACE_WILDCARD = '(?:.*)';
-const FOLLOWED_BY_SLASH_REGEXP = '(?:\/$|$)';
-const MATCH_REGEXP_FLAGS = '';
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 let _routes = [];
 
@@ -82,6 +78,27 @@ function _parseUrl(value) {
 	};
 }
 
+/**
+ * Extract parameters from current URL based on matching route
+ *
+ * @param {string} path
+ * @param {string} location
+ * @returns {Object}
+ * @private
+ */
+function _getParams(path, location) {
+	let keys = [],
+		params = {},
+		results = pathToRegExp(path, keys).exec(location);
+
+	if ($isArray(results)) {
+		results.slice(1)
+			.forEach((segment, j) => params[keys[j].name] = _castString(segment));
+	}
+
+	return Object.keys(params).length ? params : null;
+}
+
 export default {
 	/**
 	 * Register routes
@@ -120,13 +137,31 @@ export default {
 		return _routes;
 	},
 	run() {
-		//
+		const uri = this.uri();
+		const length = _routes.length;
+
+		for (let i = 0; i < length; i++) {
+			let path = _routes[i].path;
+			let params = _getParams(path, uri.full);
+
+			if (params) {
+				let toPath = pathToRegExp.compile(path);
+				path = toPath(params);
+			}
+
+			if (uri.full === path) {
+				$exec(_routes[i].handler, {
+					args: [params]
+				});
+				break;
+			}
+		}
 	},
 
 	/**
 	 * Retrieve information about current location
 	 *
-	 * @param {string} value
+	 * @param {string} [value]
 	 * @returns {Object}
 	 */
 	uri(value) {

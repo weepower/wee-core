@@ -17,8 +17,14 @@ const basicRoutes = [
 
 const testUri = 'https://www.weepower.com:9000/scripts?foo=bar#hash';
 
+function setPath(path) {
+	window.history.pushState({}, 'Title', path);
+}
+
 describe('Routes', () => {
 	describe('map', () => {
+		beforeEach(router.reset);
+
 		it('should accept an array of objects', () => {
 			router.map(basicRoutes);
 
@@ -26,9 +32,10 @@ describe('Routes', () => {
 		});
 
 		it('should overwrite existing path object', () => {
-			router.map([
-				{ path: '/', handler: 'new handler' }
-			]);
+			router.map(basicRoutes)
+				.map([
+					{ path: '/', handler: 'new handler' }
+				]);
 
 			let routes = router.routes();
 
@@ -39,7 +46,7 @@ describe('Routes', () => {
 	});
 
 	describe('routes', () => {
-		beforeEach(router.reset);
+		afterEach(router.reset);
 
 		it('should return route array', () => {
 			router.map(basicRoutes);
@@ -63,7 +70,44 @@ describe('Routes', () => {
 		});
 	});
 
-	describe('parse', () => {
+	describe('run', () => {
+		let state = false;
+		afterEach(() => {
+			router.reset();
+			state = false;
+		});
+
+		it('should evaluate existing routes against current URL', () => {
+			setPath('/');
+			router.map([
+				{
+					path: '/',
+					handler() {
+						state = true;
+					}
+				}
+			]).run();
+
+			expect(state).to.equal(true);
+		});
+
+		it('should pass any url variable parameters to handler', () => {
+			setPath('/blog/5');
+			router.map([
+				{
+					path: '/blog/:id',
+					handler(params) {
+						state = true;
+						expect(params.id).to.equal(5);
+					}
+				}
+			]).run();
+
+			expect(state).to.equal(true);
+		});
+	});
+
+	describe('uri - parse', () => {
 		it('should parse a given url', () => {
 			const result = router.uri(testUri);
 			expect(result).to.be.an('object');
@@ -104,8 +148,11 @@ describe('Routes', () => {
 	});
 
 	describe('uri', () => {
-		router.map(basicRoutes);
-		window.history.pushState('page2', 'Title', '/test2?foo=bar&baz=qux#hash');
+		before(() => {
+			router.map(basicRoutes);
+			setPath('/test2?foo=bar&baz=qux#hash');
+		});
+		after(router.reset);
 
 		it('should return the hash', () => {
 			expect(router.uri().hash).to.equal('hash');
@@ -127,7 +174,7 @@ describe('Routes', () => {
 		});
 
 		it('should return an array of segments', () => {
-			window.history.pushState('page2', 'Title', '/test2/foo/bar/baz');
+			setPath('/test2/foo/bar/baz');
 
 			expect(router.uri().segments).to.be.an('array');
 			expect(router.uri().segments[0]).to.equal('test2');
