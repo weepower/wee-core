@@ -29,6 +29,26 @@ function _addRoutes(routes) {
 }
 
 /**
+ * Add a filter to the filter registry
+ *
+ * @param name
+ * @param handler
+ * @private
+ */
+function _addFilter(name, handler) {
+	_filters[name] = handler;
+}
+
+/**
+ * Add multiple filters to filter registry
+ * @param filters
+ * @private
+ */
+function _addFilters(filters) {
+	filters.forEach(filter => _addFilter(filter.name, filter.handler));
+}
+
+/**
  * Retrieve existing route with associated index
  *
  * @param {string} value
@@ -187,7 +207,7 @@ export default {
 
 	/**
 	 * Return all registered filters
-	 * 
+	 *
 	 * @returns {{}}
 	 */
 	filters() {
