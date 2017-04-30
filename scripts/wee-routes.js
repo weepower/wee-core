@@ -43,9 +43,11 @@ function _getRoute(value) {
 	const count = _routes.length;
 
 	for (let i = 0; i < count; i++) {
-		if (_routes[i].path === value || _routes[i].name === value) {
+		let route = _routes[i];
+
+		if (route.path === value || route.name === value) {
 			return {
-				route: _routes[i],
+				route: route,
 				index: i
 			};
 		}
