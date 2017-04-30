@@ -39,6 +39,8 @@ describe('Routes', () => {
 	});
 
 	describe('routes', () => {
+		beforeEach(router.reset);
+
 		it('should return route array', () => {
 			router.map(basicRoutes);
 
@@ -52,6 +54,12 @@ describe('Routes', () => {
 			expect(router.routes().length).to.be.greaterThan(0);
 			expect(router.routes('/')).to.be.an('object');
 			expect(router.routes('/about').path).to.equal('/about');
+		});
+
+		it('should return the route with specific name', () => {
+			router.map([{ path: '/other', name: 'other', handler: () => {} }].concat(basicRoutes));
+
+			expect(router.routes('other').path).to.equal('/other');
 		});
 	});
 

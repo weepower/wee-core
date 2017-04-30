@@ -39,11 +39,11 @@ function _add(routes) {
  * @returns {Object}
  * @private
  */
-function _getRoute(value, key = 'path') {
+function _getRoute(value) {
 	const count = _routes.length;
 
 	for (let i = 0; i < count; i++) {
-		if (_routes[i][key] === value) {
+		if (_routes[i].path === value || _routes[i].name === value) {
 			return {
 				route: _routes[i],
 				index: i
@@ -86,9 +86,12 @@ export default {
 
 		return this;
 	},
-	routes(value, key) {
+	reset() {
+		_routes = [];
+	},
+	routes(value) {
 		if (value) {
-			let result = _getRoute(value, key);
+			let result = _getRoute(value);
 
 			if (result) {
 				return result.route;
