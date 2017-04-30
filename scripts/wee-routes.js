@@ -216,8 +216,9 @@ export default {
 					$exec(route.handler, {
 						args: [params]
 					});
-					break;
 				}
+
+				break;
 			}
 		}
 	},
