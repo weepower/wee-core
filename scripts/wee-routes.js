@@ -49,6 +49,43 @@ function _addFilters(filters) {
 }
 
 /**
+ * Process filters
+ *
+ * @param filter
+ * @returns {Function|string|Array}
+ * @private
+ */
+function _processFilters(filters) {
+	let shouldExec = true;
+
+	if (filters) {
+		if ($isFunction(filters)) {
+			shouldExec = $exec(filters);
+		} else if ($isString(filters)) {
+			if (_filters[filters]) {
+				shouldExec = $exec(_filters[filters]);
+			}
+		} else if ($isArray(filters)) {
+			let length = filters.length;
+
+			for (let i = 0; i < length; i++) {
+				let filter = _filters[filters[i]];
+
+				if (filter) {
+					shouldExec = $exec(filter);
+
+					if (shouldExec === false) {
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return shouldExec;
+}
+
+/**
  * Retrieve existing route with associated index
  *
  * @param {string} value
@@ -160,9 +197,11 @@ export default {
 	run() {
 		const uri = this.uri();
 		const length = _routes.length;
+		let shouldExec = true;
 
 		for (let i = 0; i < length; i++) {
-			let path = _routes[i].path;
+			let route = _routes[i];
+			let path = route.path;
 			let params = _getParams(path, uri.full);
 
 			if (params) {
@@ -171,10 +210,14 @@ export default {
 			}
 
 			if (uri.full === path) {
-				$exec(_routes[i].handler, {
-					args: [params]
-				});
-				break;
+				shouldExec = _processFilters(route.filter);
+
+				if (shouldExec) {
+					$exec(route.handler, {
+						args: [params]
+					});
+					break;
+				}
 			}
 		}
 	},
