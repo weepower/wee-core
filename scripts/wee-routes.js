@@ -13,8 +13,8 @@ let _routes = [];
 /**
  * Add a route to routes array
  *
- * @private
  * @param routes
+ * @private
  */
 function _add(routes) {
 	const count = routes.length;
@@ -122,6 +122,13 @@ export default {
 	run() {
 		//
 	},
+
+	/**
+	 * Retrieve information about current location
+	 *
+	 * @param {string} value
+	 * @returns {Object}
+	 */
 	uri(value) {
 		return _parseUrl(value);
 	}
