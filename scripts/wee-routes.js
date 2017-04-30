@@ -182,5 +182,14 @@ export default {
 		}
 
 		return this;
+	},
+
+	/**
+	 * Return all registered filters
+	 * 
+	 * @returns {{}}
+	 */
+	filters() {
+		return _filters;
 	}
 };
