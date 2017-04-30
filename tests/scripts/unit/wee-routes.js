@@ -177,6 +177,34 @@ describe('Routes', () => {
 
 			expect(state).to.equal(false);
 		});
+
+		it('should not execute handler if one filter evaluates false', () => {
+			setPath('/test');
+			router.addFilter([
+				{
+					name: 'filterOne',
+					handler: function() {
+						return false;
+					}
+				},
+				{
+					name: 'filterTwo',
+					handler: function() {
+						return true;
+					}
+				}
+			]).map([
+				{
+					path: '/test',
+					handler() {
+						state = true;
+					},
+					filter: ['filterOne', 'filterTwo']
+				}
+			]).run();
+
+			expect(state).to.equal(false);
+		});
 	});
 
 	describe('run', () => {
