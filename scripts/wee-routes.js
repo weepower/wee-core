@@ -201,12 +201,9 @@ export default {
 
 		for (let i = 0; i < length; i++) {
 			let route = _routes[i];
-			let path = route.path;
 			let params = _getParams(path, uri.full);
-
-			if (params) {
-				path = pathToRegExp.compile(path)(params);
-			}
+			let path = params ?
+					pathToRegExp.compile(route.path)(params) : route.path;
 
 			if (uri.full === path) {
 				shouldExec = _processFilters(route.filter);
