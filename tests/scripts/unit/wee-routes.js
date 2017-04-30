@@ -24,6 +24,18 @@ describe('Routes', () => {
 
 			expect(router.routes()).to.be.an('array');
 		});
+
+		it('should overwrite existing path object', () => {
+			router.map([
+				{ path: '/', handler: 'new handler' }
+			]);
+
+			let routes = router.routes();
+
+			expect(routes.length).to.equal(2);
+			expect(routes[0].handler).to.equal('new handler');
+			expect(routes[1].path).to.equal('/about');
+		});
 	});
 
 	describe('routes', () => {
@@ -31,14 +43,15 @@ describe('Routes', () => {
 			router.map(basicRoutes);
 
 			expect(router.routes()).to.be.an('array');
+			expect(router.routes()[0].path).to.equal('/');
 		});
 
-		it('should return the route at indicated index', () => {
+		it('should return the route with specific path', () => {
 			router.map(basicRoutes);
 
 			expect(router.routes().length).to.be.greaterThan(0);
-			expect(router.routes(1)).to.be.an('object');
-			expect(router.routes(2).path).to.equal('/');
+			expect(router.routes('/')).to.be.an('object');
+			expect(router.routes('/about').path).to.equal('/about');
 		});
 	});
 

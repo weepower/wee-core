@@ -17,17 +17,49 @@ let _routes = [];
  * @param routes
  */
 function _add(routes) {
-	routes.forEach(route => {
-		_routes.push(route);
-	});
+	const count = routes.length;
+
+	for (let i = 0; i < count; i++) {
+		let route = _getRoute(routes[i].path);
+
+		if (route) {
+			_routes[route.index] = routes[i];
+			break;
+		}
+
+		_routes.push(routes[i]);
+	}
+}
+
+/**
+ * Retrieve existing route with associated index
+ *
+ * @param {string} value
+ * @param {string} key
+ * @returns {Object}
+ * @private
+ */
+function _getRoute(value, key = 'path') {
+	const count = _routes.length;
+
+	for (let i = 0; i < count; i++) {
+		if (_routes[i][key] === value) {
+			return {
+				route: _routes[i],
+				index: i
+			};
+		}
+	}
+
+	return null;
 }
 
 /**
  * Parse url and return results
  *
  * @private
- * @param value
- * @returns {{full: string, hash: (Blob|string|*|ArrayBuffer|Array.<T>|$), path: string, query: {}, segments: Array, url: (*|Location|String|string), port}}
+ * @param {string} value
+ * @returns {Object}
  * @private
  */
 function _parseUrl(value) {
@@ -54,9 +86,13 @@ export default {
 
 		return this;
 	},
-	routes(index) {
-		if (index && _routes[index]) {
-			return _routes[index];
+	routes(value, key) {
+		if (value) {
+			let result = _getRoute(value, key);
+
+			if (result) {
+				return result.route;
+			}
 		}
 
 		return _routes;
