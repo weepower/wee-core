@@ -5,6 +5,7 @@ import { $exec } from 'core/core';
 
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 let _routes = [];
+let _filters = {};
 
 /**
  * Add a route to routes array
@@ -12,7 +13,7 @@ let _routes = [];
  * @param routes
  * @private
  */
-function _add(routes) {
+function _addRoutes(routes) {
 	const count = routes.length;
 
 	for (let i = 0; i < count; i++) {
@@ -25,6 +26,26 @@ function _add(routes) {
 
 		_routes.push(routes[i]);
 	}
+}
+
+/**
+ * Add a filter to the filter registry
+ *
+ * @param name
+ * @param handler
+ * @private
+ */
+function _addFilter(name, handler) {
+	_filters[name] = handler;
+}
+
+/**
+ * Add multiple filters to filter registry
+ * @param filters
+ * @private
+ */
+function _addFilters(filters) {
+	filters.forEach(filter => _addFilter(filter.name, filter.handler));
 }
 
 /**
@@ -55,7 +76,6 @@ function _getRoute(value) {
 /**
  * Parse url and return results
  *
- * @private
  * @param {string} value
  * @returns {Object}
  * @private
@@ -107,16 +127,17 @@ export default {
 	 * @returns {Object}
 	 */
 	map(routes) {
-		_add(routes);
+		_addRoutes(routes);
 
 		return this;
 	},
 
 	/**
-	 * Reset all routes - mainly for testing purposes
+	 * Reset all routes and filters - mainly for testing purposes
 	 */
 	reset() {
 		_routes = [];
+		_filters = {};
 	},
 
 	/**
@@ -166,5 +187,30 @@ export default {
 	 */
 	uri(value) {
 		return _parseUrl(value);
+	},
+
+	/**
+	 * Add a filter or array of filters to internal filter registry
+	 *
+	 * @param {string|Array} name
+	 * @param {Function} [callback]
+	 */
+	addFilter(name, callback) {
+		if ($isArray(name)) {
+			_addFilters(name);
+		} else {
+			_addFilter(name, callback)
+		}
+
+		return this;
+	},
+
+	/**
+	 * Return all registered filters
+	 *
+	 * @returns {{}}
+	 */
+	filters() {
+		return _filters;
 	}
 };

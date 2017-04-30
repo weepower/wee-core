@@ -70,6 +70,49 @@ describe('Routes', () => {
 		});
 	});
 
+	describe('filter', () => {
+		afterEach(router.reset);
+
+		it('should return filters object', () => {
+			router.addFilter('test', () => {
+				return true;
+			});
+
+			expect(router.filters()).to.be.an('object');
+		});
+
+		it('should add a filter to the filters object', () => {
+			router.addFilter('test', () => {
+				return true;
+			});
+
+			expect(router.filters()).to.have.property('test');
+			expect(router.filters().test()).to.equal(true);
+		});
+
+		it('should add multiple filters to the filters object', () => {
+			router.addFilter([
+				{
+					name: 'test',
+					handler() {
+						return 'test';
+					}
+				},
+				{
+					name: 'test2',
+					handler() {
+						return 'test2'
+					}
+				}
+			]);
+
+			expect(router.filters()).to.have.property('test');
+			expect(router.filters()).to.have.property('test2');
+			expect(router.filters().test()).to.equal('test');
+			expect(router.filters().test2()).to.equal('test2');
+		});
+	});
+
 	describe('run', () => {
 		let state = false;
 		afterEach(() => {
@@ -104,6 +147,22 @@ describe('Routes', () => {
 			]).run();
 
 			expect(state).to.equal(true);
+		});
+
+		it('should pass multiple url variables as an object to handler', () => {
+			setPath('/blog/tech/2017/10/5/blog-title');
+			router.map([
+				{
+					path: '/blog/:category/:year/:month/:day/:slug',
+					handler(params) {
+						expect(params.category).to.equal('tech');
+						expect(params.year).to.equal(2017);
+						expect(params.month).to.equal(10);
+						expect(params.day).to.equal(5);
+						expect(params.slug).to.equal('blog-title');
+					}
+				}
+			]).run();
 		});
 	});
 
