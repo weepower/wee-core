@@ -240,18 +240,18 @@ export function $parseHTML(html) {
 * @param {(Array|function|string)} fn
 */
 export function $ready(fn) {
-    let doc = _doc;
+	let doc = _doc;
 
-    // This is for testing only
-    if (this && this.readyState) {
-        doc = this;
-    }
+	// This is for testing only
+	if (this && this.readyState) {
+		doc = this;
+	}
 
-    doc.readyState === 'complete' ?
-        $exec(fn) :
-        doc.addEventListener('DOMContentLoaded', () => {
-            $exec(fn);
-        });
+	doc.readyState === 'complete' ?
+		$exec(fn) :
+		doc.addEventListener('DOMContentLoaded', () => {
+			$exec(fn);
+		});
 }
 
 /**

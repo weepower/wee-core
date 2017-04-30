@@ -1,25 +1,7 @@
 import { $exec } from '../core/core';
-import {
-	_castString,
-	_slice,
-	$extend,
-	$isFunction,
-	$isNumber,
-	$isObject,
-	$isString,
-	$serialize,
-	$toArray
-} from '../core/types';
+import { _castString, _slice, $extend, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray } from '../core/types';
 import { _doc, _html, _win, U } from '../core/variables';
-import {
-	$each,
-	$map,
-	$parseHTML,
-	$sel,
-	$setRef,
-	$unique,
-	_selArray
-} from '../core/dom';
+import { $each, $map, $parseHTML, $sel, $setRef, $unique, _selArray } from '../core/dom';
 
 /**
  * Get class value of element
