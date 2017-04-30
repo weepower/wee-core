@@ -105,6 +105,22 @@ describe('Routes', () => {
 
 			expect(state).to.equal(true);
 		});
+
+		it('should pass multiple url variables as an object to handler', () => {
+			setPath('/blog/tech/2017/10/5/blog-title');
+			router.map([
+				{
+					path: '/blog/:category/:year/:month/:day/:slug',
+					handler(params) {
+						expect(params.category).to.equal('tech');
+						expect(params.year).to.equal(2017);
+						expect(params.month).to.equal(10);
+						expect(params.day).to.equal(5);
+						expect(params.slug).to.equal('blog-title');
+					}
+				}
+			]).run();
+		});
 	});
 
 	describe('uri - parse', () => {
