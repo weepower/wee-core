@@ -55,7 +55,6 @@ function _getRoute(value) {
 /**
  * Parse url and return results
  *
- * @private
  * @param {string} value
  * @returns {Object}
  * @private
