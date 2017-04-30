@@ -1,4 +1,5 @@
 import router from 'wee-routes';
+import { RouteHandler } from 'wee-routes';
 
 const basicRoutes = [
 	{
@@ -120,6 +121,76 @@ describe('Routes', () => {
 					}
 				}
 			]).run();
+		});
+
+		describe('handler', () => {
+			beforeEach(() => {
+				router.map(basicRoutes);
+			});
+			afterEach(router.reset);
+
+			it('should accept function', () => {
+				let state = false;
+
+				setPath('/accepts/function');
+				router.map([
+					{
+						path: '/accepts/function',
+						handler() {
+							state = true;
+						}
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/route-handler');
+				router.map([
+					{
+						path: '/accepts/route-handler',
+						handler: new RouteHandler({
+							init() {
+								state = true;
+							}
+						})
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept array with mixture of functions/RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/mixture');
+				router.map([
+					{
+						path: '/accepts/mixture',
+						handler: [
+							() => {
+								state = 'anonymous function';
+								expect(state).to.equal('anonymous function');
+							},
+							new RouteHandler({
+								init() {
+									state = 'route handler';
+									expect(state).to.equal('route handler');
+								}
+							}),
+							() => {
+								state = 'last';
+								expect(state).to.equal('last');
+							}
+						]
+					}
+				]).run();
+
+				expect(state).to.equal('last');
+			});
 		});
 	});
 
