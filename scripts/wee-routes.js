@@ -81,14 +81,31 @@ function _parseUrl(value) {
 }
 
 export default {
+	/**
+	 * Register routes
+	 *
+	 * @param {Array} routes
+	 * @returns {Object}
+	 */
 	map(routes) {
 		_add(routes);
 
 		return this;
 	},
+
+	/**
+	 * Reset all routes - mainly for testing purposes
+	 */
 	reset() {
 		_routes = [];
 	},
+
+	/**
+	 * Retrieve all routes or specific route by name/path
+	 *
+	 * @param {string} [value]
+	 * @returns {Object|Array}
+	 */
 	routes(value) {
 		if (value) {
 			let result = _getRoute(value);
