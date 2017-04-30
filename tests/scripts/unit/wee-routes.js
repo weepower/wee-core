@@ -91,7 +91,7 @@ describe('Routes', () => {
 			expect(state).to.equal(true);
 		});
 
-		it('should pass any url variable parameters to handler', () => {
+		it('should parse url variable parameters and pass to handler', () => {
 			setPath('/blog/5');
 			router.map([
 				{
