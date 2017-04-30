@@ -5,6 +5,7 @@ import { $exec } from 'core/core';
 
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 let _routes = [];
+let _filters = {};
 
 /**
  * Add a route to routes array
@@ -12,7 +13,7 @@ let _routes = [];
  * @param routes
  * @private
  */
-function _add(routes) {
+function _addRoutes(routes) {
 	const count = routes.length;
 
 	for (let i = 0; i < count; i++) {
