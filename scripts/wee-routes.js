@@ -107,16 +107,17 @@ export default {
 	 * @returns {Object}
 	 */
 	map(routes) {
-		_add(routes);
+		_addRoutes(routes);
 
 		return this;
 	},
 
 	/**
-	 * Reset all routes - mainly for testing purposes
+	 * Reset all routes and filters - mainly for testing purposes
 	 */
 	reset() {
 		_routes = [];
+		_filters = {};
 	},
 
 	/**
