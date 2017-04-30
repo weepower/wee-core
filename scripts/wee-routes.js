@@ -141,18 +141,17 @@ export default {
 		const length = _routes.length;
 
 		for (let i = 0; i < length; i++) {
-			let path = _routes[i].path;
+			let route = _routes[i];
+			let path = route.path;
 			let params = _getParams(path, uri.full);
 
-			if (params) {
-				let toPath = pathToRegExp.compile(path);
-				path = toPath(params);
-			}
+			path = params ? pathToRegExp.compile(path)(params) : path;
 
 			if (uri.full === path) {
-				$exec(_routes[i].handler, {
+				$exec(route.handler, {
 					args: [params]
 				});
+
 				break;
 			}
 		}
