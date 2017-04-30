@@ -1,5 +1,5 @@
 import pathToRegExp from 'path-to-regexp';
-import { _castString, $isArray, $unserialize } from 'core/types';
+import { _castString, $isArray, $isFunction, $isString, $unserialize } from 'core/types';
 import { _doc } from 'core/variables';
 import { $exec } from 'core/core';
 
