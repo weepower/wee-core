@@ -70,6 +70,49 @@ describe('Routes', () => {
 		});
 	});
 
+	describe('filter', () => {
+		afterEach(router.reset);
+
+		it('should return filters object', () => {
+			router.addFilter('test', () => {
+				return true;
+			});
+
+			expect(router.filters()).to.be.an('object');
+		});
+
+		it('should add a filter to the filters object', () => {
+			router.addFilter('test', () => {
+				return true;
+			});
+
+			expect(router.filters()).to.have.property('test');
+			expect(router.filters().test()).to.equal(true);
+		});
+
+		it('should add multiple filters to the filters object', () => {
+			router.addFilter([
+				{
+					name: 'test',
+					handler() {
+						return 'test';
+					}
+				},
+				{
+					name: 'test2',
+					handler() {
+						return 'test2'
+					}
+				}
+			]);
+
+			expect(router.filters()).to.have.property('test');
+			expect(router.filters()).to.have.property('test2');
+			expect(router.filters().test()).to.equal('test');
+			expect(router.filters().test2()).to.equal('test2');
+		});
+	});
+
 	describe('run', () => {
 		let state = false;
 		afterEach(() => {
