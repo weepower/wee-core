@@ -204,7 +204,7 @@ export default {
 			let path = route.path;
 			let params = _getParams(path, uri.full);
 
-			path = params ? pathToRegExp.compile(route.path)(params) : path;
+			path = params ? pathToRegExp.compile(path)(params) : path;
 
 			if (uri.full === path) {
 				shouldExec = _processFilters(route.filter);
