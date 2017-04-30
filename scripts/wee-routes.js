@@ -205,8 +205,7 @@ export default {
 			let params = _getParams(path, uri.full);
 
 			if (params) {
-				let toPath = pathToRegExp.compile(path);
-				path = toPath(params);
+				path = pathToRegExp.compile(path)(params);
 			}
 
 			if (uri.full === path) {
