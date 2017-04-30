@@ -156,6 +156,27 @@ function _getParams(path, location) {
 	return Object.keys(params).length ? params : null;
 }
 
+function _process(handler, params) {
+	if (handler instanceof RouteHandler) {
+		$exec(handler.init, {
+			// TODO: Need to inspect if route/RouteHandler has already been executed
+			args: [params]
+		});
+	} else if ($isFunction(handler)) {
+		$exec(handler, {
+			// TODO: Need to inspect if route/RouteHandler has already been executed
+			args: [params]
+		});
+	}
+}
+
+// Class to be used as handler for routes
+export class RouteHandler {
+	constructor(conf) {
+		this.init = conf.init;
+	}
+}
+
 export default {
 	/**
 	 * Register routes
@@ -194,6 +215,8 @@ export default {
 
 		return _routes;
 	},
+
+
 	run() {
 		const uri = this.uri();
 		const length = _routes.length;
@@ -204,18 +227,24 @@ export default {
 			let path = route.path;
 			let params = _getParams(path, uri.full);
 
-			path = params ? pathToRegExp.compile(path)(params) : path;
-
+			if (params) {
+				path = pathToRegExp.compile(path)(params);
+			}
+			// If route matches, execute handler
 			if (uri.full === path) {
 				shouldExec = _processFilters(route.filter);
 
 				if (shouldExec) {
-					$exec(route.handler, {
-						args: [params]
-					});
-				}
+					let handler = route.handler;
 
-				break;
+					if ($isArray(handler)) {
+						handler.forEach(h => _process(h, params));
+					} else {
+						_process(handler, params);
+					}
+
+					break;
+				}
 			}
 		}
 	},

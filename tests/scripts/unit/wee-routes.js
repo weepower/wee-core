@@ -1,4 +1,5 @@
 import router from 'wee-routes';
+import { RouteHandler } from 'wee-routes';
 
 const basicRoutes = [
 	{
@@ -231,7 +232,7 @@ describe('Routes', () => {
 			expect(state).to.equal(true);
 		});
 
-		it('should pass any url variable parameters to handler', () => {
+		it('should parse url variable parameters and pass to handler', () => {
 			setPath('/blog/5');
 			router.map([
 				{
@@ -260,26 +261,96 @@ describe('Routes', () => {
 					}
 				}
 			]).run();
+
+			it('should evaluate wildcard routes and run handlers accordingly', () => {
+				setPath('/test/test2');
+				router.map([
+					{
+						path: '/test/*',
+						handler() {
+							stateArray.push(1);
+						}
+					},
+					{
+						path: '/test/test2',
+						handler() {
+							stateArray.push(2);
+						}
+					}
+				]).run();
+
+				expect(stateArray.length).to.equal(2);
+			});
 		});
 
-		it('should evaluate wildcard routes and run handlers accordingly', () => {
-			setPath('/test/test2');
-			router.map([
-				{
-					path: '/test/*',
-					handler() {
-						stateArray.push(1);
-					}
-				},
-				{
-					path: '/test/test2',
-					handler() {
-						stateArray.push(2);
-					}
-				}
-			]).run();
+		describe('handler', () => {
+			beforeEach(() => {
+				router.map(basicRoutes);
+			});
+			afterEach(router.reset);
 
-			expect(stateArray.length).to.equal(2);
+			it('should accept function', () => {
+				let state = false;
+
+				setPath('/accepts/function');
+				router.map([
+					{
+						path: '/accepts/function',
+						handler() {
+							state = true;
+						}
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/route-handler');
+				router.map([
+					{
+						path: '/accepts/route-handler',
+						handler: new RouteHandler({
+							init() {
+								state = true;
+							}
+						})
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept array with mixture of functions/RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/mixture');
+				router.map([
+					{
+						path: '/accepts/mixture',
+						handler: [
+							() => {
+								state = 'anonymous function';
+								expect(state).to.equal('anonymous function');
+							},
+							new RouteHandler({
+								init() {
+									state = 'route handler';
+									expect(state).to.equal('route handler');
+								}
+							}),
+							() => {
+								state = 'last';
+								expect(state).to.equal('last');
+							}
+						]
+					}
+				]).run();
+
+				expect(state).to.equal('last');
+			});
 		});
 	});
 
