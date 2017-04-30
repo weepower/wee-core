@@ -166,5 +166,21 @@ export default {
 	 */
 	uri(value) {
 		return _parseUrl(value);
+	},
+
+	/**
+	 * Add a filter or array of filters to internal filter registry
+	 *
+	 * @param {string|Array} name
+	 * @param {Function} [callback]
+	 */
+	addFilter(name, callback) {
+		if ($isArray(name)) {
+			_addFilters(name);
+		} else {
+			_addFilter(name, callback)
+		}
+
+		return this;
 	}
 };
