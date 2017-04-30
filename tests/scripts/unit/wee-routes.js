@@ -71,7 +71,11 @@ describe('Routes', () => {
 	});
 
 	describe('filter', () => {
-		afterEach(router.reset);
+		let state = false;
+		afterEach(() => {
+			router.reset();
+			state = false;
+		});
 
 		it('should return filters object', () => {
 			router.addFilter('test', () => {
@@ -110,6 +114,68 @@ describe('Routes', () => {
 			expect(router.filters()).to.have.property('test2');
 			expect(router.filters().test()).to.equal('test');
 			expect(router.filters().test2()).to.equal('test2');
+		});
+
+		it('should use filter to determine handler execution', () => {
+			setPath('/test');
+			router.map([
+				{
+					path: '/test',
+					handler() {
+						state = true;
+					},
+					filter: function() {
+						return false;
+					}
+				}
+			]).run();
+
+			expect(state).to.equal(false);
+		});
+
+		it('should use registered filter to determine handler execution', () => {
+			setPath('/test');
+			router.addFilter('test', () => {
+				return false;
+			}).map([
+				{
+					path: '/test',
+					handler() {
+						state = true;
+					},
+					filter: 'test'
+				}
+			]).run();
+
+			expect(state).to.equal(false);
+		});
+
+		it('should use registered filters to determine handler execution', () => {
+			setPath('/test');
+			router.addFilter([
+				{
+					name: 'filterOne',
+					handler: function() {
+						return false;
+					}
+				},
+				{
+					name: 'filterTwo',
+					handler: function() {
+						return false;
+					}
+				}
+			]).map([
+				{
+					path: '/test',
+					handler() {
+						state = true;
+					},
+					filter: ['filterOne', 'filterTwo']
+				}
+			]).run();
+
+			expect(state).to.equal(false);
 		});
 	});
 
