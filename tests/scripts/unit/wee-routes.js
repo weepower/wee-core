@@ -116,96 +116,6 @@ describe('Routes', () => {
 			expect(router.filters().test()).to.equal('test');
 			expect(router.filters().test2()).to.equal('test2');
 		});
-
-		it('should use filter to determine handler execution', () => {
-			setPath('/test');
-			router.map([
-				{
-					path: '/test',
-					handler() {
-						state = true;
-					},
-					filter: function() {
-						return false;
-					}
-				}
-			]).run();
-
-			expect(state).to.equal(false);
-		});
-
-		it('should use registered filter to determine handler execution', () => {
-			setPath('/test');
-			router.addFilter('test', () => {
-				return false;
-			}).map([
-				{
-					path: '/test',
-					handler() {
-						state = true;
-					},
-					filter: 'test'
-				}
-			]).run();
-
-			expect(state).to.equal(false);
-		});
-
-		it('should use registered filters to determine handler execution', () => {
-			setPath('/test');
-			router.addFilter([
-				{
-					name: 'filterOne',
-					handler: function() {
-						return false;
-					}
-				},
-				{
-					name: 'filterTwo',
-					handler: function() {
-						return false;
-					}
-				}
-			]).map([
-				{
-					path: '/test',
-					handler() {
-						state = true;
-					},
-					filter: ['filterOne', 'filterTwo']
-				}
-			]).run();
-
-			expect(state).to.equal(false);
-		});
-
-		it('should not execute handler if one filter evaluates false', () => {
-			setPath('/test');
-			router.addFilter([
-				{
-					name: 'filterOne',
-					handler: function() {
-						return false;
-					}
-				},
-				{
-					name: 'filterTwo',
-					handler: function() {
-						return true;
-					}
-				}
-			]).map([
-				{
-					path: '/test',
-					handler() {
-						state = true;
-					},
-					filter: ['filterOne', 'filterTwo']
-				}
-			]).run();
-
-			expect(state).to.equal(false);
-		});
 	});
 
 	describe('run', () => {
@@ -352,45 +262,98 @@ describe('Routes', () => {
 				expect(state).to.equal('last');
 			});
 		});
-	});
 
-	describe('uri - parse', () => {
-		it('should parse a given url', () => {
-			const result = router.uri(testUri);
-			expect(result).to.be.an('object');
-		});
+		describe('filter', () => {
+			it('should use filter to determine handler execution', () => {
+				setPath('/test');
+				router.map([
+					{
+						path: '/test',
+						handler() {
+							state = true;
+						},
+						filter: function() {
+							return false;
+						}
+					}
+				]).run();
 
-		it('should return the hash', () => {
-			const result = router.uri(testUri);
-			expect(result.hash).to.equal('hash');
-		});
+				expect(state).to.equal(false);
+			});
 
-		it('should return the full path', () => {
-			const result = router.uri(testUri);
-			expect(result.full).to.equal('/scripts?foo=bar#hash');
-		});
+			it('should use registered filter to determine handler execution', () => {
+				setPath('/test');
+				router.addFilter('test', () => {
+					return false;
+				}).map([
+					{
+						path: '/test',
+						handler() {
+							state = true;
+						},
+						filter: 'test'
+					}
+				]).run();
 
-		it('should return the path', () => {
-			const result = router.uri(testUri);
-			expect(result.path).to.equal('/scripts');
-		});
+				expect(state).to.equal(false);
+			});
 
-		it('should return the query', () => {
-			const result = router.uri(testUri);
-			expect(result.query).to.be.an('object');
-			expect(result.query).to.include.keys(['foo']);
-			expect(result.query.foo).to.equal('bar');
-		});
+			it('should use registered filters to determine handler execution', () => {
+				setPath('/test');
+				router.addFilter([
+					{
+						name: 'filterOne',
+						handler: function() {
+							return false;
+						}
+					},
+					{
+						name: 'filterTwo',
+						handler: function() {
+							return false;
+						}
+					}
+				]).map([
+					{
+						path: '/test',
+						handler() {
+							state = true;
+						},
+						filter: ['filterOne', 'filterTwo']
+					}
+				]).run();
 
-		it('should return an array of segments', () => {
-			const result = router.uri(testUri);
-			expect(result.segments).to.be.an('array');
-			expect(result.segments[0]).to.equal('scripts');
-		});
+				expect(state).to.equal(false);
+			});
 
-		it('should return the full url', () => {
-			const result = router.uri(testUri);
-			expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar#hash');
+			it('should not execute handler and stop filter evaluation if one filter evaluates false', () => {
+				setPath('/test');
+				router.addFilter([
+					{
+						name: 'filterOne',
+						handler: function() {
+							return false;
+						}
+					},
+					{
+						name: 'filterTwo',
+						handler: function() {
+							state = true;
+							return true;
+						}
+					}
+				]).map([
+					{
+						path: '/test',
+						handler() {
+							state = true;
+						},
+						filter: ['filterOne', 'filterTwo']
+					}
+				]).run();
+
+				expect(state).to.equal(false);
+			});
 		});
 	});
 
@@ -432,6 +395,46 @@ describe('Routes', () => {
 
 		it('should return the full url', () => {
 			expect(router.uri().url).to.equal(window.location.href);
+		});
+
+		describe('parse', () => {
+			it('should parse a given url', () => {
+				const result = router.uri(testUri);
+				expect(result).to.be.an('object');
+			});
+
+			it('should return the hash', () => {
+				const result = router.uri(testUri);
+				expect(result.hash).to.equal('hash');
+			});
+
+			it('should return the full path', () => {
+				const result = router.uri(testUri);
+				expect(result.full).to.equal('/scripts?foo=bar#hash');
+			});
+
+			it('should return the path', () => {
+				const result = router.uri(testUri);
+				expect(result.path).to.equal('/scripts');
+			});
+
+			it('should return the query', () => {
+				const result = router.uri(testUri);
+				expect(result.query).to.be.an('object');
+				expect(result.query).to.include.keys(['foo']);
+				expect(result.query.foo).to.equal('bar');
+			});
+
+			it('should return an array of segments', () => {
+				const result = router.uri(testUri);
+				expect(result.segments).to.be.an('array');
+				expect(result.segments[0]).to.equal('scripts');
+			});
+
+			it('should return the full url', () => {
+				const result = router.uri(testUri);
+				expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar#hash');
+			});
 		});
 	});
 });

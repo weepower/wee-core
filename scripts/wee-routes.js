@@ -49,37 +49,42 @@ function _addFilters(filters) {
 }
 
 /**
+ * Evaluate filter
+ *
+ * @param [Function|string] filter
+ * @returns {boolean}
+ * @private
+ */
+function _processFilter(filter) {
+	if ($isString(filter) && _filters[filter]) {
+		return $exec(_filters[filter]);
+	}
+
+	return $exec(filter);
+}
+
+/**
  * Process filters
  *
  * @param filter
- * @returns {Function|string|Array}
+ * @returns {boolean}
  * @private
  */
-function _processFilters(filters) {
+function _processFilters(filter) {
 	let shouldExec = true;
 
-	if (filters) {
-		if ($isFunction(filters)) {
-			shouldExec = $exec(filters);
-		} else if ($isString(filters)) {
-			if (_filters[filters]) {
-				shouldExec = $exec(_filters[filters]);
-			}
-		} else if ($isArray(filters)) {
-			let length = filters.length;
+	if ($isArray(filter)) {
+		let length = filter.length;
 
-			for (let i = 0; i < length; i++) {
-				let filter = _filters[filters[i]];
+		for (let i = 0; i < length; i++) {
+			shouldExec = _processFilter(filter[i]);
 
-				if (filter) {
-					shouldExec = $exec(filter);
-
-					if (shouldExec === false) {
-						break;
-					}
-				}
+			if (shouldExec === false) {
+				break;
 			}
 		}
+	} else {
+		shouldExec = _processFilter(filter);
 	}
 
 	return shouldExec;
@@ -232,7 +237,9 @@ export default {
 			}
 			// If route matches, execute handler
 			if (uri.full === path) {
-				shouldExec = _processFilters(route.filter);
+				if (route.filter) {
+					shouldExec = _processFilters(route.filter);
+				}
 
 				if (shouldExec) {
 					let handler = route.handler;
