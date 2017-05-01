@@ -1,5 +1,5 @@
 import pathToRegExp from 'path-to-regexp';
-import { _castString, $isArray, $isFunction, $isString, $unserialize } from 'core/types';
+import { _castString, $isArray, $isFunction, $isString, $isObject, $unserialize } from 'core/types';
 import { _doc } from 'core/variables';
 import { $exec } from 'core/core';
 
@@ -45,7 +45,11 @@ function _addFilter(name, handler) {
  * @private
  */
 function _addFilters(filters) {
-	filters.forEach(filter => _addFilter(filter.name, filter.handler));
+	for (let filter in filters) {
+		if (filters.hasOwnProperty(filter)) {
+			_addFilter(filter, filters[filter]);
+		}
+	}
 }
 
 /**
@@ -161,6 +165,13 @@ function _getParams(path, location) {
 	return Object.keys(params).length ? params : null;
 }
 
+/**
+ * Process the handler
+ *
+ * @param handler
+ * @param params
+ * @private
+ */
 function _process(handler, params) {
 	if (handler instanceof RouteHandler) {
 		$exec(handler.init, {
@@ -273,7 +284,7 @@ export default {
 	 * @param {Function} [callback]
 	 */
 	addFilter(name, callback) {
-		if ($isArray(name)) {
+		if ($isObject(name)) {
 			_addFilters(name);
 		} else {
 			_addFilter(name, callback)
