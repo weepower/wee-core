@@ -96,20 +96,14 @@ describe('Routes', () => {
 		});
 
 		it('should add multiple filters to the filters object', () => {
-			router.addFilter([
-				{
-					name: 'test',
-					handler() {
-						return 'test';
-					}
+			router.addFilter({
+				test() {
+					return 'test';
 				},
-				{
-					name: 'test2',
-					handler() {
-						return 'test2'
-					}
+				test2() {
+					return 'test2';
 				}
-			]);
+			});
 
 			expect(router.filters()).to.have.property('test');
 			expect(router.filters()).to.have.property('test2');
@@ -300,20 +294,14 @@ describe('Routes', () => {
 
 			it('should use registered filters to determine handler execution', () => {
 				setPath('/test');
-				router.addFilter([
-					{
-						name: 'filterOne',
-						handler: function() {
-							return false;
-						}
+				router.addFilter({
+					filterOne() {
+						return false;
 					},
-					{
-						name: 'filterTwo',
-						handler: function() {
-							return false;
-						}
+					filterTwo() {
+						return false;
 					}
-				]).map([
+				}).map([
 					{
 						path: '/test',
 						handler() {
@@ -328,21 +316,15 @@ describe('Routes', () => {
 
 			it('should not execute handler and stop filter evaluation if one filter evaluates false', () => {
 				setPath('/test');
-				router.addFilter([
-					{
-						name: 'filterOne',
-						handler: function() {
-							return false;
-						}
+				router.addFilter({
+					filterOne() {
+						return false;
 					},
-					{
-						name: 'filterTwo',
-						handler: function() {
-							state = true;
-							return true;
-						}
+					filterTwo() {
+						state = true;
+						return true;
 					}
-				]).map([
+				}).map([
 					{
 						path: '/test',
 						handler() {
@@ -357,16 +339,13 @@ describe('Routes', () => {
 
 			it('should pass params and current URI to filters', () => {
 				setPath('/test/2');
-				router.addFilter([
-					{
-						name: 'filter',
-						handler: function(params, uri) {
-							expect(params.id).to.equal(2);
-							expect(uri.full).to.equal('/test/2');
-							return true;
-						}
+				router.addFilter({
+					filter: function(params, uri) {
+						expect(params.id).to.equal(2);
+						expect(uri.full).to.equal('/test/2');
+						return true;
 					}
-				]).map([
+				}).map([
 					{
 						path: '/test/:id',
 						handler() {
