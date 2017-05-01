@@ -51,40 +51,48 @@ function _addFilters(filters) {
 /**
  * Evaluate filter
  *
- * @param [Function|string] filter
+ * @param {Function|string} filter
+ * @param {Object|null} params
+ * @param {Object} uri
  * @returns {boolean}
  * @private
  */
-function _processFilter(filter) {
+function _processFilter(filter, params, uri) {
 	if ($isString(filter) && _filters[filter]) {
-		return $exec(_filters[filter]);
+		return $exec(_filters[filter], {
+			args: [params, uri]
+		});
 	}
 
-	return $exec(filter);
+	return $exec(filter, {
+		args: [params, uri]
+	});
 }
 
 /**
  * Process filters
  *
- * @param filter
+ * @param {Array|Function|string} filter
+ * @param {Object|null} params
+ * @param {Object} uri
  * @returns {boolean}
  * @private
  */
-function _processFilters(filter) {
+function _processFilters(filter, params, uri) {
 	let shouldExec = true;
 
 	if ($isArray(filter)) {
 		let length = filter.length;
 
 		for (let i = 0; i < length; i++) {
-			shouldExec = _processFilter(filter[i]);
+			shouldExec = _processFilter(filter[i], params, uri);
 
 			if (shouldExec === false) {
 				break;
 			}
 		}
 	} else {
-		shouldExec = _processFilter(filter);
+		shouldExec = _processFilter(filter, params, uri);
 	}
 
 	return shouldExec;
@@ -161,7 +169,14 @@ function _getParams(path, location) {
 	return Object.keys(params).length ? params : null;
 }
 
-function _process(handler, params) {
+/**
+ * Process matched route
+ *
+ * @param {RouteHandler|Function} handler
+ * @param {Object|null} params
+ * @private
+ */
+function _processRoute(handler, params) {
 	if (handler instanceof RouteHandler) {
 		$exec(handler.init, {
 			// TODO: Need to inspect if route/RouteHandler has already been executed
@@ -235,19 +250,20 @@ export default {
 			if (params) {
 				path = pathToRegExp.compile(path)(params);
 			}
+
 			// If route matches, execute handler
 			if (uri.full === path) {
 				if (route.filter) {
-					shouldExec = _processFilters(route.filter);
+					shouldExec = _processFilters(route.filter, params, uri);
 				}
 
 				if (shouldExec) {
 					let handler = route.handler;
 
 					if ($isArray(handler)) {
-						handler.forEach(h => _process(h, params));
+						handler.forEach(h => _processRoute(h, params));
 					} else {
-						_process(handler, params);
+						_processRoute(handler, params);
 					}
 
 					break;

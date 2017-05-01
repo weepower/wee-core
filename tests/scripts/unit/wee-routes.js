@@ -354,6 +354,30 @@ describe('Routes', () => {
 
 				expect(state).to.equal(false);
 			});
+
+			it('should pass params and current URI to filters', () => {
+				setPath('/test/2');
+				router.addFilter([
+					{
+						name: 'filter',
+						handler: function(params, uri) {
+							expect(params.id).to.equal(2);
+							expect(uri.full).to.equal('/test/2');
+							return true;
+						}
+					}
+				]).map([
+					{
+						path: '/test/:id',
+						handler() {
+							state = true;
+						},
+						filter: 'filter'
+					}
+				]).run();
+
+				expect(state).to.equal(true);
+			});
 		});
 	});
 
