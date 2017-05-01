@@ -165,26 +165,26 @@ describe('Routes', () => {
 					}
 				}
 			]).run();
+		});
 
-			it('should evaluate wildcard routes and run handlers accordingly', () => {
-				setPath('/test/test2');
-				router.map([
-					{
-						path: '/test/*',
-						handler() {
-							stateArray.push(1);
-						}
-					},
-					{
-						path: '/test/test2',
-						handler() {
-							stateArray.push(2);
-						}
+		it('should evaluate wildcard routes and run handlers accordingly', () => {
+			setPath('/test/test2');
+			router.map([
+				{
+					path: '/test/*',
+					handler() {
+						stateArray.push(1);
 					}
-				]).run();
+				},
+				{
+					path: '/test/test2',
+					handler() {
+						stateArray.push(2);
+					}
+				}
+			]).run();
 
-				expect(stateArray.length).to.equal(2);
-			});
+			expect(stateArray.length).to.equal(2);
 		});
 
 		describe('handler', () => {
