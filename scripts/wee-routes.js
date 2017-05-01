@@ -203,6 +203,31 @@ export class RouteHandler {
 
 export default {
 	/**
+	 * Add a filter or array of filters to internal filter registry
+	 *
+	 * @param {string|Array} name
+	 * @param {Function} [callback]
+	 */
+	addFilter(name, callback) {
+		if ($isObject(name)) {
+			_addFilters(name);
+		} else {
+			_addFilter(name, callback)
+		}
+
+		return this;
+	},
+
+	/**
+	 * Return all registered filters
+	 *
+	 * @returns {{}}
+	 */
+	filters() {
+		return _filters;
+	},
+
+	/**
 	 * Register routes
 	 *
 	 * @param {Array} routes
@@ -284,30 +309,5 @@ export default {
 	 */
 	uri(value) {
 		return _parseUrl(value);
-	},
-
-	/**
-	 * Add a filter or array of filters to internal filter registry
-	 *
-	 * @param {string|Array} name
-	 * @param {Function} [callback]
-	 */
-	addFilter(name, callback) {
-		if ($isObject(name)) {
-			_addFilters(name);
-		} else {
-			_addFilter(name, callback)
-		}
-
-		return this;
-	},
-
-	/**
-	 * Return all registered filters
-	 *
-	 * @returns {{}}
-	 */
-	filters() {
-		return _filters;
 	}
 };
