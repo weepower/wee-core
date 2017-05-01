@@ -360,6 +360,30 @@ describe('Routes', () => {
 		});
 	});
 
+	describe('segments', () => {
+		afterEach(router.reset);
+
+		it('should return the current path as an array of it\'s segments', () => {
+			setPath('/one/two/three/four');
+
+			expect(router.segments()).to.be.an('array');
+			expect(router.segments().length).to.equal(4);
+			expect(router.segments()[0]).to.equal('one');
+			expect(router.segments()[1]).to.equal('two');
+			expect(router.segments()[2]).to.equal('three');
+			expect(router.segments()[3]).to.equal('four');
+		});
+
+		it('should return the segment by index of the current path', () => {
+			setPath('/one/two/three/four');
+
+			expect(router.segments(0)).to.equal('one');
+			expect(router.segments(1)).to.equal('two');
+			expect(router.segments(2)).to.equal('three');
+			expect(router.segments(3)).to.equal('four');
+		});
+	});
+
 	describe('uri', () => {
 		before(() => {
 			router.map(basicRoutes);

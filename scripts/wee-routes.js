@@ -302,6 +302,22 @@ export default {
 	},
 
 	/**
+	 * Retrieve the current path's segments as an array or segment by index
+	 *
+	 * @param index
+	 * @returns {*}
+	 */
+	segments(index) {
+		const segments = this.uri().segments;
+
+		if (index >= 0 && segments[index]) {
+			return segments[index];
+		}
+
+		return segments;
+	},
+
+	/**
 	 * Retrieve information about current location
 	 *
 	 * @param {string} [value]
