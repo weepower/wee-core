@@ -83,23 +83,23 @@ function _processFilter(filter, params, uri) {
  * @private
  */
 function _processFilters(filter, params, uri) {
-	let shouldExec = true;
+	let run = true;
 
 	if ($isArray(filter)) {
 		let length = filter.length;
 
 		for (let i = 0; i < length; i++) {
-			shouldExec = _processFilter(filter[i], params, uri);
+			run = _processFilter(filter[i], params, uri);
 
-			if (shouldExec === false) {
+			if (run === false) {
 				break;
 			}
 		}
 	} else {
-		shouldExec = _processFilter(filter, params, uri);
+		run = _processFilter(filter, params, uri);
 	}
 
-	return shouldExec;
+	return run;
 }
 
 /**
@@ -269,7 +269,7 @@ export default {
 	run() {
 		const uri = this.uri();
 		const length = _routes.length;
-		let shouldExec = true;
+		let run = true;
 
 		for (let i = 0; i < length; i++) {
 			let route = _routes[i];
@@ -283,10 +283,10 @@ export default {
 			// If route matches, execute handler
 			if (uri.full === path) {
 				if (route.filter) {
-					shouldExec = _processFilters(route.filter, params, uri);
+					run = _processFilters(route.filter, params, uri);
 				}
 
-				if (shouldExec) {
+				if (run) {
 					let handler = route.handler;
 
 					if ($isArray(handler)) {
