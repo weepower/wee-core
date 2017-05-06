@@ -165,26 +165,26 @@ describe('Routes', () => {
 					}
 				}
 			]).run();
+		});
 
-			it('should evaluate wildcard routes and run handlers accordingly', () => {
-				setPath('/test/test2');
-				router.map([
-					{
-						path: '/test/*',
-						handler() {
-							stateArray.push(1);
-						}
-					},
-					{
-						path: '/test/test2',
-						handler() {
-							stateArray.push(2);
-						}
+		it('should evaluate wildcard routes and run handlers accordingly', () => {
+			setPath('/test/test2');
+			router.map([
+				{
+					path: '/test/*',
+					handler() {
+						stateArray.push(1);
 					}
-				]).run();
+				},
+				{
+					path: '/test/test2',
+					handler() {
+						stateArray.push(2);
+					}
+				}
+			]).run();
 
-				expect(stateArray.length).to.equal(2);
-			});
+			expect(stateArray.length).to.equal(2);
 		});
 
 		it('should create and maintain "from" object', () => {
@@ -527,6 +527,30 @@ describe('Routes', () => {
 					// TODO: Write test
 				});
 			});
+		});
+	});
+
+	describe('segments', () => {
+		afterEach(router.reset);
+
+		it('should return the current path as an array of it\'s segments', () => {
+			setPath('/one/two/three/four');
+
+			expect(router.segments()).to.be.an('array');
+			expect(router.segments().length).to.equal(4);
+			expect(router.segments()[0]).to.equal('one');
+			expect(router.segments()[1]).to.equal('two');
+			expect(router.segments()[2]).to.equal('three');
+			expect(router.segments()[3]).to.equal('four');
+		});
+
+		it('should return the segment by index of the current path', () => {
+			setPath('/one/two/three/four');
+
+			expect(router.segments(0)).to.equal('one');
+			expect(router.segments(1)).to.equal('two');
+			expect(router.segments(2)).to.equal('three');
+			expect(router.segments(3)).to.equal('four');
 		});
 	});
 
