@@ -280,7 +280,7 @@ export default {
 				path = pathToRegExp.compile(path)(params);
 			}
 
-			// If route matches, execute handler
+			// If calculated route matches, execute handler
 			if (uri.full === path) {
 				if (route.filter) {
 					run = _processFilters(route.filter, params, uri);
@@ -294,8 +294,6 @@ export default {
 					} else {
 						_processRoute(handler, params);
 					}
-
-					break;
 				}
 			}
 		}
