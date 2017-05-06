@@ -187,6 +187,14 @@ describe('Routes', () => {
 			});
 		});
 
+		it('should create and maintain "from" object', () => {
+			// TODO: Write test
+		});
+
+		it('should create and maintain "to" object', () => {
+			// TODO: Write test
+		});
+
 		describe('handler', () => {
 			beforeEach(() => {
 				router.map(basicRoutes);
@@ -254,6 +262,10 @@ describe('Routes', () => {
 				]).run();
 
 				expect(state).to.equal('last');
+			});
+
+			it('should be evaluated every time route matches', () => {
+				// TODO: Write test
 			});
 		});
 
@@ -356,6 +368,164 @@ describe('Routes', () => {
 				]).run();
 
 				expect(state).to.equal(true);
+			});
+		});
+
+		describe('init', () => {
+			it('should be a function', () => {
+				// TODO: Write test
+			});
+
+			it('should execute when route is first matched', () => {
+				// TODO: Write test
+			});
+		});
+
+		describe('update', () => {
+			it('should be a function', () => {
+				// TODO: Write test
+			});
+
+			it('should execute if route has already been processed', () => {
+				// TODO: Write test
+			});
+		});
+
+		describe('beforeInit', () => {
+			it('should be a function', () => {
+				// TODO: Write test
+			});
+
+			it('should execute before navigating to matched route', () => {
+				// TODO: Write test
+			});
+
+			it('should have "to", "from", and "next" parameters', () => {
+				// TODO: Write test
+			});
+
+			it('should require "next" to be executed for navigation to occur', () => {
+				// TODO: Write test
+			});
+		});
+
+		describe('beforeUpdate', () => {
+			it('should be a function', () => {
+				// TODO: Write test
+			});
+
+			it('should execute before navigating to destination URL if route has been matched once before', () => {
+				// TODO: Write test
+			});
+
+			it('should have "to", "from", and "next" parameters', () => {
+				// TODO: Write test
+			});
+
+			it('should require "next" to be executed for navigation to occur', () => {
+				// TODO: Write test
+			});
+		});
+
+		describe('unload', () => {
+			it('should execute when leaving a route', () => {
+				// TODO: Write test
+			});
+
+			it('should execute a callback function as value', () => {
+				// TODO: Write test
+			});
+
+			it('should accept an object with resources to unload and custom "handler" callback', () => {
+				// TODO: Write test
+			});
+
+			it('should unload all resources under namespace', () => {
+				// TODO: Write test
+			});
+		});
+
+		describe('route handler', () => {
+			it('should should be an instance of RouteHandler', () => {
+				// TODO: Write test
+			});
+
+			it('should enforce interface', () => {
+				// TODO: Write test
+			});
+
+			describe('init', () => {
+				it('should be a function', () => {
+					// TODO: Write test
+				});
+
+				it('should execute when route handler is first processed', () => {
+					// TODO: Write test
+				});
+			});
+
+			describe('update', () => {
+				it('should be a function', () => {
+					// TODO: Write test
+				});
+
+				it('should execute if route handler has already been processed', () => {
+					// TODO: Write test
+				});
+			});
+
+			describe('beforeInit', () => {
+				it('should be a function', () => {
+					// TODO: Write test
+				});
+
+				it('should execute before navigating to destination URL', () => {
+					// TODO: Write test
+				});
+
+				it('should have "to", "from", and "next" parameters', () => {
+					// TODO: Write test
+				});
+
+				it('should require "next" to be executed for navigation to occur', () => {
+					// TODO: Write test
+				});
+			});
+
+			describe('beforeUpdate', () => {
+				it('should be a function', () => {
+					// TODO: Write test
+				});
+
+				it('should execute before navigating to destination URL if route handler has already been initialized', () => {
+					// TODO: Write test
+				});
+
+				it('should have "to", "from", and "next" parameters', () => {
+					// TODO: Write test
+				});
+
+				it('should require "next" to be executed for navigation to occur', () => {
+					// TODO: Write test
+				});
+			});
+
+			describe('unload', () => {
+				it('should execute when leaving a route', () => {
+					// TODO: Write test
+				});
+
+				it('should execute a callback function as value', () => {
+					// TODO: Write test
+				});
+
+				it('should accept an object with resources to unload and custom "handler" callback', () => {
+					// TODO: Write test
+				});
+
+				it('should unload all resources under namespace', () => {
+					// TODO: Write test
+				});
 			});
 		});
 	});
