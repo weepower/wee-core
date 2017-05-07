@@ -1,20 +1,102 @@
 import $ from 'wee-dom';
 import $events from 'wee-events';
-import { createSingleDiv, resetDOM } from '../helpers/dom';
+import { createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
+
+function triggerEvent(el, type) {
+   if ('createEvent' in document) {
+        // modern browsers, IE9+
+        let e = document.createEvent('HTMLEvents');
+        e.initEvent(type, false, true);
+        el.dispatchEvent(e);
+    } else {
+        // IE 8
+        let e = document.createEventObject();
+        e.eventType = type;
+        el.fireEvent('on' + e.eventType, e);
+    }
+}
 
 describe('Events', () => {
 	describe('on', () => {
-		before(createSingleDiv);
-		after(resetDOM);
+		beforeEach(() => {
+			createSingleDiv();
+			createMultiDiv();
+		});
+		afterEach(resetDOM);
 
-		it('should bind an event to selected element', () => {
-			$events.on('click', '.test', () => {
+		it('should bind a single event to a single element', () => {
+			$events.on('.test', 'click', () => {
 				$('.test')[0].style.backgroundColor = 'red';
 			});
 
-			$('.test')[0].click();
+			triggerEvent($('.test')[0], 'click');
 
 			expect($('.test')[0].style.backgroundColor).to.equal('red');
+		});
+
+		it('should bind multiple events to a single element', () => {
+			$events.on({
+				'.test': {
+					click() {
+						$('.test')[0].style.backgroundColor = 'red';
+					},
+					mouseenter() {
+						$('.test')[0].style.backgroundColor = 'purple';
+					}
+				}
+			});
+
+			triggerEvent($('.test')[0], 'click');
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('.test')[0], 'mouseenter');
+			expect($('.test')[0].style.backgroundColor).to.equal('purple');
+		});
+
+		it('should bind multiple events to multiple elements', () => {
+			$events.on({
+				'#first': {
+					click() {
+						$('#first')[0].style.backgroundColor = 'red';
+					},
+					mouseenter() {
+						$('#first')[0].style.backgroundColor = 'purple';
+					}
+				},
+				'.other-class': {
+					click() {
+						$('.other-class')[0].style.backgroundColor = 'red';
+					},
+					mouseenter() {
+						$('.other-class')[0].style.backgroundColor = 'purple';
+					}
+				}
+			});
+
+			triggerEvent($('#first')[0], 'click');
+			expect($('#first')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('#first')[0], 'mouseenter');
+			expect($('#first')[0].style.backgroundColor).to.equal('purple');
+			triggerEvent($('.other-class')[0], 'click');
+			expect($('.other-class')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('.other-class')[0], 'mouseenter');
+			expect($('.other-class')[0].style.backgroundColor).to.equal('purple');
+		});
+
+		describe('once', () => {
+			it('should bind an event that fires only once', () => {
+				$events.on('.test', 'click', () => {
+					let bgColor = $('.test')[0].style.backgroundColor;
+
+					$('.test')[0].style.backgroundColor = bgColor === 'red' ? 'purple' : 'red';
+				}, {
+					once: true
+				});
+
+				triggerEvent($('.test')[0], 'click');
+				triggerEvent($('.test')[0], 'click');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
 		})
 	});
 });
