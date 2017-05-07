@@ -1,32 +1,11 @@
 import pathToRegExp from 'path-to-regexp';
 import { _castString, $isArray, $isFunction, $isString, $isObject, $unserialize } from 'core/types';
-import { _doc } from 'core/variables';
+import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
 
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 let _routes = [];
 let _filters = {};
-
-/**
- * Add a route to routes array
- *
- * @param routes
- * @private
- */
-function _addRoutes(routes) {
-	const count = routes.length;
-
-	for (let i = 0; i < count; i++) {
-		let route = _getRoute(routes[i].path);
-
-		if (route) {
-			_routes[route.index] = routes[i];
-			break;
-		}
-
-		_routes.push(routes[i]);
-	}
-}
 
 /**
  * Add a filter to the filter registry
@@ -49,6 +28,27 @@ function _addFilters(filters) {
 		if (filters.hasOwnProperty(filter)) {
 			_addFilter(filter, filters[filter]);
 		}
+	}
+}
+
+/**
+ * Add a route to routes array
+ *
+ * @param routes
+ * @private
+ */
+function _addRoutes(routes) {
+	const count = routes.length;
+
+	for (let i = 0; i < count; i++) {
+		let route = _getRoute(routes[i].path);
+
+		if (route) {
+			_routes[route.index] = routes[i];
+			break;
+		}
+
+		_routes.push(routes[i]);
 	}
 }
 
