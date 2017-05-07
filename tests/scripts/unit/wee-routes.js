@@ -16,7 +16,7 @@ const basicRoutes = [
 	}
 ];
 
-const testUri = 'https://www.weepower.com:9000/scripts?foo=bar#hash';
+const testUri = 'https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash';
 
 function setPath(path) {
 	window.history.pushState({}, 'Title', path);
@@ -610,7 +610,7 @@ describe('Routes', () => {
 
 			it('should return the full path', () => {
 				const result = router.uri(testUri);
-				expect(result.full).to.equal('/scripts?foo=bar#hash');
+				expect(result.full).to.equal('/scripts?foo=bar&baz=qux#hash');
 			});
 
 			it('should return the path', () => {
@@ -623,6 +623,8 @@ describe('Routes', () => {
 				expect(result.query).to.be.an('object');
 				expect(result.query).to.include.keys(['foo']);
 				expect(result.query.foo).to.equal('bar');
+				expect(result.query).to.include.keys(['baz']);
+				expect(result.query.baz).to.equal('qux');
 			});
 
 			it('should return an array of segments', () => {
@@ -633,7 +635,7 @@ describe('Routes', () => {
 
 			it('should return the full url', () => {
 				const result = router.uri(testUri);
-				expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar#hash');
+				expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash');
 			});
 		});
 	});
