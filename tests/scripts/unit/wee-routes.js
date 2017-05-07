@@ -168,17 +168,20 @@ describe('Routes', () => {
 		});
 
 		it('should evaluate wildcard routes and run handlers accordingly', () => {
-			setPath('/test/test2');
+			setPath('/test/test2/3');
 			router.map([
 				{
 					path: '/test/*',
-					handler() {
+					handler(params) {
+						expect(params[0]).to.equal('test2/3');
 						stateArray.push(1);
 					}
 				},
 				{
-					path: '/test/test2',
-					handler() {
+					path: '/test/*/:id',
+					handler(params) {
+						expect(params[0]).to.equal('test2');
+						expect(params.id).to.equal(3);
 						stateArray.push(2);
 					}
 				}
