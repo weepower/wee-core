@@ -6,15 +6,7 @@ import { _doc } from 'core/variables';
 const bound = [];
 const custom = {};
 
-/**
- * Attach specific event logic to element
- *
- * @private
- * @param {(Array|HTMLElement|object|string)} els
- * @param {object} obj
- * @param {object} options
- */
-function _process(els, obj, options) {
+function _bind(els, obj, options) {
 	// Redefine variables when delegating
 	if (options && options.delegate) {
 		options.targ = els;
@@ -24,43 +16,117 @@ function _process(els, obj, options) {
 	// For each element attach events
 	$each(els, el => {
 		// Loop through object events
-		for (var key in obj) {
-			if (obj.hasOwnProperty(key)) {
-				let evts = key.split(' ');
-				let i = 0;
+		for (let key in obj) {
+			let evts = key.split(' ');
+			let	i = 0;
 
-				for (; i < evts.length; i++) {
-					let conf = $extend({
+			for (; i < evts.length; i++) {
+				let conf = $extend({
 						args: [],
 						once: false,
 						scope: el
 					}, options);
-					let fn = obj[key];
-					let evt = evts[i];
-					let ev = evt;
-					let parts = ev.split('.');
-					let f = fn;
-					evt = parts[0];
+				let	fn = obj[key];
+				let	evt = evts[i];
+				let	ev = evt;
+				let	parts = ev.split('.');
+				let	f = fn;
+				evt = parts[0];
 
-					if (parts.length == 1 && conf.namespace) {
-						ev += '.' + conf.namespace;
-					}
-
-					// Prepend element to callback arguments if necessary
-					if (conf.args[1] !== el) {
-						conf.args.unshift(0, el);
-					}
-
-					_bind(el, evt, fn, f, ev, conf)
+				if (parts.length == 1 && conf.namespace) {
+					ev += '.' + conf.namespace;
 				}
+
+				// Prepend element to callback arguments if necessary
+				if (conf.args[1] !== el) {
+					conf.args.unshift(0, el);
+				}
+
+				(function(el, evt, fn, f, conf) {
+					let cb = e => {
+						let cont = true;
+						conf.args[0] = e;
+
+						// If watch within ancestor make sure the target
+						// matches the selector
+						if (conf.targ) {
+							let targ = conf.targ;
+							let	sel = targ._$ ? targ.sel : targ;
+
+							// Update refs when targeting ref
+							if ($isString(sel) &&
+								sel.indexOf('ref:') > -1) {
+								$setRef(el);
+							}
+
+							cont = $toArray($sel(sel)).some(el => el.contains(e.target) && (targ = el));
+
+							// Ensure element argument is the target
+							conf.args[1] = conf.scope = targ;
+						}
+
+						if (cont) {
+							$exec(fn, conf);
+
+							// Unbind after first execution
+							if (conf.once) {
+								_off(el, evt, f);
+							}
+						}
+					};
+
+					// Ensure the specified element, event, and function
+					// combination hasn't already been bound
+					if (evt != 'init' && ! _bound(el, ev, f, conf.targ).length) {
+						// Determine if the event is native or custom
+						if ('on' + evt in el) {
+							el.addEventListener(evt, cb, false);
+						} else if (custom[evt]) {
+							custom[evt][0](el, fn, conf);
+						}
+
+						bound.push({
+							el: el,
+							ev: ev,
+							evt: evt,
+							cb: cb,
+							fn: f,
+							targ: conf.targ
+						});
+					}
+
+					if (evt == 'init' || conf.init === true) {
+						cb();
+					}
+				})(el, evt, fn, f, conf);
 			}
 		}
 	}, options);
 }
 
+/**
+ * Detach event(s) from element
+ *
+ * @private
+ * @param {(HTMLElement|string)} [sel]
+ * @param {string} [evt]
+ * @param {function} [fn]
+ */
+function _off(sel, evt, fn) {
+	$each(_bound(sel, evt, fn), e => {
+		if ('on' + e.evt in _doc) {
+			e.el.removeEventListener(e.evt, e.cb);
+		} else if (custom[e.evt]) {
+			custom[e.evt][1](e.el, e.cb);
+		}
+
+		bound.splice(bound.indexOf(e), 1);
+	});
+}
+
 function _bound(target, event, fn, delegateTarg) {
 	let segs = (event || '').split('.');
-	let matches = [];
+	let	matches = [];
 	target = target || [0];
 
 	$each(target, el => {
@@ -103,84 +169,6 @@ function _bound(target, event, fn, delegateTarg) {
 	return target ? matches : bound;
 }
 
-function _bind(el, evt, fn, f, ev, conf) {
-	let cb = function(e) {
-		let cont = true;
-		conf.args[0] = e;
-
-		// If watch within ancestor make sure the target
-		// matches the selector
-		if (conf.targ) {
-			let targ = conf.targ;
-			let sel = targ._$ ? targ.sel : targ;
-
-			// Update refs when targeting ref
-			if (typeof sel == 'string' &&
-				sel.indexOf('ref:') > -1) {
-				$setRef(el);
-			}
-
-			cont = $toArray($sel(sel)).some(el => el.contains(e.target) && (targ = el));
-
-			// Ensure element argument is the target
-			conf.args[1] = conf.scope = targ;
-		}
-
-		if (cont) {
-			$exec(fn, conf);
-
-			// Unbind after first execution
-			if (conf.once) {
-				_off(el, evt, f);
-			}
-		}
-	};
-
-	// Ensure the specified element, event, and function
-	// combination hasn't already been bound
-	if (evt != 'init' && ! _bound(el, ev, f, conf.targ).length) {
-		// Determine if the event is native or custom
-		if ('on' + evt in el) {
-			el.addEventListener(evt, cb, false);
-		} else if (custom[evt]) {
-			custom[evt][0](el, fn, conf);
-		}
-
-		bound.push({
-			el: el,
-			ev: ev,
-			evt: evt,
-			cb: cb,
-			fn: f,
-			targ: conf.targ
-		});
-	}
-
-	if (evt == 'init' || conf.init === true) {
-		cb();
-	}
-}
-
-/**
- * Detach event(s) from element
- *
- * @private
- * @param {(HTMLElement|string)} [sel]
- * @param {string} [evt]
- * @param {function} [fn]
- */
-function _off(sel, evt, fn) {
-	$each(_bound(sel, evt, fn), function(e) {
-		if ('on' + e.evt in _doc) {
-			e.el.removeEventListener(e.evt, e.cb);
-		} else if (custom[e.evt]) {
-			custom[e.evt][1](e.el, e.cb);
-		}
-
-		bound.splice(bound.indexOf(e), 1);
-	});
-}
-
 export default {
 	/**
 	 * Bind event function to element
@@ -200,13 +188,13 @@ export default {
 
 		if ($isObject(target) && ! target._$) {
 			let keys = Object.keys(target);
-			let i = 0;
+			let	i = 0;
 
 			for (; i < keys.length; i++) {
-				var key = keys[i];
+				let key = keys[i];
 				evts = target[key];
 
-				_process(key, evts, a);
+				_bind(key, evts, a);
 			}
 		} else {
 			if ($isString(a)) {
@@ -216,7 +204,7 @@ export default {
 				c = b;
 			}
 
-			_process(target, evts, c);
+			_bind(target, evts, c);
 		}
 	},
 
@@ -236,17 +224,15 @@ export default {
 				obj[a] = b;
 			}
 
-			for (var key in obj) {
-				if (obj.hasOwnProperty(key)) {
-					let evts = key.split(' ');
-					let i = 0;
+			for (let key in obj) {
+				let evts = key.split(' ');
+				let	i = 0;
 
-					for (; i < evts.length; i++) {
-						let evt = evts[i];
-						let fn = obj[evt];
+				for (; i < evts.length; i++) {
+					let evt = evts[i];
+					let fn = obj[evt];
 
-						_off(target, evt, fn);
-					}
+					_off(target, evt, fn);
 				}
 			}
 		} else {
