@@ -133,6 +133,36 @@ describe('Events', () => {
 			});
 		});
 
+		describe('targ', () => {
+			// TODO: what does this do?
+			it('targ', () => {
+				$events.on('.test', 'click', () => {
+					$('.test')[0].style.backgroundColor = 'red';
+				}, {
+					targ: '.test'
+				});
+
+				triggerEvent($('.test')[0], 'click');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+
+			// TODO: get clarification
+			it('should set ref on targ', () => {
+				before(createSingleDiv);
+
+				$events.on('.test', 'click', () => {
+					$('.test')[0].style.backgroundColor = 'red'
+				}, {
+					targ: 'ref:test'
+				});
+
+				triggerEvent($('.test')[0], 'click');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+		});
+
 		describe('args', () => {
 			it('can add injected arguments', () => {
 				$events.on('.test', 'click', (e, el, arg1, arg2) => {
