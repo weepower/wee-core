@@ -33,7 +33,10 @@ describe('Events', () => {
 			createSingleDiv();
 			createMultiDiv();
 		});
-		afterEach(resetDOM);
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
 
 		it('should bind a single event to a single element', () => {
 			$events.on('.test', 'click', () => {
