@@ -1,9 +1,8 @@
 import pathToRegExp from 'path-to-regexp';
-import { _castString, $isArray, $isFunction, $isString, $isObject, $unserialize } from 'core/types';
-import { _doc, _win } from 'core/variables';
+import { _castString, $isArray, $isFunction, $isString, $isObject } from 'core/types';
 import { $exec } from 'core/core';
+import { parseLocation } from 'routes/util/location';
 
-const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 let _routes = [];
 let _filters = {};
 
@@ -125,31 +124,6 @@ function _getRoute(value) {
 	}
 
 	return null;
-}
-
-/**
- * Parse url and return results
- *
- * @param {string} value
- * @returns {Object}
- * @private
- */
-function _parseUrl(value) {
-	const a = _doc.createElement('a');
-	a.href = value || window.location;
-
-	const search = a.search,
-		path = a.pathname.replace(REMOVE_SLASHES_REGEXP, '');
-
-	return {
-		full: '/' + path + search + a.hash,
-		hash: a.hash.slice(1),
-		path: '/' + path,
-		query: search ? $unserialize(search) : {},
-		segments: path.split('/'),
-		url: a.href,
-		port: a.port
-	};
 }
 
 /**
