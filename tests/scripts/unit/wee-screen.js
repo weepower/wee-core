@@ -145,6 +145,42 @@ describe('Screen', () => {
 			expect(state.one).to.equal(true);
 		});
 
+		it('can use function as callback', () => {
+			function callback() {
+				state.one = true;
+			}
+
+			$screen.map({
+				size: 3,
+				callback
+			});
+
+			setScreenSize(3);
+			expect(state.one).to.equal(true);
+		});
+
+		it('should execute multiple callbacks', () => {
+			function callbackOne() {
+				state.one = true;
+			}
+
+			function callbackTwo() {
+				state.two = true;
+			}
+
+			$screen.map({
+				size: 3,
+				callback: [
+					callbackOne,
+					callbackTwo
+				]
+			});
+
+			setScreenSize(3);
+			expect(state.one).to.equal(true);
+			expect(state.two).to.equal(true);
+		});
+
 		describe('each', () => {
 			it('should execute callback on each size until max', () => {
 				$screen.map({
