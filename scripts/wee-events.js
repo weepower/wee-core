@@ -3,8 +3,8 @@ import { $extend, $isObject, $isString, $toArray } from 'core/types';
 import { $exec } from 'core/core';
 import { _doc } from 'core/variables';
 
-const bound = [];
-const custom = {};
+let custom = {};
+let bound = [];
 
 function _bind(els, obj, options) {
 	// Redefine variables when delegating
