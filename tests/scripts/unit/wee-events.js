@@ -157,6 +157,8 @@ describe('Events', () => {
 
 		describe('context', () => {
 			it('should use provided context for selection', () => {
+				// TODO: figure out the best way to test that it's actually
+				// TODO: using provided context
 				$events.on('.new-el', 'click', (e, el) => {
 					el.style.backgroundColor = 'red';
 				}, {
