@@ -311,6 +311,23 @@ describe('Events', () => {
 			expect($events.bound()[1].evt).to.equal('mouseenter');
 			expect($events.bound()[1].fn()).to.equal('mouseenter');
 		});
+
+		// TODO: finish this test
+		// it('should check delegated selector against targeted selector', () => {
+		// 	$events.on('ref:test', 'click', (e, el) => {
+		// 		el.style.backgroundColor = 'red';
+		// 	}, {
+		// 		delegate: 'ref:test'
+		// 	});
+		//
+		// 	createDiv({
+		// 		className: 'new-el'
+		// 	}, {
+		// 		'data-ref': 'test'
+		// 	}, true);
+		//
+		// 	triggerEvent($('ref:test')[0], 'click');
+		// });
 	});
 
 	describe('off', () => {
