@@ -29,12 +29,12 @@ function triggerEvent(el, type) {
 }
 
 describe('Screen', () => {
-	describe('map', () => {
-		afterEach(() => {
-			resetState();
-			$screen.reset();
-		});
+	afterEach(() => {
+		resetState();
+		$screen.reset();
+	});
 
+	describe('map', () => {
 		it('should add a mapping to the registry', () => {
 			$screen.map({
 				size: 3,
@@ -133,11 +133,6 @@ describe('Screen', () => {
 		});
 
 		describe('each', () => {
-			afterEach(() => {
-				resetState();
-				$screen.reset();
-			});
-
 			it('should execute callback on each size until max', () => {
 				$screen.map({
 					max: 3,
@@ -179,11 +174,6 @@ describe('Screen', () => {
 		});
 
 		describe('namespace', () => {
-			afterEach(() => {
-				resetState();
-				$screen.reset();
-			});
-
 			it('should attach namespace to map object', () => {
 				$screen.map({
 					size: 3,
@@ -205,11 +195,24 @@ describe('Screen', () => {
 		});
 
 		describe('once', () => {
-			afterEach(() => {
-				resetState();
-				$screen.reset();
-			});
+			it('should only execute callback once', () => {
+				$screen.map({
+					size: 3,
+					once: true,
+					callback() {
+						state.one = true;
+					}
+				});
 
+				setScreenSize(3);
+				expect(state.one).to.equal(true);
+				resetState();
+				setScreenSize(3);
+				expect(state.one).to.equal(false);
+			})
+		});
+
+		describe('args', () => {
 			it('should only execute callback once', () => {
 				$screen.map({
 					size: 3,
@@ -229,11 +232,6 @@ describe('Screen', () => {
 	});
 
 	describe('run', () => {
-		afterEach(() => {
-			resetState();
-			$screen.reset();
-		});
-
 		it('should run all mappings', () => {
 			$screen.map([
 				{
@@ -293,11 +291,6 @@ describe('Screen', () => {
 	});
 
 	describe('size', () => {
-		afterEach(() => {
-			resetState();
-			$screen.reset();
-		});
-
 		it('should return the current screen size', () => {
 			setScreenSize(2);
 			expect($screen.size()).to.equal(2);
@@ -305,11 +298,6 @@ describe('Screen', () => {
 	});
 
 	describe('bound', () => {
-		afterEach(() => {
-			resetState();
-			$screen.reset();
-		});
-
 		it('should return the currently bound mappings', () => {
 			expect($screen.bound()).to.be.an('array');
 			expect($screen.bound().length).to.equal(0);
