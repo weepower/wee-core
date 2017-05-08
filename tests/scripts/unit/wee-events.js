@@ -82,12 +82,22 @@ describe('Events', () => {
 			expect($('.other-class')[0].style.backgroundColor).to.equal('purple');
 		});
 
+		it('should inject the event and element into the callback', () => {
+			$events.on('.test', 'click', (e, el) => {
+				expect(el.className).to.equal('test');
+				expect(e.type).to.equal('click');
+			});
+
+			triggerEvent($('.test')[0], 'click');
+		})
+
 		describe('once', () => {
 			it('should bind an event that fires only once', () => {
 				$events.on('.test', 'click', () => {
 					let bgColor = $('.test')[0].style.backgroundColor;
 
-					$('.test')[0].style.backgroundColor = bgColor === 'red' ? 'purple' : 'red';
+					$('.test')[0].style.backgroundColor =
+						bgColor === 'red' ? 'purple' : 'red';
 				}, {
 					once: true
 				});
@@ -97,6 +107,6 @@ describe('Events', () => {
 
 				expect($('.test')[0].style.backgroundColor).to.equal('red');
 			});
-		})
+		});
 	});
 });
