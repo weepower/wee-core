@@ -121,5 +121,24 @@ describe('Events', () => {
 				triggerEvent($('.test')[0], 'click');
 			});
 		});
+
+		describe('scope', () => {
+			it('can add change the scope of the callback', () => {
+				let test = {
+					param: 'test',
+					bind: function() {
+						$events.on('.test', 'click', () => {
+							expect(this.param).to.equal('test');
+						}, {
+							scope: this
+						});
+					}
+				}
+
+				test.bind();
+
+				triggerEvent($('.test')[0], 'click');
+			});
+		});
 	});
 });
