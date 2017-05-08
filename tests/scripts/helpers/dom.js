@@ -17,7 +17,7 @@ export function createSingleDiv() {
 	return div;
 }
 
-function createDiv(options) {
+export function createDiv(options) {
 	let div = document.createElement('div');
 
 	for (let option in options) {
