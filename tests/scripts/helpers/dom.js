@@ -1,15 +1,34 @@
 export function createSingleDiv() {
+	let div = createDiv({
+		textContent: 'test',
+		className: 'test',
+		style: {
+			width: '100px',
+			height: '80px',
+			border: '1px solid',
+			padding: '15px 10px',
+			margin: '10px'
+		}
+	});
+
+	div.setAttribute('data-ref', 'test');
+	document.querySelector('body').appendChild(div);
+
+	return div;
+}
+
+function createDiv(options) {
 	let div = document.createElement('div');
 
-	div.textContent = 'test';
-	div.className = 'test';
-	div.setAttribute('data-ref', 'test');
-	div.style.width = '100px';
-	div.style.height = '80px';
-	div.style.border = '1px solid';
-	div.style.padding = '15px 10px';
-	div.style.margin = '10px';
-	document.querySelector('body').appendChild(div);
+	for (let option in options) {
+		if (option === 'style') {
+			for (let styleOption in options[option]) {
+				div.style[styleOption] = options[option][styleOption];
+			}
+		} else {
+			div[option] = options[option];
+		}
+	}
 
 	return div;
 }
