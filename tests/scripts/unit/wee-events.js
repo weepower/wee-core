@@ -1,6 +1,6 @@
 import $ from 'wee-dom';
 import $events from 'wee-events';
-import { createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
+import { createDiv, createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
 
 function triggerEvent(el, type) {
    if ('createEvent' in document) {
@@ -126,8 +126,8 @@ describe('Events', () => {
 			it('can add change the scope of the callback', () => {
 				let test = {
 					param: 'test',
-					bind: function() {
-						$events.on('.test', 'click', () => {
+					bind() {
+						$events.on('.test', 'click', function() {
 							expect(this.param).to.equal('test');
 						}, {
 							scope: this
