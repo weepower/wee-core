@@ -226,10 +226,43 @@ describe('Screen', () => {
 		});
 
 		describe('args', () => {
-			it('should only execute callback once', () => {
+			it('should add to the arguments array', () => {
 				$screen.map({
 					size: 3,
-					once: true,
+					args: ['one', 'two'],
+					callback(arg, one, two) {
+						expect(one).to.equal('one');
+						expect(two).to.equal('two');
+					}
+				});
+
+				setScreenSize(3);
+			})
+		});
+
+		describe('scope', () => {
+			it('should change the scope of the callback', () => {
+				let obj = {
+					one: 'one'
+				};
+
+				$screen.map({
+					size: 3,
+					scope: obj,
+					callback() {
+						expect(this.one).to.equal('one');
+					}
+				});
+
+				setScreenSize(3);
+			});
+		});
+
+		describe('watch', () => {
+			it('should determine evaluation on screen resize', () => {
+				$screen.map({
+					size: 3,
+					watch: false,
 					callback() {
 						state.one = true;
 					}
@@ -240,7 +273,7 @@ describe('Screen', () => {
 				resetState();
 				setScreenSize(3);
 				expect(state.one).to.equal(false);
-			})
+			});
 		});
 	});
 
