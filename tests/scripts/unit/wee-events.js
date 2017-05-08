@@ -173,14 +173,97 @@ describe('Events', () => {
 			it('should use provided context for selection', () => {
 				// TODO: figure out the best way to test that it's actually
 				// TODO: using provided context
-				$events.on('.new-el', 'click', (e, el) => {
-					el.style.backgroundColor = 'red';
+				$events.on('.test', 'click', () => {
+					$('.test')[0].style.backgroundColor = 'red';
 				}, {
 					context: 'body'
 				});
 
-				triggerEvent($('.new-el')[0], 'click');
-			})
-		})
+				triggerEvent($('.test')[0], 'click');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+		});
+
+		describe('namespace', () => {
+			it('should add a namespace to event', () => {
+				// TODO: find the best way to test for namespace existence
+				$events.on('.test', 'click', function() {
+					$('.test')[0].style.backgroundColor = 'red';
+				}, {
+					namespace: 'namespace'
+				});
+
+				triggerEvent($('.test')[0], 'click');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+		});
+	});
+
+	describe('trigger', () => {
+		beforeEach(createSingleDiv);
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
+
+		it('should trigger event for matching selection', () => {
+			$events.on('.test', 'click', () => {
+				$('.test')[0].style.backgroundColor = 'red';
+			});
+
+			$events.trigger('.test', 'click');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+		});
+	});
+
+	describe('touch', () => {
+		beforeEach(createSingleDiv);
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
+
+		it('should bind touch event', () => {
+			$events.on('.test', 'swipeLeft', () => {
+				$('.test')[0].style.backgroundColor = 'red';
+			}, {
+				distance: 150,
+				movement: 20
+			});
+
+			$events.trigger('.test', 'swipeLeft');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+		});
+	});
+
+	describe('bound', () => {
+		beforeEach(createSingleDiv);
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
+
+		it('it should return an array of all bound events', () => {
+			$events.on({
+				'.test': {
+					click() {
+						//
+					},
+					mouseenter() {
+						//
+					}
+				}
+			});
+
+			expect($events.bound()).to.be.an('array');
+			expect($events.bound()[0]).to.be.an('object');
+			expect($events.bound()[0].el.className).to.equal('test');
+			expect($events.bound()[0].ev).to.equal('click');
+			expect($events.bound()[0].evt).to.equal('click');
+		});
 	});
 });
