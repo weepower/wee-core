@@ -348,4 +348,59 @@ describe('Events', () => {
 			expect($events.bound().length).to.equal(0);
 		});
 	});
+
+	describe('addEvent', () => {
+		beforeEach(() => {
+			createSingleDiv();
+			createMultiDiv();
+		});
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
+
+		it('should register custom event', () => {
+			$events.addEvent('pressHold', function(el, fn, conf) {
+				$events.on(el, 'mousedown.pressHold', function(e, el) {
+					expect(el.className).to.equal('test');
+				}, conf);
+
+				$events.on(el, 'mouseup.pressHold', function(e, el) {
+					expect(el.className).to.equal('test');
+				});
+			}, function(el, fn) {
+				$events.off(el, 'mouseup.pressHold', fn);
+			});
+
+			$events.on('.test', 'pressHold', function(e, el) {
+				$('.test')[0].style.backgroundColor = 'red';
+			});
+
+			$events.trigger('.test', 'pressHold');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+
+			$events.off('.test', null, (e) => {
+				// TODO: Find a better way to test this
+			});
+		});
+	});
+
+	// TODO: finish this test - line 99
+	// describe('init', () => {
+	// 	beforeEach(createSingleDiv);
+	// 	afterEach(resetDOM);
+	//
+	// 	it('should fire event immediately', () => {
+	// 		$events.on('.test', 'click', () => {
+	// 			$('.test')[0].style.backgroundColor = 'red';
+	// 		}, {
+	// 			init: true
+	// 		});
+	//
+	// 		triggerEvent($('.test')[0], 'click');
+	//
+	// 		expect($('.test')[0].style.backgroundColor).to.equal('red');
+	// 	});
+	// });
 });
