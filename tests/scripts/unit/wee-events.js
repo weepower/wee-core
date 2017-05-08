@@ -154,5 +154,17 @@ describe('Events', () => {
 				triggerEvent($('.new-el')[0], 'click');
 			});
 		});
+
+		describe('context', () => {
+			it('should use provided context for selection', () => {
+				$events.on('.new-el', 'click', (e, el) => {
+					el.style.backgroundColor = 'red';
+				}, {
+					context: 'body'
+				});
+
+				triggerEvent($('.new-el')[0], 'click');
+			})
+		})
 	});
 });
