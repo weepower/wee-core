@@ -1,5 +1,5 @@
 export function createSingleDiv() {
-	let div = createDiv({
+	return createDiv({
 		textContent: 'test',
 		className: 'test',
 		style: {
@@ -9,15 +9,12 @@ export function createSingleDiv() {
 			padding: '15px 10px',
 			margin: '10px'
 		}
-	});
-
-	div.setAttribute('data-ref', 'test');
-	document.querySelector('body').appendChild(div);
-
-	return div;
+	}, {
+		'data-ref': 'test'
+	}, true);
 }
 
-export function createDiv(options) {
+export function createDiv(options, attributes, append = false) {
 	let div = document.createElement('div');
 
 	for (let option in options) {
@@ -28,6 +25,14 @@ export function createDiv(options) {
 		} else {
 			div[option] = options[option];
 		}
+	}
+
+	for (let attribute in attributes) {
+		div.setAttribute(attribute, attributes[attribute]);
+	}
+
+	if (append) {
+		document.body.appendChild(div);
 	}
 
 	return div;
