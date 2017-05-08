@@ -140,5 +140,23 @@ describe('Events', () => {
 				triggerEvent($('.test')[0], 'click');
 			});
 		});
+
+		describe('delegate', () => {
+			it('should delegate bound events to specified ancestor', () => {
+				$events.on('.new-el', 'click', () => {
+					$('.new-el')[0].style.backgroundColor = 'red';
+				}, {
+					delegate: '.grandparent'
+				});
+
+				let div = createSingleDiv();
+				div.className = 'new-el';
+				$('.grandparent')[0].appendChild(div);
+
+				triggerEvent($('.new-el')[0], 'click');
+
+				expect($('.new-el')[0].style.backgroundColor).to.equal('red');
+			});
+		});
 	});
 });
