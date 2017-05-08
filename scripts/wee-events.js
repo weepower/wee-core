@@ -218,6 +218,12 @@ export default {
 	off(target, a, b) {
 		let obj = a;
 
+		if (! target && ! a) {
+			bound = [];
+			custom = {};
+			return;
+		}
+
 		if (a) {
 			if ($isString(a)) {
 				obj = [];
