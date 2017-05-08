@@ -108,5 +108,18 @@ describe('Events', () => {
 				expect($('.test')[0].style.backgroundColor).to.equal('red');
 			});
 		});
+
+		describe('args', () => {
+			it('can add injected arguments', () => {
+				$events.on('.test', 'click', (e, el, arg1, arg2) => {
+					expect(arg1).to.equal('arg1');
+					expect(arg2).to.equal('arg2');
+				}, {
+					args: ['arg1', 'arg2']
+				});
+
+				triggerEvent($('.test')[0], 'click');
+			});
+		});
 	});
 });
