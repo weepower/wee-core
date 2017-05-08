@@ -11,6 +11,8 @@ function removeEvents() {
 
 		oldElement.parentNode.replaceChild(newElement, oldElement);
 	}
+
+	$events.off();
 }
 
 function triggerEvent(el, type) {
@@ -251,10 +253,10 @@ describe('Events', () => {
 			$events.on({
 				'.test': {
 					click() {
-						//
+						return 'click';
 					},
 					mouseenter() {
-						//
+						return 'mouseenter';
 					}
 				}
 			});
@@ -264,6 +266,48 @@ describe('Events', () => {
 			expect($events.bound()[0].el.className).to.equal('test');
 			expect($events.bound()[0].ev).to.equal('click');
 			expect($events.bound()[0].evt).to.equal('click');
+			expect($events.bound()[0].fn()).to.equal('click');
+
+			expect($events.bound()[1].el.className).to.equal('test');
+			expect($events.bound()[1].ev).to.equal('mouseenter');
+			expect($events.bound()[1].evt).to.equal('mouseenter');
+			expect($events.bound()[1].fn()).to.equal('mouseenter');
+		});
+	});
+
+	describe('off', () => {
+		beforeEach(createSingleDiv);
+		afterEach(() => {
+			resetDOM();
+			removeEvents();
+		});
+
+		it('should remove a bound element', () => {
+			$events.on('.test', 'click', () => {
+				$('.test')[0].style.backgroundColor = 'red';
+			});
+
+			triggerEvent($('.test')[0], 'click');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+
+			$events.off('.test');
+
+			expect($events.bound().length).to.equal(0);
+		});
+
+		it('should remove a bound element by namespace', () => {
+			$events.on('.test', 'click.namespace', () => {
+				$('.test')[0].style.backgroundColor = 'red';
+			});
+
+			triggerEvent($('.test')[0], 'click');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+
+			$events.off(null, '.namespace');
+
+			expect($events.bound().length).to.equal(0);
 		});
 	});
 });
