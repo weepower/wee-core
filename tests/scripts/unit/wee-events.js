@@ -2,6 +2,17 @@ import $ from 'wee-dom';
 import $events from 'wee-events';
 import { createDiv, createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
 
+function removeEvents() {
+	let elements = document.body.getElementsByTagName('*');
+
+	for (let i = elements.length; i--;) {
+		let oldElement = elements[i];
+		let newElement = oldElement.cloneNode(true);
+
+		oldElement.parentNode.replaceChild(newElement, oldElement);
+	}
+}
+
 function triggerEvent(el, type) {
    if ('createEvent' in document) {
         // modern browsers, IE9+
