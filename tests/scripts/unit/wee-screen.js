@@ -99,6 +99,19 @@ describe('Screen', () => {
 			expect(state.one).to.equal(true);
 		});
 
+		it('should inject data object as first parameter to callback', () => {
+			$screen.map({
+				size: 3,
+				callback(data) {
+					expect(data).to.be.an('object');
+					expect(data).to.have.keys(['dir', 'init', 'prev', 'size']);
+					expect(data.size).to.equal(3);
+				}
+			});
+
+			setScreenSize(3);
+		});
+
 		it('should execute callback when min size is reached', () => {
 			$screen.map([
 				{
