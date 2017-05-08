@@ -140,7 +140,9 @@ export default {
 			return events;
 		}
 
-		return events.filter(obj => obj.namespace === namespace);
+		return events.filter(obj => {
+			return obj.namespace === namespace;
+		});
 	},
 
 	/**
@@ -190,6 +192,8 @@ export default {
 	 * @param {string} [namespace] - remove screen events in this namespace
 	 */
 	reset(namespace) {
-		events = events.filter(obj => obj.namespace !== namespace);
+		events = events.filter(obj => {
+			obj.namespace !== namespace;
+		});
 	}
 }
