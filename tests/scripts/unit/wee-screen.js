@@ -1,6 +1,20 @@
 import $screen from 'wee-screen';
 import { _html, _win } from 'core/variables';
 
+let state = {
+	one: false,
+	two: false,
+	three: false,
+};
+
+function resetState() {
+	state = {
+		one: false,
+		two: false,
+		three: false,
+	}
+}
+
 function setScreenSize(size) {
 	_html.style.fontFamily = '"' + size + '"';
 	triggerEvent(_win, 'resize');
