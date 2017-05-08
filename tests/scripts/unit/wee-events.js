@@ -97,6 +97,22 @@ describe('Events', () => {
 			});
 
 			triggerEvent($('.test')[0], 'click');
+		});
+
+		it('should bind multiple events to a single element selection', () => {
+			$events.on('.test', {
+				click() {
+					$('.test')[0].style.backgroundColor = 'red';
+				},
+				mouseenter() {
+					$('.test')[0].style.backgroundColor = 'purple';
+				}
+			});
+
+			triggerEvent($('.test')[0], 'click');
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('.test')[0], 'mouseenter');
+			expect($('.test')[0].style.backgroundColor).to.equal('purple');
 		})
 
 		describe('once', () => {
