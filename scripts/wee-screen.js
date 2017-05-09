@@ -77,6 +77,7 @@ function _eq(evt, size, init) {
  * @private
  * @param {boolean} [init=false] - initial page load
  * @param {Array} [rules] - breakpoint rules
+ * @param {string} [namespace] - namespace for map object
  */
 function _run(init, rules, namespace) {
 	let size = _size();
@@ -85,8 +86,11 @@ function _run(init, rules, namespace) {
 
 	// If breakpoint has been hit or resize logic initialized
 	if (size && (init || size !== current)) {
+
 		if (namespace) {
-			evts = evts.filter(obj => obj.namespace === namespace);
+			evts = evts.filter(obj => {
+				return obj.namespace === namespace;
+			});
 		}
 
 		i = evts.length;
@@ -110,7 +114,9 @@ function _run(init, rules, namespace) {
 
 				// Disable future execution if once
 				if (evt.once) {
-					events = events.filter(obj => obj.i !== evt.i);
+					events = events.filter(obj => {
+						return obj.i !== evt.i;
+					});
 				}
 			}
 		}
