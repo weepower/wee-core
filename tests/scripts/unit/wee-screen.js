@@ -340,6 +340,7 @@ describe('Screen', () => {
 		});
 
 		it('should run all namespaced mappings', () => {
+			setScreenSize(3);
 			$screen.map([
 				{
 					size: 3,
@@ -363,7 +364,7 @@ describe('Screen', () => {
 				}
 			]);
 
-			setScreenSize(3);
+			resetState();
 
 			$screen.run('namespace');
 			expect(state.one).to.equal(true);
