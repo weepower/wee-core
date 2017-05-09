@@ -126,7 +126,6 @@ describe('Screen', () => {
 			expect(state.one).to.equal(true);
 		});
 
-		// TODO: Why is this failing?
 		it('should execute callback when min and max size is reached', () => {
 			$screen.map([
 				{
@@ -141,6 +140,7 @@ describe('Screen', () => {
 			setScreenSize(1);
 			expect(state.one).to.equal(true);
 			resetState();
+			setScreenSize(4);
 			setScreenSize(3);
 			expect(state.one).to.equal(true);
 		});
