@@ -3,9 +3,11 @@ module.exports = {
 	description: 'Build',
 	usage: '- wee build [options]',
 	options: [
-		['-l, --local', 'wrap proxy around local dev domain']
+		['-img, --images', 'copy image assets to public directory'],
+		['-css, --styles', 'compile and minify Wee stylesheets only'],
+		['-js, --scripts', 'compile and minify Wee Scripts only']
 	],
 	action(config, options) {
-		console.log(config);
+		console.log(options);
 	}
 };
