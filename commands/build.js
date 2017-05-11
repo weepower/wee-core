@@ -13,17 +13,21 @@ module.exports = {
 	action(config, options) {
 		// Set Arguments array
 		let args = ['run'];
+		let option = 'build';
 
 		if (options.images) {
 			args.push('build:images');
+			option = 'build --images';
 		}
 
 		if (options.styles) {
 			args.push('build:css');
+			option = 'build --styles';
 		}
 
 		if (options.scripts) {
 			args.push('build:js');
+			option = 'build --scripts';
 		}
 
 		if (! options.scripts && ! options.styles && ! options.images ) {
@@ -41,7 +45,7 @@ module.exports = {
 		});
 
 		child.on('close', (code) => {
-			console.log(`child process exited with code ${code}`);
+			console.log(`Command: wee ` + option + ` was executed!`);
 		});
 	}
 };
