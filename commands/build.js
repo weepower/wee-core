@@ -3,12 +3,12 @@ const spawn = require('child_process').spawn;
 
 module.exports = {
 	name: 'build',
-	description: 'Build sources and assets',
+	description: 'Build source directory and image assets',
 	usage: '- wee build [options]',
 	options: [
 		['-i, --images', 'copy image assets to public directory'],
-		['-c, --styles', 'compile and minify Wee stylesheets only'],
-		['-s, --scripts', 'compile and minify Wee scripts only']
+		['-c, --styles', 'compile and minify Wee stylesheets'],
+		['-s, --scripts', 'compile and minify Wee scripts']
 	],
 	action(config, options) {
 		// Set Arguments array
@@ -30,7 +30,7 @@ module.exports = {
 			option = 'build --scripts';
 		}
 
-		if (! options.scripts && ! options.styles && ! options.images ) {
+		if (! options.scripts && ! options.styles && ! options.images) {
 			args.push('build');
 		}
 
@@ -49,6 +49,5 @@ module.exports = {
 		child.on('close', (code) => {
 			console.log(`Command: wee ` + option + ` was executed!`);
 		});
-
 	}
 };
