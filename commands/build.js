@@ -7,7 +7,7 @@ module.exports = {
 	usage: '- wee build [options]',
 	options: [
 		['-i, --images', 'copy image assets to public directory'],
-		['-c, --css', 'compile and minify Wee stylesheets only'],
+		['-c, --styles', 'compile and minify Wee stylesheets only'],
 		['-s, --scripts', 'compile and minify Wee scripts only']
 	],
 	action(config, options) {
@@ -22,7 +22,7 @@ module.exports = {
 
 		if (options.css) {
 			args.push('build:css');
-			option = 'build --css';
+			option = 'build --styles';
 		}
 
 		if (options.scripts) {
