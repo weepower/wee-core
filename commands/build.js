@@ -6,9 +6,9 @@ module.exports = {
 	description: 'Build sources and assets',
 	usage: '- wee build [options]',
 	options: [
-		['-img, --images', 'copy image assets to public directory'],
-		['-css, --styles', 'compile and minify Wee stylesheets only'],
-		['-js, --scripts', 'compile and minify Wee scripts only']
+		['-i, --images', 'copy image assets to public directory'],
+		['-c, --css', 'compile and minify Wee stylesheets only'],
+		['-s, --scripts', 'compile and minify Wee scripts only']
 	],
 	action(config, options) {
 		// Set Arguments array
@@ -20,9 +20,9 @@ module.exports = {
 			option = 'build --images';
 		}
 
-		if (options.styles) {
+		if (options.css) {
 			args.push('build:css');
-			option = 'build --styles';
+			option = 'build --css';
 		}
 
 		if (options.scripts) {
@@ -33,6 +33,8 @@ module.exports = {
 		if (! options.scripts && ! options.styles && ! options.images ) {
 			args.push('build');
 		}
+
+		args.push('--ansi');
 
 		// Execute npm build [options]
 		let child = spawn('npm', args, {
@@ -47,5 +49,6 @@ module.exports = {
 		child.on('close', (code) => {
 			console.log(`Command: wee ` + option + ` was executed!`);
 		});
+
 	}
 };
