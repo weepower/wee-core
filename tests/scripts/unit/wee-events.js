@@ -175,7 +175,6 @@ describe('Events', () => {
 		});
 
 		describe('args', () => {
-
 			it('can add injected arguments', () => {
 				let state = false;
 
@@ -221,7 +220,7 @@ describe('Events', () => {
 					delegate: 'body'
 				});
 
-				document.body.appendChild(createDiv({ className: 'new-el' }));
+				createDiv({ className: 'new-el' }, {}, true);
 
 				triggerEvent($('.new-el')[0], 'click');
 			});
