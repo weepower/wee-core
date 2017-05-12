@@ -158,7 +158,7 @@ function _bound(target, event, fn, delegateTarg) {
 		});
 	});
 
-	return target ? matches : bound;
+	return matches;
 }
 
 export default {
