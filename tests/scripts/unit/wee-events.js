@@ -60,22 +60,23 @@ describe('Events', () => {
 			expect($('.test')[0].style.backgroundColor).to.equal('purple');
 		});
 
+		// TODO: Try to figure out the best way to test multiple bindings
 		it('should bind multiple events to multiple elements', () => {
 			$events.on({
 				'#first': {
-					click() {
-						$('#first')[0].style.backgroundColor = 'red';
+					click(e, el) {
+						el.style.backgroundColor = 'red';
 					},
-					mouseenter() {
-						$('#first')[0].style.backgroundColor = 'purple';
+					mouseenter(e, el) {
+						el.style.backgroundColor = 'purple';
 					}
 				},
-				'.other-class': {
-					click() {
-						$('.other-class')[0].style.backgroundColor = 'red';
+				'.child': {
+					click(e, el) {
+						el.style.backgroundColor = 'red';
 					},
-					mouseenter() {
-						$('.other-class')[0].style.backgroundColor = 'purple';
+					mouseenter(e, el) {
+						el.style.backgroundColor = 'purple';
 					}
 				}
 			});
@@ -84,10 +85,20 @@ describe('Events', () => {
 			expect($('#first')[0].style.backgroundColor).to.equal('red');
 			triggerEvent($('#first')[0], 'mouseenter');
 			expect($('#first')[0].style.backgroundColor).to.equal('purple');
-			triggerEvent($('.other-class')[0], 'click');
-			expect($('.other-class')[0].style.backgroundColor).to.equal('red');
-			triggerEvent($('.other-class')[0], 'mouseenter');
-			expect($('.other-class')[0].style.backgroundColor).to.equal('purple');
+
+			triggerEvent($('.child')[0], 'click');
+			expect($('.child')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('.child')[0], 'mouseenter');
+			expect($('.child')[0].style.backgroundColor).to.equal('purple');
+
+			// Reset background color
+			$('.child')[0].style.backgroundColor = '';
+
+			triggerEvent($('.child').eq(1)[0], 'click');
+			expect($('.child').eq(1)[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('.child').eq(1)[0], 'mouseenter');
+			expect($('.child').eq(1)[0].style.backgroundColor).to.equal('purple');
+
 		});
 
 		it('should inject the event and element into the callback', () => {
@@ -164,13 +175,20 @@ describe('Events', () => {
 		});
 
 		describe('args', () => {
+
 			it('can add injected arguments', () => {
+				let state = false;
+
 				$events.on('.test', 'click', (e, el, arg1, arg2) => {
 					expect(arg1).to.equal('arg1');
 					expect(arg2).to.equal('arg2');
+
+					state = true;
 				}, {
 					args: ['arg1', 'arg2']
 				});
+
+				expect(state).to.equal(true);
 
 				triggerEvent($('.test')[0], 'click');
 			});
@@ -178,18 +196,18 @@ describe('Events', () => {
 
 		describe('scope', () => {
 			it('can add change the scope of the callback', () => {
-				let test = {
-					param: 'test',
-					bind() {
-						$events.on('.test', 'click', function() {
-							expect(this.param).to.equal('test');
-						}, {
-							scope: this
-						});
-					}
-				}
+				let state = false;
 
-				test.bind();
+				$events.on('.test', 'click', function() {
+					expect(this.param).to.equal('test');
+					state = true;
+				}, {
+					scope: {
+						param: 'test'
+					}
+				});
+
+				expect(state).to.equal(true);
 
 				triggerEvent($('.test')[0], 'click');
 			});
