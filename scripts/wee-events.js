@@ -139,15 +139,7 @@ function _bound(target, event, fn, delegateTarg) {
 				match = false;
 			}
 
-			if (event &&
-				(
-					segs[0] !== '' &&
-					segs[0] != parts[0]
-				) ||
-				(
-					segs[1] &&
-					segs[1] != parts[1]
-				)) {
+			if (event && (segs[0] !== '' && segs[0] != parts[0]) || (segs[1] && segs[1] != parts[1])) {
 				match = false;
 			}
 
