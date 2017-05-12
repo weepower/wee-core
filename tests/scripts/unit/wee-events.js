@@ -228,17 +228,33 @@ describe('Events', () => {
 
 		describe('context', () => {
 			it('should use provided context for selection', () => {
-				// TODO: figure out the best way to test that it's actually
-				// TODO: using provided context
-				$events.on('.test', 'click', () => {
-					$('.test')[0].style.backgroundColor = 'red';
+				let ctxOne = createDiv({
+						className: 'context-one'
+					}, {}, true);
+				let ctxOneInner = createDiv({
+						className: 'context-inner'
+					});
+
+				ctxOne.appendChild(ctxOneInner);
+
+				let ctxTwo = createDiv({
+						className: 'context-two'
+					}, {}, true);
+				let ctxTwoInner = createDiv({
+						className: 'context-inner'
+					});
+
+				ctxTwo.appendChild(ctxTwoInner);
+
+				$events.on('.context-inner', 'click', (e, el) => {
+					el.style.backgroundColor = 'red';
 				}, {
-					context: 'body'
+					context: '.context-two'
 				});
 
-				triggerEvent($('.test')[0], 'click');
+				$events.trigger('.context-inner', 'click');
 
-				expect($('.test')[0].style.backgroundColor).to.equal('red');
+				expect($('.context-inner').eq(1)[0].style.backgroundColor).to.equal('red');
 			});
 		});
 
