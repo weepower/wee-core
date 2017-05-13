@@ -3,11 +3,9 @@ import { _castString, $isArray, $isFunction, $isString, $isObject } from 'core/t
 import { $exec } from 'core/core';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
-import { getRouteMapping, mapRoutes } from 'routes/route-map';
+import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
 
-let _routes = [];
 let _filters = {};
-let map;
 
 /**
  * Add a filter to the filter registry
@@ -191,8 +189,8 @@ router.filters = function filters() {
  * @param {Array} routes
  * @returns {Object}
  */
-router.map = function register(routes) {
-	map = mapRoutes(routes);
+router.map = function routerMap(routes) {
+	mapRoutes(routes);
 
 	return this;
 }
@@ -201,26 +199,33 @@ router.map = function register(routes) {
  * Reset all routes and filters - mainly for testing purposes
  */
 router.reset = function reset() {
-	_routes = [];
-	_filters = {};
+	resetRouteMap();
 }
 
 /**
  * Retrieve all routes or specific route by name/path
  *
  * @param {string} [value]
+ * @param {string} keyType
  * @returns {Object|Array}
  */
-router.routes = function routes(value) {
-	if (value) {
-		let result = _getRoute(value);
+router.routes = function routes(key, keyType = 'path') {
+	let routeMaps = getRouteMap();
+	let map;
 
-		if (result) {
-			return result.route;
-		}
+	if (keyType === 'path') {
+		map = routeMaps.pathMap;
+	} else if (keyType === 'name') {
+		map = routeMaps.nameMap;
+	} else {
+		return null;
 	}
 
-	return _routes;
+	if (key) {
+		return map[key];
+	}
+
+	return map;
 }
 
 /**
