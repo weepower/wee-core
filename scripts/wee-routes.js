@@ -1,10 +1,13 @@
 import pathToRegExp from 'path-to-regexp';
 import { _castString, $isArray, $isFunction, $isString, $isObject } from 'core/types';
 import { $exec } from 'core/core';
-import { parseLocation } from 'routes/util/location';
+import { parseLocation } from 'routes/location';
+import Handler from 'routes/route-handler';
+import { getRouteMapping, mapRoutes } from 'routes/route-map';
 
 let _routes = [];
 let _filters = {};
+let map;
 
 /**
  * Add a filter to the filter registry
@@ -27,27 +30,6 @@ function _addFilters(filters) {
 		if (filters.hasOwnProperty(filter)) {
 			_addFilter(filter, filters[filter]);
 		}
-	}
-}
-
-/**
- * Add a route to routes array
- *
- * @param routes
- * @private
- */
-function _addRoutes(routes) {
-	const count = routes.length;
-
-	for (let i = 0; i < count; i++) {
-		let route = _getRoute(routes[i].path);
-
-		if (route) {
-			_routes[route.index] = routes[i];
-			break;
-		}
-
-		_routes.push(routes[i]);
 	}
 }
 
@@ -168,134 +150,141 @@ function _processRoute(handler, params) {
 	}
 }
 
-// Class to be used as handler for routes
-export class RouteHandler {
-	constructor(conf) {
-		this.init = conf.init;
+/**
+ * Set base configurations for router
+ *
+ * @param {Object} config
+ */
+function router(config = {history: true}) {
+	// TODO: Apply configuration
+}
+
+/**
+ * Add a filter or array of filters to internal filter registry
+ *
+ * @param {string|Array} name
+ * @param {Function} [callback]
+ */
+router.addFilter = function addFilter(name, callback) {
+	if ($isObject(name)) {
+		_addFilters(name);
+	} else {
+		_addFilter(name, callback)
+	}
+
+	return this;
+}
+
+/**
+ * Return all registered filters
+ *
+ * @returns {Object}
+ */
+router.filters = function filters() {
+	return _filters;
+}
+
+// TODO: Change map to register
+/**
+ * Register routes
+ *
+ * @param {Array} routes
+ * @returns {Object}
+ */
+router.map = function register(routes) {
+	map = mapRoutes(routes);
+
+	return this;
+}
+
+/**
+ * Reset all routes and filters - mainly for testing purposes
+ */
+router.reset = function reset() {
+	_routes = [];
+	_filters = {};
+}
+
+/**
+ * Retrieve all routes or specific route by name/path
+ *
+ * @param {string} [value]
+ * @returns {Object|Array}
+ */
+router.routes = function routes(value) {
+	if (value) {
+		let result = _getRoute(value);
+
+		if (result) {
+			return result.route;
+		}
+	}
+
+	return _routes;
+}
+
+/**
+ * Process all matching routes
+ */
+router.run = function run() {
+	const uri = this.uri();
+	const length = _routes.length;
+	let process = true;
+
+	for (let i = 0; i < length; i++) {
+		let route = _routes[i];
+		let path = route.path;
+		let params = _getParams(path, uri.full);
+
+		if (params) {
+			path = pathToRegExp.compile(path)(params);
+		}
+
+		// If calculated route matches, execute handler
+		if (uri.full === path) {
+			if (route.filter) {
+				process = _processFilters(route.filter, params, uri);
+			}
+
+			if (process) {
+				const handler = route.handler;
+
+				if ($isArray(handler)) {
+					handler.forEach(h => _processRoute(h, params));
+				} else {
+					_processRoute(handler, params);
+				}
+			}
+		}
 	}
 }
 
-export default {
-	/**
-	 * Add a filter or array of filters to internal filter registry
-	 *
-	 * @param {string|Array} name
-	 * @param {Function} [callback]
-	 */
-	addFilter(name, callback) {
-		if ($isObject(name)) {
-			_addFilters(name);
-		} else {
-			_addFilter(name, callback)
-		}
+// TODO: Perhaps break out location methods into own module
+/**
+ * Retrieve the current path's segments as an array or segment by index
+ *
+ * @param index
+ * @returns {Array|string}
+ */
+router.segments = function(index) {
+	const segments = this.uri().segments;
 
-		return this;
-	},
-
-	/**
-	 * Return all registered filters
-	 *
-	 * @returns {{}}
-	 */
-	filters() {
-		return _filters;
-	},
-
-	/**
-	 * Register routes
-	 *
-	 * @param {Array} routes
-	 * @returns {Object}
-	 */
-	map(routes) {
-		_addRoutes(routes);
-
-		return this;
-	},
-
-	/**
-	 * Reset all routes and filters - mainly for testing purposes
-	 */
-	reset() {
-		_routes = [];
-		_filters = {};
-	},
-
-	/**
-	 * Retrieve all routes or specific route by name/path
-	 *
-	 * @param {string} [value]
-	 * @returns {Object|Array}
-	 */
-	routes(value) {
-		if (value) {
-			let result = _getRoute(value);
-
-			if (result) {
-				return result.route;
-			}
-		}
-
-		return _routes;
-	},
-
-
-	run() {
-		const uri = this.uri();
-		const length = _routes.length;
-		let run = true;
-
-		for (let i = 0; i < length; i++) {
-			let route = _routes[i];
-			let path = route.path;
-			let params = _getParams(path, uri.full);
-
-			if (params) {
-				path = pathToRegExp.compile(path)(params);
-			}
-
-			// If calculated route matches, execute handler
-			if (uri.full === path) {
-				if (route.filter) {
-					run = _processFilters(route.filter, params, uri);
-				}
-
-				if (run) {
-					let handler = route.handler;
-
-					if ($isArray(handler)) {
-						handler.forEach(h => _processRoute(h, params));
-					} else {
-						_processRoute(handler, params);
-					}
-				}
-			}
-		}
-	},
-
-	/**
-	 * Retrieve the current path's segments as an array or segment by index
-	 *
-	 * @param index
-	 * @returns {*}
-	 */
-	segments(index) {
-		const segments = this.uri().segments;
-
-		if (index >= 0 && segments[index]) {
-			return segments[index];
-		}
-
-		return segments;
-	},
-
-	/**
-	 * Retrieve information about current location
-	 *
-	 * @param {string} [value]
-	 * @returns {Object}
-	 */
-	uri(value) {
-		return _parseUrl(value);
+	if (index >= 0 && segments[index]) {
+		return segments[index];
 	}
-};
+
+	return segments;
+}
+
+/**
+ * Retrieve information about current location
+ *
+ * @param {string} [value]
+ * @returns {Object}
+ */
+router.uri = function uri(value) {
+	return parseLocation(value);
+}
+
+export default router;
+export const RouteHandler = Handler;
