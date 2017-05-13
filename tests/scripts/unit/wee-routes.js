@@ -44,6 +44,58 @@ describe('Router', () => {
 			expect(routes['/'].handler).to.equal('old handler');
 			expect(routes['/about'].path).to.equal('/about');
 		});
+
+		it('should map nested children routes', () => {
+			router.map(basicRoutes)
+				.map([
+					{
+						path: '/parent/:id',
+						handler: () => {},
+						children: [
+							{ path: 'child', handler: 'I am a child' }
+						]
+					}
+				]);
+
+			let routes = router.routes();
+
+			expect(Object.keys(routes).length).to.equal(4);
+			expect(routes['/parent/:id/child']).to.be.an('object');
+			expect(routes['/parent/:id/child'].path).to.equal('/parent/:id/child');
+			expect(routes['/parent/:id/child'].handler).to.equal('I am a child');
+		});
+
+		it('should map by route name if provided', () => {
+			router.map([
+					{
+						name: 'home',
+						path: '/',
+						handler: 'this is the home route handler'
+					},
+					{
+						name: 'parent',
+						path: '/parent/:id',
+						handler: () => {},
+						children: [
+							{ name: 'child', path: 'child', handler: 'I am a child' }
+						]
+					}
+				]);
+
+				let routes = router.routes(null, 'name');
+
+				expect(routes.home.path).to.equal('/');
+				expect(routes.parent.path).to.equal('/parent/:id');
+				expect(routes.child.path).to.equal('/parent/:id/child');
+		});
+
+		it('should prepend / if route has no parent', () => {
+			router.map([
+				{ path: 'something', handler: () => {} }
+			]);
+
+			expect(router.routes()['/something'].path).to.equal('/something');
+		});
 	});
 
 	// TODO: Get all commented out tests to pass after refactor of map and matching routes

@@ -17,7 +17,7 @@ function _addRouteRecord(route, parent) {
 		name,
 		parent,
 		handler,
-		path: _normalizePath(path),
+		path: _normalizePath(path, parent),
 		regex: PathToRegexp(path),
 		// redirect, TODO: Look into redirect functionality further
 		beforeEnter: route.before,
@@ -25,8 +25,13 @@ function _addRouteRecord(route, parent) {
 		meta: route.meta || {}
 	};
 
-	if (route.children) {
-		// TODO: Call _addRouteRecord with parent added
+	if (route.children && route.children.length) {
+		let i = 0;
+		let length = route.children.length;
+
+		for (; i < length; i++) {
+			_addRouteRecord(route.children[i], route);
+		}
 	}
 
 	if (! pathMap[record.path]) {
@@ -54,12 +59,14 @@ function _normalizePath (path, parent) {
 
 	path = path.replace(/\/$/, '');
 
+	// If path begins with / then assume it is independent route
 	if (path[0] === '/') {
 		return path;
 	}
 
+	// If no parent, and route doesn't start with /, then prepend /
 	if (! parent) {
-		return path;
+		return '/' + path;
 	}
 
 	return _cleanPath(`${parent.path}/${path}`);
