@@ -1,8 +1,8 @@
 import PathToRegexp from 'path-to-regexp';
 
-const pathList = [];
-const pathMap = {};
-const nameMap = {};
+let pathList = [];
+let pathMap = {};
+let nameMap = {};
 
 /**
  * Register new route
@@ -12,14 +12,16 @@ const nameMap = {};
  * @private
  */
 function _addRouteRecord(route, parent) {
-	const { path, name } = route;
+	const { path, name, handler } = route;
 	const record = {
 		name,
 		parent,
+		handler,
 		path: _normalizePath(path),
 		regex: PathToRegexp(path),
 		// redirect, TODO: Look into redirect functionality further
-		beforeEnter: route.beforeEnter, // TODO: what about beforeUpdate?
+		beforeEnter: route.before,
+		beforeUpdate: route.beforeUpdate,
 		meta: route.meta || {}
 	};
 
