@@ -41,18 +41,22 @@ function _addRouteRecord(route, parent) {
  * Find full path of route
  *
  * @param {string} path
- * @param {Object} parent
+ * @param {Object} [parent]
  * @returns {*}
  * @private
  */
 function _normalizePath (path, parent) {
+	if (path === '/') {
+		return path;
+	}
+
 	path = path.replace(/\/$/, '');
 
 	if (path[0] === '/') {
 		return path;
 	}
 
-	if (parent == null) {
+	if (! parent) {
 		return path;
 	}
 
