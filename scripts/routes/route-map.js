@@ -86,14 +86,26 @@ export function mapRoutes(routes) {
 	for (let i = 0; i < count; i++) {
 		_addRouteRecord(routes[i]);
 	}
-
-	return getRouteMapping();
 }
 
-export function getRouteMapping() {
+/**
+ * Retrieve current route mapping objects
+ *
+ * @returns {Object}
+ */
+export function getRouteMap() {
 	return {
 		pathList,
 		pathMap,
 		nameMap
 	};
+}
+
+/**
+ * Reset all map objects
+ */
+export function resetRouteMap() {
+	pathList = [];
+	pathMap = {};
+	nameMap = {};
 }
