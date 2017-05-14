@@ -155,10 +155,8 @@ function _processRoute(handler, params) {
  *
  * @param {Object} config
  */
-function router(config = {history: true}) {
-	if (config.history) {
-		_history = new History();
-	}
+function router(config = {}) {
+	_history = new History();
 
 	return router;
 }
