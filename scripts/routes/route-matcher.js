@@ -1,6 +1,7 @@
 import { getRouteMap } from './route-map';
 import { parseLocation } from './location';
 import { createRoute } from './route';
+import { _castString } from '../core/types';
 
 /**
  * Match route against current path and assign params
@@ -28,7 +29,7 @@ export function matchRoute (regex, path, params) {
 		const val = typeof match[i] === 'string' ? decodeURIComponent(match[i]) : match[i];
 
 		if (key) {
-			params[key.name] = val;
+			params[key.name] = _castString(val);
 		}
 	}
 
@@ -54,6 +55,7 @@ export function match(path) {
 		const path = pathList[i];
 		const record = pathMap[path];
 
+		// Add params to location object as part of check
 		if (matchRoute(record.regex, location.path, location.params)) {
 			matches.push(record);
 		}
