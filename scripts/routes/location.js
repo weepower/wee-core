@@ -5,7 +5,7 @@ const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 /**
  * Parse url and return results
  *
- * @param {string} value
+ * @param {string} [value]
  * @returns {Object}
  * @private
  */
