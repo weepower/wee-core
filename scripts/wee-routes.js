@@ -239,42 +239,6 @@ router.routes = function routes(key, keyType = 'path') {
 	return map;
 }
 
-/**
- * Process all matching routes
- */
-router.run = function run() {
-	const uri = this.uri();
-	const length = _routes.length;
-	let process = true;
-
-	for (let i = 0; i < length; i++) {
-		let route = _routes[i];
-		let path = route.path;
-		let params = _getParams(path, uri.full);
-
-		if (params) {
-			path = pathToRegExp.compile(path)(params);
-		}
-
-		// If calculated route matches, execute handler
-		if (uri.full === path) {
-			if (route.filter) {
-				process = _processFilters(route.filter, params, uri);
-			}
-
-			if (process) {
-				const handler = route.handler;
-
-				if ($isArray(handler)) {
-					handler.forEach(h => _processRoute(h, params));
-				} else {
-					_processRoute(handler, params);
-				}
-			}
-		}
-	}
-}
-
 // TODO: Perhaps break out location methods into own module
 /**
  * Retrieve the current path's segments as an array or segment by index
@@ -282,7 +246,7 @@ router.run = function run() {
  * @param index
  * @returns {Array|string}
  */
-router.segments = function(index) {
+router.segments = function uriSegments(index) {
 	const segments = this.uri().segments;
 
 	if (index >= 0 && segments[index]) {
