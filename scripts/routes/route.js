@@ -21,12 +21,19 @@ function _getMetaFromRecords(records) {
 	return meta;
 }
 
+export const START = createRoute({ path: '/' });
+
 /**
+ * Create final immutable route object
  *
- * @param location
+ * @param {Object} location
  * @returns {Object}
  */
 export function createRoute(location) {
+	if (! location.matches) {
+		location.matches = [];
+	}
+
 	const route = {
 		name: location.matches.length === 1 ? location.matches[0].name : null,
 		meta: _getMetaFromRecords(location.matches),
@@ -34,10 +41,25 @@ export function createRoute(location) {
 		hash: location.hash,
 		query: location.query,
 		segments: location.segments,
-		params: location.params,
+		params: location.params || {},
 		full: location.full,
 		matches: location.matches
 	};
 
 	return Object.freeze(route);
+}
+
+/**
+ * Compare route equality
+ *
+ * @param {Object} newRoute
+ * @param {Object} oldRoute
+ * @returns {boolean}
+ */
+export function isSameRoute(newRoute, oldRoute) {
+	if (oldRoute === START) {
+		return newRoute === oldRoute;
+	}
+
+	return newRoute.full === oldRoute.full;
 }

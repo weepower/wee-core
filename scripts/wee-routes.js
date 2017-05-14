@@ -4,10 +4,10 @@ import { $exec } from 'core/core';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
-import { match } from './routes/route-matcher';
-import { getCurrent } from './routes/history';
+import History from './routes/history';
 
 let _filters = {};
+let _history = {};
 
 /**
  * Add a filter to the filter registry
@@ -156,7 +156,11 @@ function _processRoute(handler, params) {
  * @param {Object} config
  */
 function router(config = {history: true}) {
-	// TODO: Apply configuration
+	if (config.history) {
+		_history = new History();
+	}
+
+	return router;
 }
 
 /**
@@ -181,7 +185,7 @@ router.addFilter = function addFilter(name, callback) {
  * @returns {Object}
  */
 router.currentRoute = function currentRoute() {
-	return getCurrent();
+	return _history.current;
 }
 
 /**
@@ -202,6 +206,9 @@ router.filters = function filters() {
  */
 router.map = function routerMap(routes) {
 	mapRoutes(routes);
+
+	// Ensure we are on the current URL/evaluate routes
+	_history.navigate(this.uri().full);
 
 	return this;
 }
