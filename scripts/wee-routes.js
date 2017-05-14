@@ -4,6 +4,8 @@ import { $exec } from 'core/core';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
+import { match } from './routes/route-matcher';
+import { getCurrent } from './routes/history';
 
 let _filters = {};
 
@@ -171,6 +173,15 @@ router.addFilter = function addFilter(name, callback) {
 	}
 
 	return this;
+}
+
+/**
+ * Retrieve current route
+ *
+ * @returns {Object}
+ */
+router.currentRoute = function currentRoute() {
+	return getCurrent();
 }
 
 /**

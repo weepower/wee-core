@@ -1,5 +1,6 @@
 import router from 'wee-routes';
 import { RouteHandler } from 'wee-routes';
+import * as history from 'routes/history';
 
 const basicRoutes = [
 	{
@@ -165,16 +166,16 @@ describe('Router', () => {
 		});
 	});
 
-	// describe('run', () => {
-	// 	let state = false;
-	// 	let stateArray = [];
-	//
-	// 	afterEach(() => {
-	// 		router.reset();
-	// 		state = false;
-	// 		stateArray = [];
-	// 	});
-	//
+	describe('run', () => {
+		let state = false;
+		let stateArray = [];
+
+		afterEach(() => {
+			router.reset();
+			state = false;
+			stateArray = [];
+		});
+
 	// 	it('should evaluate existing routes against current URL', () => {
 	// 		setPath('/');
 	// 		router.map([
@@ -243,15 +244,47 @@ describe('Router', () => {
 	// 		expect(stateArray.length).to.equal(2);
 	// 	});
 	//
-	// 	it('should create and maintain "from" object', () => {
-	// 		expect($router.current).to.deep.equal({
-	//
-	// 		});
-	// 	});
-	//
-	// 	it('should create and maintain "to" object', () => {
-	// 		// TODO: Write test
-	// 	});
+		it('should create and maintain "from" object', () => {
+			const handler = function() {};
+			setPath('/path/to/stuff?key=value&key2=value2#hash');
+
+			router.map([
+				{ name: 'home', path: '/path/to/:place', handler: handler, meta: {test: 'meta'} }
+			]);
+
+			// Update current path since we manually navigated to new URL
+			history.setCurrent();
+
+			expect(router.currentRoute()).to.deep.equal({
+				name: 'home',
+				meta: {test: 'meta'},
+				path: '/path/to/stuff',
+				hash: 'hash',
+				query: {key: 'value', key2: 'value2'},
+				params: {place: 'stuff'},
+				segments: ['path', 'to', 'stuff'],
+				full: '/path/to/stuff?key=value&key2=value2#hash',
+				matches: [
+					{
+						before: undefined,
+						beforeUpdate: undefined,
+						handler: handler,
+						init: undefined,
+						update: undefined,
+						meta: {test: 'meta'},
+						name: 'home',
+						once: false,
+						parent: undefined,
+						path: '/path/to/:place',
+						regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
+					}
+				]
+			});
+		});
+
+		it('should create and maintain "to" object', () => {
+			// TODO: Write test
+		});
 	//
 	// 	describe('handler', () => {
 	// 		beforeEach(() => {
@@ -586,7 +619,7 @@ describe('Router', () => {
 	// 			});
 	// 		});
 	// 	});
-	// });
+	});
 
 	describe('segments', () => {
 		afterEach(router.reset);

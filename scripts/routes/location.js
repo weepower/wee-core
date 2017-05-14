@@ -13,8 +13,8 @@ export function parseLocation(value) {
 	const a = _doc.createElement('a');
 	a.href = value || window.location;
 
-	const search = a.search,
-		path = a.pathname.replace(REMOVE_SLASHES_REGEXP, '');
+	const search = a.search;
+	const path = a.pathname.replace(REMOVE_SLASHES_REGEXP, '');
 
 	return {
 		full: '/' + path + search + a.hash,
