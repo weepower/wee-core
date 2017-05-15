@@ -1378,11 +1378,11 @@ describe('DOM', () => {
 			});
 		} else if (isEdge()) {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(788);
+				expect($(window).width()).to.equal(897);
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(776);
+				expect($(document).width()).to.equal(885);
 			});
 		} else {
 			it('should return the width of window', () => {
