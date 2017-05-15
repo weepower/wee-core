@@ -7,7 +7,7 @@ import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
 import History from './routes/history';
 
 let _filters = {};
-let _history = {};
+let _history = new History();
 
 /**
  * Add a filter to the filter registry
@@ -156,8 +156,6 @@ function _processRoute(handler, params) {
  * @param {Object} config
  */
 function router(config = {}) {
-	_history = new History();
-
 	return router;
 }
 
