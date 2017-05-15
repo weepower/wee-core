@@ -1,7 +1,11 @@
-var chalk = require('chalk'),
-	fs = require('fs-extra'),
-	notifier = require('node-notifier'),
-	path = require('path');
+const chalk = require('chalk');
+const fs = require('fs-extra');
+const notifier = require('node-notifier');
+const path = require('path');
+const process = require('process');
+const basePath = __filename.split('/').slice(0, -1).join('/');
+const projectPath = process.env.PWD;
+const projectSourcePath = `${projectPath}/source`;
 
 module.exports = {
 	/**
@@ -44,5 +48,22 @@ module.exports = {
 			chalk.bgBlack.bold('[' + position + '] ') +
 			message + ' ' + (details || '')
 		);
+	},
+
+	logList(name, desc) {
+		console.log(
+			`${chalk.green.bgBlack.bold(name)} - ${chalk.white.bgBlack(desc)}`
+		);
+	},
+
+	paths: {
+		root: basePath,
+		styles: `${basePath}/styles`,
+		project: {
+			root: projectPath,
+			source: projectSourcePath,
+			styles: `${projectSourcePath}/styles`,
+			scripts: `${projectSourcePath}/scripts`
+		}
 	}
 };
