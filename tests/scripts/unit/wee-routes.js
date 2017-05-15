@@ -262,7 +262,7 @@ describe('Router', () => {
 				full: '/path/to/stuff?key=value&key2=value2#hash',
 				matches: [
 					{
-						before: undefined,
+						beforeInit: undefined,
 						beforeUpdate: undefined,
 						handler: handler,
 						init: undefined,
@@ -272,6 +272,7 @@ describe('Router', () => {
 						once: false,
 						parent: undefined,
 						path: '/path/to/:place',
+						processed: true,
 						regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
 					}
 				]

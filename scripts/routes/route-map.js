@@ -20,12 +20,13 @@ function _addRouteRecord(route, parent) {
 		path: _normalizePath(path, parent),
 		regex: PathToRegexp(path),
 		// redirect, TODO: Look into redirect functionality further
-		before: route.before,
+		beforeInit: route.beforeInit,
 		beforeUpdate: route.beforeUpdate,
 		init: route.init,
 		update: route.update,
 		meta: route.meta || {},
-		once: route.once === true
+		once: route.once === true,
+		processed: false
 	};
 
 	if (route.children && route.children.length) {
