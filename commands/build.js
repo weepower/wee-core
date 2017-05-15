@@ -1,53 +1,88 @@
 const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
+const name = 'build';
+const assets = {
+	images: '--images',
+	styles: '--styles',
+	scripts: '--scripts'
+};
 
 module.exports = {
-	name: 'build',
-	description: 'Build source directory and image assets',
+	name: name,
+	description: 'Compile project assets',
 	usage: '- wee build [options]',
 	options: [
-		['-i, --images', 'copy image assets to public directory'],
-		['-c, --styles', 'compile and minify Wee stylesheets'],
-		['-s, --scripts', 'compile and minify Wee scripts']
+		['-i, ' + assets.images, 'copy and minify image assets'],
+		['-c, ' + assets.styles, 'compile and minify stylesheets'],
+		['-s, ' + assets.scripts, 'compile and minify scripts']
 	],
 	action(config, options) {
 		// Set Arguments array
-		let args = ['run'];
-		let option = 'build';
+		const commands = [];
+		const ansi = '--ansi';
+		const baseCommand = 'run';
+		let feedbackItems = [];
+		let option = name;
+		let spawnCount = 0;
+		let error = null;
 
 		if (options.images) {
-			args.push('build:images');
-			option = 'build --images';
+			commands.push([baseCommand, 'build:images', ansi]);
+			option = option + ' ' + assets.images;
+			feedbackItems.push(assets.images);
 		}
 
-		if (options.css) {
-			args.push('build:css');
-			option = 'build --styles';
+		if (options.styles) {
+			commands.push([baseCommand, 'build:css', ansi]);
+			option += ' ' + assets.styles;
+			feedbackItems.push(assets.styles);
 		}
 
 		if (options.scripts) {
-			args.push('build:js');
-			option = 'build --scripts';
+			commands.push([baseCommand, 'build:js', ansi]);
+			option += ' ' + assets.scripts;
+			feedbackItems.push(assets.scripts);
 		}
 
-		if (! options.scripts && ! options.styles && ! options.images) {
-			args.push('build');
+		if (! commands.length) {
+			commands.push([baseCommand, 'build', ansi]);
+			feedbackItems.push('build');
 		}
 
-		args.push('--ansi');
+		const lastSpawn = commands.length;
 
-		// Execute npm build [options]
-		let child = spawn('npm', args, {
-			cwd: config.rootPath,
-			stdio: 'inherit'
-		});
+		commands.forEach(command => {
+			// Execute npm build [options]
+			let child = spawn('npm', command, {
+				cwd: config.rootPath,
+				stdio: 'inherit'
+			});
 
-		child.on('error', data => {
-			console.log(data);
-		});
+			child.on('error', data => {
+				error = true;
+				console.log(data);
+			});
 
-		child.on('close', (code) => {
-			console.log(`Command: wee ` + option + ` was executed!`);
+			child.on('close', (code) => {
+				spawnCount += 1;
+
+				if (spawnCount === lastSpawn && ! error) {
+					console.log(`Finished: ${buildFeedback(feedbackItems)}`);
+				}
+			});
 		});
 	}
 };
+
+/**
+ * Build out feedback string
+ *
+ * @param {Array} items
+ * @return {string}
+ */
+function buildFeedback(items) {
+	return items.map(item => {
+			return item.replace('--', '');
+		})
+		.join(', ');
+}
