@@ -47,7 +47,8 @@ module.exports = {
 		 	return 0;
 		});
 			list.forEach(item => {
-				if (! item.comment.code.includes('_')) {
+				found = true;
+				if (! item.private === true) {
 					utils.logList(item.comment.code.split('(')[0], item.description);
 				}
 			});
