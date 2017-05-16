@@ -175,50 +175,140 @@ describe('Router', () => {
 			stateArray = [];
 		});
 
-		it('should evaluate handler of matching routes', () => {
+		it('should evaluate beforeInit hooks registered to route records', () => {
 			setPath('/');
+
 			router().map([
 				{
 					path: '/',
-					handler() {
+					beforeInit(to, from, next) {
 						state = true;
+						next();
 					}
-				}
-			]);
-
-			expect(state).to.equal(true);
-		});
-
-		it('should parse url variable parameters and pass to handler', () => {
-			setPath('/blog/5');
-			router().map([
+				},
 				{
-					path: '/blog/:id',
-					handler(params) {
-						state = true;
-						expect(params.id).to.equal(5);
+					path: '*',
+					beforeInit(to, from, next) {
+						state = 'catch all';
+						next();
 					}
 				}
 			]);
 
-			expect(state).to.equal(true);
+			expect(state).to.equal('catch all');
 		});
 
-	// 	it('should pass multiple url variables as an object to handler', () => {
-	// 		setPath('/blog/tech/2017/10/5/blog-title');
-	// 		router().map([
-	// 			{
-	// 				path: '/blog/:category/:year/:month/:day/:slug',
-	// 				handler(params) {
-	// 					expect(params.category).to.equal('tech');
-	// 					expect(params.year).to.equal(2017);
-	// 					expect(params.month).to.equal(10);
-	// 					expect(params.day).to.equal(5);
-	// 					expect(params.slug).to.equal('blog-title');
-	// 				}
-	// 			}
-	// 		]);
-	// 	});
+		// it('should abort navigation if false is passed to "next"', () => {
+		// 	setPath('/');
+		// 	beforeState = false;
+		// 	initState = false;
+		//
+		// 	router().map([
+		// 		{
+		// 			path: '/',
+		// 			before(to, from, next) {
+		// 				beforeState = true;
+		// 				next(false);
+		// 			},
+		// 			init() {
+		// 				initState = true;
+		// 			}
+		// 		},
+		// 		{
+		// 			path: '*',
+		// 			before(to, from, next) {
+		// 				beforeState = false;
+		// 			}
+		// 		}
+		// 	]);
+		//
+		// 	expect(beforeState).to.be.true;
+		// 	expect(initState).to.be.false;
+		// });
+
+		it('should resolve beforeInit hooks asynchronously', done => {
+			setPath('/test');
+
+			router.map([
+				{
+					path: '/test',
+					beforeInit(to, from, next) {
+						setTimeout(() => {
+							state = true;
+							next();
+						}, 250);
+					}
+				}
+			]);
+
+			setTimeout(() => {
+				expect(state).to.be.true;
+				done();
+			}, 300);
+		});
+
+		// it('should not resolve before hook if "next" is not executed', () => {
+		// 	setPath('/');
+		// 	state = false;
+		//
+		// 	router().map([
+		// 		{
+		// 			path: '/',
+		// 			before(to, from, next) {
+		// 				setTimeout(() => {
+		// 					state = true;
+		// 				}, 1000);
+		// 			}
+		// 		}
+		// 	]);
+		//
+		// 	expect(state).to.be.false;
+		// });
+
+		// it('should evaluate handler of matching routes', () => {
+		// 	setPath('/');
+		// 	router().map([
+		// 		{
+		// 			path: '/',
+		// 			handler() {
+		// 				state = true;
+		// 			}
+		// 		}
+		// 	]);
+		//
+		// 	expect(state).to.equal(true);
+		// });
+
+		// it('should parse url variable parameters and pass to handler', () => {
+		// 	setPath('/blog/5');
+		// 	router().map([
+		// 		{
+		// 			path: '/blog/:id',
+		// 			handler(params) {
+		// 				state = true;
+		// 				expect(params.id).to.equal(5);
+		// 			}
+		// 		}
+		// 	]);
+		//
+		// 	expect(state).to.equal(true);
+		// });
+
+		// it('should pass multiple url variables as an object to handler', () => {
+		// 	setPath('/blog/tech/2017/10/5/blog-title');
+		// 	router().map([
+		// 		{
+		// 			path: '/blog/:category/:year/:month/:day/:slug',
+		// 			handler(params) {
+		// 				expect(params.category).to.equal('tech');
+		// 				expect(params.year).to.equal(2017);
+		// 				expect(params.month).to.equal(10);
+		// 				expect(params.day).to.equal(5);
+		// 				expect(params.slug).to.equal('blog-title');
+		// 			}
+		// 		}
+		// 	]);
+		// });
 	//
 	// 	it('should evaluate wildcard routes and run handlers accordingly', () => {
 	// 		setPath('/test/test2/3');
