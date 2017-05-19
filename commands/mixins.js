@@ -52,6 +52,8 @@ module.exports = {
 					utils.logList(item.comment.code.split('(')[0], item.description);
 				}
 			});
+
+			console.log('\n');
 		} else {
 			list.forEach(item => {
 				let mixinName = item.comment.code.split('(')[0];
@@ -63,8 +65,9 @@ module.exports = {
 				if (fuzzy.test(mixin, mixinName)) {
 					found = true;
 
-					if (item.param != undefined) {
+					if (item.param != undefined && item.private !== true) {
 						utils.logList(mixinName.charAt(0).toUpperCase() + mixinName.slice(1), item.description);
+
 						item.params.forEach(param => {
 							mixinTable.push([
 								[param.name],
@@ -74,11 +77,14 @@ module.exports = {
 
 							]);
 						});
-						console.log(chalk.bold('Available Parameters'));
+
 						console.log(mixinTable.toString());
+						console.log('\n');
 					} else {
-						utils.logList(mixinName.charAt(0).toUpperCase() + mixinName.slice(1), item.description);
-						console.log(chalk.bold('Mixin has no parameters'));
+						if (item.private !== true) {
+							utils.logList(mixinName.charAt(0).toUpperCase() + mixinName.slice(1), item.description);
+							console.log(chalk.bold('Mixin has no parameters'));
+						}
 					}
 				}
 			 });
