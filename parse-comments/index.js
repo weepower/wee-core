@@ -1,18 +1,9 @@
-/**
- * Module dependencies
- */
-
-const _ = require('lodash');
-const arrayify = require('arrayify-compact');
 const extract = require('extract-comments');
 const utils = require('./lib/utils');
 
 function parser (str, opts) {
   return parser.codeContext(str, opts);
 }
-
-parser.nolinks = [];
-parser.links = {};
 
 /**
  * Extract code comments, and merge in code context.
@@ -30,7 +21,7 @@ parser.codeContext = function (str, opts) {
       let comment = comments[key];
       let o = parser.parseComment(comment.content, opts);
       o.comment = comment;
-      _.merge(o, parser.parseDescription(o));
+      Object.assign(o, parser.parseDescription(o));
       res.push(o);
     }
   }
@@ -47,11 +38,6 @@ parser.codeContext = function (str, opts) {
 parser.normalizeDesc = function (comment) {
   // strip trailing whitespace from description
   comment.description = utils.trimRight(comment.description);
-
-  // Extract leads from comments
-  let parsedDesc = parser.parseLead(comment.description);
-  comment.description = parsedDesc.desc;
-  return comment;
 };
 
 /**
@@ -64,12 +50,7 @@ parser.normalizeDesc = function (comment) {
 parser.parseDescription = function (comment) {
   // strip trailing whitespace from description
   if (comment.description) {
-    _.merge(comment, parser.normalizeDesc(comment));
-  }
-
-  // @example tags, strip trailing whitespace
-  if (comment.example) {
-    comment.example = utils.trimRight(comment.example);
+    Object.assign(comment, parser.normalizeDesc(comment));
   }
   return comment;
 };
@@ -105,144 +86,11 @@ parser.parseParams = function (param) {
 };
 
 /**
- * Parse the subproperties from parameters.
- *
- * @param  {String} `param`
- * @return {Object}
- */
-
-parser.parseSubprop = function (match, params) {
-  let subprop = match[2];
-  if (/\./.test(subprop)) {
-    let parts = subprop.split('.');
-    let def = parts[1].split('=');
-    params.name = def[0];
-    params['default'] = def[1] || null;
-    subprop = parts[0];
-  }
-  params.parent = subprop;
-  return params;
-};
-
-/**
- * Parse the parameters from a string.
- *
- * @param  {String} `param`
- * @return {Object}
- */
-
-parser.mergeSubprops = function (c, subprop) {
-  if (c.hasOwnProperty(subprop) && typeof c[subprop] === 'object') {
-    let o = {};
-
-    c[subprop].forEach(function (child) {
-      o[child.parent] = o[child.parent] || [];
-      o[child.parent].push(child);
-      delete child.parent;
-    });
-
-    if (c.hasOwnProperty('params')) {
-      c.params = c.params.map(function (param) {
-        if (o[param.name]) {
-          param[subprop] = o[param.name];
-        }
-        return param;
-      });
-    }
-  }
-  return c;
-};
-
-/**
  * Parse `@return` comments.
  *
  * @param  {String} `str`
  * @return {Object}
  */
-
-parser.parseReturns = function (str) {
-  let match = /^\{([^\}]+)\}/.exec(str);
-  return match && match[1];
-};
-
-/**
- * Parse the "lead" from a description.
- *
- * @param  {String} `str`
- * @return {Object}
- */
-
-parser.parseLead = function (str) {
-  let re = /^([\s\S]+?)(?:\n\n)/;
-
-  let lead = '';
-  let description = str.replace(re, function (match, a) {
-    lead += a.split('\n').join(' ');
-    return match.replace(a, '');
-  });
-
-  return {
-    desc: description,
-    lead: lead
-  };
-};
-
-/**
- * Parse links.
- *
- * @param  {String} `str`
- * @return {Object}
- */
-
-parser.parseLink = function (str) {
-  let re = /^!?\[((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*)\]\(\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*\)/;
-  let match = str.match(re);
-  if (match) {
-    return {
-      text: match[1],
-      url: match[2],
-      alt: match[3]
-    };
-  }
-};
-
-/**
- * Parse nolinks.
- *
- * @param  {String} `str`
- * @return {Object}
- */
-
-parser.parseNolink = function (str) {
-  let nolink = /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/;
-  let ref = /^!?\[((?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*)\]\s*\[([^\]]*)\]/;
-  let match;
-  if (match = str.match(nolink)) {
-    return match[0];
-  } else if (match = str.match(ref)) {
-    return match[0];
-  }
-  return null;
-};
-
-/**
- * Extract links
- *
- * @param {Object} `c` Comment object.
- * @param {String} `line`
- */
-
-parser.extractLinks = function (c, line) {
-  let href = parser.parseLink(line);
-  if (href) {
-    parser.links[href.text] = href;
-  }
-
-  let nolink = parser.parseNolink(line);
-  if (nolink) {
-    parser.nolinks.push(nolink);
-  }
-};
 
 /**
  * Parse `@tags`.
@@ -252,27 +100,35 @@ parser.extractLinks = function (c, line) {
  * @return {Object}
  */
 
-parser.parseTags = function (comment, options) {
-  let opts = options || {};
+parser.parseTags = function (comment, opts = {}) {
 
   // parse @param tags (`singular: plural`)
-  let props = _.merge({
-    'return': 'returns',
-    param   : 'params',
+  let props = Object.assign({
+    param: 'params',
     property: 'properties',
-    option  : 'options'
+    option: 'options',
+    return: 'return'
   }, opts.subprops);
-
-  props = _.omit(props, ['api', 'constructor', 'class', 'static', 'type']);
 
   Object.keys(props).forEach(function (key) {
     let value = props[key];
-    if (comment[key]) {
 
-      let arr = comment[key] || [];
-      comment[value] = arrayify(arr).map(function (str) {
-        return parser.parseParams(str);
-      });
+    if (comment[key]) {
+      const arr = comment[key] || [];
+      const count = arr.length;
+      let result = [];
+
+      for (let i = 0; i < count; i++) {
+        const item = arr[i];
+
+        if (Array.isArray(item)) {
+          result.concat(item);
+        } else if (item) {
+          result.push(item);
+        }
+      }
+
+      comment[value] = result.map(str => parser.parseParams(str));
     }
   });
   return comment;
@@ -304,7 +160,6 @@ parser.parseComment = function (content, options) {
     }
 
     if (line) {
-      parser.extractLinks(c, line);
 
       let match = line.match(/^(\s*@[\S]+)\s*(.*)/);
       if (match) {
@@ -340,12 +195,6 @@ parser.parseComment = function (content, options) {
           } else {
             c.description = line;
           }
-        } else {
-          if (c.example) {
-            c.example += '\n' + line;
-          } else {
-            c.example = line;
-          }
         }
       }
       afterNewLine = false;
@@ -355,50 +204,15 @@ parser.parseComment = function (content, options) {
         if (c.description) {
           c.description += '\n' + line;
         }
-      } else {
-        if (c.example) {
-          c.example += '\n' + line;
-        }
       }
     }
     i++;
     return c;
   }, {});
 
-  let singular = _.keys(opts.subprops);
-  let plural = _.values(opts.subprops);
-
-  let diff = _.difference(props, singular).filter(function (prop) {
-    return prop !== 'param' &&
-      prop !== 'constructor' &&
-      prop !== 'return' &&
-      prop !== 'static' &&
-      prop !== 'class' &&
-      prop !== 'type' &&
-      prop !== 'api';
-  });
-
-  // let pluralized = diff.map(function (name) {
-  //   return inflect.pluralize(name);
-  // });
-  //
-  // singular = _.union(diff, singular);
-  // plural = _.union([], pluralized, plural);
-  //
-  let comments = this.parseTags(comment, {
-    subprops: _.zipObject(singular, plural)
-  });
-
-  // Pass custom subprops (plural/arrays)
-  plural.forEach(function (prop) {
-    this.mergeSubprops(comments, prop);
-  }.bind(this));
+  let comments = this.parseTags(comment);
 
   return comments;
 };
-
-/**
- * Expose `parser`
- */
 
 module.exports = parser;
