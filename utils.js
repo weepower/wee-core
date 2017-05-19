@@ -52,7 +52,7 @@ module.exports = {
 
 	logList(name, desc) {
 		console.log(
-			`${chalk.green.bgBlack.bold(name)} - ${chalk.white.bgBlack(desc)}`
+			`\n${chalk.green.bgBlack.bold(name)} - ${chalk.white.bgBlack(desc)}`
 		);
 	},
 
