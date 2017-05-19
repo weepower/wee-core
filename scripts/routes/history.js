@@ -96,14 +96,23 @@ export default class History {
 			return;
 		}
 
+		this.pending = route;
 		const queues = this.buildQueues(route.matches);
 		const iterator = (hook, next) => {
 			hook(route, this.current, to => {
+				if (to === false) {
+					// TODO: Any feedback necessary here to alert program of aborted navigation?
+				}
+
 				next(to);
 			});
 		};
 
-		runQueue(queues.beforeQueue, iterator, () => {
+		runQueue(queues.beforeQueue, iterator, error => {
+			if (error) {
+				// TODO: Prohibit processing of other routes
+			}
+
 			// TODO: Finish queues
 		});
 

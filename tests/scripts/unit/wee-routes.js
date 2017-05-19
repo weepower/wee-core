@@ -175,76 +175,83 @@ describe('Router', () => {
 			stateArray = [];
 		});
 
-		it('should evaluate beforeInit hooks registered to route records', () => {
-			setPath('/');
+		describe('before hooks', () => {
+			it('should evaluate beforeInit hooks registered to route records', () => {
+				setPath('/');
 
-			router().map([
-				{
-					path: '/',
-					beforeInit(to, from, next) {
-						state = true;
-						next();
-					}
-				},
-				{
-					path: '*',
-					beforeInit(to, from, next) {
-						state = 'catch all';
-						next();
-					}
-				}
-			]);
-
-			expect(state).to.equal('catch all');
-		});
-
-		// it('should abort navigation if false is passed to "next"', () => {
-		// 	setPath('/');
-		// 	beforeState = false;
-		// 	initState = false;
-		//
-		// 	router().map([
-		// 		{
-		// 			path: '/',
-		// 			before(to, from, next) {
-		// 				beforeState = true;
-		// 				next(false);
-		// 			},
-		// 			init() {
-		// 				initState = true;
-		// 			}
-		// 		},
-		// 		{
-		// 			path: '*',
-		// 			before(to, from, next) {
-		// 				beforeState = false;
-		// 			}
-		// 		}
-		// 	]);
-		//
-		// 	expect(beforeState).to.be.true;
-		// 	expect(initState).to.be.false;
-		// });
-
-		it('should resolve beforeInit hooks asynchronously', done => {
-			setPath('/test');
-
-			router.map([
-				{
-					path: '/test',
-					beforeInit(to, from, next) {
-						setTimeout(() => {
+				router().map([
+					{
+						path: '/',
+						beforeInit(to, from, next) {
 							state = true;
 							next();
-						}, 250);
+						}
+					},
+					{
+						path: '*',
+						beforeInit(to, from, next) {
+							state = 'catch all';
+							next();
+						}
 					}
-				}
-			]);
+				]);
 
-			setTimeout(() => {
-				expect(state).to.be.true;
-				done();
-			}, 300);
+				expect(state).to.equal('catch all');
+			});
+
+			it('should resolve beforeInit hooks asynchronously', done => {
+				setPath('/test');
+
+				router.map([
+					{
+						path: '/test',
+						beforeInit(to, from, next) {
+							setTimeout(() => {
+								state = true;
+								next();
+							}, 250);
+						}
+					}
+				]);
+
+				setTimeout(() => {
+					expect(state).to.be.true;
+					done();
+				}, 300);
+			});
+
+			it('should stop processing of routes if false is passed to "next"', () => {
+				setPath('/');
+				let beforeState = 0;
+				let initState = 0;
+
+				router().map([
+					{
+						path: '/',
+						beforeInit(to, from, next) {
+							beforeState += 1;
+							next(false);
+						},
+						init() {
+							initState += 1;
+						}
+					},
+					{
+						path: '*',
+						beforeInit(to, from, next) {
+							beforeState += 1;
+							next();
+						},
+						beforeUpdate() {
+
+						}
+					}
+				]);
+
+				expect(beforeState).to.equal(1);
+				// TODO: Ensure test stops processing of init when init callbacks are processing
+				expect(initState).to.equal(0);
+			});
 		});
 
 		// it('should not resolve before hook if "next" is not executed', () => {
