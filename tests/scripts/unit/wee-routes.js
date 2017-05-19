@@ -98,31 +98,45 @@ describe('Router', () => {
 		});
 	});
 
-	// TODO: Get all commented out tests to pass after refactor of map and matching routes
-	// describe('routes', () => {
-	// 	afterEach(router().reset);
-	//
-	// 	it('should return route array', () => {
-	// 		router().map(basicRoutes);
-	//
-	// 		expect(router().routes()).to.be.an('array');
-	// 		expect(router().routes()[0].path).to.equal('/');
-	// 	});
-	//
-	// 	it('should return the route with specific path', () => {
-	// 		router().map(basicRoutes);
-	//
-	// 		expect(router().routes().length).to.be.greaterThan(0);
-	// 		expect(router().routes('/')).to.be.an('object');
-	// 		expect(router().routes('/about').path).to.equal('/about');
-	// 	});
-	//
-	// 	it('should return the route with specific name', () => {
-	// 		router().map([{ path: '/other', name: 'other', handler: () => {} }].concat(basicRoutes));
-	//
-	// 		expect(router().routes('other').path).to.equal('/other');
-	// 	});
-	// });
+	describe('routes', () => {
+		afterEach(router().reset);
+
+		it('should return route path mapping', () => {
+			router.map(basicRoutes);
+
+			expect(router.routes()).to.be.an('object');
+			expect(router.routes()['/'].path).to.equal('/');
+		});
+
+		it('should return the route with specific path', () => {
+			router.map(basicRoutes);
+
+			expect(router.routes(null, 'list').length).to.equal(2);
+			expect(router.routes('/')).to.be.an('object');
+			expect(router.routes('/about').path).to.equal('/about');
+		});
+
+		it('should return the route with specific name', () => {
+			router.map([{ path: '/other', name: 'test', handler: () => {} }].concat(basicRoutes));
+
+			expect(router.routes('test').path).to.equal('/other');
+		});
+
+		it('should return the route name mapping', () => {
+			router.map([{ path: '/other', name: 'test', handler: () => {} }].concat(basicRoutes));
+
+			const nameMap = router.routes(null, 'name');
+
+			expect(nameMap).to.be.an('object');
+			expect(nameMap.test.path).to.equal('/other');
+		});
+
+		it('should return the route path list', () => {
+			router.map(basicRoutes);
+
+			expect(router.routes(null, 'list')).to.deep.equal(['/', '/about']);
+		});
+	});
 
 	describe('run', () => {
 		let state = false;
@@ -133,6 +147,10 @@ describe('Router', () => {
 			state = false;
 			stateArray = [];
 		});
+
+		// it('should match one route', () => {
+		//
+		// });
 
 		describe('before hooks', () => {
 			it('should evaluate beforeInit hooks registered to route records', () => {
