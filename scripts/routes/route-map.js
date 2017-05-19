@@ -29,6 +29,7 @@ function _addRouteRecord(route, parent) {
 		processed: false
 	};
 
+	// Children should be mapped before parent in case of wildcard in parent
 	if (route.children && route.children.length) {
 		let i = 0;
 		let length = route.children.length;

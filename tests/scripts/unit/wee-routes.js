@@ -52,17 +52,25 @@ describe('Router', () => {
 						path: '/parent/:id',
 						handler: () => {},
 						children: [
-							{ path: 'child', handler: 'I am a child' }
+							{ path: 'child', handler: 'I am a child' },
+							{ path: 'child2', handler: 'I am a second child' }
 						]
 					}
 				]);
 
-			let routes = router().routes();
+			const list = router().routes(null, 'list');
+			const routes = router().routes();
 
-			expect(Object.keys(routes).length).to.equal(4);
+			// Verify mapping objects are correct
+			expect(Object.keys(routes).length).to.equal(5);
 			expect(routes['/parent/:id/child']).to.be.an('object');
 			expect(routes['/parent/:id/child'].path).to.equal('/parent/:id/child');
 			expect(routes['/parent/:id/child'].handler).to.equal('I am a child');
+
+			// Verify that order of mapping of child routes is correct
+			expect(list[2]).to.equal('/parent/:id/child');
+			expect(list[3]).to.equal('/parent/:id/child2');
+			expect(list[4]).to.equal('/parent/:id');
 		});
 
 		it('should map by route name if provided', () => {
