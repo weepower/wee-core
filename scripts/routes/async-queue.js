@@ -12,8 +12,12 @@ export default function runQueue(queue, iterator, callback) {
 			callback();
 		} else {
 			if (queue[index]) {
-				iterator(queue[index], () => {
-					step(index + 1);
+				iterator(queue[index], next => {
+					if (next === false) {
+						callback(true);
+					} else {
+						step(index + 1);
+					}
 				});
 			} else {
 				step(index + 1);
