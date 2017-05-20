@@ -1,6 +1,8 @@
+import { genKey } from './key';
+
 export default class RouteHandler {
 	constructor(conf) {
-		this.processed = false;
+		this.id = genKey();
 		this.init = conf.init;
 		this.beforeInit = null;
 		this.beforeUpdate = null;
