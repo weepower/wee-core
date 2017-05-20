@@ -24,12 +24,12 @@ function setPath(path) {
 
 describe('Router', () => {
 	describe('map', () => {
-		beforeEach(router().reset);
+		beforeEach(router.reset);
 
 		it('should accept an array of objects', () => {
-			router().map(basicRoutes);
+			router.map(basicRoutes);
 
-			expect(Object.keys(router().routes()).length).to.equal(2);
+			expect(router.routes(null, 'list').length).to.equal(2);
 		});
 
 		it('should not overwrite existing path object', () => {
@@ -156,35 +156,49 @@ describe('Router', () => {
 			stateArray = [];
 		});
 
-		// it('should match one route', () => {
-		//
-		// });
+		it('should match one route', () => {
+
+		});
+
+		it('should match child route before parent route', () => {
+			router.map(basicRoutes.concat([
+				{
+					path: '/parent/*',
+					handler: () => state = 'parent',
+					children: [
+						{ path: 'child', handler: () => state = 'child' }
+					]
+				}
+			]));
+
+			expect(state).to.equal('child');
+		});
 
 		describe('before hooks', () => {
-			it('should evaluate beforeInit hooks registered to route records', () => {
+			it('should evaluate before hook of matched route record', () => {
 				setPath('/');
 
 				router().map([
 					{
 						path: '/',
-						beforeInit(to, from, next) {
-							state = true;
+						before(to, from, next) {
+							state = 'home';
 							next();
 						}
 					},
 					{
 						path: '*',
-						beforeInit(to, from, next) {
+						before(to, from, next) {
 							state = 'catch all';
 							next();
 						}
 					}
 				]);
 
-				expect(state).to.equal('catch all');
+				expect(state).to.equal('home');
 			});
 
-			it('should resolve beforeInit hooks asynchronously', done => {
+			it('should resolve before hooks asynchronously', done => {
 				setPath('/test');
 
 				router.map([
@@ -203,6 +217,14 @@ describe('Router', () => {
 					expect(state).to.be.true;
 					done();
 				}, 300);
+			});
+
+			it('should evaluate beforeEach hook(s) before route record is evaluated', () => {
+				// TODO: Write test
+			});
+
+			it('should evaluate parent before hooks before children route records', () => {
+				// TODO: Write test
 			});
 
 			it('should stop processing of routes if false is passed to "next"', () => {
@@ -344,14 +366,15 @@ describe('Router', () => {
 				full: '/path/to/stuff?key=value&key2=value2#hash',
 				matches: [
 					{
-						beforeInit: undefined,
-						beforeUpdate: undefined,
+						before: undefined,
 						handler: handler,
 						init: undefined,
 						update: undefined,
+						after: undefined,
+						unload: undefined,
+						pop: undefined,
 						meta: {test: 'meta'},
 						name: 'home',
-						once: false,
 						parent: undefined,
 						path: '/path/to/:place',
 						processed: true,
