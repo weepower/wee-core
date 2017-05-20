@@ -45,23 +45,20 @@ export function matchRoute (regex, path, params) {
 export function match(path) {
 	const { pathList, pathMap } = getRouteMap();
 	const location = parseLocation(path);
-	const matches = [];
 	let i = 0;
 	let routeCount = pathList.length;
 
 	location.params = {};
 
 	for (; i < routeCount; i++) {
-		const path = pathList[i];
-		const record = pathMap[path];
+		const record = pathMap[pathList[i]];
 
 		// Add params to location object as part of check
 		if (matchRoute(record.regex, location.path, location.params)) {
-			matches.push(record);
+			return createRoute(location, record);
 		}
 	}
 
-	location.matches = matches;
-
+	// No match
 	return createRoute(location);
 }

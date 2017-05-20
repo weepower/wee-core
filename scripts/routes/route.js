@@ -1,24 +1,18 @@
 /**
- * Aggregate meta properties from many route records
+ * Find all ancestor routes
  *
- * @param {Array} records
- * @returns {Object}
- * @private
+ * @param {Object} record
+ * @returns {Array}
  */
-function _getMetaFromRecords(records) {
-	const meta = {};
-	const count = records.length;
-	let i = 0;
+function _createMatched(record) {
+	let result = [];
 
-	for (; i < count; i++) {
-		const recordMeta = records[i].meta;
-
-		Object.keys(recordMeta).forEach(prop => {
-			meta[prop] = recordMeta[prop];
-		});
+	while (record) {
+		result.unshift(record);
+		record = record.parent;
 	}
 
-	return meta;
+	return result;
 }
 
 export const START = createRoute({ path: '/' });
@@ -27,23 +21,20 @@ export const START = createRoute({ path: '/' });
  * Create final immutable route object
  *
  * @param {Object} location
+ * @param {Object} record
  * @returns {Object}
  */
-export function createRoute(location) {
-	if (! location.matches) {
-		location.matches = [];
-	}
-
+export function createRoute(location, record = {}) {
 	const route = {
-		name: location.matches.length === 1 ? location.matches[0].name : null,
-		meta: _getMetaFromRecords(location.matches),
+		name: record.name,
+		meta: record.meta || {},
 		path: location.path,
 		hash: location.hash,
 		query: location.query,
 		segments: location.segments,
 		params: location.params || {},
 		full: location.full,
-		matches: location.matches
+		matched: _createMatched(record)
 	};
 
 	return Object.freeze(route);
