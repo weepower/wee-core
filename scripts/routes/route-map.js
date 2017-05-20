@@ -20,13 +20,13 @@ function _addRouteRecord(route, parent) {
 		path: _normalizePath(path, parent),
 		regex: PathToRegexp(path),
 		// redirect, TODO: Look into redirect functionality further
-		beforeInit: route.beforeInit,
-		beforeUpdate: route.beforeUpdate,
+		before: route.before,
 		init: route.init,
 		update: route.update,
-		meta: route.meta || {},
-		once: route.once === true,
-		processed: false
+		after: route.after,
+		unload: route.unload,
+		pop: route.pop,
+		meta: route.meta || {}
 	};
 
 	// Children should be mapped before parent in case of wildcard in parent
