@@ -1,6 +1,3 @@
-import pathToRegExp from 'path-to-regexp';
-import { _castString, $isArray, $isFunction, $isString, $isObject } from 'core/types';
-import { $exec } from 'core/core';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
@@ -18,37 +15,12 @@ function router(config = {}) {
 }
 
 /**
- * Add a filter or array of filters to internal filter registry
- *
- * @param {string|Array} name
- * @param {Function} [callback]
- */
-router.addFilter = function addFilter(name, callback) {
-	if ($isObject(name)) {
-		_addFilters(name);
-	} else {
-		_addFilter(name, callback)
-	}
-
-	return this;
-}
-
-/**
  * Retrieve current route
  *
  * @returns {Object}
  */
 router.currentRoute = function currentRoute() {
 	return _history.current;
-}
-
-/**
- * Return all registered filters
- *
- * @returns {Object}
- */
-router.filters = function filters() {
-	return _filters;
 }
 
 // TODO: Change map to register
@@ -68,7 +40,7 @@ router.map = function routerMap(routes) {
 }
 
 /**
- * Reset all routes and filters - mainly for testing purposes
+ * Reset all routes - mainly for testing purposes
  */
 router.reset = function reset() {
 	resetRouteMap();
