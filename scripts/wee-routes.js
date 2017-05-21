@@ -33,9 +33,6 @@ router.currentRoute = function currentRoute() {
 router.map = function routerMap(routes) {
 	mapRoutes(routes);
 
-	// Ensure we are on the current URL/evaluate routes
-	_history.navigate(this.uri().full);
-
 	return this;
 }
 
@@ -44,6 +41,8 @@ router.map = function routerMap(routes) {
  */
 router.reset = function reset() {
 	resetRouteMap();
+	resetHooks();
+	_history.current = START;
 }
 
 /**
@@ -74,6 +73,24 @@ router.routes = function routes(key, keyType = 'path') {
 	}
 
 	return map;
+}
+
+router.run = function runRoutes(value) {
+	if (! value) {
+		_history.navigate(this.uri().full);
+		return this;
+	}
+
+	// TODO: This is going to set the state of the current route in history
+	// TODO: I don't think that will be desirable
+	// TODO: Do we need a way to evaluate routes without changing history state?
+	const { pathMap, nameMap } = getRouteMap();
+
+	if (pathMap[value]) {
+		_history.navigate(value);
+	} else if (nameMap[value]) {
+		_history.navigate(value);
+	}
 }
 
 // TODO: Perhaps break out location methods into own module
