@@ -98,10 +98,14 @@ router.routes = function routes(key, keyType = 'path') {
 	let routeMaps = getRouteMap();
 	let map;
 
-	if (key && routeMaps.pathMap[key]) {
-		return routeMaps.pathMap[key];
-	} else if (key && routeMaps.nameMap[key]) {
-		return routeMaps.nameMap[key];
+	if (key) {
+		if (routeMaps.pathMap.hasOwnProperty(key)) {
+			return routeMaps.pathMap[key];
+		} else if (routeMaps.nameMap.hasOwnProperty(key)) {
+			return routeMaps.nameMap[key];
+		} else {
+			return null;
+		}
 	}
 
 	if (keyType === 'path') {
@@ -110,8 +114,6 @@ router.routes = function routes(key, keyType = 'path') {
 		map = routeMaps.nameMap;
 	} else if (keyType === 'list') {
 		map = routeMaps.pathList;
-	} else {
-		return null;
 	}
 
 	return map;

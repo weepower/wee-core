@@ -275,9 +275,19 @@ describe('Router', () => {
 		});
 
 		it('should return the route with specific name', () => {
-			router.map([{ path: '/other', name: 'test', handler: () => {} }].concat(basicRoutes));
+			router.map([
+				{ path: '/other', name: 'test', handler: () => {} }
+			].concat(basicRoutes));
 
 			expect(router.routes('test').path).to.equal('/other');
+		});
+
+		it('should return null if route does not exist', () => {
+			router.map([
+				{ path: '/' }
+			]);
+
+			expect(router.routes('nothing')).to.be.null;
 		});
 
 		it('should return the route name mapping', () => {
