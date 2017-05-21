@@ -11,15 +11,13 @@ import { _castString } from '../core/types';
  * @param {Object} [params]
  * @returns {boolean}
  */
-export function matchRoute (regex, path, params) {
+export function matchRoute (regex, path, params = {}) {
 	const match = path.match(regex);
 	let i = 0;
 	let length;
 
 	if (! match) {
 		return false;
-	} else if (! params) {
-		return true;
 	}
 
 	length = match.length;
