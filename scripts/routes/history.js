@@ -136,6 +136,7 @@ export default class History {
 
 			queues.queue.forEach(fn => fn(route, this.current));
 			// TODO: Finish queues
+			queues.afterQueue.forEach(fn => fn(route, this.current));
 		});
 
 		// TODO: How to know to update URL?

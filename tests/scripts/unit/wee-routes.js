@@ -424,6 +424,15 @@ describe('Router', () => {
 				}, 300);
 			});
 
+			it('should evaluate global before hooks', () => {
+				setPath('/');
+				router.beforeEach((to, from, next) => {
+					stateArray.push('before each');
+				}).run();
+
+				expect(stateArray).to.deep.equal(['before each']);
+			});
+
 			it('should evaluate before hook(s) in specific order', () => {
 				let stateArray = [];
 
@@ -602,6 +611,17 @@ describe('Router', () => {
 			expect(state).to.be.true;
 		});
 
+		describe('after hooks', () => {
+			it('should evaluate global after hooks', () => {
+				setPath('/');
+				router.afterEach((to, from, next) => {
+					stateArray.push('after each');
+				}).run();
+
+				expect(stateArray).to.deep.equal(['after each']);
+			});
+		});
+
 		describe('init', () => {
 			it('should execute when route is first matched', () => {
 				setPath('/1');
@@ -741,24 +761,24 @@ describe('Router', () => {
 			});
 		});
 
-		// TODO: Finish tests when working on unload functionality
-	// 	describe('unload', () => {
-	// 		it('should execute when leaving a route', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should execute a callback function as value', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should accept an object with resources to unload and custom "handler" callback', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should unload all resources under namespace', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
+		// TODO: Finish
+		// describe('unload', () => {
+		// 	it('should execute when leaving a route', () => {
+		// 		// TODO: Write test
+		// 	});
+		//
+		// 	it('should execute a callback function as value', () => {
+		// 		// TODO: Write test
+		// 	});
+		//
+		// 	it('should accept an object with resources to unload and custom "handler" callback', () => {
+		// 		// TODO: Write test
+		// 	});
+		//
+		// 	it('should unload all resources under namespace', () => {
+		// 		// TODO: Write test
+		// 	});
+		// });
 	});
 
 	describe('segments', () => {
