@@ -181,39 +181,6 @@ describe('Router', () => {
 			expect(router.currentRoute().matched.length).to.equal(2);
 		});
 
-		it('should evaluate parent before child route', () => {
-			let parent = false;
-			let child = false;
-			setPath('/parent/other/child');
-
-			router.map(basicRoutes.concat([
-				{
-					path: '/parent/:id',
-					before(to, from, next) {
-						parent = true;
-						state = 'parent';
-						expect(child).to.be.false;
-						expect(parent).to.be.true;
-						next();
-					},
-					children: [
-						{
-							path: 'child',
-							before(to, from, next) {
-								child = true;
-								state = 'child';
-								expect(child).to.be.true;
-								expect(parent).to.be.true;
-								next();
-							}
-						}
-					]
-				}
-			]));
-
-			expect(state).to.equal('child');
-		});
-
 		describe('before hooks', () => {
 			it('should evaluate before hook of matched route record', () => {
 				setPath('/');
@@ -264,11 +231,56 @@ describe('Router', () => {
 			});
 
 			it('should evaluate parent before hooks before children route records', () => {
-				// TODO: Write test
+				let parent = false;
+				let child = false;
+				setPath('/parent/other/child');
+
+				router.map(basicRoutes.concat([
+					{
+						path: '/parent/:id',
+						before(to, from, next) {
+							parent = true;
+							state = 'parent';
+							expect(child).to.be.false;
+							expect(parent).to.be.true;
+							next();
+						},
+						children: [
+							{
+								path: 'child',
+								before(to, from, next) {
+									child = true;
+									state = 'child';
+									expect(child).to.be.true;
+									expect(parent).to.be.true;
+									next();
+								}
+							}
+						]
+					}
+				]));
+
+				expect(state).to.equal('child');
+			});
+
+			it('should not resolve if "next" is not executed', () => {
+				setPath('/');
+
+				router().map([
+					{
+						path: '/',
+						before(to, from, next) {},
+						init() {
+							state = 'init';
+						}
+					}
+				]);
+
+				expect(state).to.be.false;
 			});
 
 			it('should stop processing of routes if false is passed to "next"', () => {
-				setPath('/');
+				setPath('/asdf');
 				let beforeState = 0;
 				let initState = 0;
 
@@ -281,112 +293,75 @@ describe('Router', () => {
 						},
 						init() {
 							initState += 1;
-						}
-					},
-					{
-						path: '*',
-						beforeInit(to, from, next) {
-							beforeState += 1;
-							next();
 						},
-						beforeUpdate() {
+						children: [
+							{
+								path: '*',
+								before(to, from, next) {
+									beforeState += 1;
+									next();
+								},
+								beforeUpdate() {
 
-						}
+								}
+							}
+						]
 					}
 				]);
 
 				expect(beforeState).to.equal(1);
-				// TODO: Ensure test stops processing of init when init callbacks are processing
 				expect(initState).to.equal(0);
 			});
 		});
 
-		// it('should not resolve before hook if "next" is not executed', () => {
-		// 	setPath('/');
-		// 	state = false;
-		//
-		// 	router().map([
-		// 		{
-		// 			path: '/',
-		// 			before(to, from, next) {
-		// 				setTimeout(() => {
-		// 					state = true;
-		// 				}, 1000);
-		// 			}
-		// 		}
-		// 	]);
-		//
-		// 	expect(state).to.be.false;
-		// });
+		it('should parse url variable parameters and pass to functions', () => {
+			setPath('/blog/5');
+			router().map([
+				{
+					path: '/blog/:id',
+					init(to, from) {
+						state = true;
+						expect(to.params.id).to.equal(5);
+					}
+				}
+			]);
 
-		// it('should evaluate handler of matching routes', () => {
-		// 	setPath('/');
-		// 	router().map([
-		// 		{
-		// 			path: '/',
-		// 			handler() {
-		// 				state = true;
-		// 			}
-		// 		}
-		// 	]);
-		//
-		// 	expect(state).to.equal(true);
-		// });
+			expect(state).to.be.true;
+		});
 
-		// it('should parse url variable parameters and pass to handler', () => {
-		// 	setPath('/blog/5');
-		// 	router().map([
-		// 		{
-		// 			path: '/blog/:id',
-		// 			handler(params) {
-		// 				state = true;
-		// 				expect(params.id).to.equal(5);
-		// 			}
-		// 		}
-		// 	]);
-		//
-		// 	expect(state).to.equal(true);
-		// });
+		it('should pass multiple url variables in route objects to functions', () => {
+			setPath('/blog/tech/2017/10/5/blog-title');
+			router().map([
+				{
+					path: '/blog/:category/:year/:month/:day/:slug',
+					init(to, from) {
+						const params = to.params;
 
-		// it('should pass multiple url variables as an object to handler', () => {
-		// 	setPath('/blog/tech/2017/10/5/blog-title');
-		// 	router().map([
-		// 		{
-		// 			path: '/blog/:category/:year/:month/:day/:slug',
-		// 			handler(params) {
-		// 				expect(params.category).to.equal('tech');
-		// 				expect(params.year).to.equal(2017);
-		// 				expect(params.month).to.equal(10);
-		// 				expect(params.day).to.equal(5);
-		// 				expect(params.slug).to.equal('blog-title');
-		// 			}
-		// 		}
-		// 	]);
-		// });
-	//
-	// 	it('should evaluate wildcard routes and run handlers accordingly', () => {
-	// 		setPath('/test/test2/3');
-	// 		router().map([
-	// 			{
-	// 				path: '/test/*',
-	// 				handler(params) {
-	// 					expect(params[0]).to.equal('test2/3');
-	// 					stateArray.push(1);
-	// 				}
-	// 			},
-	// 			{
-	// 				path: '/test/*/:id',
-	// 				handler(params) {
-	// 					expect(params[0]).to.equal('test2');
-	// 					expect(params.id).to.equal(3);
-	// 					stateArray.push(2);
-	// 				}
-	// 			}
-	// 		]);
-	//
-	// 		expect(stateArray.length).to.equal(2);
-	// 	});
-	//
+						expect(params.category).to.equal('tech');
+						expect(params.year).to.equal(2017);
+						expect(params.month).to.equal(10);
+						expect(params.day).to.equal(5);
+						expect(params.slug).to.equal('blog-title');
+					}
+				}
+			]);
+		});
+
+		it('should evaluate wildcard routes and run functions accordingly', () => {
+			setPath('/test/test2/3');
+			router().map([
+				{
+					path: '/test/*',
+					init(to, from) {
+						expect(to.params[0]).to.equal('test2/3');
+						stateArray.push(1);
+					}
+				}
+			]);
+
+			expect(stateArray.length).to.equal(1);
+		});
+
 		it('should create and maintain "current" object', () => {
 			const handler = function() {};
 			setPath('/path/to/stuff?key=value&key2=value2#hash');
@@ -422,183 +397,66 @@ describe('Router', () => {
 				]
 			});
 		});
-	//
-	// 	describe('handler', () => {
-	// 		beforeEach(() => {
-	// 			router().map(basicRoutes);
-	// 		});
-	// 		afterEach(router().reset);
-	//
-	// 		it('should accept function', () => {
-	// 			let state = false;
-	//
-	// 			setPath('/accepts/function');
-	// 			router().map([
-	// 				{
-	// 					path: '/accepts/function',
-	// 					handler() {
-	// 						state = true;
-	// 					}
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.be.true;
-	// 		});
-	//
-	// 		it('should accept RouteHandler', () => {
-	// 			let state = false;
-	//
-	// 			setPath('/accepts/route-handler');
-	// 			router().map([
-	// 				{
-	// 					path: '/accepts/route-handler',
-	// 					handler: new RouteHandler({
-	// 						init() {
-	// 							state = true;
-	// 						}
-	// 					})
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.be.true;
-	// 		});
-	//
-	// 		it('should accept array with mixture of functions/RouteHandler', () => {
-	// 			let state = false;
-	//
-	// 			setPath('/accepts/mixture');
-	// 			router().map([
-	// 				{
-	// 					path: '/accepts/mixture',
-	// 					handler: [
-	// 						() => {
-	// 							state = 'anonymous function';
-	// 							expect(state).to.equal('anonymous function');
-	// 						},
-	// 						new RouteHandler({
-	// 							init() {
-	// 								state = 'route handler';
-	// 								expect(state).to.equal('route handler');
-	// 							}
-	// 						}),
-	// 						() => {
-	// 							state = 'last';
-	// 							expect(state).to.equal('last');
-	// 						}
-	// 					]
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal('last');
-	// 		});
-	//
-	// 		it('should be evaluated every time route matches', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
-	// 	describe('filter', () => {
-	// 		it('should use filter to determine handler execution', () => {
-	// 			setPath('/test');
-	// 			router().map([
-	// 				{
-	// 					path: '/test',
-	// 					handler() {
-	// 						state = true;
-	// 					},
-	// 					filter: function() {
-	// 						return false;
-	// 					}
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal(false);
-	// 		});
-	//
-	// 		it('should use registered filter to determine handler execution', () => {
-	// 			setPath('/test');
-	// 			router().addFilter('test', () => {
-	// 				return false;
-	// 			}).map([
-	// 				{
-	// 					path: '/test',
-	// 					handler() {
-	// 						state = true;
-	// 					},
-	// 					filter: 'test'
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal(false);
-	// 		});
-	//
-	// 		it('should use registered filters to determine handler execution', () => {
-	// 			setPath('/test');
-	// 			router().addFilter({
-	// 				filterOne() {
-	// 					return false;
-	// 				},
-	// 				filterTwo() {
-	// 					return false;
-	// 				}
-	// 			}).map([
-	// 				{
-	// 					path: '/test',
-	// 					handler() {
-	// 						state = true;
-	// 					},
-	// 					filter: ['filterOne', 'filterTwo']
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal(false);
-	// 		});
-	//
-	// 		it('should not execute handler and stop filter evaluation if one filter evaluates false', () => {
-	// 			setPath('/test');
-	// 			router().addFilter({
-	// 				filterOne() {
-	// 					return false;
-	// 				},
-	// 				filterTwo() {
-	// 					state = true;
-	// 					return true;
-	// 				}
-	// 			}).map([
-	// 				{
-	// 					path: '/test',
-	// 					handler() {
-	// 						state = true;
-	// 					},
-	// 					filter: ['filterOne', 'filterTwo']
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal(false);
-	// 		});
-	//
-	// 		it('should pass params and current URI to filters', () => {
-	// 			setPath('/test/2');
-	// 			router().addFilter({
-	// 				filter: function(params, uri) {
-	// 					expect(params.id).to.equal(2);
-	// 					expect(uri.full).to.equal('/test/2');
-	// 					return true;
-	// 				}
-	// 			}).map([
-	// 				{
-	// 					path: '/test/:id',
-	// 					handler() {
-	// 						state = true;
-	// 					},
-	// 					filter: 'filter'
-	// 				}
-	// 			]);
-	//
-	// 			expect(state).to.equal(true);
-	// 		});
-	// 	});
-	//
+
+		describe('handler', () => {
+			beforeEach(() => {
+				router.map(basicRoutes);
+			});
+			afterEach(() => {
+				state = false;
+				router.reset();
+			});
+
+			it('should accept RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/route-handler');
+				router().map([
+					{
+						path: '/accepts/route-handler',
+						handler: new RouteHandler({
+							init() {
+								state = true;
+							}
+						})
+					}
+				]);
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept array of route handlers', () => {
+				let stateArray = [];
+
+				setPath('/accepts/mixture');
+				router().map([
+					{
+						path: '/accepts/mixture',
+						handler: [
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 1');
+								}
+							}),
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 2');
+								}
+							}),
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 3');
+								}
+							}),
+						]
+					}
+				]);
+
+				expect(stateArray).to.deep.equal(['handler 1', 'handler 2', 'handler 3']);
+			});
+		});
+
+		// TODO: Finish tests
 	// 	describe('init', () => {
 	// 		it('should be a function', () => {
 	// 			// TODO: Write test
