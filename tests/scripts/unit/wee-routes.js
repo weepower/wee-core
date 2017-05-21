@@ -423,28 +423,20 @@ describe('Router', () => {
 			});
 
 			it('should evaluate parent before hooks before children route records', () => {
-				let parent = false;
-				let child = false;
 				setPath('/parent/other/child');
 
 				router.map(basicRoutes.concat([
 					{
 						path: '/parent/:id',
 						before(to, from, next) {
-							parent = true;
-							state = 'parent';
-							expect(child).to.be.false;
-							expect(parent).to.be.true;
+							stateArray.push('parent');
 							next();
 						},
 						children: [
 							{
 								path: 'child',
 								before(to, from, next) {
-									child = true;
-									state = 'child';
-									expect(child).to.be.true;
-									expect(parent).to.be.true;
+									stateArray.push('child');
 									next();
 								}
 							}
@@ -452,7 +444,7 @@ describe('Router', () => {
 					}
 				])).run();
 
-				expect(state).to.equal('child');
+				expect(stateArray).to.deep.equal(['parent', 'child']);
 			});
 
 			it('should not resolve if "next" is not executed', () => {
