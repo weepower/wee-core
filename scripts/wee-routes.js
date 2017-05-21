@@ -1,6 +1,6 @@
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
-import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
+import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import { START } from './routes/route';
@@ -11,6 +11,7 @@ let _history = new History();
  * Set base configurations for router
  *
  * @param {Object} config
+ * @returns {router}
  */
 function router(config = {}) {
 	return router;
@@ -54,10 +55,25 @@ router.currentRoute = function currentRoute() {
  * Register routes
  *
  * @param {Array} routes
- * @returns {Object}
+ * @returns {router}
  */
 router.map = function routerMap(routes) {
 	mapRoutes(routes);
+
+	return this;
+}
+
+/**
+ * Set the catch all route that is matched if no other routes match
+ *
+ * @param {Object} route
+ * @returns {router}
+ */
+router.notFound = function notFound(route) {
+	route.path = '*';
+	route.name = 'notFound';
+
+	setNotFound(route);
 
 	return this;
 }
@@ -101,6 +117,12 @@ router.routes = function routes(key, keyType = 'path') {
 	return map;
 }
 
+/**
+ * Evaluate mapped routes against current or provided URL
+ *
+ * @param {string} value
+ * @returns {router}
+ */
 router.run = function runRoutes(value) {
 	if (! value) {
 		_history.navigate(this.uri().full);

@@ -3,15 +3,17 @@ import PathToRegexp from 'path-to-regexp';
 let pathList = [];
 let pathMap = {};
 let nameMap = {};
+let notFound = {};
 
 /**
  * Register new route
  *
  * @param {Object} route
  * @param {Object} [parent]
+ * @param {boolean} exclude
  * @private
  */
-function _addRouteRecord(route, parent) {
+function _addRouteRecord(route, parent, exclude = false) {
 	const { path, name, handler } = route;
 	const finalPath = _normalizePath(path, parent);
 
@@ -37,8 +39,13 @@ function _addRouteRecord(route, parent) {
 		let length = route.children.length;
 
 		for (; i < length; i++) {
-			_addRouteRecord(route.children[i], route);
+			_addRouteRecord(route.children[i], route, exclude);
 		}
+	}
+
+	// Exclude from main mapping/return created route record object
+	if (exclude) {
+		return record;
 	}
 
 	if (! pathMap[record.path]) {
@@ -97,7 +104,8 @@ export function getRouteMap() {
 	return {
 		pathList,
 		pathMap,
-		nameMap
+		nameMap,
+		notFound
 	};
 }
 
@@ -122,4 +130,13 @@ export function resetRouteMap() {
 	pathList = [];
 	pathMap = {};
 	nameMap = {};
+}
+
+/**
+ * Set not found route
+ *
+ * @param {Object} route
+ */
+export function setNotFound(route) {
+	notFound = _addRouteRecord(route, null, true);
 }

@@ -41,7 +41,7 @@ export function matchRoute (regex, path, params = {}) {
  * @returns {Object}
  */
 export function match(path) {
-	const { pathList, pathMap } = getRouteMap();
+	const { notFound, pathList, pathMap } = getRouteMap();
 	const location = parseLocation(path);
 	let i = 0;
 	let routeCount = pathList.length;
@@ -58,5 +58,5 @@ export function match(path) {
 	}
 
 	// No match
-	return createRoute(location);
+	return createRoute(location, notFound);
 }

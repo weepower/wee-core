@@ -235,6 +235,27 @@ describe('Router', () => {
 		});
 	});
 
+	describe('notFound', () => {
+		let state = false;
+		let stateArray = [];
+
+		afterEach(() => {
+			router.reset();
+			state = false;
+			stateArray = [];
+		});
+
+		it('should register wildcard route record to evaluate if no match found', () => {
+			setPath('/asdf');
+
+			router.map(basicRoutes)
+				.notFound({ init() { state = true; } })
+				.run();
+
+			expect(state).to.be.true;
+		});
+	});
+
 	describe('routes', () => {
 		afterEach(router().reset);
 
