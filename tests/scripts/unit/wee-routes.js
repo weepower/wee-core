@@ -290,6 +290,75 @@ describe('Router', () => {
 			expect(router.currentRoute().matched.length).to.equal(2);
 		});
 
+		it('should pass multiple url variables in route objects to functions', () => {
+			setPath('/blog/tech/2017/10/5/blog-title');
+			router().map([
+				{
+					path: '/blog/:category/:year/:month/:day/:slug',
+					init(to, from) {
+						const params = to.params;
+
+						expect(params.category).to.equal('tech');
+						expect(params.year).to.equal(2017);
+						expect(params.month).to.equal(10);
+						expect(params.day).to.equal(5);
+						expect(params.slug).to.equal('blog-title');
+					}
+				}
+			]);
+		});
+
+		it('should evaluate wildcard routes and run functions accordingly', () => {
+			setPath('/test/test2/3');
+			router().map([
+				{
+					path: '/test/*',
+					init(to, from) {
+						expect(to.params[0]).to.equal('test2/3');
+						stateArray.push(1);
+					}
+				}
+			]).run();
+
+			expect(stateArray.length).to.equal(1);
+		});
+
+		it('should create and maintain "current" object', () => {
+			const handler = function() {};
+			setPath('/path/to/stuff?key=value&key2=value2#hash');
+
+			router().map([
+				{ name: 'home', path: '/path/to/:place', handler: handler, meta: {test: 'meta'} }
+			]).run();
+
+			expect(router.currentRoute()).to.deep.equal({
+				name: 'home',
+				meta: {test: 'meta'},
+				path: '/path/to/stuff',
+				hash: 'hash',
+				query: {key: 'value', key2: 'value2'},
+				params: {place: 'stuff'},
+				segments: ['path', 'to', 'stuff'],
+				full: '/path/to/stuff?key=value&key2=value2#hash',
+				matched: [
+					{
+						before: undefined,
+						handler: handler,
+						init: undefined,
+						update: undefined,
+						after: undefined,
+						unload: undefined,
+						pop: undefined,
+						meta: {test: 'meta'},
+						name: 'home',
+						parent: undefined,
+						path: '/path/to/:place',
+						regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
+					}
+				]
+			});
+		});
+
 		describe('before hooks', () => {
 			it('should evaluate before hook of matched route record', () => {
 				setPath('/');
@@ -511,75 +580,6 @@ describe('Router', () => {
 			]).run();
 
 			expect(state).to.be.true;
-		});
-
-		it('should pass multiple url variables in route objects to functions', () => {
-			setPath('/blog/tech/2017/10/5/blog-title');
-			router().map([
-				{
-					path: '/blog/:category/:year/:month/:day/:slug',
-					init(to, from) {
-						const params = to.params;
-
-						expect(params.category).to.equal('tech');
-						expect(params.year).to.equal(2017);
-						expect(params.month).to.equal(10);
-						expect(params.day).to.equal(5);
-						expect(params.slug).to.equal('blog-title');
-					}
-				}
-			]);
-		});
-
-		it('should evaluate wildcard routes and run functions accordingly', () => {
-			setPath('/test/test2/3');
-			router().map([
-				{
-					path: '/test/*',
-					init(to, from) {
-						expect(to.params[0]).to.equal('test2/3');
-						stateArray.push(1);
-					}
-				}
-			]).run();
-
-			expect(stateArray.length).to.equal(1);
-		});
-
-		it('should create and maintain "current" object', () => {
-			const handler = function() {};
-			setPath('/path/to/stuff?key=value&key2=value2#hash');
-
-			router().map([
-				{ name: 'home', path: '/path/to/:place', handler: handler, meta: {test: 'meta'} }
-			]).run();
-
-			expect(router.currentRoute()).to.deep.equal({
-				name: 'home',
-				meta: {test: 'meta'},
-				path: '/path/to/stuff',
-				hash: 'hash',
-				query: {key: 'value', key2: 'value2'},
-				params: {place: 'stuff'},
-				segments: ['path', 'to', 'stuff'],
-				full: '/path/to/stuff?key=value&key2=value2#hash',
-				matched: [
-					{
-						before: undefined,
-						handler: handler,
-						init: undefined,
-						update: undefined,
-						after: undefined,
-						unload: undefined,
-						pop: undefined,
-						meta: {test: 'meta'},
-						name: 'home',
-						parent: undefined,
-						path: '/path/to/:place',
-						regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
-					}
-				]
-			});
 		});
 
 		describe('init', () => {
