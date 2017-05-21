@@ -45,30 +45,54 @@ export default class History {
 	/**
 	 * Build out callback queues for processing
 	 *
-	 * @param {Array} records
+	 * @param {Object} records
+	 * 	@param {Array} records.updated
+	 * 	@param {Array} records.activated
+	 * 	@param {Array} records.deactivated
+	 * @param {Object} handlers
+	 * 	@param {Array} handlers.updated
+	 * 	@param {Array} handlers.activated
+	 * 	@param {Array} handlers.deactivated
+	 * @returns {Object}
 	 */
-	buildQueues(records) {
-		const count = records.length;
-		let beforeQueue = [];
-		let queue = [];
-		let unloadQueue = [];
-		// TODO: Determine if these are needed
-		// const preloadQueue = [];
-		// const popQueue = [];
-
-		for(let i = 0; i < count; i++) {
-			const record = records[i];
-			const handler = record.handler;
-
-			// Parent callbacks registered before
-			this.addToQueue(record, beforeQueue, queue);
-		}
+	buildQueues(records, handlers) {
+		const beforeQueue = this.extract(records.updated, 'before')
+			.concat(this.extract(records.activated, 'before'))
+			.concat(this.extract(handlers.updated, 'beforeUpdate'))
+			.concat(this.extract(handlers.activated, 'beforeInit'));
+		const unloadQueue = this.extract(handlers.deactivated, 'unload')
+			.concat(this.extract(records.deactivated, 'unload'));
+		const queue = this.extract(records.updated, 'update')
+			.concat(this.extract(records.activated, 'init'))
+			.concat(this.extract(handlers.updated, 'update'))
+			.concat(this.extract(handlers.activated, 'init'));
 
 		return {
 			beforeQueue,
 			queue,
 			unloadQueue
 		}
+	}
+
+	/**
+	 * Extract specific callback from all objects provided
+	 *
+	 * @param {Array} records
+	 * @param {string} type
+	 * @returns {Array}
+	 */
+	extract(records, type) {
+		const recordCount = records.length;
+		let result = [];
+		let i = 0;
+
+		for (; i < recordCount; i++) {
+			if (records[i][type]) {
+				result.push(records[i][type]);
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -85,14 +109,10 @@ export default class History {
 		}
 
 		this.pending = route;
-		const recordQueues = this.resolveRecords(route.matched, this.current.matched);
+		const records = this.resolveRecords(route.matched, this.current.matched);
+		const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
 
-		// Are there route handlers in 'deactivated' records that exist in either activated or updated?
-		// If so, remove them from 'deactivation' list and move to 'updated' if in 'activated'
-		const handlerQueues = this.resolveHandlers(recordQueues.updated, recordQueues.activated, recordQueues.deactivated);
-
-		// TODO: Update buildQueues to handle new record and handler queues
-		const queues = this.buildQueues(recordQueues, handlerQueues);
+		const queues = this.buildQueues(records, handlers);
 		const iterator = (hook, next) => {
 			hook(route, this.current, to => {
 				if (to === false) {
@@ -115,21 +135,6 @@ export default class History {
 		// TODO: How to know to do PJAX?
 
 		this.updateRoute(route);
-	}
-
-	/**
-	 * Determine what to do with route record handler
-	 *
-	 * @param {Function|RouteHandler} handler
-	 * @param {Array} beforeQueue
-	 * @param {Array} queue
-	 */
-	processHandler(handler, beforeQueue, queue) {
-		if ($isFunction(handler)) {
-			queue.push(handler);
-		} else if (handler instanceof RouteHandler) {
-			this.addToQueue(handler, beforeQueue, queue);
-		}
 	}
 
 	/**
@@ -181,7 +186,7 @@ export default class History {
 		}
 
 		// Evaluate handlers in records to be activated
-		// If handler is already in map, it should only be updated
+		// If handler has already been mapped, it should only be updated
 		for (i = 0; i < activatedRecords.length; i++) {
 			const handler = activatedRecords[i].handler;
 
@@ -196,11 +201,10 @@ export default class History {
 					addHandler(handler, 'activate');
 				}
 			}
-
-			handlers.activate = resolveActivate();
 		}
 
 		// Evaluate handlers in records to be deactivated
+		// If route handler is in activate and deactivate, move to update instead
 		for (; i < deactivatedRecords.length; i++) {
 			const handler = deactivatedRecords[i].handler;
 
@@ -214,9 +218,16 @@ export default class History {
 			} else if (handler instanceof RouteHandler) {
 				resolveDeactivated(handler);
 			}
+
+			// Clean up activated handlers moved to updated
+			handlers.activate = resolveActivate();
 		}
 
-		return handlers;
+		return {
+			updated: handlers.update,
+			activated: handlers.activate,
+			deactivated: handlers.deactivate
+		};
 	}
 
 	/**

@@ -13,12 +13,14 @@ let nameMap = {};
  */
 function _addRouteRecord(route, parent) {
 	const { path, name, handler } = route;
+	const finalPath = _normalizePath(path, parent);
+
 	const record = {
 		name,
 		parent,
 		handler,
-		path: _normalizePath(path, parent),
-		regex: PathToRegexp(path),
+		path: finalPath,
+		regex: PathToRegexp(finalPath),
 		// redirect, TODO: Look into redirect functionality further
 		before: route.before,
 		init: route.init,

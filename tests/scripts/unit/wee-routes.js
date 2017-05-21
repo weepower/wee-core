@@ -4,13 +4,13 @@ import { RouteHandler } from 'wee-routes';
 const basicRoutes = [
 	{
 		path: '/',
-		handler() {
+		init() {
 			//
 		}
 	},
 	{
 		path: '/about',
-		handler() {
+		init() {
 			//
 		}
 	}
@@ -160,13 +160,53 @@ describe('Router', () => {
 
 		});
 
-		it('should match child route before parent route', () => {
+		it('should match child route before parent', () => {
+			let parent = false;
+			let child = false;
+			setPath('/parent/something/child');
+
 			router.map(basicRoutes.concat([
 				{
-					path: '/parent/*',
-					handler: () => state = 'parent',
+					path: '/parent/:id',
+					init() {},
 					children: [
-						{ path: 'child', handler: () => state = 'child' }
+						{
+							path: 'child',
+							init() {}
+						}
+					]
+				}
+			]));
+
+			expect(router.currentRoute().matched.length).to.equal(2);
+		});
+
+		it('should evaluate parent before child route', () => {
+			let parent = false;
+			let child = false;
+			setPath('/parent/other/child');
+
+			router.map(basicRoutes.concat([
+				{
+					path: '/parent/:id',
+					before(to, from, next) {
+						parent = true;
+						state = 'parent';
+						expect(child).to.be.false;
+						expect(parent).to.be.true;
+						next();
+					},
+					children: [
+						{
+							path: 'child',
+							before(to, from, next) {
+								child = true;
+								state = 'child';
+								expect(child).to.be.true;
+								expect(parent).to.be.true;
+								next();
+							}
+						}
 					]
 				}
 			]));
@@ -204,7 +244,7 @@ describe('Router', () => {
 				router.map([
 					{
 						path: '/test',
-						beforeInit(to, from, next) {
+						before(to, from, next) {
 							setTimeout(() => {
 								state = true;
 								next();
@@ -235,7 +275,7 @@ describe('Router', () => {
 				router().map([
 					{
 						path: '/',
-						beforeInit(to, from, next) {
+						before(to, from, next) {
 							beforeState += 1;
 							next(false);
 						},
@@ -364,7 +404,7 @@ describe('Router', () => {
 				params: {place: 'stuff'},
 				segments: ['path', 'to', 'stuff'],
 				full: '/path/to/stuff?key=value&key2=value2#hash',
-				matches: [
+				matched: [
 					{
 						before: undefined,
 						handler: handler,
@@ -377,7 +417,6 @@ describe('Router', () => {
 						name: 'home',
 						parent: undefined,
 						path: '/path/to/:place',
-						processed: true,
 						regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
 					}
 				]
