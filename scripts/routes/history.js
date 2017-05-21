@@ -3,11 +3,13 @@ import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
 import { getHooks } from './global-hooks';
+import { $isFunction, $isString } from '../core/types';
 
 export default class History {
 	constructor() {
 		this.support = history && history.pushState;
 		this.current = START;
+		this.pending = null;
 	}
 
 	/**
@@ -25,7 +27,6 @@ export default class History {
 	 */
 	buildQueues(records, handlers) {
 		const { beforeEach, afterEach } = getHooks();
-
 		const beforeQueue = beforeEach
 			.concat(this.extract(records.updated, 'before'))
 			.concat(this.extract(records.activated, 'before'))
@@ -78,33 +79,32 @@ export default class History {
 		const route = match(path);
 
 		if (isSameRoute(route, this.current)) {
-			// TODO: Is a notification needed here?
 			return;
 		}
 
-		this.pending = route;
 		const records = this.resolveRecords(route.matched, this.current.matched);
 		const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
 
 		const queues = this.buildQueues(records, handlers);
 		const iterator = (hook, next) => {
 			hook(route, this.current, to => {
-				if (to === false) {
-					// TODO: Any feedback necessary here to alert program of aborted navigation?
-				}
-
 				next(to);
 			});
 		};
 
 		runQueue(queues.beforeQueue, iterator, error => {
 			if (error) {
-				// TODO: Prohibit processing of other routes
 				return false;
 			}
 
+			queues.unloadQueue.forEach(unload => {
+				if ($isString(unload)) {
+					// TODO: Destroy events, screen map, and store based on namespace
+				} else if ($isFunction(unload)) {
+					unload(route, this.current);
+				}
+			});
 			queues.queue.forEach(fn => fn(route, this.current));
-			// TODO: Finish queues
 			queues.afterQueue.forEach(fn => fn(route, this.current));
 		});
 
@@ -137,7 +137,7 @@ export default class History {
 			}
 		}
 		const resolveDeactivated = function resolveDeactivated(handler) {
-			if (map.activate[handler.id] && ! map.deactivate[handler.id]) {
+			if (map.activate.hasOwnProperty(handler.id) && ! map.deactivate[handler.id]) {
 				// Move from activate to update if handler exists in activated and deactivated records
 				handlers.activate[map.activate[handler.id]] = false;
 				addHandler(handler);
@@ -182,7 +182,7 @@ export default class History {
 
 		// Evaluate handlers in records to be deactivated
 		// If route handler is in activate and deactivate, move to update instead
-		for (; i < deactivatedRecords.length; i++) {
+		for (i = 0; i < deactivatedRecords.length; i++) {
 			const handler = deactivatedRecords[i].handler;
 
 			if (Array.isArray(handler)) {

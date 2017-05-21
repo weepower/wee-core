@@ -134,13 +134,13 @@ router.run = function runRoutes(value) {
 	// TODO: This is going to set the state of the current route in history
 	// TODO: I don't think that will be desirable
 	// TODO: Do we need a way to evaluate routes without changing history state?
-	const { pathMap, nameMap } = getRouteMap();
-
-	if (pathMap[value]) {
-		_history.navigate(value);
-	} else if (nameMap[value]) {
-		_history.navigate(value);
-	}
+	// const { pathMap, nameMap } = getRouteMap();
+	//
+	// if (pathMap[value]) {
+	// 	_history.navigate(value);
+	// } else if (nameMap[value]) {
+	// 	_history.navigate(value);
+	// }
 }
 
 // TODO: Perhaps break out location methods into own module

@@ -8,5 +8,6 @@ export default class RouteHandler {
 		this.beforeUpdate = conf.beforeUpdate || null;
 		this.init = conf.init || null;
 		this.update = conf.update || null;
+		this.unload = conf.unload || null;
 	}
 }

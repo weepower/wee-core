@@ -317,7 +317,21 @@ describe('Router', () => {
 		});
 
 		it('should match one route', () => {
+			setPath('/');
+			router.map(basicRoutes).run();
 
+			expect(router.currentRoute().path).to.equal('/');
+		});
+
+		it('should not evaluate identical route two times in a row', () => {
+			setPath('/');
+			router.map([
+				{ path: '/', init() { stateArray.push('init'); }, update() { stateArray.push('update'); } }
+			]).run();
+
+			router.run();
+
+			expect(stateArray).to.deep.equal(['init']);
 		});
 
 		it('should match child route before parent', () => {
@@ -735,6 +749,43 @@ describe('Router', () => {
 			});
 		});
 
+		// TODO: Requires events, screen, and store before being finished
+		describe('unload', () => {
+			it('should evaluate function when leaving route', () => {
+				setPath('/test');
+				router.map([
+					{ path: '/', init() { stateArray.push('home'); } },
+					{ path: '/test', unload() { stateArray.push('test unload'); } }
+				]).run();
+
+				// Leave /test to trigger unload
+				setPath('/');
+				router.run();
+
+				expect(stateArray).to.deep.equal(['test unload', 'home']);
+			});
+
+			it('should pass unload functions "to" and "from" parameters', () => {
+				setPath('/test');
+				router.map([
+					{ path: '/', init() { stateArray.push('home'); } },
+					{
+						path: '/test',
+						unload(to, from) {
+							stateArray.push(to.path);
+							stateArray.push(from.path);
+						}
+					}
+				]).run();
+
+				// Leave /test to trigger unload
+				setPath('/');
+				router.run();
+
+				expect(stateArray).to.deep.equal(['/', '/test', 'home']);
+			});
+		});
+
 		describe('init', () => {
 			it('should execute when route is first matched', () => {
 				setPath('/1');
@@ -781,6 +832,24 @@ describe('Router', () => {
 				]).run();
 
 				expect(stateArray).to.deep.equal(['before', 'init', 'handler init']);
+			});
+
+			it('should process update functions when part of both "from" and "to" route records', () => {
+				const handler = new RouteHandler({
+					init() { stateArray.push('handler init'); },
+					update() { stateArray.push('handler update'); }
+				});
+
+				setPath('/test');
+				router.map([
+					{ path: '/test', handler: handler },
+					{ path: '/other', handler: handler }
+				]).run();
+
+				setPath('/other');
+				router.run();
+
+				expect(stateArray).to.deep.equal(['handler init', 'handler update']);
 			});
 
 			describe('beforeInit/init', () => {
@@ -834,6 +903,91 @@ describe('Router', () => {
 
 					expect(stateArray).to.deep.equal(['before update', 'update', 'before update', 'update']);
 				});
+
+				it('should execute multiple handlers', () => {
+					setPath('/1');
+					router.map([
+						{
+							path: '/:id',
+							handler: [
+								new RouteHandler({
+									beforeUpdate(to, from, next) {
+										stateArray.push('before1');
+										next();
+									},
+									update(to, from) {
+										stateArray.push('update1');
+									}
+								}),
+								new RouteHandler({
+									beforeUpdate(to, from, next) {
+										stateArray.push('before2');
+										next();
+									},
+									update(to, from) {
+										stateArray.push('update2');
+									}
+								})
+							]
+						}
+					]).run();
+
+					setPath('/2');
+					router.run();
+
+					expect(stateArray).to.deep.equal(['before1', 'before2', 'update1', 'update2']);
+				});
+			});
+
+			describe('unload', () => {
+				it('should evaluate unload function when deactivating handler', () => {
+					setPath('/test');
+					router.map([
+						{ path: '/', init() { stateArray.push('home'); } },
+						{
+							path: '/test',
+							handler: new RouteHandler({
+								unload(to, from) {
+									stateArray.push('unload test');
+								}
+							})
+						}
+					]).run();
+
+					// Leave /test to trigger unload
+					setPath('/');
+					router.run();
+
+					expect(stateArray).to.deep.equal(['unload test', 'home']);
+				});
+
+				it('should evaluate unload function of multiple handlers', () => {
+					setPath('/test');
+					router.map([
+						{ path: '/', init() { stateArray.push('home'); } },
+						{
+							path: '/test',
+							handler: [
+								new RouteHandler({
+									unload() {
+										stateArray.push('unload1');
+									}
+								}),
+								new RouteHandler({
+									unload() {
+										stateArray.push('unload2');
+									}
+								})
+							]
+						}
+					]).run();
+
+					// Leave /test to trigger unload
+					setPath('/');
+					router.run();
+
+					expect(stateArray).to.deep.equal(['unload1', 'unload2', 'home']);
+				});
 			});
 		});
 
@@ -873,25 +1027,6 @@ describe('Router', () => {
 				expect(stateArray).to.deep.equal(['before', 'before init', 'init', 'handler init']);
 			});
 		});
-
-		// TODO: Finish
-		// describe('unload', () => {
-		// 	it('should execute when leaving a route', () => {
-		// 		// TODO: Write test
-		// 	});
-		//
-		// 	it('should execute a callback function as value', () => {
-		// 		// TODO: Write test
-		// 	});
-		//
-		// 	it('should accept an object with resources to unload and custom "handler" callback', () => {
-		// 		// TODO: Write test
-		// 	});
-		//
-		// 	it('should unload all resources under namespace', () => {
-		// 		// TODO: Write test
-		// 	});
-		// });
 	});
 
 	describe('segments', () => {
