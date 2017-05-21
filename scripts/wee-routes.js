@@ -85,9 +85,9 @@ router.routes = function routes(key, keyType = 'path') {
 	let routeMaps = getRouteMap();
 	let map;
 
-	if (routeMaps.pathMap[key]) {
+	if (key && routeMaps.pathMap[key]) {
 		return routeMaps.pathMap[key];
-	} else if (routeMaps.nameMap[key]) {
+	} else if (key && routeMaps.nameMap[key]) {
 		return routeMaps.nameMap[key];
 	}
 
