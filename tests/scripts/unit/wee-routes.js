@@ -131,6 +131,88 @@ describe('Router', () => {
 
 			expect(router().routes()['/something'].path).to.equal('/something');
 		});
+
+		describe('children', () => {
+			it('should prefix parent path to child path(s)', () => {
+				router.reset();
+				router.map([
+					{
+						path: '/parent',
+						children: [
+							{ name: 'child', path: 'child' },
+							{ name: 'child2', path: 'child2' }
+						]
+					}
+				]);
+
+				expect(router.routes('child').path).to.equal('/parent/child');
+				expect(router.routes('child2').path).to.equal('/parent/child2');
+			});
+
+			it('should place children before parent routes for evaluation', () => {
+				router.reset();
+				router.map([
+					{
+						path: '/parent',
+						children: [
+							{ name: 'child', path: 'child' }
+						]
+					}
+				]);
+
+				expect(router.routes(null, 'list')).to.deep.equal(['/parent/child', '/parent']);
+			});
+		});
+
+		describe('handler', () => {
+			it('should accept RouteHandler', () => {
+				let state = false;
+
+				setPath('/accepts/route-handler');
+				router().map([
+					{
+						path: '/accepts/route-handler',
+						handler: new RouteHandler({
+							init() {
+								state = true;
+							}
+						})
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should accept array of route handlers', () => {
+				let stateArray = [];
+
+				setPath('/accepts/mixture');
+				router().map([
+					{
+						path: '/accepts/mixture',
+						handler: [
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 1');
+								}
+							}),
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 2');
+								}
+							}),
+							new RouteHandler({
+								init() {
+									stateArray.push('handler 3');
+								}
+							}),
+						]
+					}
+				]).run();
+
+				expect(stateArray).to.deep.equal(['handler 1', 'handler 2', 'handler 3']);
+			});
+		});
 	});
 
 	describe('routes', () => {
@@ -178,7 +260,7 @@ describe('Router', () => {
 		let stateArray = [];
 
 		afterEach(() => {
-			router().reset();
+			router.reset();
 			state = false;
 			stateArray = [];
 		});
@@ -203,7 +285,7 @@ describe('Router', () => {
 						}
 					]
 				}
-			]));
+			])).run();
 
 			expect(router.currentRoute().matched.length).to.equal(2);
 		});
@@ -227,7 +309,7 @@ describe('Router', () => {
 							next();
 						}
 					}
-				]);
+				]).run();
 
 				expect(state).to.equal('home');
 			});
@@ -368,7 +450,7 @@ describe('Router', () => {
 							}
 						]
 					}
-				]));
+				])).run();
 
 				expect(state).to.equal('child');
 			});
@@ -417,7 +499,7 @@ describe('Router', () => {
 							}
 						]
 					}
-				]);
+				]).run();
 
 				expect(beforeState).to.equal(1);
 				expect(initState).to.equal(0);
@@ -434,7 +516,7 @@ describe('Router', () => {
 						expect(to.params.id).to.equal(5);
 					}
 				}
-			]);
+			]).run();
 
 			expect(state).to.be.true;
 		});
@@ -467,7 +549,7 @@ describe('Router', () => {
 						stateArray.push(1);
 					}
 				}
-			]);
+			]).run();
 
 			expect(stateArray.length).to.equal(1);
 		});
@@ -478,7 +560,7 @@ describe('Router', () => {
 
 			router().map([
 				{ name: 'home', path: '/path/to/:place', handler: handler, meta: {test: 'meta'} }
-			]);
+			]).run();
 
 			expect(router.currentRoute()).to.deep.equal({
 				name: 'home',
@@ -508,121 +590,146 @@ describe('Router', () => {
 			});
 		});
 
-		describe('handler', () => {
-			beforeEach(() => {
-				router.map(basicRoutes);
-			});
-			afterEach(() => {
-				state = false;
-				router.reset();
-			});
+		describe('init', () => {
+			it('should execute when route is first matched', () => {
+				setPath('/1');
+				router.map([
+					{ path: '/:id', init() { state = stateArray.push('init'); } }
+				]).run();
 
-			it('should accept RouteHandler', () => {
-				let state = false;
+				// Should not run init twice in this scenario
+				setPath('/2');
+				router.run();
 
-				setPath('/accepts/route-handler');
-				router().map([
+				expect(stateArray).to.deep.equal(['init']);
+			});
+		});
+
+		describe('update', () => {
+			it('should execute if newly matched route is same as current matched route', () => {
+				setPath('/route/1');
+				router.map([
+					{ path: '/route/:id', init() { stateArray.push('init'); }, update() { stateArray.push('update'); } }
+				]).run();
+
+				setPath('/route/2');
+				router.run();
+				setPath('/route/3');
+				router.run();
+
+				expect(stateArray).to.deep.equal(['init', 'update', 'update']);
+			});
+		});
+
+		describe('route handler', () => {
+			it('should evaluate after route record callbacks have executed', () => {
+				setPath('/test');
+				router.map([
 					{
-						path: '/accepts/route-handler',
+						path: '/test',
+						before(to, from, next) { stateArray.push('before'); next(); },
+						init() { stateArray.push('init'); },
 						handler: new RouteHandler({
-							init() {
+							init() { stateArray.push('handler init'); }
+						})
+					}
+				]).run();
+
+				expect(stateArray).to.deep.equal(['before', 'init', 'handler init']);
+			});
+
+			describe('beforeInit/init', () => {
+				it('should execute on initial route match', () => {
+					setPath('/1');
+					router.map([
+						{
+							path: '/:id',
+							handler: new RouteHandler({
+								beforeInit(to, from, next) {
+									stateArray.push('before init');
+									next();
+								},
+								init(to, from) {
+									stateArray.push('init');
+								}
+							})
+						}
+					]).run();
+
+					// Should not run init twice
+					setPath('/2');
+					router.run();
+
+					expect(stateArray).to.deep.equal(['before init', 'init']);
+				});
+			});
+
+			describe('beforeUpdate/update', () => {
+				it('should execute on subsequent route matches', () => {
+					setPath('/1');
+					router.map([
+						{
+							path: '/:id',
+							handler: new RouteHandler({
+								beforeUpdate(to, from, next) {
+									stateArray.push('before update');
+									next();
+								},
+								update(to, from) {
+									stateArray.push('update');
+								}
+							})
+						}
+					]).run();
+
+					setPath('/2');
+					router.run();
+					setPath('/3');
+					router.run();
+
+					expect(stateArray).to.deep.equal(['before update', 'update', 'before update', 'update']);
+				});
+			});
+		});
+
+		describe('meta', () => {
+			it('should be accessible through route objects passed to all callbacks', () => {
+				const meta = { testProp: 'inject' };
+
+				setPath('/test')
+				router.map([
+					{
+						path: '/test',
+						meta: meta,
+						before(to, from, next) {
+							expect(to.meta).to.equal(meta);
+							stateArray.push('before');
+							next();
+						},
+						init(to, from) {
+							expect(to.meta).to.equal(meta);
+							stateArray.push('init');
+						},
+						handler: new RouteHandler({
+							beforeInit(to, from, next) {
+								expect(to.meta).to.equal(meta);
+								stateArray.push('before init');
+								next();
+							},
+							init(to, from) {
+								expect(to.meta).to.equal(meta);
+								stateArray.push('handler init');
 								state = true;
 							}
 						})
 					}
-				]);
+				]).run();
 
-				expect(state).to.be.true;
-			});
-
-			it('should accept array of route handlers', () => {
-				let stateArray = [];
-
-				setPath('/accepts/mixture');
-				router().map([
-					{
-						path: '/accepts/mixture',
-						handler: [
-							new RouteHandler({
-								init() {
-									stateArray.push('handler 1');
-								}
-							}),
-							new RouteHandler({
-								init() {
-									stateArray.push('handler 2');
-								}
-							}),
-							new RouteHandler({
-								init() {
-									stateArray.push('handler 3');
-								}
-							}),
-						]
-					}
-				]);
-
-				expect(stateArray).to.deep.equal(['handler 1', 'handler 2', 'handler 3']);
+				expect(stateArray).to.deep.equal(['before', 'before init', 'init', 'handler init']);
 			});
 		});
 
-		// TODO: Finish tests
-	// 	describe('init', () => {
-	// 		it('should be a function', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should execute when route is first matched', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
-	// 	describe('update', () => {
-	// 		it('should be a function', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should execute if route has already been processed', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
-	// 	describe('beforeInit', () => {
-	// 		it('should be a function', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should execute before navigating to matched route', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should have "to", "from", and "next" parameters', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should require "next" to be executed for navigation to occur', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
-	// 	describe('beforeUpdate', () => {
-	// 		it('should be a function', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should execute before navigating to destination URL if route has been matched once before', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should have "to", "from", and "next" parameters', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should require "next" to be executed for navigation to occur', () => {
-	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
+		// TODO: Finish tests when working on unload functionality
 	// 	describe('unload', () => {
 	// 		it('should execute when leaving a route', () => {
 	// 			// TODO: Write test
@@ -638,90 +745,6 @@ describe('Router', () => {
 	//
 	// 		it('should unload all resources under namespace', () => {
 	// 			// TODO: Write test
-	// 		});
-	// 	});
-	//
-	// 	describe('route handler', () => {
-	// 		it('should should be an instance of RouteHandler', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		it('should enforce interface', () => {
-	// 			// TODO: Write test
-	// 		});
-	//
-	// 		describe('init', () => {
-	// 			it('should be a function', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should execute when route handler is first processed', () => {
-	// 				// TODO: Write test
-	// 			});
-	// 		});
-	//
-	// 		describe('update', () => {
-	// 			it('should be a function', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should execute if route handler has already been processed', () => {
-	// 				// TODO: Write test
-	// 			});
-	// 		});
-	//
-	// 		describe('beforeInit', () => {
-	// 			it('should be a function', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should execute before navigating to destination URL', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should have "to", "from", and "next" parameters', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should require "next" to be executed for navigation to occur', () => {
-	// 				// TODO: Write test
-	// 			});
-	// 		});
-	//
-	// 		describe('beforeUpdate', () => {
-	// 			it('should be a function', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should execute before navigating to destination URL if route handler has already been initialized', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should have "to", "from", and "next" parameters', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should require "next" to be executed for navigation to occur', () => {
-	// 				// TODO: Write test
-	// 			});
-	// 		});
-	//
-	// 		describe('unload', () => {
-	// 			it('should execute when leaving a route', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should execute a callback function as value', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should accept an object with resources to unload and custom "handler" callback', () => {
-	// 				// TODO: Write test
-	// 			});
-	//
-	// 			it('should unload all resources under namespace', () => {
-	// 				// TODO: Write test
-	// 			});
 	// 		});
 	// 	});
 	});
