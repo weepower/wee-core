@@ -69,7 +69,8 @@ export default class History {
 			.concat(this.extract(records.activated, 'init'))
 			.concat(this.extract(handlers.updated, 'update'))
 			.concat(this.extract(handlers.activated, 'init'));
-		const afterQueue = afterEach;
+		const afterQueue = this.extract(records.activated, 'after')
+			.concat(afterEach);
 
 		return {
 			beforeQueue,

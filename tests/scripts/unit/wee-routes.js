@@ -620,6 +620,88 @@ describe('Router', () => {
 
 				expect(stateArray).to.deep.equal(['after each']);
 			});
+
+			it('should evaluate after hook of matched route record', () => {
+				setPath('/test');
+				router.map([
+					{
+						path: '/test',
+						after() { state = true; }
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
+
+			it('should evaluate after hook(s) in specific order', () => {
+				setPath('/test/1');
+				router.map([
+					{
+						path: '/test/:id',
+						after(to, from) {
+							stateArray.push('after');
+						},
+						init(to, from) {
+							stateArray.push('init');
+						}
+					}
+				]).afterEach((to, from) => {
+					stateArray.push('after each');
+				}).run();
+
+				expect(stateArray).to.deep.equal(['init', 'after', 'after each']);
+			});
+
+			it('should all be passed "to" and "from" parameters', () => {
+				let toRoutes = [];
+				let fromRoutes = [];
+
+				setPath('/test');
+				router.map([
+					{
+						path: '/test',
+						after(to, from) {
+							toRoutes.push(to);
+							fromRoutes.push(from);
+						}
+					}
+				]).afterEach((to, from) => {
+					toRoutes.push(to);
+					fromRoutes.push(from);
+				}).run();
+
+				expect(toRoutes.length).to.equal(2);
+				expect(fromRoutes.length).to.equal(2);
+				toRoutes.forEach(to => {
+					expect(to.path).to.equal('/test');
+				});
+				fromRoutes.forEach(from => {
+					expect(from.path).to.equal('/');
+				});
+			});
+
+			it('should evaluate parent after hooks before children', () => {
+				setPath('/parent/other/child');
+
+				router.map(basicRoutes.concat([
+					{
+						path: '/parent/:id',
+						after(to, from) {
+							stateArray.push('parent');
+						},
+						children: [
+							{
+								path: 'child',
+								after(to, from) {
+									stateArray.push('child');
+								}
+							}
+						]
+					}
+				])).run();
+
+				expect(stateArray).to.deep.equal(['parent', 'child']);
+			});
 		});
 
 		describe('init', () => {
