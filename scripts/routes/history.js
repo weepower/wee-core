@@ -11,38 +11,6 @@ export default class History {
 	}
 
 	/**
-	 * Shared logic between route records and route handlers
-	 *
-	 * @param {Object|RouteHandler} obj
-	 * @param {Array} beforeQueue
-	 * @param {Array} queue
-	 * @returns {Object|RouteHandler}
-	 */
-	addToQueue(obj, beforeQueue, queue) {
-		if (obj.processed) {
-			if (obj.beforeUpdate) {
-				beforeQueue.push(obj.beforeUpdate);
-			}
-
-			if (obj.update) {
-				queue.push(obj.update);
-			}
-		} else {
-			if (obj.beforeInit) {
-				beforeQueue.push(obj.beforeInit);
-			}
-
-			if (obj.init) {
-				queue.push(obj.init);
-			}
-		}
-
-		obj.processed = true;
-
-		return obj;
-	}
-
-	/**
 	 * Build out callback queues for processing
 	 *
 	 * @param {Object} records
