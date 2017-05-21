@@ -4,9 +4,9 @@ export default class RouteHandler {
 	constructor(conf) {
 		this.id = genKey();
 		this.init = conf.init;
-		this.beforeInit = null;
-		this.beforeUpdate = null;
-		this.init = null;
-		this.update = null;
+		this.beforeInit = conf.beforeInit || null;
+		this.beforeUpdate = conf.beforeUpdate || null;
+		this.init = conf.init || null;
+		this.update = conf.update || null;
 	}
 }
