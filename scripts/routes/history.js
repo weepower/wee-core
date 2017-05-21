@@ -126,8 +126,10 @@ export default class History {
 		runQueue(queues.beforeQueue, iterator, error => {
 			if (error) {
 				// TODO: Prohibit processing of other routes
+				return false;
 			}
 
+			queues.queue.forEach(fn => fn(route, this.current));
 			// TODO: Finish queues
 		});
 
