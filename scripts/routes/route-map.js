@@ -59,7 +59,7 @@ function _addRouteRecord(route, parent) {
  * @returns {*}
  * @private
  */
-function _normalizePath (path, parent) {
+function _normalizePath(path, parent) {
 	if (path === '/') {
 		return path;
 	}
@@ -84,8 +84,21 @@ function _normalizePath (path, parent) {
  *
  * @param {string} path
  */
-function _cleanPath (path) {
+function _cleanPath(path) {
 	return path.replace(/\/\//g, '/');
+}
+
+/**
+ * Retrieve current route mapping objects
+ *
+ * @returns {Object}
+ */
+export function getRouteMap() {
+	return {
+		pathList,
+		pathMap,
+		nameMap
+	};
 }
 
 /**
@@ -100,19 +113,6 @@ export function mapRoutes(routes) {
 	for (let i = 0; i < count; i++) {
 		_addRouteRecord(routes[i]);
 	}
-}
-
-/**
- * Retrieve current route mapping objects
- *
- * @returns {Object}
- */
-export function getRouteMap() {
-	return {
-		pathList,
-		pathMap,
-		nameMap
-	};
 }
 
 /**
