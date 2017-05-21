@@ -2,6 +2,8 @@ import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
 import History from './routes/history';
+import { addBeforeEach, resetHooks } from './routes/global-hooks';
+import { START } from './routes/route';
 
 let _history = new History();
 
@@ -13,6 +15,18 @@ let _history = new History();
 function router(config = {}) {
 	return router;
 }
+
+/**
+ * Register global before hook
+ *
+ * @param {Function} fn
+ * @returns {router}
+ */
+router.beforeEach = function registerBeforeEach(fn) {
+	addBeforeEach(fn);
+
+	return this;
+};
 
 /**
  * Retrieve current route

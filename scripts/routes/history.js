@@ -1,8 +1,8 @@
 import { match } from './route-matcher';
 import { isSameRoute, START } from './route';
-import { $isArray, $isFunction } from '../core/types';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
+import { getHooks } from './global-hooks';
 
 export default class History {
 	constructor() {
@@ -56,7 +56,10 @@ export default class History {
 	 * @returns {Object}
 	 */
 	buildQueues(records, handlers) {
-		const beforeQueue = this.extract(records.updated, 'before')
+		const { beforeEach, afterEach } = getHooks();
+
+		const beforeQueue = beforeEach
+			.concat(this.extract(records.updated, 'before'))
 			.concat(this.extract(records.activated, 'before'))
 			.concat(this.extract(handlers.updated, 'beforeUpdate'))
 			.concat(this.extract(handlers.activated, 'beforeInit'));
@@ -66,11 +69,13 @@ export default class History {
 			.concat(this.extract(records.activated, 'init'))
 			.concat(this.extract(handlers.updated, 'update'))
 			.concat(this.extract(handlers.activated, 'init'));
+		const afterQueue = afterEach;
 
 		return {
 			beforeQueue,
 			queue,
-			unloadQueue
+			unloadQueue,
+			afterQueue
 		}
 	}
 

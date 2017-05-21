@@ -23,8 +23,35 @@ function setPath(path) {
 }
 
 describe('Router', () => {
+	describe('beforeEach', () => {
+		let state = false;
+
+		beforeEach(() => {
+			router.map(basicRoutes);
+		});
+		afterEach(() => {
+			router.reset();
+			state = false;
+		});
+
+		it('should register global before hook', () => {
+			router.beforeEach(() => {
+				state = true;
+			}).run();
+
+			expect(state).to.be.true;
+		});
+	});
+
 	describe('map', () => {
-		beforeEach(router.reset);
+		let state = false;
+		let stateArray = [];
+
+		afterEach(() => {
+			router.reset();
+			state = false;
+			stateArray = [];
+		});
 
 		it('should accept an array of objects', () => {
 			router.map(basicRoutes);
@@ -218,7 +245,7 @@ describe('Router', () => {
 							}, 250);
 						}
 					}
-				]);
+				]).run();
 
 				setTimeout(() => {
 					expect(state).to.be.true;
@@ -226,8 +253,91 @@ describe('Router', () => {
 				}, 300);
 			});
 
-			it('should evaluate beforeEach hook(s) before route record is evaluated', () => {
-				// TODO: Write test
+			it('should evaluate before hook(s) in specific order', () => {
+				let stateArray = [];
+
+				setPath('/test/1');
+				router.map([
+					{
+						path: '/test/:id',
+						before(to, from, next) {
+							stateArray.push('before');
+							next();
+						},
+						init(to, from) {
+							stateArray.push('init');
+						},
+						handler: new RouteHandler({
+							beforeInit(to, from, next) {
+								stateArray.push('beforeInit');
+								next();
+							},
+							beforeUpdate(to, from, next) {
+								stateArray.push('beforeUpdate');
+								next();
+							},
+							init() {
+								stateArray.push('handlerInit');
+							},
+							update() {
+								stateArray.push('handlerUpdate');
+							}
+						})
+					}
+				]).beforeEach((to, from, next) => {
+					stateArray.push('beforeEach');
+					next();
+				}).run();
+
+				setPath('/test/2');
+				router.run();
+
+				expect(stateArray).to.deep.equal(['beforeEach', 'before', 'beforeInit', 'init', 'handlerInit', 'beforeEach', 'before', 'beforeUpdate', 'handlerUpdate']);
+			});
+
+			it('should all be passed "to", "from", and "next" parameters', () => {
+				let toRoutes = [];
+				let fromRoutes = [];
+				let nextFns = [];
+
+				setPath('/test');
+				router.map([
+					{
+						path: '/test',
+						before(to, from, next) {
+							toRoutes.push(to);
+							fromRoutes.push(from);
+							nextFns.push(next);
+							next();
+						},
+						handler: new RouteHandler({
+							beforeInit(to, from, next) {
+								toRoutes.push(to);
+								fromRoutes.push(from);
+								nextFns.push(next);
+								next();
+							}
+						})
+					}
+				]).beforeEach((to, from, next) => {
+					toRoutes.push(to);
+					fromRoutes.push(from);
+					nextFns.push(next);
+					next();
+				}).run();
+
+				expect(toRoutes.length).to.equal(3);
+				expect(fromRoutes.length).to.equal(3);
+				expect(nextFns.length).to.equal(3);
+				toRoutes.forEach(to => {
+					expect(to.path).to.equal('/test');
+				});
+				fromRoutes.forEach(from => {
+					expect(from.path).to.equal('/');
+				});
+				nextFns.forEach(next => {
+					expect(next).to.be.function;
+				});
 			});
 
 			it('should evaluate parent before hooks before children route records', () => {
