@@ -23,6 +23,26 @@ function setPath(path) {
 }
 
 describe('Router', () => {
+	describe('afterEach', () => {
+		let state = false;
+
+		beforeEach(() => {
+			router.map(basicRoutes);
+		});
+		afterEach(() => {
+			router.reset();
+			state = false;
+		});
+
+		it('should register global after hook', () => {
+			router.afterEach(() => {
+				state = true;
+			}).run();
+
+			expect(state).to.be.true;
+		});
+	});
+
 	describe('beforeEach', () => {
 		let state = false;
 

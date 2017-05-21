@@ -2,7 +2,7 @@ import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap } from 'routes/route-map';
 import History from './routes/history';
-import { addBeforeEach, resetHooks } from './routes/global-hooks';
+import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import { START } from './routes/route';
 
 let _history = new History();
@@ -14,6 +14,18 @@ let _history = new History();
  */
 function router(config = {}) {
 	return router;
+}
+
+/**
+ * Register global after hook
+ *
+ * @param {Function} fn
+ * @returns {router}
+ */
+router.afterEach = function registerAfterEach(fn) {
+	addAfterEach(fn);
+
+	return this;
 }
 
 /**

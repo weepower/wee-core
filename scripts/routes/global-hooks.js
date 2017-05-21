@@ -11,6 +11,15 @@ export function addBeforeEach(fn) {
 }
 
 /**
+ * Add beforeEach function to registry
+ *
+ * @param {function} fn
+ */
+export function addAfterEach(fn) {
+	afterEach.push(fn);
+}
+
+/**
  * Get all registered functions
  *
  * @returns {Object}
