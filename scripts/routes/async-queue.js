@@ -13,7 +13,10 @@ export default function runQueue(queue, iterator, callback) {
 		} else {
 			iterator(queue[index], next => {
 				if (next === false) {
-					callback(true);
+					callback({
+						index,
+						message: 'queue stopped prematurely'
+					});
 				} else {
 					step(index + 1);
 				}

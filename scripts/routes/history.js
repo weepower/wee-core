@@ -4,6 +4,7 @@ import RouteHandler from './route-handler';
 import runQueue from './async-queue';
 import { getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
+import { warn } from './warn';
 
 export default class History {
 	constructor() {
@@ -79,6 +80,7 @@ export default class History {
 		const route = match(path);
 
 		if (isSameRoute(route, this.current)) {
+			warn('attempted to navigate to current URL');
 			return;
 		}
 
@@ -94,6 +96,7 @@ export default class History {
 
 		runQueue(queues.beforeQueue, iterator, error => {
 			if (error) {
+				warn(error.message);
 				return false;
 			}
 
