@@ -65,5 +65,14 @@ module.exports = {
 			styles: `${projectSourcePath}/styles`,
 			scripts: `${projectSourcePath}/scripts`
 		}
+	},
+
+	trimRight(str) {
+		return str.replace(/\s+$/, '');
+	},
+
+	stripStars(line) {
+	let re = /^(?:\s*[\*]{1,2}\s)/;
+		return this.trimRight(line.replace(re, ''));
 	}
 };
