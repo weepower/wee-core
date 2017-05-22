@@ -1,5 +1,5 @@
 const extract = require('extract-comments');
-const utils = require('./lib/utils');
+const utils = require('../utils');
 
 function parser (str, opts) {
   return parser.codeContext(str, opts);
@@ -11,6 +11,7 @@ function parser (str, opts) {
  * @param  {String} `str`
  * @return {Array} Array of comment objects.
  */
+
 
 parser.codeContext = function (str, opts) {
   let comments = extract(str);
