@@ -60,7 +60,6 @@ describe('Events', () => {
 			expect($('.test')[0].style.backgroundColor).to.equal('purple');
 		});
 
-		// TODO: Try to figure out the best way to test multiple bindings
 		it('should bind multiple events to multiple elements', () => {
 			$events.on({
 				'#first': {
