@@ -1150,7 +1150,11 @@ export function $serializeForm(target, json) {
 
 			if (type == 'select-multiple') {
 				obj[name] = _getSelected(child);
-			} else if (type == 'hidden') {
+			} else if (
+				type == 'hidden' && (
+					child.value.indexOf('true') > -1 ||
+					child.value.indexOf('false') > -1)
+			) {
 				obj[name] = child.value == 'true';
 			} else if (
 				type != 'submit' && type != 'button' &&

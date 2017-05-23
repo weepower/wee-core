@@ -1179,6 +1179,7 @@ describe('DOM', () => {
 				<form class="js-form">
 					<input name="true_check" type="hidden" value="true">
 					<input name="false_check" type="hidden" value="false">
+					<input name="string_check" type="hidden" value="string">
 				</form>
 				`,
 				fragment = document.createRange().createContextualFragment(form);
@@ -1189,6 +1190,7 @@ describe('DOM', () => {
 
 			expect(obj.true_check).to.equal(true);
 			expect(obj.false_check).to.equal(false);
+			expect(obj.string_check).to.equal('string');
 		});
 	});
 
