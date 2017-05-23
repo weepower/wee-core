@@ -238,7 +238,6 @@ describe('Events', () => {
 
 		describe('namespace', () => {
 			it('should add a namespace to event', () => {
-				// TODO: find the best way to test for namespace existence
 				$events.on('.test', 'click', function() {
 					$('.test')[0].style.backgroundColor = 'red';
 				}, {
@@ -248,6 +247,9 @@ describe('Events', () => {
 				triggerEvent($('.test')[0], 'click');
 
 				expect($('.test')[0].style.backgroundColor).to.equal('red');
+				expect($events.bound().length).to.equal(1);
+				$events.off(null, '.namespace');
+				expect($events.bound().length).to.equal(0);
 			});
 		});
 	});
