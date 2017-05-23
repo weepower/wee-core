@@ -1065,6 +1065,25 @@ describe('DOM', () => {
 		it('should not attempt to serialize a non form element', () => {
 			expect($('.test').serialize()).to.equal('');
 		});
+
+		it('should cast hidden input values to a boolean if "true" or "false"', () => {
+			let form = `
+				<form class="js-form">
+					<input name="true_check" type="hidden" value="true">
+					<input name="false_check" type="hidden" value="false">
+					<input name="string_check" type="hidden" value="string">
+				</form>
+				`,
+				fragment = document.createRange().createContextualFragment(form);
+
+			document.querySelector('body').appendChild(fragment);
+
+			let obj = $('.js-form').serialize(true);
+
+			expect(obj.true_check).to.equal(true);
+			expect(obj.false_check).to.equal(false);
+			expect(obj.string_check).to.equal('string');
+		});
 	});
 
 	describe('$show', () => {
