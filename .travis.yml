@@ -10,6 +10,12 @@ before_install:
 install:
   - npm install
 
+branches:
+  only:
+  - master
+  - develop
+  - v2
+
 script:
   - npm run test:ci
   - bash <(curl -s https://codecov.io/bash) -F unit
