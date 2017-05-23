@@ -1,6 +1,6 @@
 import $ from 'wee-dom';
 import $events from 'wee-events';
-import { createDiv, createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
+import { createDiv, createSingleDiv, createMultiDiv, resetDOM, isIE } from '../helpers/dom';
 
 function removeEvents() {
 	let elements = document.body.getElementsByTagName('*');
@@ -15,10 +15,19 @@ function removeEvents() {
 	$events.off();
 }
 
-function triggerEvent(el, type) {
-	let e = document.createEvent('HTMLEvents');
-	e.initEvent(type, false, true);
-	el.dispatchEvent(e);
+function triggerEvent(el, type, bubbles = true, cancelable = true) {
+	if (isIE()) {
+		let e = document.createEvent('HTMLEvents');
+		e.initEvent(type, bubbles, cancelable);
+		el.dispatchEvent(e);
+	} else {
+		let e = new Event(type, {
+			bubbles,
+			cancelable
+		});
+
+		el.dispatchEvent(e);
+	}
 }
 
 describe('Events', () => {
