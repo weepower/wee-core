@@ -16,22 +16,22 @@ function _bind(els, obj, options) {
 	// For each element attach events
 	$each(els, el => {
 		// Loop through object events
-		for (let key in obj) {
+		for (const key in obj) {
 			if (obj.hasOwnProperty(key)) {
 				let evts = key.split(' ');
 				let	i = 0;
 
 				for (; i < evts.length; i++) {
-					let conf = $extend({
+					const conf = $extend({
 						args: [],
 						once: false,
 						scope: el
 					}, options);
-					let	fn = obj[key];
+					const fn = obj[key];
+					const f = fn;
 					let	evt = evts[i];
 					let	ev = evt;
-					let	parts = ev.split('.');
-					let	f = fn;
+					let parts = ev.split('.');
 					evt = parts[0];
 
 					if (parts.length == 1 && conf.namespace) {
@@ -44,7 +44,7 @@ function _bind(els, obj, options) {
 					}
 
 					(function(el, evt, fn, f, conf) {
-						let cb = e => {
+						const cb = e => {
 							let cont = true;
 							conf.args[0] = e;
 
@@ -52,7 +52,7 @@ function _bind(els, obj, options) {
 							// matches the selector
 							if (conf.targ) {
 								let targ = conf.targ;
-								let	sel = targ._$ ? targ.sel : targ;
+								const sel = targ._$ ? targ.sel : targ;
 
 								// Update refs when targeting ref
 								if ($isString(sel) &&
@@ -79,6 +79,7 @@ function _bind(els, obj, options) {
 						// Ensure the specified element, event, and function
 						// combination hasn't already been bound
 						if (evt != 'init' && ! _bound(el, ev, f, conf.targ).length) {
+
 							// Determine if the event is native or custom
 							if ('on' + evt in el) {
 								el.addEventListener(evt, cb, false);
@@ -87,10 +88,10 @@ function _bind(els, obj, options) {
 							}
 
 							bound.push({
-								el: el,
-								ev: ev,
-								evt: evt,
-								cb: cb,
+								el,
+								ev,
+								evt,
+								cb,
 								fn: f,
 								targ: conf.targ
 							});
@@ -181,11 +182,11 @@ export default {
 		let evts = [];
 
 		if ($isObject(target) && ! target._$) {
-			let keys = Object.keys(target);
+			const keys = Object.keys(target);
 			let	i = 0;
 
 			for (; i < keys.length; i++) {
-				let key = keys[i];
+				const key = keys[i];
 				evts = target[key];
 
 				_bind(key, evts, a);
@@ -226,12 +227,12 @@ export default {
 
 			for (let key in obj) {
 				if (obj.hasOwnProperty(key)) {
-					let evts = key.split(' ');
+					const evts = key.split(' ');
 					let	i = 0;
 
 					for (; i < evts.length; i++) {
-						let evt = evts[i];
-						let fn = obj[evt];
+						const evt = evts[i];
+						const fn = obj[evt];
 
 						_off(target, evt, fn);
 					}
@@ -262,7 +263,7 @@ export default {
 	 * @param {string} name
 	 */
 	trigger(target, name) {
-		let fn = function() {};
+		const fn = function() {};
 
 		_bound(target, name).forEach(e => {
 			e.cb({
