@@ -193,8 +193,8 @@ describe('Events', () => {
 
 		describe('delegate', () => {
 			it('should delegate bound events to specified ancestor', () => {
-				$events.on('.new-el', 'click', (e, el) => {
-					el.style.backgroundColor = 'red';
+				$events.on('ref:newEl', 'click', (e) => {
+					e.target.style.backgroundColor = 'red';
 				}, {
 					delegate: '.parent'
 				});
@@ -204,13 +204,9 @@ describe('Events', () => {
 				);
 
 				triggerEvent($('.new-el')[0], 'click');
-				
+
 				expect($('.new-el')[0].style.backgroundColor).to.equal('red');
 			});
-
-			it('should', () => {
-
-			})
 		});
 
 		describe('context', () => {
