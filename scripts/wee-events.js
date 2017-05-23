@@ -127,16 +127,18 @@ function _off(sel, evt, fn) {
 	});
 }
 
-function _bound(target, event = '', fn = null, delegateTarg = null) {
-	let segs = event.split('.');
+function _bound(target, event = '', fn = null, delegateTarg = undefined) {
+	const segs = event.split('.');
 	let	matches = [];
 	target = target || [0];
 
 	$each(target, el => {
 		Object.keys(bound).forEach(e => {
-			let binding = bound[e];
-			let	parts = binding.ev.split('.');
-			let	match = true;
+			const binding = bound[e];
+			const newSel = $isObject(delegateTarg) ? delegateTarg.sel : delegateTarg;
+			const oldSel = $isObject(binding.targ) ? binding.targ.sel : binding.targ;
+			const parts = binding.ev.split('.');
+			let match = true;
 
 			if (el && el !== binding.el) {
 				match = false;
@@ -151,7 +153,7 @@ function _bound(target, event = '', fn = null, delegateTarg = null) {
 			}
 
 			// If delegated event, check against target element
-			if ((delegateTarg && binding.targ) && delegateTarg.sel !== binding.targ.sel) {
+			if (newSel !== oldSel) {
 				match = false;
 			}
 
