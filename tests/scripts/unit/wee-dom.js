@@ -750,6 +750,7 @@ describe('DOM', () => {
 		after(resetDOM);
 
 		it('should return the parent of the selection', () => {
+			expect($('.child').parent().length).to.equal(1);
 			expect($('.child').parent()[0].className).to.equal('parent');
 		});
 
