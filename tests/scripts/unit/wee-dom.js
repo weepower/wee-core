@@ -1,29 +1,7 @@
 import $ from 'wee-dom';
 import { $setRef } from 'core/dom';
 import * as W from 'dom/index';
-import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM } from '../helpers/dom';
-
-// Test scaffolding methods
-function isIE() {
-	if (navigator.appName == 'Microsoft Internet Explorer') {
-		let ua = navigator.userAgent,
-			re  = new RegExp('MSIE ([0-9]{1,}[\.0-9]{0,})');
-
-		return re.test(ua);
-	} else if (navigator.appName == 'Netscape') {
-		let ua = navigator.userAgent,
-			re  = new RegExp('Trident/.*rv:([0-9]{1,}[\.0-9]{0,})');
-
-		return re.test(ua);
-	}
-
-	return false;
-}
-
-function isEdge() {
-	return navigator.appName == 'Netscape' &&
-		/Edge/.test(navigator.userAgent);
-}
+import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM, isIE, isEdge } from '../helpers/dom';
 
 // Tests
 describe('DOM', () => {
