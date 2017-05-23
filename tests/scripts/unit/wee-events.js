@@ -257,6 +257,42 @@ describe('Events', () => {
 				expect($events.bound().length).to.equal(0);
 			});
 		});
+
+		describe('init', () => {
+			beforeEach(createSingleDiv);
+			afterEach(resetDOM);
+
+			it('should fire event immediately', () => {
+				$events.on('.test', 'click', () => {
+					$('.test')[0].style.backgroundColor = 'red';
+				}, {
+					init: true
+				});
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+		});
+
+		describe('touch', () => {
+			beforeEach(createSingleDiv);
+			afterEach(() => {
+				resetDOM();
+				removeEvents();
+			});
+
+			it('should bind touch event', () => {
+				$events.on('.test', 'swipeLeft', () => {
+					$('.test')[0].style.backgroundColor = 'red';
+				}, {
+					distance: 150,
+					movement: 20
+				});
+
+				$events.trigger('.test', 'swipeLeft');
+
+				expect($('.test')[0].style.backgroundColor).to.equal('red');
+			});
+		});
 	});
 
 	describe('trigger', () => {
@@ -272,27 +308,6 @@ describe('Events', () => {
 			});
 
 			$events.trigger('.test', 'click');
-
-			expect($('.test')[0].style.backgroundColor).to.equal('red');
-		});
-	});
-
-	describe('touch', () => {
-		beforeEach(createSingleDiv);
-		afterEach(() => {
-			resetDOM();
-			removeEvents();
-		});
-
-		it('should bind touch event', () => {
-			$events.on('.test', 'swipeLeft', () => {
-				$('.test')[0].style.backgroundColor = 'red';
-			}, {
-				distance: 150,
-				movement: 20
-			});
-
-			$events.trigger('.test', 'swipeLeft');
 
 			expect($('.test')[0].style.backgroundColor).to.equal('red');
 		});
@@ -438,21 +453,6 @@ describe('Events', () => {
 
 			expect($events.bound().length).to.equal(1);
 			triggerEvent($('.test')[0], 'customEvent');
-			expect($('.test')[0].style.backgroundColor).to.equal('red');
-		});
-	});
-
-	describe('init', () => {
-		beforeEach(createSingleDiv);
-		afterEach(resetDOM);
-
-		it('should fire event immediately', () => {
-			$events.on('.test', 'click', () => {
-				$('.test')[0].style.backgroundColor = 'red';
-			}, {
-				init: true
-			});
-
 			expect($('.test')[0].style.backgroundColor).to.equal('red');
 		});
 	});
