@@ -299,13 +299,16 @@ describe('Events', () => {
 	});
 
 	describe('bound', () => {
-		beforeEach(createSingleDiv);
+		beforeEach(() => {
+			createSingleDiv();
+			createMultiDiv();
+		});
 		afterEach(() => {
 			resetDOM();
 			removeEvents();
 		});
 
-		it('it should return an array of all bound events', () => {
+		it('should return an array of all matching bound events', () => {
 			$events.on({
 				'.test': {
 					click() {
