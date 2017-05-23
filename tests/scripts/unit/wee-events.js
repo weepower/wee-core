@@ -333,6 +333,28 @@ describe('Events', () => {
 			expect($events.bound()[1].evt).to.equal('mouseenter');
 			expect($events.bound()[1].fn()).to.equal('mouseenter');
 		});
+
+		it('should inspect delegate targets', () => {
+			const fn = (e) => {
+				e.target.style.backgroundColor = 'red';
+			};
+
+			$events.on('.other-el', 'click', fn, {
+				delegate: '.parent'
+			});
+
+			$events.on('.new-el', 'click', fn, {
+				delegate: '.parent'
+			});
+
+			$('.parent')[0].appendChild(
+				createDiv({ className: 'new-el' }, { 'data-ref': 'newEl'})
+			);
+
+			triggerEvent($('.new-el')[0], 'click');
+
+			expect($('.new-el')[0].style.backgroundColor).to.equal('red');
+		});
 	});
 
 	describe('off', () => {
