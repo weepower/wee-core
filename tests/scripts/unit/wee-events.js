@@ -324,58 +324,63 @@ describe('Events', () => {
 			expect($events.bound()[1].evt).to.equal('mouseenter');
 			expect($events.bound()[1].fn()).to.equal('mouseenter');
 		});
-
-		// TODO: finish this test
-		// it('should check delegated selector against targeted selector', () => {
-		// 	$events.on('ref:test', 'click', (e, el) => {
-		// 		el.style.backgroundColor = 'red';
-		// 	}, {
-		// 		delegate: 'ref:test'
-		// 	});
-		//
-		// 	createDiv({
-		// 		className: 'new-el'
-		// 	}, {
-		// 		'data-ref': 'test'
-		// 	}, true);
-		//
-		// 	triggerEvent($('ref:test')[0], 'click');
-		// });
 	});
 
 	describe('off', () => {
-		beforeEach(createSingleDiv);
+		beforeEach(createMultiDiv);
 		afterEach(() => {
 			resetDOM();
 			removeEvents();
 		});
 
-		it('should remove a bound element', () => {
-			$events.on('.test', 'click', () => {
-				$('.test')[0].style.backgroundColor = 'red';
+		it('should remove a bound event', () => {
+			$events.on('#first', 'click', (e, el) => {
+				el.style.backgroundColor = 'red';
 			});
 
-			triggerEvent($('.test')[0], 'click');
+			triggerEvent($('#first')[0], 'click');
 
-			expect($('.test')[0].style.backgroundColor).to.equal('red');
+			expect($('#first')[0].style.backgroundColor).to.equal('red');
 
-			$events.off('.test');
+			$events.off('#first');
 
 			expect($events.bound().length).to.equal(0);
 		});
 
 		it('should remove a bound element by namespace', () => {
-			$events.on('.test', 'click.namespace', () => {
-				$('.test')[0].style.backgroundColor = 'red';
+			$events.on('#first', 'click.namespace', (e, el) => {
+				el.style.backgroundColor = 'red';
 			});
 
-			triggerEvent($('.test')[0], 'click');
+			$events.on('.parent', 'click.secondNamespace', () => {
+				// ..
+			});
 
-			expect($('.test')[0].style.backgroundColor).to.equal('red');
+			triggerEvent($('#first')[0], 'click');
+
+			expect($('#first')[0].style.backgroundColor).to.equal('red');
 
 			$events.off(null, '.namespace');
 
+			expect($events.bound().length).to.equal(1);
+		});
+
+		it('should remove custom event', () => {
+			$events.addEvent('customEvent', (el) => {
+				el.style.backgroundColor = 'red';
+			}, (el) => {
+				el.style.backgroundColor = 'blue'
+			});
+
+			$events.on('#first', 'customEvent', () => {});
+
+			expect($('#first')[0].backgroundColor = 'red');
+			expect($events.bound().length).to.equal(1);
+
+			$events.off('#first');
+
 			expect($events.bound().length).to.equal(0);
+			expect($('#first')[0].backgroundColor = 'blue');
 		});
 	});
 
@@ -390,47 +395,35 @@ describe('Events', () => {
 		});
 
 		it('should register custom event', () => {
-			$events.addEvent('pressHold', function(el, fn, conf) {
-				$events.on(el, 'mousedown.pressHold', function(e, el) {
-					expect(el.className).to.equal('test');
-				}, conf);
-
-				$events.on(el, 'mouseup.pressHold', function(e, el) {
-					expect(el.className).to.equal('test');
-				});
-			}, function(el, fn) {
-				$events.off(el, 'mouseup.pressHold', fn);
+			$events.addEvent('customEvent', (el, fn, conf) => {
+				expect(el.className).to.equal('test');
+				expect(fn()).to.equal('test');
+				expect(conf).to.be.an('object');
+				el.style.backgroundColor = 'red';
 			});
 
-			$events.on('.test', 'pressHold', function(e, el) {
-				$('.test')[0].style.backgroundColor = 'red';
+			$events.on('.test', 'customEvent', () => {
+				return 'test';
 			});
 
-			$events.trigger('.test', 'pressHold');
-
+			expect($events.bound().length).to.equal(1);
+			triggerEvent($('.test')[0], 'customEvent');
 			expect($('.test')[0].style.backgroundColor).to.equal('red');
-
-			$events.off('.test', null, (e) => {
-				// TODO: Find a better way to test this
-			});
 		});
 	});
 
-	// TODO: finish this test - line 99
-	// describe('init', () => {
-	// 	beforeEach(createSingleDiv);
-	// 	afterEach(resetDOM);
-	//
-	// 	it('should fire event immediately', () => {
-	// 		$events.on('.test', 'click', () => {
-	// 			$('.test')[0].style.backgroundColor = 'red';
-	// 		}, {
-	// 			init: true
-	// 		});
-	//
-	// 		triggerEvent($('.test')[0], 'click');
-	//
-	// 		expect($('.test')[0].style.backgroundColor).to.equal('red');
-	// 	});
-	// });
+	describe('init', () => {
+		beforeEach(createSingleDiv);
+		afterEach(resetDOM);
+
+		it('should fire event immediately', () => {
+			$events.on('.test', 'click', () => {
+				$('.test')[0].style.backgroundColor = 'red';
+			}, {
+				init: true
+			});
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
+		});
+	});
 });
