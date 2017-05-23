@@ -126,8 +126,8 @@ function _off(sel, evt, fn) {
 	});
 }
 
-function _bound(target, event, fn, delegateTarg) {
-	let segs = (event || '').split('.');
+function _bound(target, event = '', fn = null, delegateTarg = null) {
+	let segs = event.split('.');
 	let	matches = [];
 	target = target || [0];
 
