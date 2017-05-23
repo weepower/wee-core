@@ -146,36 +146,6 @@ describe('Events', () => {
 			});
 		});
 
-		describe('targ', () => {
-			// TODO: what does this do?
-			it('targ', () => {
-				$events.on('.test', 'click', () => {
-					$('.test')[0].style.backgroundColor = 'red';
-				}, {
-					targ: '.test'
-				});
-
-				triggerEvent($('.test')[0], 'click');
-
-				expect($('.test')[0].style.backgroundColor).to.equal('red');
-			});
-
-			// TODO: get clarification
-			it('should set ref on targ', () => {
-				before(createSingleDiv);
-
-				$events.on('.test', 'click', () => {
-					$('.test')[0].style.backgroundColor = 'red'
-				}, {
-					targ: 'ref:test'
-				});
-
-				triggerEvent($('.test')[0], 'click');
-
-				expect($('.test')[0].style.backgroundColor).to.equal('red');
-			});
-		});
-
 		describe('args', () => {
 			it('can add injected arguments', () => {
 				let state = false;
@@ -189,14 +159,13 @@ describe('Events', () => {
 					args: ['arg1', 'arg2']
 				});
 
-				expect(state).to.equal(true);
-
 				triggerEvent($('.test')[0], 'click');
+				expect(state).to.equal(true);
 			});
 		});
 
 		describe('scope', () => {
-			it('can add change the scope of the callback', () => {
+			it('can change the scope of the callback', () => {
 				let state = false;
 
 				$events.on('.test', 'click', function() {
@@ -208,9 +177,8 @@ describe('Events', () => {
 					}
 				});
 
-				expect(state).to.equal(true);
-
 				triggerEvent($('.test')[0], 'click');
+				expect(state).to.equal(true);
 			});
 		});
 
@@ -219,13 +187,21 @@ describe('Events', () => {
 				$events.on('.new-el', 'click', (e, el) => {
 					el.style.backgroundColor = 'red';
 				}, {
-					delegate: 'body'
+					delegate: '.parent'
 				});
 
-				createDiv({ className: 'new-el' }, {}, true);
+				$('.parent')[0].appendChild(
+					createDiv({ className: 'new-el' }, { 'data-ref': 'newEl'})
+				);
 
 				triggerEvent($('.new-el')[0], 'click');
+				
+				expect($('.new-el')[0].style.backgroundColor).to.equal('red');
 			});
+
+			it('should', () => {
+
+			})
 		});
 
 		describe('context', () => {
