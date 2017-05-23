@@ -104,9 +104,12 @@ describe('Events', () => {
 			$events.on('.test', 'click', (e, el) => {
 				expect(el.className).to.equal('test');
 				expect(e.type).to.equal('click');
+				el.style.backgroundColor = 'red';
 			});
 
 			triggerEvent($('.test')[0], 'click');
+
+			expect($('.test')[0].style.backgroundColor).to.equal('red');
 		});
 
 		it('should bind multiple events to a single element selection', () => {
