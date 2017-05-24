@@ -258,7 +258,7 @@ describe('Screen', () => {
 				resetState();
 				setScreenSize(3);
 				expect(state.one).to.equal(false);
-			})
+			});
 		});
 
 		describe('args', () => {
@@ -269,11 +269,15 @@ describe('Screen', () => {
 					callback(arg, one, two) {
 						expect(one).to.equal('one');
 						expect(two).to.equal('two');
+
+						state.one = true;
 					}
 				});
 
 				setScreenSize(3);
-			})
+
+				expect(state.one).to.be.true;
+			});
 		});
 
 		describe('scope', () => {
@@ -287,10 +291,14 @@ describe('Screen', () => {
 					scope: obj,
 					callback() {
 						expect(this.one).to.equal('one');
+
+						state.one = true;
 					}
 				});
 
 				setScreenSize(3);
+
+				expect(state.one).to.be.true;
 			});
 		});
 
@@ -377,6 +385,9 @@ describe('Screen', () => {
 		it('should return the current screen size', () => {
 			setScreenSize(2);
 			expect($screen.size()).to.equal(2);
+
+			setScreenSize(3);
+			expect($screen.size()).to.equal(3);
 		});
 	});
 
