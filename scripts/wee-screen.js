@@ -34,7 +34,7 @@ function _addRule(conf) {
 
 		// Only attach event once
 		if (! bound) {
-			let run = _run.bind(this, false, 0, null);
+			const run = _run.bind(this, false, 0, null);
 			bound = 1;
 			events = [conf];
 
@@ -59,10 +59,10 @@ function _addRule(conf) {
  * @returns {boolean}
  */
 function _eq(evt, size, init) {
-	let sz = evt.size;
-	let	mn = evt.min;
-	let	mx = evt.max;
-	let	ex = evt.each || init;
+	const sz = evt.size;
+	const mn = evt.min;
+	const mx = evt.max;
+	const ex = evt.each || init;
 
 	// Check match against rules
 	return (! sz && ! mn && ! mx) ||
@@ -80,27 +80,24 @@ function _eq(evt, size, init) {
  * @param {string} [namespace] - namespace for map object
  */
 function _run(init, rules, namespace) {
-	let size = _size();
-	let	evts = rules || events;
+	const size = _size();
+	let evts = rules || events;
 	let	i;
 
 	// If breakpoint has been hit or resize logic initialized
 	if (size && (init || size !== current)) {
-
 		if (namespace) {
-			evts = evts.filter(obj => {
-				return obj.namespace === namespace;
-			});
+			evts = evts.filter(obj => obj.namespace === namespace);
 		}
 
 		i = evts.length;
 
 		while (i--) {
-			let evt = evts[i];
+			const evt = evts[i];
 
 			if (_eq(evt, size, init)) {
-				let f = init && ! current;
-				let	data = {
+				const f = init && ! current;
+				const data = {
 						dir: f ? 0 : (size > current ? 1 : -1),
 						init: f,
 						prev: current,
@@ -114,9 +111,7 @@ function _run(init, rules, namespace) {
 
 				// Disable future execution if once
 				if (evt.once) {
-					events = events.filter(obj => {
-						return obj.i !== evt.i;
-					});
+					events = events.filter(obj => obj.i !== evt.i);
 				}
 			}
 		}
@@ -146,9 +141,7 @@ export default {
 			return events;
 		}
 
-		return events.filter(obj => {
-			return obj.namespace === namespace;
-		});
+		return events.filter(obj => obj.namespace === namespace);
 	},
 
 	/**
@@ -177,8 +170,8 @@ export default {
 	 * @param {boolean} [rules.watch=true] - check event on screen resize
 	 */
 	map(rules) {
-		let sets = $toArray(rules);
-		let	i = sets.length;
+		const sets = $toArray(rules);
+		let i = sets.length;
 
 		while (i--) {
 			_addRule(sets[i]);
