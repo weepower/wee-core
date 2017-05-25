@@ -6,6 +6,7 @@ let state = {
 	two: false,
 	three: false,
 };
+let stateArray = [];
 
 function resetState() {
 	state = {
@@ -13,6 +14,7 @@ function resetState() {
 		two: false,
 		three: false,
 	}
+	stateArray = [];
 }
 
 function setScreenSize(size) {
@@ -127,22 +129,21 @@ describe('Screen', () => {
 		});
 
 		it('should execute callback when min and max size is reached', () => {
+			setScreenSize(1);
 			$screen.map([
 				{
 					min: 1,
 					max: 3,
-					callback() {
-						state.one = true;
+					callback(data) {
+						stateArray.push(data.size);
 					}
 				}
 			]);
 
-			setScreenSize(1);
-			expect(state.one).to.equal(true);
-			resetState();
+			expect(stateArray).to.deep.equal([1]);
 			setScreenSize(4);
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(stateArray).to.deep.equal([1, 3]);
 		});
 
 		it('can use function as callback', () => {
