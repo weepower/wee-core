@@ -192,7 +192,11 @@ export default {
 	 */
 	reset(namespace) {
 		events = events.filter(obj => {
-			obj.namespace !== namespace;
+			if (namespace) {
+				return obj.namespace !== namespace
+			}
+
+			return false;
 		});
 	}
 }
