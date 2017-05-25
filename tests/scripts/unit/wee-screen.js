@@ -46,7 +46,7 @@ describe('Screen', () => {
 			});
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 			expect($screen.bound().length).to.equal(1);
 		});
 
@@ -67,9 +67,9 @@ describe('Screen', () => {
 			]);
 
 			setScreenSize(2);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 			setScreenSize(3);
-			expect(state.two).to.equal(true);
+			expect(state.two).to.be.true;
 		});
 
 		it('should not execute callback outside of specified size', () => {
@@ -81,10 +81,10 @@ describe('Screen', () => {
 			});
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 			resetState();
 			setScreenSize(4);
-			expect(state.one).to.equal(false);
+			expect(state.one).to.be.false;
 		});
 
 		it('should execute callback when max size is reached', () => {
@@ -98,7 +98,7 @@ describe('Screen', () => {
 			]);
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 		});
 
 		it('should inject data object as first parameter to callback', () => {
@@ -125,7 +125,7 @@ describe('Screen', () => {
 			]);
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 		});
 
 		it('should execute callback when min and max size is reached', () => {
@@ -157,7 +157,7 @@ describe('Screen', () => {
 			});
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
+			expect(state.one).to.be.true;
 		});
 
 		it('should execute multiple callbacks', () => {
@@ -178,8 +178,8 @@ describe('Screen', () => {
 			});
 
 			setScreenSize(3);
-			expect(state.one).to.equal(true);
-			expect(state.two).to.equal(true);
+			expect(state.one).to.be.true;
+			expect(state.two).to.be.true;
 		});
 
 		describe('each', () => {
@@ -187,19 +187,20 @@ describe('Screen', () => {
 				$screen.map({
 					max: 3,
 					each: true,
-					callback() {
-						state.one = true;
+					init: false,
+					callback(data) {
+						stateArray.push(data.size);
 					}
 				});
 
 				setScreenSize(1);
-				expect(state.one).to.equal(true);
-				resetState();
+				expect(stateArray).to.deep.equal([1]);
 				setScreenSize(2);
-				expect(state.one).to.equal(true);
-				resetState();
+				expect(stateArray).to.deep.equal([1, 2]);
 				setScreenSize(3);
-				expect(state.one).to.equal(true);
+				expect(stateArray).to.deep.equal([1, 2, 3]);
+				setScreenSize(4);
+				expect(stateArray).to.deep.equal([1, 2, 3]);
 			});
 
 			it('should execute callback within bounds of min and max size', () => {
@@ -207,19 +208,17 @@ describe('Screen', () => {
 					min: 1,
 					max: 3,
 					each: true,
-					callback() {
-						state.one = true;
+					callback(data) {
+						stateArray.push(data.size);
 					}
 				});
 
 				setScreenSize(1);
-				expect(state.one).to.equal(true);
-				resetState();
+				expect(stateArray).to.deep.equal([1]);
 				setScreenSize(2);
-				expect(state.one).to.equal(true);
-				resetState();
+				expect(stateArray).to.deep.equal([1, 2]);
 				setScreenSize(3);
-				expect(state.one).to.equal(true);
+				expect(stateArray).to.deep.equal([1, 2, 3]);
 			});
 		});
 
@@ -234,13 +233,13 @@ describe('Screen', () => {
 				});
 
 				setScreenSize(3);
-				expect(state.one).to.equal(true);
+				expect(state.one).to.be.true;
 				resetState();
 
 				$screen.reset('namespace');
 
 				setScreenSize(3);
-				expect(state.one).to.equal(false);
+				expect(state.one).to.be.false;
 			});
 		});
 
@@ -255,10 +254,10 @@ describe('Screen', () => {
 				});
 
 				setScreenSize(3);
-				expect(state.one).to.equal(true);
+				expect(state.one).to.be.true;
 				resetState();
 				setScreenSize(3);
-				expect(state.one).to.equal(false);
+				expect(state.one).to.be.false;
 			});
 		});
 
@@ -267,7 +266,7 @@ describe('Screen', () => {
 				$screen.map({
 					size: 3,
 					args: ['one', 'two'],
-					callback(arg, one, two) {
+					callback(data, one, two) {
 						expect(one).to.equal('one');
 						expect(two).to.equal('two');
 
@@ -276,7 +275,6 @@ describe('Screen', () => {
 				});
 
 				setScreenSize(3);
-
 				expect(state.one).to.be.true;
 			});
 		});
@@ -304,7 +302,7 @@ describe('Screen', () => {
 		});
 
 		describe('watch', () => {
-			it('should determine evaluation on screen resize', () => {
+			it('should not evaluate on screen resize', () => {
 				$screen.map({
 					size: 3,
 					watch: false,
@@ -314,28 +312,32 @@ describe('Screen', () => {
 				});
 
 				setScreenSize(3);
-				expect(state.one).to.equal(true);
+				expect(state.one).to.be.true;
 				resetState();
 				setScreenSize(3);
-				expect(state.one).to.equal(false);
+				expect(state.one).to.be.false;
 			});
 		});
 	});
 
 	describe('run', () => {
 		it('should run all mappings', () => {
+			setScreenSize(3);
 			$screen.map([
 				{
+					size: 3,
 					callback() {
 						state.one = true;
 					}
 				},
 				{
+					min: 2,
 					callback() {
 						state.two = true;
 					}
 				},
 				{
+					min: 3,
 					callback() {
 						state.three = true;
 					}
@@ -343,9 +345,9 @@ describe('Screen', () => {
 			]);
 
 			$screen.run();
-			expect(state.one).to.equal(true);
-			expect(state.two).to.equal(true);
-			expect(state.three).to.equal(true);
+			expect(state.one).to.be.true;
+			expect(state.two).to.be.true;
+			expect(state.three).to.be.true;
 		});
 
 		it('should run all namespaced mappings', () => {
@@ -376,9 +378,9 @@ describe('Screen', () => {
 			resetState();
 
 			$screen.run('namespace');
-			expect(state.one).to.equal(true);
-			expect(state.two).to.equal(true);
-			expect(state.three).to.equal(false);
+			expect(state.one).to.be.true;
+			expect(state.two).to.be.true;
+			expect(state.three).to.be.false;
 		});
 	});
 
