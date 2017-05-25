@@ -1,116 +1,7 @@
 import $ from 'wee-dom';
 import { $setRef } from 'core/dom';
 import * as W from 'dom/index';
-
-// Test scaffolding methods
-function createSingleDiv() {
-	let div = document.createElement('div');
-
-	div.textContent = 'test';
-	div.className = 'test';
-	div.setAttribute('data-ref', 'test');
-	div.style.width = '100px';
-	div.style.height = '80px';
-	div.style.border = '1px solid';
-	div.style.padding = '15px 10px';
-	div.style.margin = '10px';
-	document.querySelector('body').appendChild(div);
-
-	return div;
-}
-
-function createMultiDiv() {
-	let html = `<main class="grandparent">
-					<div class="parent">
-						<div id="first" class="child" data-ref="child">1</div>
-						<div class="child" data-ref="child">2</div>
-						<div class="child other-class" data-ref="child">3</div>
-					</div>
-				</main>`,
-		fragment = document.createRange().createContextualFragment(html);
-
-	document.querySelector('body').appendChild(fragment);
-}
-
-function createForm() {
-	let html = `<form action="#" id="form">
-					<input class="input" type="text" name="input" value="inputValue">
-					<input class="checkbox" type="checkbox" name="checkbox" value="checkboxValue" checked required>
-					<input class="radio" type="radio" name="radio1" value="radioValue" checked>
-					<input class="array-input" type="text" name="name[]" value="name1">
-					<input type="text" name="email[]" value="email1">
-					<input class="array-input" type="text" name="name[]" value="name2">
-					<input type="text" name="email[]" value="email2">
-					<select class="select" name="select">
-						<option value="selectValue1" selected>Option 1</option>
-						<option value="selectValue2">Option 2</option>
-					</select>
-					<select class="multi-select" name="select-multiple" multiple>
-						<option value="selectValue1" selected>Option 1</option>
-						<option value="selectValue2" selected>Option 2</option>
-					</select>
-					<select class="optgroup-select" name="optgroup">
-						<optgroup>
-							<option value="optgroupValue1" selected>Optgroup 1</option>
-							<option value="optgroupValue2">Optgroup 2</option>
-						</optgroup>
-					</select>
-					<textarea name="textarea" class="textarea">Text Area</textarea>
-				</form>`,
-		fragment = document.createRange().createContextualFragment(html);
-
-	document.querySelector('body').appendChild(fragment);
-}
-
-function createList() {
-	let html = `<ul class="parent">
-					<li id="first" class="child"><span>1</span></li>
-					<li class="child">2</li>
-					<li class="child" data-ref="last">3</li>
-				</ul>`,
-		fragment = document.createRange().createContextualFragment(html);
-
-	document.querySelector('body').appendChild(fragment);
-}
-
-function resetBaseStyling() {
-	let block = `<style>
-					* {
-						margin: 0;
-						padding: 0;
-						border: 0;
-				</style>`,
-	fragment = document.createRange().createContextualFragment(block);
-	document.head.appendChild(fragment);
-}
-
-function resetDOM() {
-	let body = document.querySelector('body');
-
-	body.innerHTML = '';
-	body.style.width = '500px';
-}
-
-function isIE() {
-	if (navigator.appName == 'Microsoft Internet Explorer') {
-		let ua = navigator.userAgent,
-			re  = new RegExp('MSIE ([0-9]{1,}[\.0-9]{0,})');
-
-		return re.test(ua);
-	} else if (navigator.appName == 'Netscape') {
-		let ua = navigator.userAgent,
-			re  = new RegExp('Trident/.*rv:([0-9]{1,}[\.0-9]{0,})');
-
-		return re.test(ua);
-	}
-
-	return false;
-}
-
-function isEdge() {
-	return navigator.appName == 'Netscape' &&
-		/Edge/.test(navigator.userAgent);
-}
+import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM, isIE, isEdge } from '../helpers/dom';
 
 // Tests
 describe('DOM', () => {
@@ -859,6 +750,7 @@ describe('DOM', () => {
 		after(resetDOM);
 
 		it('should return the parent of the selection', () => {
+			expect($('.child').parent().length).to.equal(1);
 			expect($('.child').parent()[0].className).to.equal('parent');
 		});
 
@@ -1173,6 +1065,25 @@ describe('DOM', () => {
 		it('should not attempt to serialize a non form element', () => {
 			expect($('.test').serialize()).to.equal('');
 		});
+
+		it('should cast hidden input values to a boolean if "true" or "false"', () => {
+			let form = `
+				<form class="js-form">
+					<input name="true_check" type="hidden" value="true">
+					<input name="false_check" type="hidden" value="false">
+					<input name="string_check" type="hidden" value="string">
+				</form>
+				`,
+				fragment = document.createRange().createContextualFragment(form);
+
+			document.querySelector('body').appendChild(fragment);
+
+			let obj = $('.js-form').serialize(true);
+
+			expect(obj.true_check).to.equal(true);
+			expect(obj.false_check).to.equal(false);
+			expect(obj.string_check).to.equal('string');
+		});
 	});
 
 	describe('$show', () => {
@@ -1378,11 +1289,11 @@ describe('DOM', () => {
 			});
 		} else if (isEdge()) {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(788);
+				expect($(window).width()).to.equal($(window).width());
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(776);
+				expect($(document).width()).to.equal($(document).width());
 			});
 		} else {
 			it('should return the width of window', () => {
