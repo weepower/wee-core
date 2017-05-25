@@ -256,7 +256,7 @@ $chain({
 	 * Get the zero-based index of a matching selection relative
 	 * to it's siblings
 	 *
-	 * @returns {int}
+	 * @returns {number}
 	 */
 	index() {
 		return W.$index(this);
