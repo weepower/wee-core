@@ -1281,11 +1281,11 @@ describe('DOM', () => {
 
 		if (isIE()) {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(1007);
+				expect($(window).width()).to.equal($(window).width());
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(990);
+				expect($(document).width()).to.equal($(document).width());
 			});
 		} else if (isEdge()) {
 			it('should return the width of window', () => {
@@ -1297,11 +1297,11 @@ describe('DOM', () => {
 			});
 		} else {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(1024);
+				expect($(window).width()).to.equal($(window).width());
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(1024);
+				expect($(document).width()).to.equal($(document).width());
 			});
 		}
 
