@@ -36,7 +36,6 @@ describe('fetch', () => {
 			server.respond();
 		});
 
-		// TODO: Add config option for parsing HTML into DOM
 		it('should get HTML string', done => {
 			server.respondWith('GET', '/sample.html', [200, {}, sample.html]);
 
@@ -62,6 +61,29 @@ describe('fetch', () => {
 			}).then(done, done);
 
 			server.respond();
+		});
+
+		it('should reject on network errors', () => {
+			const resolveSpy = sinon.spy();
+			const rejectSpy = sinon.spy();
+			const finish = function() {
+				expect(resolveSpy.called).to.be.false;
+				expect(rejectSpy.called).to.be.true
+
+				const reason = rejectSpy.args[0][0];
+				expect(reason).to.be.an('error');
+			}
+
+			server.respondWith('GET', '/sample.json', [500, {}, '']);
+
+			const request = $fetch({
+				url: '/sample.json'
+			});
+
+			// Trigger network error
+			server.requests[0].error();
+
+			return request.then(resolveSpy, rejectSpy).then(finish, finish);
 		});
 	});
 

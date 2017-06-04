@@ -13,22 +13,25 @@ export default function fetchFactory() {
 	 * @param {object} conf
 	 * @returns {*}
 	 */
-	const _change = function _change(x, conf, resolve, reject) {
-		if (x.readyState === 4) {
-			var code = x.status,
+	const _change = function _change(request, conf, resolve, reject) {
+		if (request.readyState === 4) {
+			var code = request.status,
 				exec = {
 					args: conf.args,
 					scope: conf.scope
 				};
 
-			if (code >= 200 && code < 400) {
-				_success(x, conf, resolve);
-			} else {
-				$exec(reject, exec);
+			// The request errored out and we didn't get a response, this will be handled by onerror instead
+			// With one exception: request that using file: protocol, most browsers
+			// will return status as 0 even though it's a successful request
+			if (code === 0 && ! (request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+				return;
 			}
 
-			if (conf.complete) {
-				$exec(conf.complete, exec);
+			if (code >= 200 && code < 400) {
+				_success(request, conf, resolve);
+			} else {
+				$exec(reject, exec);
 			}
 		}
 	}
@@ -166,10 +169,10 @@ export default function fetchFactory() {
 					return _jsonp(conf, resolve, reject);
 				}
 
-				var x = new XMLHttpRequest();
+				var request = new XMLHttpRequest();
 
 				// Inject XHR object as first callback argument
-				conf.args.unshift(x);
+				conf.args.unshift(request);
 
 				if (conf.send) {
 					$exec(conf.send, {
@@ -178,8 +181,12 @@ export default function fetchFactory() {
 					});
 				}
 
-				x.onreadystatechange = function() {
-					_change(x, conf, resolve, reject);
+				request.onreadystatechange = function() {
+					_change(request, conf, resolve, reject);
+				};
+
+				request.onerror = function handleError() {
+					reject(new Error);
 				};
 
 				var contentTypeHeader = 'Content-Type',
@@ -203,7 +210,7 @@ export default function fetchFactory() {
 							$serialize(conf.data);
 				}
 
-				x.open(method, conf.url, true);
+				request.open(method, conf.url, true);
 
 				// Add content type header
 				if (conf.type == 'json') {
@@ -239,16 +246,16 @@ export default function fetchFactory() {
 					var val = headers[key];
 
 					if (val !== false) {
-						x.setRequestHeader(key, val);
+						request.setRequestHeader(key, val);
 					}
 				}
 
 				// Set response type
 				if (conf.responseType) {
-					x.responseType = conf.responseType;
+					request.responseType = conf.responseType;
 				}
 
-				x.send(send);
+				request.send(send);
 			});
 		},
 
