@@ -13,7 +13,7 @@ export default function fetchFactory() {
 	 * @param {object} conf
 	 * @returns {*}
 	 */
-	const _change = function _change(x, conf) {
+	const _change = function _change(x, conf, resolve, reject) {
 		if (x.readyState === 4) {
 			var code = x.status,
 				exec = {
@@ -22,11 +22,9 @@ export default function fetchFactory() {
 				};
 
 			if (code >= 200 && code < 400) {
-				if (conf.success) {
-					_success(x, conf);
-				}
-			} else if (conf.error) {
-				$exec(conf.error, exec);
+				_success(x, conf, resolve);
+			} else {
+				$exec(reject, exec);
 			}
 
 			if (conf.complete) {
@@ -58,11 +56,11 @@ export default function fetchFactory() {
 	 * @param {object} conf
 	 * @returns {boolean}
 	 */
-	const _success = function _success(x, conf) {
-		var resp = ! conf.responseType || conf.responseType == 'text' ?
+	const _success = function _success(x, conf, resolve) {
+		let resp = ! conf.responseType || conf.responseType == 'text' ?
 				x.responseText :
-				x.response,
-			exec = {
+				x.response;
+		let exec = {
 				args: conf.args.slice(0),
 				scope: conf.scope
 			};
@@ -78,8 +76,8 @@ export default function fetchFactory() {
 
 		exec.args.unshift(resp);
 
-		// Execute success callback if specified
-		$exec(conf.success, exec);
+		// Resolve promise
+		$exec(resolve, exec);
 	}
 
 	/**
@@ -88,43 +86,32 @@ export default function fetchFactory() {
 	 * @private
 	 * @param {object} conf
 	 */
-	const _jsonp = function _jsonp(conf) {
-		var el = _doc.createElement('script');
+	const _jsonp = function _jsonp(conf, resolve, reject) {
+		const el = _doc.createElement('script');
+		let fn = conf.jsonpCallback;
 
-		if (conf.success) {
-			var fn = conf.jsonpCallback;
-
-			if (! fn) {
-				fn = 'jsonp' + version;
-				version++;
-			}
-
-			_win[fn] = function(data) {
-				conf.args.unshift(data);
-
-				$exec(conf.success, {
-					args: conf.args,
-					scope: conf.scope
-				});
-			};
-
-			conf.data[
-				conf.jsonp === true ?
-					'callback' :
-					conf.jsonp
-				] = fn;
+		if (! fn) {
+			fn = 'jsonp' + version;
+			version++;
 		}
+
+		_win[fn] = function(data) {
+			conf.args.unshift(data);
+
+			resolve.apply(conf.scope, conf.args);
+		};
+
+		conf.data[
+			conf.jsonp === true ?
+				'callback' :
+				conf.jsonp
+			] = fn;
 
 		el.src = _getUrl(conf);
 
-		if (conf.error) {
-			el.onerror = function() {
-				$exec(conf.error, {
-					args: conf.args,
-					scope: conf.scope
-				});
-			};
-		}
+		el.onerror = function() {
+			reject.apply(conf.scope, conf.args);
+		};
 
 		_doc.head.appendChild(el);
 	};
@@ -136,7 +123,7 @@ export default function fetchFactory() {
 		 * @param {object} options
 		 * @param {Array} [options.args] - callback arguments appended after default values
 		 * @param {(Array|function|string)} [options.complete] - callback on request completion
-		 * @param {boolean} [options.cache=true] - disable automatic cache-busting query string
+		 * @param {boolean} [options.disableCache=false] - add query string to request to bypass browser caching
 		 * @param {object} [options.data] - object to serialize and pass along with request
 		 * @param {(Array|function|string)} [options.error] - callback if request fails
 		 * @param {object} [options.headers] - request headers
@@ -154,112 +141,115 @@ export default function fetchFactory() {
 		 * @param {string} options.url - endpoint to request
 		 */
 		request: function(options) {
-			var conf = $extend({
-				args: [],
-				data: {},
-				headers: {},
-				method: 'get',
-				root: ''
-			}, options);
+			return new Promise((resolve, reject) => {
+				var conf = $extend({
+					args: [],
+					data: {},
+					disableCache: false,
+					headers: {},
+					method: 'get',
+					root: ''
+				}, options);
 
-			if (conf.cache === false) {
-				conf.data.dt = Date.now();
-			}
-
-			// Prefix root path to url
-			if (conf.root) {
-				conf.url = conf.root.replace(/\/$/, '') + '/' +
-					conf.url.replace(/^\//, '');
-			}
-
-			// Process JSONP
-			if (conf.jsonp) {
-				return _jsonp(conf);
-			}
-
-			var x = new XMLHttpRequest();
-
-			// Inject XHR object as first callback argument
-			conf.args.unshift(x);
-
-			if (conf.send) {
-				$exec(conf.send, {
-					args: conf.args,
-					scope: conf.scope
-				});
-			}
-
-			x.onreadystatechange = function() {
-				_change(x, conf);
-			};
-
-			var contentTypeHeader = 'Content-Type',
-				method = conf.method.toUpperCase(),
-				str = typeof conf.data == 'string',
-				send = null,
-				headers = [];
-
-			if (! str && ! conf.type) {
-				conf.type = 'json';
-			}
-
-			// Format data based on specified verb
-			if (method == 'GET') {
-				conf.url = this._getUrl(conf);
-			} else {
-				send = str || conf.processData === false ?
-					conf.data :
-					conf.type == 'json' ?
-						JSON.stringify(conf.data) :
-						$serialize(conf.data);
-			}
-
-			x.open(method, conf.url, true);
-
-			// Add content type header
-			if (conf.type == 'json') {
-				headers[contentTypeHeader] = 'application/json';
-			} else if (conf.type == 'xml') {
-				headers[contentTypeHeader] = 'text/xml';
-			} else if (method == 'POST' || conf.type == 'form') {
-				headers[contentTypeHeader] =
-					'application/x-www-form-urlencoded';
-			}
-
-			// Accept JSON header
-			if (conf.json) {
-				headers.Accept = 'application/json, text/javascript, */*; q=0.01';
-			}
-
-			// Add X-Requested-With header for same domain requests
-			var a = _doc.createElement('a');
-			a.href = conf.url;
-
-			if (! a.host || a.host == location.host) {
-				headers['X-Requested-With'] = 'XMLHttpRequest';
-			}
-
-			// Append character set to content type header
-			headers[contentTypeHeader] += '; charset=UTF-8';
-
-			// Extend configured headers into defaults
-			headers = $extend(headers, conf.headers);
-
-			// Set request headers
-			for (var key in headers) {
-				var val = headers[key];
-
-				if (val !== false) {
-					x.setRequestHeader(key, val);
+				if (conf.disableCache) {
+					conf.data.dt = Date.now();
 				}
-			}
 
-			// Set response type
-			if (conf.responseType) {
-				x.responseType = conf.responseType;
-			}
+				// Prefix root path to url
+				if (conf.root) {
+					conf.url = conf.root.replace(/\/$/, '') + '/' +
+						conf.url.replace(/^\//, '');
+				}
 
-			x.send(send);
+				// Process JSONP
+				if (conf.jsonp) {
+					return _jsonp(conf, resolve, reject);
+				}
+
+				var x = new XMLHttpRequest();
+
+				// Inject XHR object as first callback argument
+				conf.args.unshift(x);
+
+				if (conf.send) {
+					$exec(conf.send, {
+						args: conf.args,
+						scope: conf.scope
+					});
+				}
+
+				x.onreadystatechange = function() {
+					_change(x, conf, resolve, reject);
+				};
+
+				var contentTypeHeader = 'Content-Type',
+					method = conf.method.toUpperCase(),
+					str = typeof conf.data == 'string',
+					send = null,
+					headers = [];
+
+				if (! str && ! conf.type) {
+					conf.type = 'json';
+				}
+
+				// Format data based on specified verb
+				if (method == 'GET') {
+					conf.url = this._getUrl(conf);
+				} else {
+					send = str || conf.processData === false ?
+						conf.data :
+						conf.type == 'json' ?
+							JSON.stringify(conf.data) :
+							$serialize(conf.data);
+				}
+
+				x.open(method, conf.url, true);
+
+				// Add content type header
+				if (conf.type == 'json') {
+					headers[contentTypeHeader] = 'application/json';
+				} else if (conf.type == 'xml') {
+					headers[contentTypeHeader] = 'text/xml';
+				} else if (method == 'POST' || conf.type == 'form') {
+					headers[contentTypeHeader] =
+						'application/x-www-form-urlencoded';
+				}
+
+				// Accept JSON header
+				if (conf.json) {
+					headers.Accept = 'application/json, text/javascript, */*; q=0.01';
+				}
+
+				// Add X-Requested-With header for same domain requests
+				var a = _doc.createElement('a');
+				a.href = conf.url;
+
+				if (! a.host || a.host == location.host) {
+					headers['X-Requested-With'] = 'XMLHttpRequest';
+				}
+
+				// Append character set to content type header
+				headers[contentTypeHeader] += '; charset=UTF-8';
+
+				// Extend configured headers into defaults
+				headers = $extend(headers, conf.headers);
+
+				// Set request headers
+				for (var key in headers) {
+					var val = headers[key];
+
+					if (val !== false) {
+						x.setRequestHeader(key, val);
+					}
+				}
+
+				// Set response type
+				if (conf.responseType) {
+					x.responseType = conf.responseType;
+				}
+
+				x.send(send);
+			});
 		},
 
 		/**
