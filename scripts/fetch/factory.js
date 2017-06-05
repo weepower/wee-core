@@ -268,9 +268,14 @@ export default function fetchFactory() {
 					}
 				}
 
-				// Set response type
+				// Add responseType to request if needed
 				if (conf.responseType) {
-					request.responseType = conf.responseType;
+					try {
+						request.responseType = conf.responseType;
+					} catch (e) {
+						// Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+						throw e;
+					}
 				}
 
 				request.send(send);
