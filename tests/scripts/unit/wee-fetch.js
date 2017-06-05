@@ -10,7 +10,7 @@ describe('fetch', () => {
 		expect($fetch).to.be.a('function');
 	});
 
-	describe('request', () => {
+	describe('requests', () => {
 		let state = false;
 
 		beforeEach(() => {
@@ -22,12 +22,11 @@ describe('fetch', () => {
 			state = false;
 		});
 
-		it('should get and parse JSON', done => {
+		it('should return parsed JSON', done => {
 			server.respondWith('GET', '/sample.json', [200, {}, sample.json.get]);
 
 			$fetch({
-				url: '/sample.json',
-				json: true
+				url: '/sample.json'
 			}).then((response) => {
 				expect(response.data).to.deep.equal(sample.jsonResults.get);
 				expect(server.requests.length).to.be.equal(1);
@@ -36,11 +35,12 @@ describe('fetch', () => {
 			server.respond();
 		});
 
-		it('should get HTML string', done => {
+		it('should return HTML string', done => {
 			server.respondWith('GET', '/sample.html', [200, {}, sample.html]);
 
 			$fetch({
-				url: '/sample.html'
+				url: '/sample.html',
+				responseType: 'text'
 			}).then((response) => {
 				expect(response.data).to.deep.equal(sample.html);
 				expect(server.requests.length).to.be.equal(1);
@@ -49,7 +49,7 @@ describe('fetch', () => {
 			server.respond();
 		});
 
-		it('should get and parse XML', done => {
+		it('should return parsed XML', done => {
 			server.respondWith('GET', '/sample.xml', [200, {}, sample.xml]);
 
 			$fetch({
@@ -87,6 +87,47 @@ describe('fetch', () => {
 			server.requests[0].error();
 
 			return request.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+
+		it('should reject on invalid response status', () => {
+			const resolveSpy = sinon.spy();
+			const rejectSpy = sinon.spy();
+			const finish = function() {
+				expect(resolveSpy.called).to.be.false;
+				expect(rejectSpy.called).to.be.true
+
+				const error = rejectSpy.args[0][0];
+				expect(error).to.be.an('error');
+				expect(error.message).to.equal('Request failed with status code 404');
+				expect(error.config.method).to.equal('get');
+				expect(error.request).to.be.an.instanceof(sinon.useFakeXMLHttpRequest());
+				expect(error.config.url).to.equal('http://thisisnotaserver.com/sample.json');
+			}
+
+			server.respondWith('GET', 'http://thisisnotaserver.com/sample.json', [404, {}, '']);
+
+			const request = $fetch({
+				baseUrl: 'http://thisisnotaserver.com',
+				url: '/sample.json'
+			});
+
+			// Trigger network error directly
+			server.respond();
+
+			return request.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+
+		it('should resolve when valid status', done => {
+			server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+
+			$fetch({
+				url: '/sample'
+			}).then(response => {
+				expect(response.data).to.deep.equal(sample.jsonResults.get);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
 		});
 	});
 
