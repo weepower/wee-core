@@ -1,6 +1,6 @@
 import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
-import { $extend, $serialize } from 'core/types';
+import { $extend, $isString, $serialize } from 'core/types';
 import { parseHeaders } from 'fetch/headers';
 import { createError } from 'fetch/error';
 
@@ -66,13 +66,11 @@ export default function fetchFactory() {
 			request.responseText :
 			request.response;
 
-		// Parse JSON response if specified
-		if (config.responseType === 'json') {
+		// Ensure that JSON is parsed appropriately
+		if ($isString(data)) {
 			try {
 				data = JSON.parse(data);
-			} catch (e) {
-				data = {};
-			}
+			} catch (e) { /* Ignore */ }
 		}
 
 		return {
