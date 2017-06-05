@@ -22,47 +22,6 @@ describe('fetch', () => {
 			state = false;
 		});
 
-		it('should return parsed JSON', done => {
-			server.respondWith('GET', '/sample.json', [200, {}, sample.json.get]);
-
-			$fetch({
-				url: '/sample.json'
-			}).then((response) => {
-				expect(response.data).to.deep.equal(sample.jsonResults.get);
-				expect(server.requests.length).to.be.equal(1);
-			}).then(done, done);
-
-			server.respond();
-		});
-
-		it('should return HTML string', done => {
-			server.respondWith('GET', '/sample.html', [200, {}, sample.html]);
-
-			$fetch({
-				url: '/sample.html',
-				responseType: 'text'
-			}).then((response) => {
-				expect(response.data).to.deep.equal(sample.html);
-				expect(server.requests.length).to.be.equal(1);
-			}).then(done, done);
-
-			server.respond();
-		});
-
-		it('should return parsed XML', done => {
-			server.respondWith('GET', '/sample.xml', [200, {}, sample.xml]);
-
-			$fetch({
-				url: '/sample.xml',
-				responseType: 'document'
-			}).then(response => {
-				expect(response.data).to.deep.equal(sample.xmlResults);
-				expect(server.requests.length).to.be.equal(1);
-			}).then(done, done);
-
-			server.respond();
-		});
-
 		it('should reject on network errors', () => {
 			const resolveSpy = sinon.spy();
 			const rejectSpy = sinon.spy();
@@ -124,6 +83,89 @@ describe('fetch', () => {
 				url: '/sample'
 			}).then(response => {
 				expect(response.data).to.deep.equal(sample.jsonResults.get);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return parsed JSON', done => {
+			server.respondWith('GET', '/sample.json', [200, {}, sample.json.get]);
+
+			$fetch({
+				url: '/sample.json'
+			}).then((response) => {
+				expect(response.data).to.deep.equal(sample.jsonResults.get);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return HTML string', done => {
+			server.respondWith('GET', '/sample.html', [200, {}, sample.html]);
+
+			$fetch({
+				url: '/sample.html',
+				responseType: 'text'
+			}).then((response) => {
+				expect(response.data).to.equal(sample.html);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return parsed HTML', done => {
+			server.respondWith('GET', '/sample.html', [200, {}, sample.html]);
+
+			$fetch({
+				url: '/sample.html',
+				responseType: 'document'
+			}).then((response) => {
+				expect(response.data).to.be.instanceOf(Document);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return parsed XML', done => {
+			server.respondWith('GET', '/sample.xml', [200, {}, sample.xml]);
+
+			$fetch({
+				url: '/sample.xml',
+				responseType: 'document'
+			}).then(response => {
+				expect(response.data).to.deep.equal(sample.xmlResults);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return blob', done => {
+			server.respondWith('GET', '/sample.png', [200, {}, 'randomstring']);
+
+			$fetch({
+				url: '/sample.png',
+				responseType: 'blob'
+			}).then(response => {
+				expect(response.data).to.be.instanceOf(Blob);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should return array buffer', done => {
+			server.respondWith('GET', '/sample.png', [200, {}, 'randomstring']);
+
+			$fetch({
+				url: '/sample.png',
+				responseType: 'arraybuffer'
+			}).then(response => {
+				expect(response.data).to.be.instanceOf(ArrayBuffer);
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
 
