@@ -154,7 +154,7 @@ export default function fetchFactory() {
 		 * @param {string} [options.method=get] - request verb
 		 * @param {boolean} [options.processData=true] - post data in the body
 		 * @param {string} [options.responseType] - set the type of the response
-		 * @param {string} [options.root=''] - prepended request path
+		 * @param {string} [options.baseUrl=''] - prepended request path
 		 * @param {object} [options.scope] - callback scope
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
 		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
@@ -165,11 +165,12 @@ export default function fetchFactory() {
 			return new Promise((resolve, reject) => {
 				var conf = $extend({
 					args: [],
+					baseUrl: '',
 					data: {},
 					disableCache: false,
 					headers: {},
 					method: 'get',
-					root: ''
+					responseType: 'json'
 				}, options);
 
 				if (conf.disableCache) {
@@ -177,8 +178,8 @@ export default function fetchFactory() {
 				}
 
 				// Prefix root path to url
-				if (conf.root) {
-					conf.url = conf.root.replace(/\/$/, '') + '/' +
+				if (conf.baseUrl) {
+					conf.url = conf.baseUrl.replace(/\/$/, '') + '/' +
 						conf.url.replace(/^\//, '');
 				}
 
