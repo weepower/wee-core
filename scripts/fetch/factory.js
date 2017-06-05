@@ -15,13 +15,14 @@ export default function fetchFactory() {
 	 * @param {object} conf
 	 * @returns {*}
 	 */
-	const _settle = function _settle(response, resolve, reject) {
-		if (response.request.readyState === 4) {
+	const _settle = function _settle(request, config, resolve, reject) {
+		if (request.readyState === 4) {
+			let response = _prepareResponse(request, config);
 			let exec = {
 					args: response.config.args.slice(0),
 					scope: response.config.scope
 				};
-			let responseUrl = response.request.responseURL;
+			let responseUrl = request.responseURL;
 
 			// The request errored out and we didn't get a response, this will be handled by onerror instead
 			// With one exception: request that using file: protocol, most browsers
@@ -199,7 +200,7 @@ export default function fetchFactory() {
 				}
 
 				request.onreadystatechange = function() {
-					_settle(_prepareResponse(request, conf), resolve, reject);
+					_settle(request, conf, resolve, reject);
 				};
 
 				request.onerror = function handleError() {
