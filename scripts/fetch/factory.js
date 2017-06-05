@@ -66,7 +66,7 @@ export default function fetchFactory() {
 			request.response;
 
 		// Parse JSON response if specified
-		if (config.json) {
+		if (config.responseType === 'json') {
 			try {
 				data = JSON.parse(data);
 			} catch (e) {
