@@ -28,8 +28,8 @@ describe('fetch', () => {
 			$fetch({
 				url: '/sample.json',
 				json: true
-			}).then((data, xhr) => {
-				expect(data).to.deep.equal(sample.jsonResults.get);
+			}).then((response) => {
+				expect(response.data).to.deep.equal(sample.jsonResults.get);
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
 
@@ -41,8 +41,8 @@ describe('fetch', () => {
 
 			$fetch({
 				url: '/sample.html'
-			}).then((data, xhr) => {
-				expect(data).to.deep.equal(sample.html);
+			}).then((response) => {
+				expect(response.data).to.deep.equal(sample.html);
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
 
@@ -55,8 +55,8 @@ describe('fetch', () => {
 			$fetch({
 				url: '/sample.xml',
 				responseType: 'document'
-			}).then(data => {
-				expect(data).to.deep.equal(sample.xmlResults);
+			}).then(response => {
+				expect(response.data).to.deep.equal(sample.xmlResults);
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
 
@@ -70,8 +70,11 @@ describe('fetch', () => {
 				expect(resolveSpy.called).to.be.false;
 				expect(rejectSpy.called).to.be.true
 
-				const reason = rejectSpy.args[0][0];
-				expect(reason).to.be.an('error');
+				const error = rejectSpy.args[0][0];
+				expect(error).to.be.an('error');
+				expect(error.message).to.equal('Network Error');
+				expect(error.config.method).to.equal('get');
+				expect(error.request).to.be.an.instanceof(sinon.useFakeXMLHttpRequest());
 			}
 
 			server.respondWith('GET', '/sample.json', [500, {}, '']);
@@ -80,7 +83,7 @@ describe('fetch', () => {
 				url: '/sample.json'
 			});
 
-			// Trigger network error
+			// Trigger network error directly
 			server.requests[0].error();
 
 			return request.then(resolveSpy, rejectSpy).then(finish, finish);

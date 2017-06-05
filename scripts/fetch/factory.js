@@ -1,6 +1,8 @@
 import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
 import { $extend, $serialize } from 'core/types';
+import { parseHeaders } from 'fetch/headers';
+import { createError } from 'fetch/error';
 
 export default function fetchFactory() {
 	let version = 1;
@@ -9,31 +11,78 @@ export default function fetchFactory() {
 	 * Process the readyState change event
 	 *
 	 * @private
-	 * @param {XMLHttpRequest} x
+	 * @param {XMLHttpRequest} request
 	 * @param {object} conf
 	 * @returns {*}
 	 */
-	const _change = function _change(request, conf, resolve, reject) {
-		if (request.readyState === 4) {
-			var code = request.status,
-				exec = {
-					args: conf.args,
-					scope: conf.scope
+	const _settle = function _settle(response, resolve, reject) {
+		if (response.request.readyState === 4) {
+			let exec = {
+					args: response.config.args.slice(0),
+					scope: response.config.scope
 				};
+			let responseUrl = response.request.responseURL;
 
 			// The request errored out and we didn't get a response, this will be handled by onerror instead
 			// With one exception: request that using file: protocol, most browsers
 			// will return status as 0 even though it's a successful request
-			if (code === 0 && ! (request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+			if (response.status === 0 && ! (responseUrl && responseUrl.indexOf('file:') === 0)) {
 				return;
 			}
 
-			if (code >= 200 && code < 400) {
-				_success(request, conf, resolve);
+			// TODO: validateStatus method with ability to customize status code
+			if (response.status >= 200 && response.status < 400) {
+				exec.args.unshift(response);
+
+				$exec(resolve, exec);
 			} else {
+				exec.args.unshift(createError(
+					'Request failed with status code ' + response.status,
+					response.config,
+					null,
+					response.request,
+					response
+				));
+
 				$exec(reject, exec);
 			}
 		}
+	}
+
+	/**
+	 * Create consistent response object for resolving promise
+	 *
+	 * @param {XMLHttpRequest} request
+	 * @param {Object} config
+	 * @returns {Object} response
+	 * @private
+	 */
+	const _prepareResponse = function _prepareResponse(request, config) {
+		const headers = 'getAllResponseHeaders' in request ?
+			parseHeaders(request.getAllResponseHeaders()) :
+			null;
+		let data = ! config.responseType || config.responseType === 'text' ?
+			request.responseText :
+			request.response;
+
+		// Parse JSON response if specified
+		if (config.json) {
+			try {
+				data = JSON.parse(data);
+			} catch (e) {
+				data = {};
+			}
+		}
+
+		return {
+			config,
+			data,
+			headers,
+			request,
+			// IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+			status: request.status === 1223 ? 204 : request.status,
+			statusText: request.status === 1223 ? 'No Content' : request.statusText
+		};
 	}
 
 	const _getUrl = function _getUrl(conf) {
@@ -49,38 +98,6 @@ export default function fetchFactory() {
 		}
 
 		return url;
-	}
-
-	/**
-	 * Execute the request success callback
-	 *
-	 * @private
-	 * @param {XMLHttpRequest} x
-	 * @param {object} conf
-	 * @returns {boolean}
-	 */
-	const _success = function _success(x, conf, resolve) {
-		let resp = ! conf.responseType || conf.responseType == 'text' ?
-				x.responseText :
-				x.response;
-		let exec = {
-				args: conf.args.slice(0),
-				scope: conf.scope
-			};
-
-		// Parse JSON response if specified
-		if (conf.json) {
-			try {
-				resp = JSON.parse(resp);
-			} catch (e) {
-				resp = {};
-			}
-		}
-
-		exec.args.unshift(resp);
-
-		// Resolve promise
-		$exec(resolve, exec);
 	}
 
 	/**
@@ -182,11 +199,11 @@ export default function fetchFactory() {
 				}
 
 				request.onreadystatechange = function() {
-					_change(request, conf, resolve, reject);
+					_settle(_prepareResponse(request, conf), resolve, reject);
 				};
 
 				request.onerror = function handleError() {
-					reject(new Error);
+					reject(createError('Network Error', conf, null, request));
 				};
 
 				var contentTypeHeader = 'Content-Type',
