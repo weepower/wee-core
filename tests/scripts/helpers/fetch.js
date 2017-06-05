@@ -36,7 +36,6 @@ export default {
 	json,
 	jsonResults,
 	html,
-	htmlResults,
 	xml,
 	xmlResults
 };
