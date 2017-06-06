@@ -1,6 +1,8 @@
 import fetchFactory from 'fetch/factory';
 import bind from 'fetch/bind';
 import { extend } from 'fetch/utils';
+import defaults from 'fetch/defaults';
+import { $extend } from 'core/types';
 
 /**
  * Create a new instance of fetch
@@ -19,15 +21,15 @@ function createFetchInstance(defaultConfig) {
 }
 
 // Instantiate main fetch instance
-const $fetch = createFetchInstance();
+const $fetch = createFetchInstance(defaults);
 
 /**
  * Create a new instance
  *
  * @returns {wrap}
  */
-$fetch.create = function create() {
-	return createFetchInstance();
+$fetch.create = function create(instanceDefaults) {
+	return createFetchInstance($extend({}, defaults, instanceDefaults));
 }
 
 export default $fetch;
