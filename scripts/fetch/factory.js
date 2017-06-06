@@ -4,7 +4,7 @@ import { $extend, $isString, $serialize } from 'core/types';
 import { parseHeaders } from 'fetch/headers';
 import { createError } from 'fetch/error';
 
-export default function fetchFactory() {
+export default function fetchFactory(defaults) {
 	let version = 1;
 
 	/**
@@ -59,7 +59,7 @@ export default function fetchFactory() {
 	 * @private
 	 */
 	const _prepareResponse = function _prepareResponse(request, config) {
-		const headers = 'getAllResponseHeaders' in request ?
+		const headers = request.getAllResponseHeaders ?
 			parseHeaders(request.getAllResponseHeaders()) :
 			null;
 		let data = ! config.responseType || config.responseType === 'text' ?
@@ -136,16 +136,19 @@ export default function fetchFactory() {
 	};
 
 	return {
+		// Set instance defaults
+		defaults,
+
 		/**
 		 * Make request based on specified options
 		 *
-		 * @param {object} options
+		 * @param {Object|string} options
 		 * @param {Array} [options.args] - callback arguments appended after default values
-		 * @param {(Array|function|string)} [options.complete] - callback on request completion
+		 * @param {(Array|Function|string)} [options.complete] - callback on request completion
 		 * @param {boolean} [options.disableCache=false] - add query string to request to bypass browser caching
-		 * @param {object} [options.data] - object to serialize and pass along with request
-		 * @param {(Array|function|string)} [options.error] - callback if request fails
-		 * @param {object} [options.headers] - request headers
+		 * @param {Object} [options.data] - object to serialize and pass along with request
+		 * @param {(Array|Function|string)} [options.error] - callback if request fails
+		 * @param {Object} [options.headers] - request headers
 		 * @param {boolean} [options.json=false] - evaluate the response as JSON and return object
 		 * @param {(boolean|string)} [options.jsonp=false] - boolean or callback query parameter override
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
@@ -159,17 +162,24 @@ export default function fetchFactory() {
 		 * @param {string} [options.type] - form, html, json, or xml
 		 * @param {string} options.url - endpoint to request
 		 */
-		request: function(options) {
+		request(options) {
+			if ($isString(options)) {
+				let url = options;
+				options = {
+					url
+				};
+			}
+
 			return new Promise((resolve, reject) => {
-				var conf = $extend({
-					args: [],
-					baseUrl: '',
-					data: {},
-					disableCache: false,
-					headers: {},
-					method: 'get',
-					responseType: 'json'
-				}, options);
+				var conf = $extend(true, {}, this.defaults, options);
+
+				// Flatten headers
+				conf.headers = $extend(
+					{},
+					conf.headers.common,
+					conf.headers[conf.method.toLowerCase()] || {},
+					options.headers || {}
+				);
 
 				if (conf.disableCache) {
 					conf.data.dt = Date.now();
@@ -206,20 +216,22 @@ export default function fetchFactory() {
 					reject(createError('Network Error', conf, null, request));
 				};
 
-				var contentTypeHeader = 'Content-Type',
-					method = conf.method.toUpperCase(),
-					str = typeof conf.data == 'string',
-					send = null,
-					headers = [];
+				// TODO: Set Content-Type only post body (refer to axios for formData scenario)
 
-				if (! str && ! conf.type) {
-					conf.type = 'json';
-				}
+				let method = conf.method.toUpperCase(),
+					str = typeof conf.data == 'string',
+					send = null;
+					// headers = [];
+
+				// if (! str && ! conf.type) {
+				// 	conf.type = 'json';
+				// }
 
 				// Format data based on specified verb
 				if (method == 'GET') {
 					conf.url = this._getUrl(conf);
 				} else {
+					// TODO: Format data with transformRequest method (refer to axios)
 					send = str || conf.processData === false ?
 						conf.data :
 						conf.type == 'json' ?
@@ -230,37 +242,31 @@ export default function fetchFactory() {
 				request.open(method, conf.url, true);
 
 				// Add content type header
-				if (conf.type == 'json') {
-					headers[contentTypeHeader] = 'application/json';
-				} else if (conf.type == 'xml') {
-					headers[contentTypeHeader] = 'text/xml';
-				} else if (method == 'POST' || conf.type == 'form') {
-					headers[contentTypeHeader] =
-						'application/x-www-form-urlencoded';
-				}
-
-				// Accept JSON header
-				if (conf.json) {
-					headers.Accept = 'application/json, text/javascript, */*; q=0.01';
-				}
+				// if (conf.type == 'json') {
+				// 	headers[contentTypeHeader] = 'application/json';
+				// } else if (conf.type == 'xml') {
+				// 	headers[contentTypeHeader] = 'text/xml';
+				// } else if (method == 'POST' || conf.type == 'form') {
+				// 	headers[contentTypeHeader] =
+				// 		'application/x-www-form-urlencoded';
+				// }
 
 				// Add X-Requested-With header for same domain requests
-				var a = _doc.createElement('a');
+				// This is a security measure for CORS as it is not an allowed
+				// header by default on cross-origin requests
+				let a = _doc.createElement('a');
 				a.href = conf.url;
 
 				if (! a.host || a.host == location.host) {
-					headers['X-Requested-With'] = 'XMLHttpRequest';
+					conf.headers['X-Requested-With'] = 'XMLHttpRequest';
 				}
 
 				// Append character set to content type header
-				headers[contentTypeHeader] += '; charset=UTF-8';
-
-				// Extend configured headers into defaults
-				headers = $extend(headers, conf.headers);
+				// headers[contentTypeHeader] += '; charset=UTF-8';
 
 				// Set request headers
-				for (var key in headers) {
-					var val = headers[key];
+				for (var key in conf.headers) {
+					var val = conf.headers[key];
 
 					if (val !== false) {
 						request.setRequestHeader(key, val);

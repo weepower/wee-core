@@ -1,6 +1,8 @@
 import sinon from 'sinon';
 import $fetch from 'wee-fetch';
 import sample from '../helpers/fetch';
+import { $copy, $extend } from 'core/types';
+import defaults from 'fetch/defaults';
 
 describe('fetch', () => {
 	let xhr;
@@ -10,8 +12,12 @@ describe('fetch', () => {
 		expect($fetch).to.be.a('function');
 	});
 
-	describe('requests', () => {
-		let state = false;
+	describe('defaults', () => {
+		let defaultHeaders;
+
+		before(() => {
+			defaultHeaders = $copy($fetch.defaults.headers);
+		});
 
 		beforeEach(() => {
 			server = sinon.fakeServer.create();
@@ -19,7 +25,113 @@ describe('fetch', () => {
 
 		afterEach(() => {
 			server.restore();
-			state = false;
+			$fetch.defaults.headers = defaultHeaders;
+		});
+
+		it('should use GET headers', done => {
+			$fetch.defaults.headers.get['X-CUSTOM-HEADER'] = 'foo';
+
+			server.respondWith('GET', '/sample', [200, {}, '']);
+
+			$fetch('/sample').then(response => {
+				expect(response.request.requestHeaders['X-CUSTOM-HEADER']).to.equal('foo');
+				expect(response.request.requestHeaders['Accept']).to.equal('application/json, text/plain, */*');
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should use POST headers', done => {
+			$fetch.defaults.headers.post['X-CUSTOM-HEADER'] = 'foo';
+
+			server.respondWith('POST', '/sample', [200, {}, '']);
+
+			$fetch({
+				url: '/sample',
+				method: 'post'
+			}).then(response => {
+				expect(response.request.requestHeaders['X-CUSTOM-HEADER']).to.equal('foo');
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should use header config', function (done) {
+			server.respondWith('GET', '/sample', [200, {}, '']);
+
+			const instance = $fetch.create({
+				headers: {
+					common: {
+						'X-COMMON-HEADER': 'commonHeaderValue'
+					},
+					get: {
+						'X-GET-HEADER': 'getHeaderValue'
+					},
+					post: {
+						'X-POST-HEADER': 'postHeaderValue'
+					}
+				}
+			});
+
+			instance({
+				url: '/sample',
+				headers: {
+					'X-FOO-HEADER': 'fooHeaderValue',
+					'X-BAR-HEADER': 'barHeaderValue'
+				}
+			}).then(response => {
+				expect(response.request.requestHeaders).to.deep.equal(
+					{
+						'X-Requested-With': 'XMLHttpRequest',
+						'Content-Type': 'text/plain;charset=utf-8',
+						'X-COMMON-HEADER': 'commonHeaderValue',
+						'X-GET-HEADER': 'getHeaderValue',
+						'X-FOO-HEADER': 'fooHeaderValue',
+						'X-BAR-HEADER': 'barHeaderValue'
+					}
+				);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should be used by custom instance if set before instance created', done => {
+			server.respondWith('GET', 'http://example.org/sample', [200, {}, '']);
+
+			$fetch.defaults.baseURL = 'http://example.org/';
+
+			const instance = $fetch.create();
+
+			instance('http://example.org/sample').then(response => {
+				expect(response.request.url).to.equal('http://example.org/sample');
+			}).then(done, done);
+
+			$fetch.defaults.baseURL = '';
+			server.respond();
+		});
+
+		it('should not be used by custom instance if set after instance created', done => {
+			server.respondWith('GET', 'http://example.org/sample', [200, {}, '']);
+
+			var instance = $fetch.create();
+			$fetch.defaults.baseURL = 'http://new-example.org/';
+
+			instance('http://example.org/sample').then(response => {
+				expect(response.request.url).to.equal('http://example.org/sample');
+			}).then(done, done);
+
+			$fetch.defaults.baseURL = '';
+			server.respond();
+		});
+	});
+
+	describe('requests', () => {
+		beforeEach(() => {
+			server = sinon.fakeServer.create();
+		});
+
+		afterEach(() => {
+			server.restore();
 		});
 
 		it('should reject on network errors', () => {
@@ -35,8 +147,6 @@ describe('fetch', () => {
 				expect(error.config.method).to.equal('get');
 				expect(error.request).to.be.an.instanceof(sinon.useFakeXMLHttpRequest());
 			}
-
-			server.respondWith('GET', '/sample.json', [500, {}, '']);
 
 			const request = $fetch({
 				url: '/sample.json'
@@ -82,6 +192,17 @@ describe('fetch', () => {
 			$fetch({
 				url: '/sample'
 			}).then(response => {
+				expect(response.data).to.deep.equal(sample.jsonResults.get);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should assume url is argument when passed string', done => {
+			server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+
+			$fetch('/sample').then(response => {
 				expect(response.data).to.deep.equal(sample.jsonResults.get);
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
