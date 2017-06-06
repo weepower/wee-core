@@ -163,90 +163,92 @@ export default function fetchFactory(defaults) {
 		 * @param {string} options.url - endpoint to request
 		 */
 		request(options) {
-			if ($isString(options)) {
-				let url = options;
-				options = {
-					url
-				};
-			}
-
 			return new Promise((resolve, reject) => {
-				var conf = $extend(true, {}, this.defaults, options);
+				// Account for possibility options being string
+				if ($isString(options)) {
+					let url = options;
+
+					options = {
+						url
+					};
+				}
+
+				let config = $extend(true, {}, this.defaults, options);
 
 				// Flatten headers
-				conf.headers = $extend(
+				config.headers = $extend(
 					{},
-					conf.headers.common,
-					conf.headers[conf.method.toLowerCase()] || {},
+					config.headers.common,
+					config.headers[config.method.toLowerCase()] || {},
 					options.headers || {}
 				);
 
-				if (conf.disableCache) {
-					conf.data.dt = Date.now();
+				if (config.disableCache) {
+					config.data.dt = Date.now();
 				}
 
 				// Prefix root path to url
-				if (conf.baseUrl) {
-					conf.url = conf.baseUrl.replace(/\/$/, '') + '/' +
-						conf.url.replace(/^\//, '');
+				if (config.baseUrl) {
+					config.url = config.baseUrl.replace(/\/$/, '') + '/' +
+						config.url.replace(/^\//, '');
 				}
 
 				// Process JSONP
-				if (conf.jsonp) {
-					return _jsonp(conf, resolve, reject);
+				if (config.jsonp) {
+					return _jsonp(config, resolve, reject);
 				}
 
 				var request = new XMLHttpRequest();
 
 				// Inject XHR object as first callback argument
-				conf.args.unshift(request);
+				config.args.unshift(request);
 
-				if (conf.send) {
-					$exec(conf.send, {
-						args: conf.args,
-						scope: conf.scope
+				if (config.send) {
+					$exec(config.send, {
+						args: config.args,
+						scope: config.scope
 					});
 				}
 
 				request.onreadystatechange = function() {
-					_settle(request, conf, resolve, reject);
+					_settle(request, config, resolve, reject);
 				};
 
 				request.onerror = function handleError() {
-					reject(createError('Network Error', conf, null, request));
+					reject(createError('Network Error', config, null, request));
 				};
 
 				// TODO: Set Content-Type only post body (refer to axios for formData scenario)
 
-				let method = conf.method.toUpperCase(),
-					str = typeof conf.data == 'string',
+				let method = config.method.toUpperCase(),
+					str = typeof config.data == 'string',
 					send = null;
 					// headers = [];
 
-				// if (! str && ! conf.type) {
-				// 	conf.type = 'json';
+				// if (! str && ! config.type) {
+				// 	config.type = 'json';
 				// }
 
 				// Format data based on specified verb
 				if (method == 'GET') {
-					conf.url = this._getUrl(conf);
+					config.url = this._getUrl(config);
 				} else {
 					// TODO: Format data with transformRequest method (refer to axios)
-					send = str || conf.processData === false ?
-						conf.data :
-						conf.type == 'json' ?
-							JSON.stringify(conf.data) :
-							$serialize(conf.data);
+					send = str || config.processData === false ?
+						config.data :
+						config.type == 'json' ?
+							JSON.stringify(config.data) :
+							$serialize(config.data);
 				}
 
-				request.open(method, conf.url, true);
+				request.open(method, config.url, true);
 
 				// Add content type header
-				// if (conf.type == 'json') {
+				// if (config.type == 'json') {
 				// 	headers[contentTypeHeader] = 'application/json';
-				// } else if (conf.type == 'xml') {
+				// } else if (config.type == 'xml') {
 				// 	headers[contentTypeHeader] = 'text/xml';
-				// } else if (method == 'POST' || conf.type == 'form') {
+				// } else if (method == 'POST' || config.type == 'form') {
 				// 	headers[contentTypeHeader] =
 				// 		'application/x-www-form-urlencoded';
 				// }
@@ -255,18 +257,18 @@ export default function fetchFactory(defaults) {
 				// This is a security measure for CORS as it is not an allowed
 				// header by default on cross-origin requests
 				let a = _doc.createElement('a');
-				a.href = conf.url;
+				a.href = config.url;
 
 				if (! a.host || a.host == location.host) {
-					conf.headers['X-Requested-With'] = 'XMLHttpRequest';
+					config.headers['X-Requested-With'] = 'XMLHttpRequest';
 				}
 
 				// Append character set to content type header
 				// headers[contentTypeHeader] += '; charset=UTF-8';
 
 				// Set request headers
-				for (var key in conf.headers) {
-					var val = conf.headers[key];
+				for (var key in config.headers) {
+					var val = config.headers[key];
 
 					if (val !== false) {
 						request.setRequestHeader(key, val);
@@ -274,9 +276,9 @@ export default function fetchFactory(defaults) {
 				}
 
 				// Add responseType to request if needed
-				if (conf.responseType) {
+				if (config.responseType) {
 					try {
-						request.responseType = conf.responseType;
+						request.responseType = config.responseType;
 					} catch (e) {
 						// Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
 						throw e;
@@ -291,7 +293,7 @@ export default function fetchFactory(defaults) {
 		 * Generate final URL
 		 *
 		 * @private
-		 * @param {object} conf
+		 * @param {object} config
 		 */
 		_getUrl: _getUrl
 	};
