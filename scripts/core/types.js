@@ -205,13 +205,80 @@ export function $isArray(obj) {
 }
 
 /**
+ * Determine if a value is an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+ */
+export function $isArrayBuffer(val) {
+	return $type(val) === 'arraybuffer';
+}
+
+/**
+ * Determine if a value is a view on an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+ */
+export function $isArrayBufferView(val) {
+	let result;
+
+	// IE10 support and up
+	if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
+		result = ArrayBuffer.isView(val);
+	}
+
+	return result;
+}
+
+/**
+ * Determine if a value is a Blob
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Blob, otherwise false
+ */
+export function $isBlob(val) {
+	return $type(val) === 'blob';
+}
+
+/**
+ * Determine if a value is a Date
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Date, otherwise false
+ */
+export function $isDate(val) {
+	return $type(val) === 'date';
+}
+
+/**
+ * Determine if a value is a File
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a File, otherwise false
+ */
+export function $isFile(val) {
+	return $type(val) === 'file';
+}
+
+/**
+ * Determine if a value is a FormData
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an FormData, otherwise false
+ */
+export function $isFormData(val) {
+	return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
+/**
  * Determine if value is a function
  *
  * @param {*} obj
  * @returns {boolean}
  */
 export function $isFunction(obj) {
-	return $type(obj) == 'function';
+	return $type(obj) === 'function';
 }
 
 /**
@@ -233,7 +300,7 @@ export function $isNumber(obj, strict = true) {
 		return value === value;
 	}
 
-	return $type(obj) == 'number';
+	return $type(obj) === 'number';
 }
 
 /**
@@ -243,7 +310,7 @@ export function $isNumber(obj, strict = true) {
  * @returns {boolean}
  */
 export function $isObject(obj) {
-	return $type(obj) == 'object';
+	return $type(obj) === 'object';
 }
 
 /**
@@ -253,7 +320,7 @@ export function $isObject(obj) {
  * @returns {boolean}
  */
 export function $isString(obj) {
-	return typeof obj == 'string';
+	return typeof obj === 'string';
 }
 
 /**
