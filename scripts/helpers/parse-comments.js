@@ -1,6 +1,3 @@
-// const extract = require('extract-comments');
-// const utils = require('../utils');
-
 /**
  * Takes a string and parses out code comments, params, and returns
  * @param str
@@ -8,25 +5,24 @@
  */
 
 function parser (str) {
-	const START = /^\/\*\*?/,
-		CONTENT = /(^[^@]+)?(@.*)/,
-		END = /^\*\//;
+	const START = /^\/\*\*?/;
+	const END = /^\*\//;
+	const CONTENT = /(^[^@]+)?(@.*)/;
+	const PARSE_PARAM = /(?:^(param|return)\s+)(?:\{([^\}]+)\}\s*)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/g;
 
-	let lines = str.split(/[\r\n]/),
-		linesLength = lines.length,
-		i = 0,
-		isComment = false,
-		afterCount,
-		o = {},
-		b,
-		comments = {},
-		commentsArray = [];
+	let lines = str.split(/[\r\n]/);
+	let linesLength = lines.length;
+	let i = 0;
+	let isComment = false;
+	let afterCount;
+	let comment = {};
+	let comments = [];
 
 	while (i < linesLength) {
 		let line = lines[i++].trim();
 
 		if (! isComment && START.test(line)) {
-			o = {
+			comment = {
 				begin: null,
 				end: null,
 				code: '',
@@ -36,21 +32,21 @@ function parser (str) {
 			};
 			afterCount = 0;
 			isComment = true;
-			o.begin = b = i; // TODO: set this to i
+			comment.begin = i;
 		}
 
 		if (isComment && END.test(line)) {
-			let contentBreakdown = o.content.match(CONTENT);
-			o.end = i;
+			let contentBreakdown = comment.content.match(CONTENT);
+			comment.end = i;
 
 			if (contentBreakdown !== null) {
 				let lines = contentBreakdown[2].trim().split('@');
-				o.description = contentBreakdown[1].trim();
+
+				comment.description = contentBreakdown[1].trim();
 
 				lines.shift();
 
 				lines.forEach(param => {
-					const PARSE_PARAM = /(?:^(param|return)\s+)(?:\{([^\}]+)\}\s*)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/g;
 					let name = '';
 					let required = true;
 					let match = PARSE_PARAM.exec(param);
@@ -76,49 +72,45 @@ function parser (str) {
 					};
 
 					if (type === 'return') {
-						o.return = result;
+						comment.return = result;
 					} else {
-						o.params.push(result);
+						comment.params.push(result);
 					}
 				});
 			}
 
-			comments[b] = o; // TODO: convert array and push items in
+			comments.push(comment);
 			isComment = false;
 		}
 
-		if (isComment && i > o.begin) {
+		if (isComment && i > comment.begin) {
 			if (isMiddle(line)) {
 				let stripped = stripStars(line);
 
 				if (stripped.length) {
-					o.content += stripped;
+					comment.content += stripped;
 				}
 			}
 		}
 
-		if (! isComment && o.end && i > o.end && afterCount < 2) {
+		if (! isComment && comment.end && i > comment.end && afterCount < 2) {
 			if (!isWhitespace(line)) {
-				o.codeStart = i;
+				comment.codeStart = i;
 			}
-			o.code += line + '\n';
+			comment.code += line + '\n';
 			afterCount++;
 			}
 
-			if (b && o.code !== '') {
-				o.code = o.code.trim();
+			if (comment.begin && comment.code !== '') {
+				comment.code = comment.code.trim();
 			}
 		}
 
-	for (item in comments) {
-		commentsArray.push(comments[item]);
-	}
-
-	return commentsArray;
+	return comments;
 }
 
 /**
- * Strips out starts
+ * Strips out stars
  *
  * @param str
  * @returns {string}
@@ -150,7 +142,7 @@ function isMiddle(str) {
 }
 
 /**
- *
+ * Checks for whitespace
  */
 let cache;
 
