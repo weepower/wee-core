@@ -1,219 +1,166 @@
-const extract = require('extract-comments');
-const utils = require('../utils');
+// const extract = require('extract-comments');
+// const utils = require('../utils');
 
-function parser (str, opts) {
-  return parser.codeContext(str, opts);
+/**
+ * Takes a string and parses out code comments, params, and returns
+ * @param str
+ * @returns array
+ */
+
+function parser (str) {
+	const START = /^\/\*\*?/,
+		CONTENT = /(^[^@]+)?(@.*)/,
+		END = /^\*\//;
+
+	let lines = str.split(/[\r\n]/),
+		linesLength = lines.length,
+		i = 0,
+		isComment = false,
+		afterCount,
+		o = {},
+		b,
+		comments = {},
+		commentsArray = [];
+
+	while (i < linesLength) {
+		let line = lines[i++].trim();
+
+		if (! isComment && START.test(line)) {
+			o = {
+				begin: null,
+				end: null,
+				code: '',
+				content: '',
+				params: [],
+				return: []
+			};
+			afterCount = 0;
+			isComment = true;
+			o.begin = b = i; // TODO: set this to i
+		}
+
+		if (isComment && END.test(line)) {
+			let contentBreakdown = o.content.match(CONTENT);
+			o.end = i;
+
+			if (contentBreakdown !== null) {
+				let lines = contentBreakdown[2].trim().split('@');
+				o.description = contentBreakdown[1].trim();
+
+				lines.shift();
+
+				lines.forEach(param => {
+					const PARSE_PARAM = /(?:^(param|return)\s+)(?:\{([^\}]+)\}\s*)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/g;
+					let name = '';
+					let required = true;
+					let match = PARSE_PARAM.exec(param);
+
+					if (! match) {
+						return;
+					}
+
+					let type = match[1];
+
+					if (match[3]) {
+						name = match[3];
+						required = false;
+					} else if (match[4]) {
+						name = match[4];
+					}
+
+					let result = {
+						type: match[2],
+						name: name,
+						required: required,
+						description: (match[5] || '').replace(/^\s*-\s*/, '')
+					};
+
+					if (type === 'return') {
+						o.return = result;
+					} else {
+						o.params.push(result);
+					}
+				});
+			}
+
+			comments[b] = o; // TODO: convert array and push items in
+			isComment = false;
+		}
+
+		if (isComment && i > o.begin) {
+			if (isMiddle(line)) {
+				let stripped = stripStars(line);
+
+				if (stripped.length) {
+					o.content += stripped;
+				}
+			}
+		}
+
+		if (! isComment && o.end && i > o.end && afterCount < 2) {
+			if (!isWhitespace(line)) {
+				o.codeStart = i;
+			}
+			o.code += line + '\n';
+			afterCount++;
+			}
+
+			if (b && o.code !== '') {
+				o.code = o.code.trim();
+			}
+		}
+
+	for (item in comments) {
+		commentsArray.push(comments[item]);
+	}
+
+	return commentsArray;
 }
 
 /**
- * Extract code comments, and merge in code context.
+ * Strips out starts
  *
- * @param  {String} `str`
- * @return {Array} Array of comment objects.
+ * @param str
+ * @returns {string}
  */
 
-
-parser.codeContext = function (str, opts) {
-  let comments = extract(str);
-  let res = [];
-
-  for (let key in comments) {
-    if (comments.hasOwnProperty(key)) {
-      let comment = comments[key];
-      let o = parser.parseComment(comment.content, opts);
-      o.comment = comment;
-      Object.assign(o, parser.parseDescription(o));
-      res.push(o);
-    }
+function stripStars(str) {
+  str = str.replace(/^\s*/, '');
+  if (str.charAt(0) === '/') {
+    str = str.slice(1);
   }
-  return res;
-};
-
-/**
- * Normalize descriptions.
- *
- * @param  {Object} `comment`
- * @return {Object}
- */
-
-parser.normalizeDesc = function (comment) {
-  // strip trailing whitespace from description
-  comment.description = utils.trimRight(comment.description);
-};
-
-/**
- * Parse code examples from a `comment.description`.
- *
- * @param  {Object} `comment`
- * @return {Object}
- */
-
-parser.parseDescription = function (comment) {
-  // strip trailing whitespace from description
-  if (comment.description) {
-    Object.assign(comment, parser.normalizeDesc(comment));
+  if (str.charAt(0) === '*') {
+    str = str.slice(1);
   }
-  return comment;
-};
-
-/**
- * Parse the parameters from a string.
- *
- * @param  {String} `param`
- * @return {Object}
- */
-
-parser.parseParams = function (param) {
-  let re = /(?:^\{([^\}]+)\}\s+)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/,
-      name = '',
-      required = true;
-  if (typeof param !== 'string') return {};
-  let match = param.match(re);
-
-  if (match[2]) {
-    name = match[2];
-    required = false;
-  } else if (match[3]) {
-    name = match[3];
+  if (str.charAt(0) === ' ') {
+    str = str.slice(1);
   }
-
-  let params = {
-    type: match[1],
-    name: name,
-    required: required,
-    description: (match[4] || '').replace(/^\s*-\s*/, '')
-  };
-  return params;
-};
+  return str;
+}
 
 /**
- * Parse `@return` comments.
- *
- * @param  {String} `str`
- * @return {Object}
+ * Detect if the given line is in the middle
+ * of a comment.
  */
+
+function isMiddle(str) {
+  return typeof str === 'string'
+   && str.charAt(0) === '*'
+   && str.charAt(1) !== '/';
+}
 
 /**
- * Parse `@tags`.
  *
- * @param  {Object} `comment` A comment object.
- * @param  {Object} `options`
- * @return {Object}
  */
+let cache;
 
-parser.parseTags = function (comment, opts = {}) {
+function isWhitespace(str) {
+  return (typeof str === 'string') && regex().test(str);
+}
 
-  // parse @param tags (`singular: plural`)
-  let props = Object.assign({
-    param: 'params',
-    property: 'properties',
-    option: 'options',
-    return: 'return'
-  }, opts.subprops);
-
-  Object.keys(props).forEach(function (key) {
-    let value = props[key];
-
-    if (comment[key]) {
-      const arr = comment[key] || [];
-      const count = arr.length;
-      let result = [];
-
-      for (let i = 0; i < count; i++) {
-        const item = arr[i];
-
-        if (Array.isArray(item)) {
-          result.concat(item);
-        } else if (item) {
-          result.push(item);
-        }
-      }
-
-      comment[value] = result.map(str => parser.parseParams(str));
-    }
-  });
-  return comment;
-};
-
-/**
- * Parse comments from the given `content` string with the
- * specified `options.`
- *
- * @param  {String} `content`
- * @param  {Object} `options`
- * @return {Object}
- */
-
-parser.parseComment = function (content, options) {
-  let opts = options || {};
-  let afterNewLine = false;
-  let afterTags = false;
-  let props = [];
-  let lastTag;
-  let i = 0;
-
-  let lines = content.split('\n');
-  let comment = lines.reduce(function (c, str) {
-    // strip leading asterisks
-    let line = utils.stripStars(str);
-    if (/\s*@/.test(line)) {
-      line = line.replace(/^\s+/, '');
-    }
-
-    if (line) {
-
-      let match = line.match(/^(\s*@[\S]+)\s*(.*)/);
-      if (match) {
-        afterTags = true;
-        let tagname = match[1].replace(/@/, '');
-        props.push(tagname);
-
-        let tagvalue = match[2].replace(/^\s+/, '');
-        lastTag = tagname;
-        if (c.hasOwnProperty(tagname)) {
-          // tag already exists
-          if (!Array.isArray(c[tagname])) {
-            c[tagname] = [c[tagname]];
-          }
-
-          c[tagname].push(tagvalue);
-        } else {
-          // new tag
-          c[tagname] = tagvalue || true;
-        }
-      } else if (lastTag && !afterNewLine) {
-        let val = line.replace(/^\s+/, '');
-        if (Array.isArray(c[lastTag])) {
-          c[lastTag][c[lastTag].length - 1] += ' ' + val;
-        } else {
-          c[lastTag] += ' ' + val;
-        }
-      } else {
-        lastTag = null;
-        if (!afterTags) {
-          if (c.description) {
-            c.description += '\n' + line;
-          } else {
-            c.description = line;
-          }
-        }
-      }
-      afterNewLine = false;
-    } else {
-      afterNewLine = true;
-      if (!afterTags) {
-        if (c.description) {
-          c.description += '\n' + line;
-        }
-      }
-    }
-    i++;
-    return c;
-  }, {});
-
-  let comments = this.parseTags(comment);
-
-  return comments;
-};
+function regex() {
+  // ensure that runtime compilation only happens once
+  return cache || (cache = new RegExp('^[\\s\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF"]+$'));
+}
 
 module.exports = parser;
