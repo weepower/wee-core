@@ -1,4 +1,4 @@
-import { $copy, $isArrayBuffer, $isArrayBufferView, $isBlob, $isFile, $isFormData, $isObject, $isString, $isURLSearchParams, $type } from '../core/types';
+import { $copy, $isArrayBuffer, $isArrayBufferView, $isBlob, $isFile, $isFormData, $isObject, $isString } from '../core/types';
 import { normalizeHeader } from 'fetch/headers';
 
 const DEFAULT_CONTENT_TYPE = {
@@ -58,9 +58,21 @@ let defaults = {
 		return data;
 	},
 
-	// TODO: Finish transformResponse method
-	transformResponse: function transformResponse() {
+	/**
+	 * Default logic for transforming response data
+	 *
+	 * @param {string|ArrayBuffer|Blob} data
+	 * @returns {*}
+	 */
+	transformResponse: function transformResponse(data) {
+		// Ensure that JSON is parsed appropriately
+		if ($isString(data)) {
+			try {
+				data = JSON.parse(data);
+			} catch (e) { /* Ignore */ }
+		}
 
+		return data;
 	},
 	timeout: 0
 };

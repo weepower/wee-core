@@ -78,13 +78,7 @@ export default function fetchFactory(defaults) {
 			statusText = request.status === 1223 ? 'No Content' : request.statusText;
 		}
 
-		// TODO: Transform response
-		// Ensure that JSON is parsed appropriately
-		if ($isString(data)) {
-			try {
-				data = JSON.parse(data);
-			} catch (e) { /* Ignore */ }
-		}
+		data = config.transformResponse(data);
 
 		return {
 			config,

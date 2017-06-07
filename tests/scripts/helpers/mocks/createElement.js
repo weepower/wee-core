@@ -4,7 +4,8 @@ export default function mockCreateElement(
 	createResponse // the function 'in charge'
 ) {
 	return function (nodeName) {
-		var result, src;
+		let result,
+			src;
 
 		// if we are creating a script
 		if (/^script$/i.test(nodeName)) {

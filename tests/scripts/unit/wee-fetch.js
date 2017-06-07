@@ -186,6 +186,40 @@ describe('fetch', () => {
 				server.respond();
 			});
 		});
+
+		describe('transformResponse', () => {
+			it('should parse json response', done => {
+				server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+
+				$fetch('/sample').then(response => {
+					expect(response.data).to.be.an('object');
+					expect(response.data).to.deep.equal(sample.jsonResults.get);
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('should be customizable', done => {
+				const instance = $fetch.create({
+					transformResponse(data) {
+						if (typeof data === 'string') {
+							data = JSON.parse(data);
+						}
+
+						return { firstName: data.firstName };
+					}
+				});
+
+				server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+
+				instance('/sample').then(response => {
+					expect(response.data).to.be.an('object');
+					expect(response.data).to.deep.equal({ firstName: 'Don' });
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
 	});
 
 	describe('request', () => {
