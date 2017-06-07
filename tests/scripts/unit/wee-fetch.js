@@ -5,7 +5,7 @@ import { $copy, $extend } from 'core/types';
 import defaults from 'fetch/defaults';
 import { createError } from 'fetch/error';
 import { normalizeHeader } from 'fetch/headers';
-import mockCreateElement from '../helpers/script';
+import mockCreateElement from '../helpers/mocks/createElement';
 
 describe('fetch', () => {
 	let xhr;
@@ -356,6 +356,101 @@ describe('fetch', () => {
 
 			server.respond();
 		});
+
+		it('should add timestamp to bypass browser cache', done => {
+			server.respondWith('GET', '/sample?dt=10000', [200, {}, 'OK']);
+
+			// Stub Date.now so I can assert the timestamp value
+			let stub = sinon.stub(Date, 'now');
+			stub.returns(10000);
+
+			$fetch({
+				url: '/sample',
+				disableCache: true
+			}).then(response => {
+				expect(response.config.params.dt).to.be.a('number');
+				expect(response.request.url).to.include('/sample?dt=10000');
+			}).then(done, done);
+
+			server.respond();
+			stub.restore();
+		});
+
+		it('should execute "send" callback', done => {
+			let sendSpy = sinon.spy();
+
+			server.respondWith('GET', '/sample', [200, {}, 'OK']);
+
+			$fetch({
+				url: '/sample',
+				send: sendSpy
+			}).then(response => {
+				expect(sendSpy.called).to.be.true;
+				expect(sendSpy.calledWith(response.request)).to.be.true;
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should inject scope into callback', done => {
+			let sendSpy = sinon.spy();
+			const scope = { prop: 1 };
+
+			server.respondWith('GET', '/sample', [200, {}, 'OK']);
+
+			$fetch({
+				scope,
+				url: '/sample',
+				send: function() {
+					expect(this).to.deep.equal(scope);
+				}
+			}).then(() => {}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should throw Error if XMLHttpRequest 2 is not supported', () => {
+			server.respondWith('GET', '/sample', [200, {}, 'OK']);
+
+			let xhr = sinon.useFakeXMLHttpRequest();
+			xhr.onCreate = function(xhr) {
+				Object.defineProperty(xhr, 'responseType', {
+					configurable: true,
+					get: function() {
+						return this._responseType || 'text';
+					},
+
+					set: function(val) {
+						if (val === 'test') {
+							throw new Error('Failed to set responseType');
+						}
+
+						this._responseType = val;
+					}
+				});
+			}
+
+			const resolveSpy = sinon.spy();
+			const rejectSpy = sinon.spy();
+			const finish = function() {
+				expect(resolveSpy.called).to.be.false;
+				expect(rejectSpy.called).to.be.true;
+
+				const error = rejectSpy.args[0][0];
+				expect(error).to.be.an('error');
+				expect(error.message).to.equal('Failed to set responseType');
+			}
+
+			let promise = $fetch({
+				url: '/sample',
+				responseType: 'test'
+			});
+
+			server.respond();
+
+			return promise.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+
 		describe('jsonp', () => {
 			let data;
 			let createElement;
