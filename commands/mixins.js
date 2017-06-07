@@ -2,7 +2,6 @@ const utils = require('../utils');
 const fs = require('fs-extra');
 const path = require('path');
 const comments = require('../parse-comments');
-const fuzzy = require('fuzzy');
 const chalk = require('chalk');
 const Table = require('cli-table');
 
