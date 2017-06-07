@@ -356,6 +356,96 @@ describe('fetch', () => {
 
 			server.respond();
 		});
+		describe('jsonp', () => {
+			let data;
+			let createElement;
+			let callbackName = 'callback';
+
+			before(() => {
+				data = {
+					test: 'value'
+				};
+
+				createElement = document.createElement
+
+				document.createElement = mockCreateElement(
+					document.createElement,
+					function (src) {
+						// Find the JSONP method name and use when assigning src
+						if (new RegExp(callbackName + '=([^&]+)').test(src)) {
+							return RegExp.$1 + '(' + JSON.stringify(data) + ')';
+						}
+					}
+				);
+			});
+
+			after(() => {
+				// Restore document
+				document.createElement = createElement;
+			});
+
+			it('should alter request strategy', done => {
+				$fetch({
+					url: 'jsonp',
+					jsonp: true
+				}).then((response) => {
+					expect(response.data).to.deep.equal({ test: 'value' });
+				}).then(done, done);
+			});
+
+			it('should tally jsonp method name', done => {
+				$fetch({
+					url: 'jsonp',
+					jsonp: true
+				}).then((response) => {
+					expect(response.config.params.callback).to.equal('jsonp2');
+				}).then(done, done);
+			});
+
+			it('should reject on bad request', () => {
+				const resolveSpy = sinon.spy();
+				const rejectSpy = sinon.spy();
+				const finish = function() {
+					expect(resolveSpy.called).to.be.false;
+					expect(rejectSpy.called).to.be.true
+
+					const error = rejectSpy.args[0][0];
+					expect(error).to.be.an('error');
+					expect(error.message).to.equal('JSONP request failed');
+					expect(error.config.method).to.equal('get');
+					expect(error.request).to.equal(null);
+				}
+
+				let promise = $fetch({
+					url: '/error',
+					jsonp: true
+				});
+
+				return promise.then(resolveSpy, rejectSpy).then(finish, finish);
+			});
+
+			it('should customize function name', done => {
+				$fetch({
+					url: 'jsonp',
+					jsonp: true,
+					jsonpCallback: 'testFn'
+				}).then((response) => {
+					expect(response.config.params.callback).to.equal('testFn');
+				}).then(done, done);
+			});
+
+			it('should customize query parameter property name', done => {
+				callbackName = 'cb';
+
+				$fetch({
+					url: 'jsonp',
+					jsonp: 'cb'
+				}).then((response) => {
+					expect(Object.keys(response.config.params)).to.include('cb');
+				}).then(done, done);
+			});
+		});
+
 		describe('params', () => {
 			it('should add query string to request', done => {
 				server.respondWith('GET', 'https://test.com/sample?name=Donald+Draper', [200, {}, 'OK']);

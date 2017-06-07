@@ -18,7 +18,7 @@ export default function fetchFactory(defaults) {
 	 */
 	const _settle = function _settle(request, config, resolve, reject) {
 		if (request.readyState === 4) {
-			let response = _prepareResponse(request, config);
+			let response = _prepareResponse(config, request);
 			let exec = {
 					args: response.config.args.slice(0),
 					scope: response.config.scope
@@ -54,19 +54,31 @@ export default function fetchFactory(defaults) {
 	/**
 	 * Create consistent response object for resolving promise
 	 *
-	 * @param {XMLHttpRequest} request
 	 * @param {Object} config
+	 * @param {XMLHttpRequest|Object} request - Either request or response data when jsonp request
 	 * @returns {Object} response
 	 * @private
 	 */
-	const _prepareResponse = function _prepareResponse(request, config) {
-		const headers = request.getAllResponseHeaders ?
-			parseHeaders(request.getAllResponseHeaders()) :
-			null;
-		let data = ! config.responseType || config.responseType === 'text' ?
-			request.responseText :
-			request.response;
+	const _prepareResponse = function _prepareResponse(config, request) {
+		let headers = null;
+		let data = request;
+		let status = null;
+		let statusText = null;
 
+		if (request instanceof XMLHttpRequest) {
+			headers = request.getAllResponseHeaders ?
+				parseHeaders(request.getAllResponseHeaders()) :
+				null;
+			data = ! config.responseType || config.responseType === 'text' ?
+				request.responseText :
+				request.response;
+
+			// IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+			status = request.status === 1223 ? 204 : request.status;
+			statusText = request.status === 1223 ? 'No Content' : request.statusText;
+		}
+
+		// TODO: Transform response
 		// Ensure that JSON is parsed appropriately
 		if ($isString(data)) {
 			try {
@@ -79,14 +91,11 @@ export default function fetchFactory(defaults) {
 			data,
 			headers,
 			request,
-			// IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-			status: request.status === 1223 ? 204 : request.status,
-			statusText: request.status === 1223 ? 'No Content' : request.statusText
+			status,
+			statusText
 		};
 	}
 
-	const _getUrl = function _getUrl(conf) {
-		var url = conf.url.replace(/[\?&]$/, '');
 	/**
 	 * Merge default and specified headers and clean up headers object
 	 *
@@ -110,12 +119,31 @@ export default function fetchFactory(defaults) {
 		return config.headers;
 	}
 
-		if (conf.data && Object.keys(conf.data).length) {
-			url += (url.indexOf('?') < 0 ? '?' : '&') +
-				$serialize(conf.data);
+	/**
+	 *
+	 * @param config
+	 * @param {string} [baseUrl]
+	 * @returns {*}
+	 * @private
+	 */
+	const _getUrl = function _getUrl(config, baseUrl) {
+		// Strip ending ? or & to prepare for building query string
+		let url = config.url.replace(/[\?&]$/, '');
+
+		// Prefix base URL to url
+		if (baseUrl) {
+			url = baseUrl.replace(/\/$/, '') + '/' +
+				url.replace(/^\//, '');
 		}
 
-		if (url[0] != '/' && ! /^https?:\/\//i.test(url)) {
+		// Build onto query string with params object
+		if (config.params && Object.keys(config.params).length) {
+			url += (url.indexOf('?') < 0 ? '?' : '&') +
+				$serialize(config.params);
+		}
+
+		// If no protocol, make url relative
+		if (url[0] !== '/' && ! /^https?:\/\//i.test(url)) {
 			url = '/' + url;
 		}
 
@@ -125,12 +153,14 @@ export default function fetchFactory(defaults) {
 	/**
 	 * Process JSONP request
 	 *
+	 * @param {Object} config
+	 * @param {Function} resolve
+	 * @param {Function} reject
 	 * @private
-	 * @param {object} conf
 	 */
-	const _jsonp = function _jsonp(conf, resolve, reject) {
+	const _jsonp = function _jsonp(config, resolve, reject) {
 		const el = _doc.createElement('script');
-		let fn = conf.jsonpCallback;
+		let fn = config.jsonpCallback;
 
 		if (! fn) {
 			fn = 'jsonp' + version;
@@ -138,22 +168,24 @@ export default function fetchFactory(defaults) {
 		}
 
 		_win[fn] = function(data) {
-			conf.args.unshift(data);
+			config.args.unshift(_prepareResponse(config, data));
 
-			resolve.apply(conf.scope, conf.args);
+			resolve.apply(config.scope, config.args);
 		};
 
-		conf.data[
-			conf.jsonp === true ?
+		config.params[
+			config.jsonp === true ?
 				'callback' :
-				conf.jsonp
+				config.jsonp
 			] = fn;
 
-		el.src = _getUrl(conf);
-
 		el.onerror = function() {
-			reject.apply(conf.scope, conf.args);
+			config.args.unshift(createError('JSONP request failed', config, null, null, null));
+
+			reject.apply(config.scope, config.args);
 		};
+
+		el.src = _getUrl(config);
 
 		_doc.head.appendChild(el);
 	};
