@@ -507,6 +507,22 @@ describe('fetch', () => {
 			return promise.then(resolveSpy, rejectSpy).then(finish, finish);
 		});
 
+		it('should support basic auth', done => {
+			server.respondWith('GET', '/sample', [200, {}, 'OK']);
+
+			$fetch({
+				url: '/sample',
+				auth: {
+					username: 'nathan',
+					password: 'testpass'
+				}
+			}).then(response => {
+				expect(response.request.requestHeaders['Authorization']).to.equal('Basic bmF0aGFuOnRlc3RwYXNz');
+			}).then(done, done);
+
+			server.respond();
+		});
+
 		describe('jsonp', () => {
 			let data;
 			let createElement;

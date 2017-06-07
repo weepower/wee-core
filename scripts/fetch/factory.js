@@ -283,6 +283,13 @@ export default function fetchFactory(defaults) {
 					requestHeaders['X-Requested-With'] = 'XMLHttpRequest';
 				}
 
+				// HTTP basic authentication
+				if (config.auth) {
+					var username = config.auth.username || '';
+					var password = config.auth.password || '';
+					requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+				}
+
 				// Set request headers
 				for (var key in requestHeaders) {
 					var val = requestHeaders[key];
