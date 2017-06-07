@@ -485,6 +485,28 @@ describe('fetch', () => {
 			return promise.then(resolveSpy, rejectSpy).then(finish, finish);
 		});
 
+		it('should timeout if configured', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			function finish() {
+				expect(resolveSpy.called).to.false;
+				expect(rejectSpy.called).to.true;
+			}
+			server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+
+			let promise = $fetch({
+				url: '/sample',
+				timeout: 25
+			});
+
+			// Timeout not implemented on sinon XMLHttpRequest
+			setTimeout(function() {
+				server.requests[0].ontimeout();
+			}, 25);
+
+			return promise.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+
 		describe('jsonp', () => {
 			let data;
 			let createElement;

@@ -253,8 +253,13 @@ export default function fetchFactory(defaults) {
 					});
 				}
 
+				request.open(config.method.toUpperCase(), config.url, true);
+
+				// Set the request timeout in ms
+				request.timeout = config.timeout;
+
 				// Listen for and settle response
-				request.onreadystatechange = function() {
+				request.onreadystatechange = function onStateChange() {
 					_settle(request, config, resolve, reject);
 				};
 
@@ -263,7 +268,10 @@ export default function fetchFactory(defaults) {
 					reject(createError('Network Error', config, null, request));
 				};
 
-				request.open(config.method.toUpperCase(), config.url, true);
+				// Handle timeout
+				request.ontimeout = function handleTimeout() {
+					reject(createError(`Timeout of ${config.timeout} ms exceeded`, config, 'ECONNABORTED', request));
+				};
 
 				// Add X-Requested-With header for same domain requests
 				// This is a security measure for CORS as it is not an allowed
