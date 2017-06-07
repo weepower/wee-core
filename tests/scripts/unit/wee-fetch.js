@@ -3,6 +3,9 @@ import $fetch from 'wee-fetch';
 import sample from '../helpers/fetch';
 import { $copy, $extend } from 'core/types';
 import defaults from 'fetch/defaults';
+import { createError } from 'fetch/error';
+import { normalizeHeader } from 'fetch/headers';
+import mockCreateElement from '../helpers/script';
 
 describe('fetch', () => {
 	let xhr;
@@ -21,6 +24,7 @@ describe('fetch', () => {
 
 		beforeEach(() => {
 			server = sinon.fakeServer.create();
+			server.respondWith('GET', '/sample', [200, {}, '']);
 		});
 
 		afterEach(() => {
@@ -31,12 +35,12 @@ describe('fetch', () => {
 		it('should use GET headers', done => {
 			$fetch.defaults.headers.get['X-CUSTOM-HEADER'] = 'foo';
 
-			server.respondWith('GET', '/sample', [200, {}, '']);
-
 			$fetch('/sample').then(response => {
 				expect(response.request.requestHeaders['X-CUSTOM-HEADER']).to.equal('foo');
 				expect(response.request.requestHeaders['Accept']).to.equal('application/json, text/plain, */*');
 			}).then(done, done);
+
+			delete $fetch.defaults.headers.get['X-CUSTOM-HEADER'];
 
 			server.respond();
 		});
@@ -53,12 +57,12 @@ describe('fetch', () => {
 				expect(response.request.requestHeaders['X-CUSTOM-HEADER']).to.equal('foo');
 			}).then(done, done);
 
+			delete $fetch.defaults.headers.post['X-CUSTOM-HEADER'];
+
 			server.respond();
 		});
 
 		it('should use header config', function (done) {
-			server.respondWith('GET', '/sample', [200, {}, '']);
-
 			const instance = $fetch.create({
 				headers: {
 					common: {
@@ -110,7 +114,7 @@ describe('fetch', () => {
 			server.respond();
 		});
 
-		it('should not be used by custom instance if set after instance created', done => {
+		it('should not affect custom instance if set after instance was created', done => {
 			server.respondWith('GET', 'http://example.org/sample', [200, {}, '']);
 
 			var instance = $fetch.create();
@@ -123,9 +127,68 @@ describe('fetch', () => {
 			$fetch.defaults.baseURL = '';
 			server.respond();
 		});
+
+		describe('transformRequest', () => {
+			it('should transform data to json and set content-type header', done => {
+				const data = {
+					key: 'value'
+				};
+				server.respondWith('POST', '/sample', [200, {'Content-Type': 'application/json'}, 'OK']);
+
+				$fetch({
+					url: '/sample',
+					method: 'post',
+					data: data
+				}).then(response => {
+					expect(response.request.requestBody).to.deep.equal(JSON.stringify(data));
+					expect(response.request.requestHeaders['Content-Type']).to.equal('application/json;charset=utf-8');
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('should extract buffer data', done => {
+				const data = new DataView(new ArrayBuffer(10));
+				server.respondWith('POST', '/sample', [200, {'Content-Type': 'application/json'}, 'OK']);
+
+				$fetch({
+					url: '/sample',
+					method: 'post',
+					data: data
+				}).then(response => {
+					expect(response.request.requestBody).to.deep.equal(data.buffer);
+					expect(response.request.requestHeaders['Content-Type']).to.equal('application/x-www-form-urlencoded;charset=utf-8');
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('should be customizable', done => {
+				const instance = $fetch.create({
+					transformRequest(data, headers) {
+						return 'new value';
+					}
+				});
+
+				server.respondWith('POST', '/sample', [200, {'Content-Type': 'application/json'}, 'OK']);
+
+				instance({
+					url: '/sample',
+					method: 'post',
+					data: {
+						test: 'value'
+					}
+				}).then(response => {
+					expect(response.request.requestBody).to.deep.equal('new value');
+					expect(response.request.requestHeaders['Content-Type']).to.equal('application/x-www-form-urlencoded;charset=utf-8');
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
 	});
 
-	describe('requests', () => {
+	describe('request', () => {
 		beforeEach(() => {
 			server = sinon.fakeServer.create();
 		});
@@ -187,12 +250,13 @@ describe('fetch', () => {
 		});
 
 		it('should resolve when valid status', done => {
-			server.respondWith('GET', '/sample', [200, {}, sample.json.get]);
+			server.respondWith('GET', '/sample', [200, {'Content-Type': 'application/json'}, sample.json.get]);
 
 			$fetch({
 				url: '/sample'
 			}).then(response => {
 				expect(response.data).to.deep.equal(sample.jsonResults.get);
+				expect(response.headers).to.deep.equal({'content-type': 'application/json'});
 				expect(server.requests.length).to.be.equal(1);
 			}).then(done, done);
 
@@ -291,6 +355,174 @@ describe('fetch', () => {
 			}).then(done, done);
 
 			server.respond();
+		});
+		describe('params', () => {
+			it('should add query string to request', done => {
+				server.respondWith('GET', 'https://test.com/sample?name=Donald+Draper', [200, {}, 'OK']);
+
+				$fetch({
+					url: 'https://test.com/sample',
+					params: {
+						name: 'Donald Draper'
+					}
+				}).then(response => {
+					expect(response.request.url).to.equal('https://test.com/sample?name=Donald+Draper');
+					expect(server.requests.length).to.be.equal(1);
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
+
+		describe('headers', () => {
+			it('POST', done => {
+				server.respondWith('POST', '/sample', [200, {}, 'randomstring']);
+
+				$fetch({
+					url: '/sample',
+					method: 'post',
+					data: new FormData()
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('PUT', done => {
+				server.respondWith('PUT', '/sample', [200, {}, 'randomstring']);
+
+				$fetch({
+					url: '/sample',
+					method: 'put',
+					data: new FormData()
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('PATCH', done => {
+				server.respondWith('PATCH', '/sample', [200, {}, 'randomstring']);
+
+				$fetch({
+					url: '/sample',
+					method: 'patch',
+					data: new FormData()
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('GET', done => {
+				server.respondWith('GET', '/sample', [200, {}, 'randomstring']);
+
+				$fetch({
+					url: '/sample'
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Content-Type': 'text/plain;charset=utf-8',
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('DELETE', done => {
+				server.respondWith('DELETE', '/sample', [200, {}, 'randomstring']);
+
+				$fetch({
+					url: '/sample',
+					method: 'delete'
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Content-Type': 'text/plain;charset=utf-8',
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+					expect(server.requests.length).to.be.equal(1);
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('HEAD', done => {
+				server.respondWith('HEAD', '/sample', [200, {}, '']);
+
+				$fetch({
+					url: '/sample',
+					method: 'head'
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Accept': 'application/json, text/plain, */*',
+						'X-Requested-With': 'XMLHttpRequest'
+					});
+					expect(server.requests.length).to.be.equal(1);
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('should not add X-Requested-With if cross-origin request', done => {
+				server.respondWith('GET', 'http://test.com/sample', [200, {}, '']);
+
+				$fetch({
+					url: 'http://test.com/sample'
+				}).then(response => {
+					expect(response.request.requestHeaders).to.deep.equal({
+						'Accept': 'application/json, text/plain, */*',
+						'Content-Type': 'text/plain;charset=utf-8'
+					});
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
+	});
+
+	describe('error', () => {
+		it('should create new error', () => {
+			const error = createError('This is a new error', 'config', 'ERRORCODE', 'request', 'response');
+
+			expect(error).to.be.an('error');
+			expect(error.message).to.equal('This is a new error');
+			expect(error.config).to.equal('config');
+			expect(error.code).to.equal('ERRORCODE');
+			expect(error.request).to.equal('request');
+			expect(error.response).to.equal('response');
+		});
+	});
+
+	describe('normalizeHeader', () => {
+		it('should update header with consistent name', () => {
+			let headers = {
+				'content-type': 'application/json'
+			};
+
+			normalizeHeader(headers, 'Content-Type')
+
+			expect(headers).to.deep.equal(
+				{
+					'Content-Type': 'application/json'
+				}
+			)
 		});
 	});
 

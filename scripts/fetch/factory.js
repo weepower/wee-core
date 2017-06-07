@@ -1,11 +1,12 @@
 import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
-import { $extend, $isString, $serialize } from 'core/types';
+import { $extend, $isFormData, $isString, $serialize } from 'core/types';
 import { parseHeaders } from 'fetch/headers';
 import { createError } from 'fetch/error';
 
 export default function fetchFactory(defaults) {
 	let version = 1;
+	let headerKeys = Object.keys(defaults.headers);
 
 	/**
 	 * Process the readyState change event
@@ -86,6 +87,28 @@ export default function fetchFactory(defaults) {
 
 	const _getUrl = function _getUrl(conf) {
 		var url = conf.url.replace(/[\?&]$/, '');
+	/**
+	 * Merge default and specified headers and clean up headers object
+	 *
+	 * @param {Object} config
+	 * @returns {Object}
+	 * @private
+	 */
+	const _flattenHeaders = function _flattenHeaders(config) {
+		config.headers = $extend(
+			{},
+			config.headers.common,
+			config.headers[config.method.toLowerCase()] || {},
+			config.headers || {}
+		);
+
+		// Remove get, post, etc properties from config.headers
+		headerKeys.forEach(method => {
+			delete config.headers[method];
+		})
+
+		return config.headers;
+	}
 
 		if (conf.data && Object.keys(conf.data).length) {
 			url += (url.indexOf('?') < 0 ? '?' : '&') +
@@ -164,7 +187,7 @@ export default function fetchFactory(defaults) {
 		 */
 		request(options) {
 			return new Promise((resolve, reject) => {
-				// Account for possibility options being string
+				// Account for possibility of options being URL string
 				if ($isString(options)) {
 					let url = options;
 
@@ -174,23 +197,14 @@ export default function fetchFactory(defaults) {
 				}
 
 				let config = $extend(true, {}, this.defaults, options);
+				let requestData = config.processData ?
+					config.transformRequest(config.data, config.headers) :
+					config.data;
+				let requestHeaders = _flattenHeaders(config);
 
-				// Flatten headers
-				config.headers = $extend(
-					{},
-					config.headers.common,
-					config.headers[config.method.toLowerCase()] || {},
-					options.headers || {}
-				);
-
+				// Disable browser caching
 				if (config.disableCache) {
-					config.data.dt = Date.now();
-				}
-
-				// Prefix root path to url
-				if (config.baseUrl) {
-					config.url = config.baseUrl.replace(/\/$/, '') + '/' +
-						config.url.replace(/^\//, '');
+					config.params.dt = Date.now();
 				}
 
 				// Process JSONP
@@ -198,7 +212,10 @@ export default function fetchFactory(defaults) {
 					return _jsonp(config, resolve, reject);
 				}
 
-				var request = new XMLHttpRequest();
+				// Set final url
+				config.url = _getUrl(config, config.baseUrl);
+
+				const request = new XMLHttpRequest();
 
 				// Inject XHR object as first callback argument
 				config.args.unshift(request);
@@ -210,48 +227,17 @@ export default function fetchFactory(defaults) {
 					});
 				}
 
+				// Listen for and settle response
 				request.onreadystatechange = function() {
 					_settle(request, config, resolve, reject);
 				};
 
+				// Listen for network errors
 				request.onerror = function handleError() {
 					reject(createError('Network Error', config, null, request));
 				};
 
-				// TODO: Set Content-Type only post body (refer to axios for formData scenario)
-
-				let method = config.method.toUpperCase(),
-					str = typeof config.data == 'string',
-					send = null;
-					// headers = [];
-
-				// if (! str && ! config.type) {
-				// 	config.type = 'json';
-				// }
-
-				// Format data based on specified verb
-				if (method == 'GET') {
-					config.url = this._getUrl(config);
-				} else {
-					// TODO: Format data with transformRequest method (refer to axios)
-					send = str || config.processData === false ?
-						config.data :
-						config.type == 'json' ?
-							JSON.stringify(config.data) :
-							$serialize(config.data);
-				}
-
-				request.open(method, config.url, true);
-
-				// Add content type header
-				// if (config.type == 'json') {
-				// 	headers[contentTypeHeader] = 'application/json';
-				// } else if (config.type == 'xml') {
-				// 	headers[contentTypeHeader] = 'text/xml';
-				// } else if (method == 'POST' || config.type == 'form') {
-				// 	headers[contentTypeHeader] =
-				// 		'application/x-www-form-urlencoded';
-				// }
+				request.open(config.method.toUpperCase(), config.url, true);
 
 				// Add X-Requested-With header for same domain requests
 				// This is a security measure for CORS as it is not an allowed
@@ -259,16 +245,13 @@ export default function fetchFactory(defaults) {
 				let a = _doc.createElement('a');
 				a.href = config.url;
 
-				if (! a.host || a.host == location.host) {
-					config.headers['X-Requested-With'] = 'XMLHttpRequest';
+				if (! a.host || a.host === location.host) {
+					requestHeaders['X-Requested-With'] = 'XMLHttpRequest';
 				}
 
-				// Append character set to content type header
-				// headers[contentTypeHeader] += '; charset=UTF-8';
-
 				// Set request headers
-				for (var key in config.headers) {
-					var val = config.headers[key];
+				for (var key in requestHeaders) {
+					var val = requestHeaders[key];
 
 					if (val !== false) {
 						request.setRequestHeader(key, val);
@@ -285,7 +268,7 @@ export default function fetchFactory(defaults) {
 					}
 				}
 
-				request.send(send);
+				request.send(requestData);
 			});
 		},
 

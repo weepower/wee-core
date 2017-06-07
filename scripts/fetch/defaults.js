@@ -1,24 +1,64 @@
-import { $copy } from '../core/types';
+import { $copy, $isArrayBuffer, $isArrayBufferView, $isBlob, $isFile, $isFormData, $isObject, $isString, $isURLSearchParams, $type } from '../core/types';
+import { normalizeHeader } from 'fetch/headers';
 
 const DEFAULT_CONTENT_TYPE = {
-	'Content-Type': 'application/x-www-form-urlencoded'
+	'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
 };
+
+function setContentTypeIfUnset(headers, value) {
+	if ($isObject(headers) && ! headers['Content-Type']) {
+		headers['Content-Type'] = value;
+	}
+}
 
 let defaults = {
 	args: [],
 	baseUrl: '',
-	data: {},
+	data: null,
 	disableCache: false,
 	headers: {
 		common: {
 			'Accept': 'application/json, text/plain, */*'
 		}
 	},
+	jsonpElement: false,
 	method: 'get',
+	processData: true,
+	params: {},
 	responseType: 'json',
-	transformRequest: function transformRequest() {
 
+	/**
+	 * Default logic for transforming request body
+	 *
+	 * @param {Object|string|null} data
+	 * @param {Object} headers
+	 * @returns {*}
+	 */
+	transformRequest: function transformRequest(data, headers) {
+		normalizeHeader(headers, 'Content-Type');
+
+		if ($isFormData(data) ||
+			$isArrayBuffer(data) ||
+			$isFile(data) ||
+			$isBlob(data)
+		) {
+			return data;
+		}
+
+		if ($isArrayBufferView(data)) {
+			return data.buffer;
+		}
+
+		if ($isObject(data)) {
+			setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+
+			return JSON.stringify(data);
+		}
+
+		return data;
 	},
+
+	// TODO: Finish transformResponse method
 	transformResponse: function transformResponse() {
 
 	},

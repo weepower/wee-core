@@ -30,3 +30,18 @@ export function parseHeaders(headers) {
 
 	return parsed;
 };
+
+/**
+ * Ensure proper formatting for header name
+ *
+ * @param {Object} headers
+ * @param {string} normalizedName
+ */
+export function normalizeHeader(headers, normalizedName) {
+	Object.keys(headers).forEach(name => {
+		if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+			headers[normalizedName] = headers[name];
+			delete headers[name];
+		}
+	})
+}
