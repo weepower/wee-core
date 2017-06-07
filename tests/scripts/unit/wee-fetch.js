@@ -714,6 +714,50 @@ describe('fetch', () => {
 				server.respond();
 			});
 		});
+
+		describe('progress', () => {
+			it('should return download progress information', done => {
+				let spy = sinon.spy();
+				server.respondWith('GET', '/sample', [200, {'Content-Length': '10'}, 'somedata']);
+
+				$fetch({
+					url: '/sample',
+					onDownloadProgress: spy
+				}).then(response => {
+					const event = spy.args[0][0];
+
+					expect(spy.called).to.be.true;
+					expect(event.percentComplete).to.equal(1);
+					expect(event.total).to.exist;
+					expect(event.loaded).to.exist;
+				}).then(done, done);
+
+				server.respond();
+			});
+
+			it('should return upload progress information', done => {
+				let spy = sinon.spy();
+				server.respondWith('POST', '/sample', [200, {'Content-Length': '10'}, 'OK']);
+
+				$fetch({
+					url: '/sample',
+					method: 'post',
+					data: {
+						test: 'data'
+					},
+					onUploadProgress: spy
+				}).then(response => {
+					const event = spy.args[0][0];
+
+					expect(spy.called).to.be.true;
+					expect(event.percentComplete).to.equal(1);
+					expect(event.total).to.exist;
+					expect(event.loaded).to.exist;
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
 	});
 
 	describe('error', () => {

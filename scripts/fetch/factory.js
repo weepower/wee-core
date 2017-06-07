@@ -1,6 +1,6 @@
 import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
-import { $extend, $isFormData, $isString, $serialize } from 'core/types';
+import { $extend, $isFormData, $isFunction, $isString, $serialize } from 'core/types';
 import { parseHeaders } from 'fetch/headers';
 import { createError } from 'fetch/error';
 
@@ -292,6 +292,28 @@ export default function fetchFactory(defaults) {
 						// Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
 						throw e;
 					}
+				}
+
+				// Handle progress if needed
+				if ($isFunction(config.onDownloadProgress)) {
+					request.addEventListener('progress', e => {
+						if (e.lengthComputable) {
+							e.percentComplete = e.loaded / e.total;
+						}
+
+						config.onDownloadProgress.call(null, e);
+					});
+				}
+
+				// Not all browsers support upload events
+				if ($isFunction(config.onUploadProgress) && request.upload) {
+					request.upload.addEventListener('progress', e => {
+						if (e.lengthComputable) {
+							e.percentComplete = e.loaded / e.total;
+						}
+
+						config.onUploadProgress.call(null, e);
+					});
 				}
 
 				request.send(requestData);
