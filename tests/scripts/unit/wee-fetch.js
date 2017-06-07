@@ -727,7 +727,7 @@ describe('fetch', () => {
 					const event = spy.args[0][0];
 
 					expect(spy.called).to.be.true;
-					expect(event.percentComplete).to.equal(1);
+					expect(event.progress).to.equal(1);
 					expect(event.total).to.exist;
 					expect(event.loaded).to.exist;
 				}).then(done, done);
@@ -750,7 +750,7 @@ describe('fetch', () => {
 					const event = spy.args[0][0];
 
 					expect(spy.called).to.be.true;
-					expect(event.percentComplete).to.equal(1);
+					expect(event.progress).to.equal(1);
 					expect(event.total).to.exist;
 					expect(event.loaded).to.exist;
 				}).then(done, done);

@@ -298,7 +298,7 @@ export default function fetchFactory(defaults) {
 				if ($isFunction(config.onDownloadProgress)) {
 					request.addEventListener('progress', e => {
 						if (e.lengthComputable) {
-							e.percentComplete = e.loaded / e.total;
+							e.progress = e.loaded / e.total;
 						}
 
 						config.onDownloadProgress.call(null, e);
@@ -309,7 +309,7 @@ export default function fetchFactory(defaults) {
 				if ($isFunction(config.onUploadProgress) && request.upload) {
 					request.upload.addEventListener('progress', e => {
 						if (e.lengthComputable) {
-							e.percentComplete = e.loaded / e.total;
+							e.progress = e.loaded / e.total;
 						}
 
 						config.onUploadProgress.call(null, e);
