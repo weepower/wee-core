@@ -1,3 +1,5 @@
+// TODO: May need to move promise polyfill to an entry point file if building dist version of Wee
+import 'es6-promise/auto';
 import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
 import { $extend, $isFormData, $isFunction, $isString, $serialize } from 'core/types';
