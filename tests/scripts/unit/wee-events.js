@@ -1,6 +1,7 @@
 import $ from 'wee-dom';
 import $events from 'wee-events';
-import { createDiv, createSingleDiv, createMultiDiv, resetDOM, isIE } from '../helpers/dom';
+import { createDiv, createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
+import { isIE } from '../helpers/browsers';
 
 function removeEvents() {
 	let elements = document.body.getElementsByTagName('*');
