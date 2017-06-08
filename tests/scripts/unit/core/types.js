@@ -1,5 +1,5 @@
 import { $copy, $equals, $extend, $isArray, $isArrayBuffer, $isArrayBufferView, $isBlob, $isDate, $isFile, $isFormData, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
-import { isIE } from '../../helpers/browsers';
+import { isIE, isEdge } from '../../helpers/browsers';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -138,7 +138,7 @@ describe('Core: Types', () => {
 
 	describe('$isFile', () => {
 		it('should identify file objects', () => {
-			if (isIE()) {
+			if (isIE() || isEdge()) {
 				return;
 			}
 
