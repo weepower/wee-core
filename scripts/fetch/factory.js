@@ -367,7 +367,7 @@ export default function fetchFactory(defaults) {
 	};
 
 	// Provide convenient verb methods
-	['get', 'delete', 'head', 'options'].forEach(method => {
+	['get', 'delete', 'head'].forEach(method => {
 		instance[method] = function(url, config = {}) {
 			config.url = url;
 			config.method = method;
