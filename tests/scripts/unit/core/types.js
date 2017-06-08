@@ -1,4 +1,5 @@
 import { $copy, $equals, $extend, $isArray, $isArrayBuffer, $isArrayBufferView, $isBlob, $isDate, $isFile, $isFormData, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
+import { isIE } from '../../helpers/browsers';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -102,6 +103,10 @@ describe('Core: Types', () => {
 
 	describe('$isArrayBuffer', () => {
 		it('should identify array buffer', () => {
+			if (isIE()) {
+				return;
+			}
+
 			expect($isArrayBuffer(new ArrayBuffer(10))).to.be.true;
 			expect($isArrayBuffer([])).to.be.false;
 		});
@@ -109,6 +114,10 @@ describe('Core: Types', () => {
 
 	describe('$isArrayBufferView', () => {
 		it('should identify array buffer views', () => {
+			if (isIE()) {
+				return;
+			}
+
 			expect($isArrayBufferView(new DataView(new ArrayBuffer(10)))).to.be.true;
 			expect($isArrayBufferView(new ArrayBuffer(10))).to.be.false;
 		});
@@ -129,6 +138,10 @@ describe('Core: Types', () => {
 
 	describe('$isFile', () => {
 		it('should identify file objects', () => {
+			if (isIE()) {
+				return;
+			}
+
 			expect($isFile(new File([new ArrayBuffer(10)], 'test.txt'))).to.be.true;
 		});
 	});

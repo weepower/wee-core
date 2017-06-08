@@ -1,4 +1,5 @@
 import $ from 'wee-dom';
+import { $setRef } from 'core/dom';
 import * as W from 'dom/index';
 import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM } from '../helpers/dom';
 import { isIE, isEdge } from '../helpers/browsers';

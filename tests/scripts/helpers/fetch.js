@@ -2,20 +2,15 @@ import { $parseHTML } from 'core/dom';
 
 const parser = new DOMParser();
 
-const json = {
-	get: `{
-		"id": 1,
-		"firstName": "Don",
-		"lastName": "Draper"
-	}`
-};
+const json = `{
+	"id": 1,
+	"firstName": "Don",
+	"lastName": "Draper"
+}`;
 
-let jsonResults = {};
-
-Object.keys(json).forEach(key => jsonResults[key] = JSON.parse(json[key]));
+let jsonResults = JSON.parse(json);
 
 const html = '<div>test</div>';
-let htmlResults = parser.parseFromString(xml, 'text/html');
 
 const xml = `<?xml version="1.0"?>
 <catalog>
