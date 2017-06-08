@@ -1,4 +1,4 @@
-import { $copy, $equals, $extend, $isArray, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
+import { $copy, $equals, $extend, $isArray, $isArrayBuffer, $isArrayBufferView, $isBlob, $isDate, $isFile, $isFormData, $isFunction, $isNumber, $isObject, $isString, $serialize, $toArray, $type, $unserialize } from 'core/types';
 
 describe('Core: Types', () => {
 	describe('$copy', () => {
@@ -60,11 +60,24 @@ describe('Core: Types', () => {
 
 		it('should deeply extend objects', () => {
 			// Reference 'obj' twice for code coverage
-			let obj = {inner: false},
+			let obj = {inner: false, superInner: {a: 10, supersuperInner: {a: 12}}},
 				a = {prop: 1, prop2: {inner: true}, prop3: [0, 1]},
-				b = {prop: 2, prop2: obj, prop3: [1], prop4: obj};
+				b = {prop: 2, prop2: obj, prop3: [1], prop4: obj},
+				extendedObj = $extend(true, a, b),
+				newObj = $extend(true, {}, a, b);
 
-			expect($extend(true, a, b)).to.deep.equal({prop:2, prop2:{inner:false}, prop3:[1], prop4: {inner: false}});
+			expect(extendedObj).to.deep.equal({prop:2, prop2: {inner: false, superInner: {a: 10, supersuperInner: {a: 12}}}, prop3: [1], prop4: {inner: false, superInner: {a: 10, supersuperInner: {a: 12}}}});
+
+			extendedObj.prop2.superInner.a = 11;
+
+			// Should create clones of objects, not use the original
+			expect(extendedObj.prop2).to.not.equal(obj);
+			expect(extendedObj).to.equal(a);
+			expect(newObj).to.not.equal(a);
+
+			// Should not reference original object
+			expect(a.prop2.superInner.a).to.equal(11);
+			expect(b.prop2.superInner.a).to.equal(10);
 		});
 
 		it('should deeply extend variable number of objects', () => {
@@ -74,12 +87,55 @@ describe('Core: Types', () => {
 
 			expect(JSON.stringify($extend(a, b, c))).to.equal('{"prop":3,"prop2":3}');
 		});
+
+		it('should return object if no target', () => {
+			expect($extend({}, null)).to.deep.equal({});
+		});
 	});
 
 	describe('$isArray', () => {
 		it('should identify array', () => {
 			expect($isArray([])).to.be.true;
 			expect($isArray({})).to.be.false;
+		});
+	});
+
+	describe('$isArrayBuffer', () => {
+		it('should identify array buffer', () => {
+			expect($isArrayBuffer(new ArrayBuffer(10))).to.be.true;
+			expect($isArrayBuffer([])).to.be.false;
+		});
+	});
+
+	describe('$isArrayBufferView', () => {
+		it('should identify array buffer views', () => {
+			expect($isArrayBufferView(new DataView(new ArrayBuffer(10)))).to.be.true;
+			expect($isArrayBufferView(new ArrayBuffer(10))).to.be.false;
+		});
+	});
+
+	describe('$isBlob', () => {
+		it('should identify blobs', () => {
+			expect($isBlob(new Blob())).to.be.true;
+		});
+	});
+
+	describe('$isDate', () => {
+		it('should identify date objects', () => {
+			expect($isDate(new Date())).to.be.true;
+			expect($isDate(Date.now())).to.be.false;
+		});
+	});
+
+	describe('$isFile', () => {
+		it('should identify file objects', () => {
+			expect($isFile(new File([new ArrayBuffer(10)], 'test.txt'))).to.be.true;
+		});
+	});
+
+	describe('$isFormData', () => {
+		it('should identify form data objects', () => {
+			expect($isFormData(new FormData())).to.be.true;
 		});
 	});
 
