@@ -226,6 +226,23 @@ describe('fetch', () => {
 				server.respond();
 			});
 		});
+
+		describe('validateStatus', done => {
+			it('should determine valid response status codes', done => {
+				server.respondWith('GET', '/sample', [100, {}, 'OK']);
+
+				$fetch({
+					url: '/sample',
+					validateStatus(response) {
+						return response.status === 100;
+					}
+				}).then(response => {
+					expect(response.status).to.equal(100);
+				}).then(done, done);
+
+				server.respond();
+			});
+		});
 	});
 
 	describe('request', () => {

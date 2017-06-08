@@ -34,8 +34,7 @@ export default function fetchFactory(defaults) {
 				return;
 			}
 
-			// TODO: validateStatus method with ability to customize status code
-			if (response.status >= 200 && response.status < 400) {
+			if (config.validateStatus(response)) {
 				exec.args.unshift(response);
 
 				$exec(resolve, exec);

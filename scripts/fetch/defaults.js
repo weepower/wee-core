@@ -74,7 +74,17 @@ let defaults = {
 
 		return data;
 	},
-	timeout: 0
+	timeout: 0,
+
+	/**
+	 * Default status code to look for
+	 *
+	 * @param {Object} response
+	 * @returns {boolean}
+	 */
+	validateStatus(response) {
+		return response.status >= 200 && response.status < 400;
+	}
 };
 
 // Add headers for various methods
