@@ -902,4 +902,97 @@ describe('fetch', () => {
 			return request.then(resolveSpy, rejectSpy).then(finish, finish);
 		});
 	});
+
+	describe('get', () => {
+		beforeEach(() => {
+			server = sinon.fakeServer.create();
+			server.respondWith('GET', '/sample', [200, {}, JSON.stringify(sample.json.get)]);
+		});
+
+		afterEach(() => {
+			server.restore();
+		});
+
+		it('should make get request', done => {
+			$fetch.get('/sample').then(response => {
+				expect(response.data).to.deep.equal(sample.jsonResults.get);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should allow for configuration through second argument', done => {
+			$fetch.get('/sample', {
+				responseType: 'text'
+			}).then(response => {
+				expect(response.data).to.deep.equal(sample.json.get);
+			}).then(done, done);
+
+			server.respond();
+		});
+	});
+
+	describe('delete, head, options', () => {
+		beforeEach(() => {
+			server = sinon.fakeServer.create();
+			server.respondWith('DELETE', '/sample', [200, {}, 'OK']);
+		});
+
+		afterEach(() => {
+			server.restore();
+		});
+
+		it('should make request', done => {
+			$fetch.delete('/sample').then(response => {
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should allow for configuration through second argument', done => {
+			$fetch.delete('/sample', {
+				responseType: 'text'
+			}).then(response => {
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+	});
+
+	describe('post, patch, put', () => {
+		beforeEach(() => {
+			server = sinon.fakeServer.create();
+			server.respondWith('POST', '/sample', [200, {}, 'OK']);
+		});
+
+		afterEach(() => {
+			server.restore();
+		});
+
+		it('should post data to server', done => {
+			$fetch.post('/sample', sample.json.get).then(response => {
+				expect(server.requests[0].requestBody).to.equal(sample.json.get);
+				expect(response.status).to.equal(200);
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+
+		it('should allow for configuration through second argument', done => {
+			$fetch.post('/sample', sample.json.get, {
+				headers: {
+					'X-TEST-HEADER': 'foo'
+				}
+			}).then(response => {
+				expect(response.status).to.equal(200);
+				expect(server.requests[0].requestHeaders['X-TEST-HEADER']).to.equal('foo');
+				expect(server.requests.length).to.be.equal(1);
+			}).then(done, done);
+
+			server.respond();
+		});
+	});
 });

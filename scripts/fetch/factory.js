@@ -20,8 +20,8 @@ export default function fetchFactory(defaults) {
 		if (request.readyState === 4) {
 			let response = _prepareResponse(config, request);
 			let exec = {
-					args: response.config.args.slice(0),
-					scope: response.config.scope
+					args: config.args.slice(0),
+					scope: config.scope
 				};
 			let responseUrl = request.responseURL;
 
@@ -184,9 +184,27 @@ export default function fetchFactory(defaults) {
 		_doc.head.appendChild(el);
 	};
 
-	return {
+	let instance = {
 		// Set instance defaults
 		defaults,
+
+		/**
+		 * Generate final URL
+		 *
+		 * @private
+		 * @param {object} config
+		 */
+		_getUrl: _getUrl,
+
+		/**
+		 * Complete concurrent requests at one time
+		 *
+		 * @param {Array} promises
+		 * @returns {Promise}
+		 */
+		all(promises) {
+			return Promise.all(promises);
+		},
 
 		/**
 		 * Make request based on specified options
@@ -336,11 +354,37 @@ export default function fetchFactory(defaults) {
 		},
 
 		/**
-		 * Generate final URL
+		 * Spreads out array of promise resolutions/rejections - used for $fetch.all
 		 *
-		 * @private
-		 * @param {object} config
+		 * @param {Function} callback
+		 * @returns {wrap}
 		 */
-		_getUrl: _getUrl
+		spread(callback) {
+			return function wrap(array) {
+				return callback.apply(null, array);
+			}
+		}
 	};
+
+	// Provide convenient verb methods
+	['get', 'delete', 'head', 'options'].forEach(method => {
+		instance[method] = function(url, config = {}) {
+			config.url = url;
+			config.method = method;
+
+			return this.request(config);
+		}
+	});
+
+	['post', 'put', 'patch'].forEach(method => {
+		instance[method] = function(url, data, config = {}) {
+			config.url = url;
+			config.method = method;
+			config.data = data;
+
+			return this.request(config);
+		}
+	});
+
+	return instance;
 }
