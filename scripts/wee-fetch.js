@@ -32,4 +32,20 @@ $fetch.create = function create(instanceDefaults) {
 	return createFetchInstance($extend({}, defaults, instanceDefaults));
 }
 
+$fetch.all = function all(promises) {
+	return Promise.all(promises);
+}
+
+/**
+ * Spreads out array of promise resolutions/rejections - used for $fetch.all
+ *
+ * @param {Function} callback
+ * @returns {wrap}
+ */
+$fetch.spread = function spread(callback) {
+	return function wrap(array) {
+		return callback.apply(null, array);
+	}
+}
+
 export default $fetch;

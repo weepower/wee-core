@@ -835,4 +835,71 @@ describe('fetch', () => {
 			expect(instance.request).to.be.a('function');
 		});
 	});
+
+	describe('all', () => {
+		let comments = [
+			{ id: 1, comment: 'test comment 1' },
+			{ id: 2, comment: 'test comment 2' }
+		];
+		let user = { id: 1, name: 'Nathan' };
+
+		beforeEach(() => {
+			comments = [
+				{ id: 1, comment: 'test comment 1' },
+				{ id: 2, comment: 'test comment 2' }
+			];
+			user = { id: 1, name: 'Nathan' };
+
+			server = sinon.fakeServer.create();
+			server.respondWith('GET', '/comments', [200, {}, JSON.stringify(comments)]);
+			server.respondWith('GET', '/user', [200, {}, JSON.stringify(user)]);
+		});
+
+		afterEach(() => {
+			server.restore();
+		});
+
+		it('should make multiple concurrent requests', done => {
+			$fetch.all([
+				$fetch('/comments'),
+				$fetch('/user')
+			]).then($fetch.spread(function(commentResponse, userResponse) {
+				expect(commentResponse.data).to.deep.equal(comments);
+				expect(userResponse.data).to.deep.equal(user);
+			})).then(done, done);
+
+			server.respond();
+		});
+
+		it('should reject on network error', () => {
+			const resolveSpy = sinon.spy();
+			const rejectSpy = sinon.spy();
+			const finish = function() {
+				expect(resolveSpy.called).to.be.false;
+				expect(rejectSpy.called).to.be.true
+
+				const error = rejectSpy.args[0][0];
+				// Should return on first rejection
+				expect(rejectSpy.args[0].length).to.equal(1);
+				expect(error).to.be.an('error');
+				expect(error.message).to.equal('Request failed with status code 404');
+				expect(error.config.method).to.equal('get');
+				expect(error.request).to.be.an.instanceof(sinon.useFakeXMLHttpRequest());
+				expect(error.config.url).to.equal('/comments');
+			}
+
+			server.respondWith('GET', '/comments', [404, {}, '']);
+
+			const request = $fetch.all([
+				$fetch('/comments'),
+				$fetch('/user'),
+				$fetch('/comments')
+			]);
+
+			// Trigger network error directly
+			server.respond();
+
+			return request.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+	});
 });
