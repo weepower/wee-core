@@ -242,11 +242,17 @@ export default class History {
 	}
 
 	/**
-	 * Update the current route
+	 * Update the current route and execute after hooks
 	 *
-	 * @param route
+	 * @param {Route} route
+	 * @param {Array} [afterQueue]
 	 */
-	updateRoute(route) {
+	updateRoute(route, afterQueue) {
+		const prev = this.current;
 		this.current = route;
+
+		if (afterQueue) {
+			afterQueue.forEach(fn => fn(route, prev));
+		}
 	}
 }
