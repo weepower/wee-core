@@ -16,9 +16,15 @@ before_install:
 install:
   - npm install
 
+branches:
+  only:
+  - master
+  - develop
+  - v2
+
 script:
-  - npm run test:ci
-  - bash <(curl -s https://codecov.io/bash) -F unit
-  - npm run test:ci-ie
-  - bash <(curl -s https://codecov.io/bash) -F unit_ie
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci-ie; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit_ie; fi'
   - npm run test:styles

@@ -1151,6 +1151,10 @@ export function $serializeForm(target, json) {
 			if (type == 'select-multiple') {
 				obj[name] = _getSelected(child);
 			} else if (
+				type == 'hidden' && (child.value === 'true' || child.value === 'false')
+			) {
+				obj[name] = child.value === 'true';
+			} else if (
 				type != 'submit' && type != 'button' &&
 				((type != 'checkbox' && type != 'radio') ||
 				child.checked)) {
