@@ -101,6 +101,8 @@ describe('Core: Types', () => {
 		});
 	});
 
+	// TODO: IE/Edge has problems with ArrayBuffer, ArrayBufferView, and File methods
+	// TODO: Not sure if it is worth having them if we cannot assure consistency
 	describe('$isArrayBuffer', () => {
 		it('should identify array buffer', () => {
 			if (isIE()) {
@@ -138,6 +140,7 @@ describe('Core: Types', () => {
 
 	describe('$isFile', () => {
 		it('should identify file objects', () => {
+			// IE does not support File constructor
 			if (isIE() || isEdge()) {
 				return;
 			}
