@@ -304,14 +304,14 @@ export default function fetchFactory(defaults) {
 
 				// HTTP basic authentication
 				if (config.auth) {
-					var username = config.auth.username || '';
-					var password = config.auth.password || '';
+					const username = config.auth.username || '';
+					const password = config.auth.password || '';
 					requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
 				}
 
 				// Set request headers
-				for (var key in requestHeaders) {
-					var val = requestHeaders[key];
+				for (let key in requestHeaders) {
+					const val = requestHeaders[key];
 
 					if (val !== false) {
 						request.setRequestHeader(key, val);
