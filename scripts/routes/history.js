@@ -72,14 +72,15 @@ export default class History {
 	}
 
 	/**
-	 * Navigate with HTML5 history
+	 * Process routes against new path
 	 *
 	 * @param {string} path
 	 */
-	navigate(path) {
+	navigate(path, onComplete) {
 		const route = match(path);
 
 		if (isSameRoute(route, this.current)) {
+			// TODO: Ensure URL - replace state?
 			warn('attempted to navigate to current URL');
 			return;
 		}
@@ -94,6 +95,7 @@ export default class History {
 			});
 		};
 
+		// Evaluate all registered callbacks
 		runQueue(queues.beforeQueue, iterator, error => {
 			if (error) {
 				warn(error.message);
@@ -108,13 +110,17 @@ export default class History {
 				}
 			});
 			queues.queue.forEach(fn => fn(route, this.current));
-			queues.afterQueue.forEach(fn => fn(route, this.current));
+
+			this.updateRoute(route, queues.afterQueue);
+
+			if (onComplete) {
+				onComplete(route);
+			}
+
+			// TODO: How to know to do PJAX?
+			// TODO: ensureURL? Is there a case for checking to make sure that onComplete is updating the URL?
+			// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
 		});
-
-		// TODO: How to know to update URL?
-		// TODO: How to know to do PJAX?
-
-		this.updateRoute(route);
 	}
 
 	/**
