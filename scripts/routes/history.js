@@ -5,12 +5,17 @@ import runQueue from './async-queue';
 import { getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
 import { warn } from './warn';
+import { _win } from 'core/variables';
+import { pushState } from './push-state';
 
 export default class History {
 	constructor() {
-		this.support = history && history.pushState;
 		this.current = START;
 		this.pending = null;
+
+		// TODO: Bind popstate for scrolling
+
+		// TODO: Bind popstate event
 	}
 
 	/**
@@ -79,6 +84,7 @@ export default class History {
 	navigate(path, onComplete) {
 		const route = match(path);
 
+		// TODO: onAbort?
 		if (isSameRoute(route, this.current)) {
 			// TODO: Ensure URL - replace state?
 			warn('attempted to navigate to current URL');
@@ -117,9 +123,18 @@ export default class History {
 				onComplete(route);
 			}
 
-			// TODO: How to know to do PJAX?
-			// TODO: ensureURL? Is there a case for checking to make sure that onComplete is updating the URL?
+			// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
 			// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
+		});
+	}
+
+	push(path, onComplete) {
+		// TODO: onAbort?
+		this.navigate(path, route => {
+			pushState(route.fullPath);
+			// TODO: scroll
+
+			onComplete(route);
 		});
 	}
 
@@ -244,7 +259,7 @@ export default class History {
 	/**
 	 * Update the current route and execute after hooks
 	 *
-	 * @param {Route} route
+	 * @param {*|Object} route - Route object
 	 * @param {Array} [afterQueue]
 	 */
 	updateRoute(route, afterQueue) {

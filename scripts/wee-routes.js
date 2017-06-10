@@ -1,11 +1,14 @@
+import { _win } from 'core/variables';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import { START } from './routes/route';
+import pjax from './routes/pjax';
 
-let _history = new History();
+export const history = new History();
+let hasPjax = false;
 
 /**
  * Set base configurations for router
@@ -47,7 +50,7 @@ router.beforeEach = function registerBeforeEach(fn) {
  * @returns {Object}
  */
 router.currentRoute = function currentRoute() {
-	return _history.current;
+	return history.current;
 }
 
 // TODO: Change map to register
@@ -79,12 +82,49 @@ router.notFound = function notFound(route) {
 }
 
 /**
+ * Configure and initialize pjax navigation
+ *
+ * @param {Object} config
+ * @returns {router}
+ */
+router.pjax = function initPjax(config = {}) {
+	// Prevent initializing pjax multiple times
+	if (! hasPjax) {
+		hasPjax = pjax.init(config);
+
+		if (hasPjax) {
+			pjax.onTrigger = function (destination, requestConfig) {
+				history.navigate(destination, route => {
+					// TODO: What to do next?
+					// console.error(route);
+				});
+			};
+
+			// Register pjax hook
+			this.beforeEach(pjax.go);
+		}
+	}
+
+	// Bind popstate event (will do that in History class)
+		// Set config property that is used for history navigations to know that PJAX replacement is needed (would we ever need to bypass this?)
+		// Fallback to manually setting window.location
+	// On popstate/bound event trigger
+		// Wee.history.go - history.navigate
+		// Ensure scroll top
+			// Evaluate scrollBehavior/ensure scroll position on new page
+
+	return this;
+},
+
+/**
  * Reset all routes - mainly for testing purposes
  */
 router.reset = function reset() {
 	resetRouteMap();
 	resetHooks();
-	_history.current = START;
+	history.current = START;
+	hasPjax = false;
+	pjax.reset();
 }
 
 /**
@@ -127,7 +167,7 @@ router.routes = function routes(key, keyType = 'path') {
  */
 router.run = function runRoutes(value) {
 	if (! value) {
-		_history.navigate(this.uri().full);
+		history.navigate(this.uri().full);
 		return this;
 	}
 
@@ -137,9 +177,9 @@ router.run = function runRoutes(value) {
 	// const { pathMap, nameMap } = getRouteMap();
 	//
 	// if (pathMap[value]) {
-	// 	_history.navigate(value);
+	// 	history.navigate(value);
 	// } else if (nameMap[value]) {
-	// 	_history.navigate(value);
+	// 	history.navigate(value);
 	// }
 }
 

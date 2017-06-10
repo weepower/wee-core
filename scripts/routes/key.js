@@ -2,15 +2,14 @@ import { _win } from '../core/variables';
 
 const TIME = _win.performance && _win.performance.now ? _win.performance : Date;
 
-// TODO: Uncomment when ready to use
 /**
  * Generate key based on timestamp
  *
  * @returns {string}
  */
-// function genTimeKey() {
-// 	return TIME.now().toFixed(3);
-// }
+export function genTimeKey() {
+	return TIME.now().toFixed(3);
+}
 
 /**
  * Generate mock UUID
