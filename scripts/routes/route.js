@@ -1,3 +1,5 @@
+const TRAILING_SLASH = /\/?$/;
+
 /**
  * Find all ancestor routes
  *
@@ -13,6 +15,25 @@ function _createMatched(record) {
 	}
 
 	return result;
+}
+
+/**
+ * Check top level object equality
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @returns {boolean}
+ * @private
+ */
+function _isObjectEqual (a = {}, b = {}) {
+	const aKeys = Object.keys(a);
+	const bKeys = Object.keys(b);
+
+	if (aKeys.length !== bKeys.length) {
+		return false
+	}
+
+	return aKeys.every(key => String(a[key]) === String(b[key]));
 }
 
 export const START = createRoute({ path: '/' });
@@ -47,10 +68,20 @@ export function createRoute(location, record = {}) {
  * @param {Object} oldRoute
  * @returns {boolean}
  */
-export function isSameRoute(newRoute, oldRoute) {
-	if (oldRoute === START) {
-		return newRoute === oldRoute;
+export function isSameRoute(a, b) {
+	if (b === START) {
+		return a === b;
+	} else if (! b) {
+		return false;
+	} else if (a.path && b.path) {
+		return (
+			a.path.replace(TRAILING_SLASH, '') === b.path.replace(TRAILING_SLASH, '') &&
+			a.hash === b.hash &&
+			_isObjectEqual(a.query, b.query)
+		)
+	} else {
+		return false;
 	}
 
-	return newRoute.full === oldRoute.full;
+	return a.full === b.full;
 }
