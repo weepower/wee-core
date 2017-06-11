@@ -1,15 +1,29 @@
-import { $unserialize } from 'core/types';
+import { $isObject, $serialize, $unserialize } from 'core/types';
 import { _doc, _win } from 'core/variables';
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 
 /**
  * Parse url and return results
  *
- * @param {string} [value]
+ * @param {string|Object} [value]
  * @returns {Object}
  * @private
  */
 export function parseLocation(value) {
+	if ($isObject(value)) {
+		let path = value.path;
+
+		if ($isObject(value.query)) {
+			path += '?' + $serialize(value.query);
+		}
+
+		if (value.hash) {
+			path += '#' + value.hash;
+		}
+
+		value = path;
+	}
+
 	const a = _doc.createElement('a');
 	a.href = value || window.location;
 
