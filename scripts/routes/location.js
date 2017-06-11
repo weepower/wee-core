@@ -1,5 +1,5 @@
 import { $unserialize } from 'core/types';
-import { _doc } from 'core/variables';
+import { _doc, _win } from 'core/variables';
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 
 /**
@@ -15,6 +15,7 @@ export function parseLocation(value) {
 
 	const search = a.search;
 	const path = a.pathname.replace(REMOVE_SLASHES_REGEXP, '');
+	const origin = a.href.split('/');
 
 	return {
 		full: '/' + path + search + a.hash,
@@ -23,6 +24,8 @@ export function parseLocation(value) {
 		query: search ? $unserialize(search) : {},
 		segments: path.split('/'),
 		url: a.href,
+		origin: origin[0] + '//' + origin[2],
+		protocol: origin[0].replace(':', ''),
 		port: a.port
 	};
 }
