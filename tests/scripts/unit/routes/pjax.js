@@ -81,7 +81,7 @@ describe('pjax', () => {
 		}, 200);
 	});
 
-	it('should manipulate resulting HTML with replace callback', done => {
+	it('should change resulting HTML with replace callback', done => {
 		$router.pjax({
 			replace(html) {
 				return '<title>Modified About</title><main>Modified about page</main>';
