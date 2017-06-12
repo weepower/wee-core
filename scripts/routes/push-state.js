@@ -9,9 +9,9 @@ export const supportsPushState = _win.history && _win.history.pushState;
  * Either replace existing History entry or add new entry
  *
  * @param {string} url
- * @param {boolean} [replace]
+ * @param {boolean} replace=false
  */
-export function pushState(url, replace) {
+export function pushState(url, replace = false) {
 	// TODO: Save scroll position when pushState is executed
 	// https://github.com/vuejs/vue-router/blob/dev/src/util/push-state.js
 	// saveScrollPosition();
