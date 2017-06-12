@@ -1,7 +1,7 @@
 const utils = require('../utils');
 const fs = require('fs-extra');
 const path = require('path');
-const comments = require('../scripts/helpers/parse-comments');
+const comments = require('./helpers/parse-comments');
 const chalk = require('chalk');
 const Table = require('cli-table');
 
@@ -46,9 +46,12 @@ module.exports = {
 		 	return 0;
 		});
 			list.forEach(item => {
+				let name = item.code.split('(')[0];
+
 				found = true;
-				if (! item.private === true) {
-					utils.logList(item.code.split('(')[0], item.description);
+
+				if (name.indexOf('_') !== 0) {
+					utils.logList(name, item.description);
 				}
 			});
 		} else {
