@@ -50,6 +50,7 @@ module.exports = {
 
 				found = true;
 
+				// Exclude private mixins
 				if (name.indexOf('_') !== 0) {
 					utils.logList(name, item.description);
 				}
