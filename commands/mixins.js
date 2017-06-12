@@ -1,8 +1,7 @@
 const utils = require('../utils');
 const fs = require('fs-extra');
 const path = require('path');
-const comments = require('../parse-comments');
-const fuzzy = require('fuzzy');
+const comments = require('../scripts/helpers/parse-comments');
 const chalk = require('chalk');
 const Table = require('cli-table');
 
@@ -40,32 +39,30 @@ module.exports = {
 
 		if (mixin === undefined) {
 			list.sort((a, b) => {
-			if (a.comment.code < b.comment.code)
+			if (a.code < b.code)
 				return -1;
-			  if (a.comment.code > b.comment.code)
+			  if (a.code > b.code)
 				return 1;
 		 	return 0;
 		});
 			list.forEach(item => {
 				found = true;
 				if (! item.private === true) {
-					utils.logList(item.comment.code.split('(')[0], item.description);
+					utils.logList(item.code.split('(')[0], item.description);
 				}
 			});
-
-			console.log('\n');
 		} else {
 			list.forEach(item => {
-				let mixinName = item.comment.code.split('(')[0];
+				let mixinName = item.code.split('(')[0];
 				let mixinTable = new Table({
 					head: [chalk.green('Name'), chalk.green('Type'), chalk.green('Description'), chalk.green('Required')],
 					colWidths: [18, 20, 25, 10]
 				});
 
-				if (fuzzy.test(mixin, mixinName)) {
+				if (mixinName.includes(mixin)) {
 					found = true;
 
-					if (item.param != undefined && item.private !== true) {
+					if (item.params.length && item.private !== true) {
 						utils.logList(mixinName.charAt(0).toUpperCase() + mixinName.slice(1), item.description);
 
 						item.params.forEach(param => {
