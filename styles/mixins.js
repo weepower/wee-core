@@ -40,7 +40,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background
 		 *
-		 * @param {number|string} [color]
+		 * @param {number|string} [color] - Hex value
 		 * @param {number|string} [opacity] - Opacity or filename
 		 * @param {string} [repeat] - Repeat or attachment
 		 * @param {number|string} [attachment] - Attachment or x
@@ -118,7 +118,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background gradient
 		 *
-		 * @param {string} [color]
+		 * @param {string} [color] - Hex value
 		 * @param {string} [start]
 		 * @param {string} [end]
 		 * @param {number} [angle]
@@ -185,7 +185,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Border
+		 * Set border properties
 		 *
 		 * @param {boolean|number|string} keyword
 		 * @param {number|string} [color]
@@ -271,7 +271,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Border image
+		 * Sets image to element border
 		 *
 		 * @param filename
 		 * @param {number|string} [slice]
@@ -302,7 +302,7 @@ module.exports = (vars = {}) => {
 		 * Create a triangle
 		 *
 		 * @param keyword
-		 * @param {string} [color]
+		 * @param {string} [color] - hex value
 		 * @param {number|string} [size]
 		 * @param {number|string} [width]
 		 * @returns {Array}
@@ -513,6 +513,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Column Offset
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number} share
@@ -640,7 +641,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Fill
+		 * Sets width and height to 100%
 		 *
 		 * @returns {Array}
 		 */
@@ -652,7 +653,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Filter
+		 * Set element filter
 		 *
 		 * @param {string} value
 		 * @returns {Object}
@@ -662,7 +663,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Blur
+		 * Blur filter
 		 *
 		 * @param {string} value
 		 * @returns {Object}
@@ -672,7 +673,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Brightness
+		 * Brightness filter
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -682,7 +683,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Contrast
+		 * Contrast filter
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -692,7 +693,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Grayscale
+		 * Grayscale filter
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -702,7 +703,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Hue rotate
+		 * Hue rotate filter
 		 *
 		 * @param {string} value
 		 * @returns {Object}
@@ -712,7 +713,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Invert
+		 * Invert filter
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -722,7 +723,8 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Saturate
+		 * Saturate filter
+		 *
 		 * @param {number} value
 		 * @returns {Object}
 		 */
@@ -731,7 +733,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Sepai
+		 * Sepai filter
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -820,7 +822,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Flex
+		 * Flex positioning
 		 *
 		 * @param {number} grow
 		 * @param {number} shrink
@@ -857,7 +859,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Font
+		 * Font setting
 		 *
 		 * @param {string} [family]
 		 * @param {number} size
@@ -1262,7 +1264,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Ratio
+		 * Set image aspect ratio
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number} [ratio]
@@ -1298,7 +1300,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Circle
+		 * Creates a circle
 		 *
 		 * @param {number} diameter
 		 * @param {boolean} [crop]
@@ -1373,7 +1375,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Padding
 		 *
-		 * @param {Array} args
+		 * @param {string} keyword
+		 * @param {number|string} top
+		 * @param {number|string} right
+		 * @param {number|string} bottom
+		 * @param {number|string} left
 		 * @returns {Array|boolean}
 		 */
 		padding(keyword, top, right, bottom, left) {
@@ -1413,7 +1419,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Placeholder
+		 * Styles form placeholder text
 		 *
 		 * @param color
 		 * @returns {*[]}
@@ -1492,7 +1498,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Bookends
+		 * Wraps a text element
 		 *
 		 * @param {string} [value]
 		 * @param {number|string} [margin]
@@ -1508,6 +1514,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
+		 * Sets overflow to hidden and resize to both
 		 *
 		 * @param {string} value
 		 * @returns {Array}
@@ -1534,7 +1541,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Rotate transform
+		 * Rotate transform function
 		 *
 		 * @param {number} [angle]
 		 * @returns {Object}
@@ -1544,7 +1551,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Scale transform
+		 * Scale transform function
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number} [value]
@@ -1567,7 +1574,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Skew transform
+		 * Skew transform function
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number|string} [x]
@@ -1594,7 +1601,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Translate transform
+		 * Translate transform function
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number|string} [x]
@@ -1735,7 +1742,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Box shadow
+		 * Set box shadow to an element
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number} [opacity]
@@ -1765,7 +1772,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Output width and/or height
+		 * Set width and/or height
 		 *
 		 * @param  {string} width
 		 * @param  {string} height
@@ -1786,7 +1793,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Add a specified margin bottom.
+		 * Add a specified margin bottom
 		 *
 		 * @return {Array}
 		 */
@@ -1795,7 +1802,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Spaced block
+		 * Set bottom margin and display block
 		 *
 		 * @param {number|string} [margin]
 		 * @param {number|string} [width]
@@ -1820,7 +1827,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Stroke color and width
+		 * SVG stroke color and width
 		 *
 		 * @param {string} [color]
 		 * @param {number|string} [width]
@@ -1839,7 +1846,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Text shadow
+		 * Adds a text shadow
 		 *
 		 * @param {number|string} [keyword]
 		 * @param {number} [opacity]
@@ -1860,7 +1867,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Sharpen text
+		 * Sharpens text
 		 *
 		 * @returns {Array}
 		 */
@@ -1972,7 +1979,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Visibility
+		 * Set visibility property
 		 *
 		 * @param  {string} [value]
 		 * @return {Object}

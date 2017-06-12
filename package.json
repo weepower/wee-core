@@ -20,6 +20,7 @@
     "test:ci": "NODE_ENV='ci' karma start ./tests/scripts/config/karma.browserstack.conf.js"
   },
   "dependencies": {
+    "cli-table": "^0.3.1",
     "commander": "^2.9.0",
     "es6-promise": "^4.1.0",
     "fs-extra": "^2.1.2",
