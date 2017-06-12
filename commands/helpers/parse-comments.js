@@ -97,14 +97,15 @@ function parser (str) {
 			if (!isWhitespace(line)) {
 				comment.codeStart = i;
 			}
+
 			comment.code += line + '\n';
 			afterCount++;
-			}
-
-			if (comment.begin && comment.code !== '') {
-				comment.code = comment.code.trim();
-			}
 		}
+
+		if (comment.begin && comment.code !== '') {
+			comment.code = comment.code.trim();
+		}
+	}
 
 	return comments;
 }
