@@ -1,3 +1,5 @@
+// TODO: May need to move promise polyfill to an entry point file if building dist version of Wee
+import 'es6-promise/auto';
 import { match } from './route-matcher';
 import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
@@ -81,50 +83,52 @@ export default class History {
 	 *
 	 * @param {string} path
 	 */
-	navigate(path, onComplete) {
-		const route = match(path);
+	navigate(path) {
+		return new Promise((resolve, reject) => {
+			const route = match(path);
 
-		// TODO: onAbort?
-		if (isSameRoute(route, this.current)) {
-			// TODO: Ensure URL - replace state?
-			warn('attempted to navigate to current URL');
-			return;
-		}
-
-		const records = this.resolveRecords(route.matched, this.current.matched);
-		const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
-
-		const queues = this.buildQueues(records, handlers);
-		const iterator = (hook, next) => {
-			hook(route, this.current, to => {
-				next(to);
-			});
-		};
-
-		// Evaluate all registered callbacks
-		runQueue(queues.beforeQueue, iterator, error => {
-			if (error) {
-				warn(error.message);
-				return false;
+			if (isSameRoute(route, this.current)) {
+				// TODO: Come up with error messaging like in fetch
+				reject();
+				// TODO: Ensure URL - replace state?
+				warn('attempted to navigate to current URL');
+				return;
 			}
 
-			queues.unloadQueue.forEach(unload => {
-				if ($isString(unload)) {
-					// TODO: Destroy events, screen map, and store based on namespace
-				} else if ($isFunction(unload)) {
-					unload(route, this.current);
+			const records = this.resolveRecords(route.matched, this.current.matched);
+			const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
+
+			const queues = this.buildQueues(records, handlers);
+			const iterator = (hook, next) => {
+				hook(route, this.current, to => {
+					next(to);
+				});
+			};
+
+			// Evaluate all registered callbacks
+			runQueue(queues.beforeQueue, iterator, error => {
+				if (error) {
+					reject(error);
+					warn(error.message);
+					return false;
 				}
+
+				queues.unloadQueue.forEach(unload => {
+					if ($isString(unload)) {
+						// TODO: Destroy events, screen map, and store based on namespace
+					} else if ($isFunction(unload)) {
+						unload(route, this.current);
+					}
+				});
+				queues.queue.forEach(fn => fn(route, this.current));
+
+				this.updateRoute(route, queues.afterQueue);
+
+				resolve(route);
+
+				// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
+				// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
 			});
-			queues.queue.forEach(fn => fn(route, this.current));
-
-			this.updateRoute(route, queues.afterQueue);
-
-			if (onComplete) {
-				onComplete(route);
-			}
-
-			// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
-			// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
 		});
 	}
 
