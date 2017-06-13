@@ -133,4 +133,17 @@ describe('pjax', () => {
 			done();
 		}, 0);
 	});
+
+	it('should add PJAX header', done => {
+		$router.pjax().run();
+
+		$events.trigger('#contact', 'click');
+		server.respond();
+
+		setTimeout(function() {
+			expect(server.requests[0].requestHeaders['X-PJAX']).to.equal('true');
+			expect(server.requests.length).to.equal(1);
+			done();
+		}, 0);
+	});
 });

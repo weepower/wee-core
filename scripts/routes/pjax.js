@@ -7,7 +7,6 @@ import { $serializeForm } from 'dom/index';
 import { supportsPushState } from './push-state';
 import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
-import { START } from './route';
 
 let defaults = {
 	bind: {
@@ -15,15 +14,14 @@ let defaults = {
 		submit: 'form'
 	},
 	context: 'document',
-	fetch: $fetch.create({
-		headers: {
-			'X-PJAX': 'true'
-		}
-	}),
+	fetch: $fetch.create(),
 	partials: 'title,main',
 	request: {
 		method: 'get',
-		responseType: 'text'
+		responseType: 'text',
+		headers: {
+			'X-PJAX': 'true'
+		}
 	},
 	replace: null
 };
