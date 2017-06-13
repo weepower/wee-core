@@ -101,7 +101,7 @@ router.pjax = function initPjax(config = {}) {
 				};
 
 				history.begin = pjax.go;
-				history.replace = pjax.replace;
+				history.replacePage = pjax.replace;
 			});
 		}
 	}
@@ -122,11 +122,21 @@ router.onReady = function onReady(success, error) {
 /**
  * Navigate to URL and add item to history
  *
- * @param path
+ * @param {string|Object} path
  * @returns {*}
  */
 router.push = function push(path) {
 	return history.push(path);
+}
+
+/**
+ * Navigate to URL and add item to history
+ *
+ * @param {string|Object} path
+ * @returns {*}
+ */
+router.replace = function replace(path) {
+	return history.replace(path);
 }
 
 /**

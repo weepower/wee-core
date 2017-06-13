@@ -8,7 +8,7 @@ import { getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
 import { warn } from './warn';
 import { _win } from 'core/variables';
-import { pushState } from './push-state';
+import { pushState, replaceState } from './push-state';
 
 export default class History {
 	constructor() {
@@ -16,7 +16,7 @@ export default class History {
 		this.current = START;
 		this.pending = null;
 		this.begin = function(to, from, next) { next(); };
-		this.replace = function() {};
+		this.replacePage = function() {};
 		this.readyQueue = [];
 		this.readyErrorQueue = [];
 		this.resetReady = function resetReady() {
@@ -89,7 +89,7 @@ export default class History {
 	/**
 	 * Process routes against new path
 	 *
-	 * @param {string} path
+	 * @param {string|Object} path
 	 */
 	navigate(path) {
 		return new Promise((resolve, reject) => {
@@ -136,7 +136,7 @@ export default class History {
 				});
 
 				// Global DOM replacement, if needed
-				this.replace();
+				this.replacePage();
 
 				// Init/update hooks
 				queues.queue.forEach(fn => fn(route, this.current));
@@ -180,12 +180,25 @@ export default class History {
 	/**
 	 * Navigate and add record to history
 	 *
-	 * @param {string} path
+	 * @param {string|Object} path
 	 */
 	push(path) {
 		return this.navigate(path)
 			.then(route => {
 				pushState(route.full);
+				// TODO: scroll
+			});
+	}
+
+	/**
+	 * Navigate and replace current history record
+	 *
+	 * @param {string|Object} path
+	 */
+	replace(path) {
+		return this.navigate(path)
+			.then(route => {
+				replaceState(route.full);
 				// TODO: scroll
 			});
 	}

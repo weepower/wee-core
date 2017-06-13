@@ -1202,4 +1202,49 @@ describe('Router', () => {
 				});
 		});
 	});
+
+	describe('replace', () => {
+		let homeSpy;
+		let page1Spy;
+		let page2Spy;
+
+		beforeEach(() => {
+			let history = window.history;
+
+			while (history.length > 49) {
+				history.back();
+			}
+
+			setPath('/');
+			$router.reset();
+			homeSpy = sinon.spy();
+			page1Spy = sinon.spy();
+			page2Spy = sinon.spy();
+
+			$router.map([
+				{ path: '/', init: homeSpy },
+				{ path: '/page1', init: page1Spy },
+				{ path: '/page2', init: page2Spy }
+			]).run();
+		});
+
+		afterEach(() => {
+			$router.reset();
+		});
+
+		it('should change URL', () => {
+			return $router.replace('page1').then(() => {
+				expect(page1Spy.calledOnce).to.be.true;
+				expect(window.location.pathname).to.equal('/page1');
+			});
+		});
+
+		it('should replace current history entry', () => {
+			const initial = window.history.length;
+
+			return $router.replace('page1').then(() => {
+				expect(window.history.length).to.equal(initial);
+			});
+		});
+	});
 });
