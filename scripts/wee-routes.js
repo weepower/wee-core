@@ -117,6 +117,26 @@ router.pjax = function initPjax(config = {}) {
 },
 
 /**
+ * Register callbacks to be executed on ready
+ *
+ * @param {Function} success
+ * @param {Function} [error]
+ */
+router.onReady = function onReady(success, error) {
+	history.onReady(success, error);
+}
+
+/**
+ * Navigate to URL and add item to history
+ *
+ * @param path
+ * @returns {*}
+ */
+router.push = function push(path) {
+	return history.push(path);
+}
+
+/**
  * Reset all routes - mainly for testing purposes
  */
 router.reset = function reset() {

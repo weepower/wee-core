@@ -1,5 +1,6 @@
 import $router from 'wee-routes';
 import { RouteHandler } from 'wee-routes';
+import sinon from 'sinon';
 
 const basicRoutes = [
 	{
@@ -1133,6 +1134,72 @@ describe('Router', () => {
 				const result = $router().uri(testUri);
 				expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash');
 			});
+		});
+	});
+
+	describe('push', () => {
+		let homeSpy;
+		let page1Spy;
+		let page2Spy;
+
+		beforeEach(() => {
+			setPath('/');
+			$router.reset();
+			homeSpy = sinon.spy();
+			page1Spy = sinon.spy();
+			page2Spy = sinon.spy();
+
+			$router.map([
+				{ path: '/', init: homeSpy },
+				{ path: '/page1', init: page1Spy },
+				{ path: '/page2', init: page2Spy }
+			]).run();
+		});
+
+		afterEach(() => {
+			$router.reset();
+		});
+
+		it('should navigate to a new URL', () => {
+			return $router.push('page1').then(() => {
+				expect(page1Spy.calledOnce).to.be.true;
+				expect(window.location.pathname).to.equal('/page1');
+			});
+		});
+
+		it('should add to browser history', done => {
+			// Ensure that history.length is not at max of 50 entries
+			while (window.history.length > 49) {
+				window.history.back();
+			}
+
+			const initial = window.history.length;
+
+			$router.push('page2').then(() => {
+				expect(window.history.length).to.equal(initial + 1);
+			}).then(done, done);
+		});
+
+		it('should navigate to a new URL with query string', () => {
+			return $router.push('page1?test=value').then(() => {
+				expect(page1Spy.calledOnce).to.be.true;
+				expect(window.location.pathname).to.equal('/page1');
+			});
+		});
+
+		it('should navigate to a new URL with hash', () => {
+			return $router.push('page1#section-a').then(() => {
+				expect(page1Spy.calledOnce).to.be.true;
+				expect(window.location.pathname).to.equal('/page1');
+			});
+		});
+
+		it('should navigate to a new URL passing object', () => {
+			return $router.push({ path: 'page2', query: { test: 'value' } })
+				.then(() => {
+					expect(page2Spy.calledOnce).to.be.true;
+					expect(window.location.pathname).to.equal('/page2');
+				});
 		});
 	});
 });
