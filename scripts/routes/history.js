@@ -12,11 +12,19 @@ import { pushState } from './push-state';
 
 export default class History {
 	constructor() {
+		this.ready = false;
 		this.current = START;
 		this.pending = null;
+		this.begin = function(to, from, next) { next(); };
+		this.replace = function() {};
+		this.readyQueue = [];
+		this.readyErrorQueue = [];
+		this.resetReady = function resetReady() {
+			this.readyQueue = [];
+			this.readyErrorQueue = [];
+		}
 
 		// TODO: Bind popstate for scrolling
-
 		// TODO: Bind popstate event
 	}
 
@@ -87,6 +95,7 @@ export default class History {
 		return new Promise((resolve, reject) => {
 			const route = match(path);
 
+			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
 				// TODO: Come up with error messaging like in fetch
 				reject();
@@ -105,7 +114,11 @@ export default class History {
 				});
 			};
 
-			// Evaluate all registered callbacks
+			// TODO: Save scroll position
+			// Register global before hook, if necessary - PJAX
+			queues.beforeQueue.unshift(this.begin);
+
+			// Before hooks
 			runQueue(queues.beforeQueue, iterator, error => {
 				if (error) {
 					reject(error);
@@ -113,6 +126,7 @@ export default class History {
 					return false;
 				}
 
+				// Unload hooks
 				queues.unloadQueue.forEach(unload => {
 					if ($isString(unload)) {
 						// TODO: Destroy events, screen map, and store based on namespace
@@ -120,11 +134,24 @@ export default class History {
 						unload(route, this.current);
 					}
 				});
+
+				// Global DOM replacement, if needed
+				this.replace();
+
+				// Init/update hooks
 				queues.queue.forEach(fn => fn(route, this.current));
 
+				// After hooks
 				this.updateRoute(route, queues.afterQueue);
 
 				resolve(route);
+
+				// Execute ready callbacks
+				if (! this.ready) {
+					this.ready = true;
+					this.readyQueue.forEach(cb => cb());
+					this.resetReady();
+				}
 
 				// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
 				// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
@@ -132,14 +159,35 @@ export default class History {
 		});
 	}
 
-	push(path, onComplete) {
-		// TODO: onAbort?
-		this.navigate(path, route => {
-			pushState(route.fullPath);
-			// TODO: scroll
+	/**
+	 * Execute callback(s) after history has been initialized
+	 *
+	 * @param {Function} success
+	 * @param {Function} error
+	 */
+	onReady(success, error) {
+		if (this.ready) {
+			success();
+		} else {
+			this.readyQueue.push(success);
 
-			onComplete(route);
-		});
+			if (error) {
+				this.readyErrorQueue.push(error);
+			}
+		}
+	}
+
+	/**
+	 * Navigate and add record to history
+	 *
+	 * @param {string} path
+	 */
+	push(path) {
+		return this.navigate(path)
+			.then(route => {
+				pushState(route.full);
+				// TODO: scroll
+			});
 	}
 
 	/**
