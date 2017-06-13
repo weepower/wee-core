@@ -21,37 +21,14 @@ let defaults = {
 		}
 	}),
 	partials: 'title,main',
-	requests: {
-		page: {
-			method: 'get',
-			responseType: 'text'
-		},
-		form: {
-			method: 'post',
-			responseType: 'json',
-			data: ''
-		}
+	request: {
+		method: 'get',
+		responseType: 'text'
 	},
-	replace: null,
-
-	/**
-	 * Configure form request config from form element properties
-	 *
-	 * @param {HTMLElement} el
-	 */
-	prepFormRequest(form) {
-		const method = form.getAttribute('method');
-
-		// Default will serialize as JSON
-		this.requests.form.data = $serializeForm(form, true);
-
-		if (method) {
-			this.requests.form.method = form.method;
-		}
-	}
+	replace: null
 };
 let settings = $copy(defaults);
-let currentRequest = {};
+let response = null;
 
 /**
  * Determine if path is valid for history navigation
@@ -118,6 +95,7 @@ function _path(loc) {
  * @param sel
  */
 function _reset(sel) {
+	response = null;
 	$setRef(sel);
 	// TODO: Uncomment when $setVar is added
 	// $setVar(sel);
@@ -155,11 +133,10 @@ const pjax = {
 					// Retrieve data-url off of element
 					// Used if element is not <a> tag
 					const loc = el.getAttribute('data-url');
-					const form = el.nodeName == 'FORM';
 					let destination = el;
 
 					// Create <a> tag for validation of URL
-					if (loc || form) {
+					if (loc) {
 						let attrs = el.attributes;
 						let j = 0;
 						let attr;
@@ -173,7 +150,7 @@ const pjax = {
 						}
 
 						// Set URL
-						destination.href = loc || el.getAttribute('action');
+						destination.href = loc;
 					}
 
 					// Ensure the path exists and is local
@@ -183,6 +160,7 @@ const pjax = {
 						return;
 					}
 
+					// TODO: Make this reset optional so we can use 'bind' dynamically
 					// Remove existing pjax events
 					$events.off(el, '.pjax');
 
@@ -202,14 +180,7 @@ const pjax = {
 
 						e.preventDefault();
 
-						if (form) {
-							settings.prepFormRequest(el);
-							currentRequest = settings.requests.form;
-						} else {
-							currentRequest = settings.requests.page;
-						}
-
-						this.onTrigger(path, currentRequest);
+						this.onTrigger(path);
 					});
 				}, {
 					context: context
@@ -219,12 +190,7 @@ const pjax = {
 	},
 
 	go(to, from, next) {
-		// Do not request more markup until routes are initialized
-		if (from === START) {
-			return next();
-		}
-
-		let request = currentRequest;
+		let request = settings.request;
 
 		// Navigate to external URL or if history isn't supported
 		let a = _doc.createElement('a');
@@ -237,51 +203,9 @@ const pjax = {
 
 		request.url = to.full;
 
-		let replaceEvent = function(x) {
-			let html = x && x.responseText ? x.responseText : x;
-			let modHtml;
-
-			if (settings.replace) {
-				modHtml = $exec(settings.replace, {
-					args: [html, settings]
-				});
-
-				// Returning false prevents PJAX replacement
-				// No explicit return will affect no change on original html
-				html = html === false ? false : modHtml || html;
-			}
-
-			// TODO: Warn that route will not replace partials
-			if (html === false) {
-				return;
-			}
-
-			html = $parseHTML('<i>' + html + '</i>').firstChild;
-
-			// Make partial replacements from response
-			$each(settings.partials.split(','), sel => {
-				$each(sel, function(el) {
-					const target = $(sel)[0];
-
-					if (target) {
-						const parent = target.parentNode;
-
-						settings.action === 'append' ?
-							parent.appendChild(el) :
-							parent.replaceChild(el, target);
-
-						_reset(parent);
-					}
-				}, {
-					context: html
-				});
-			});
-		}
-
-		// TODO: Save scroll position
 		settings.fetch(request)
-			.then(response => {
-				replaceEvent(response.request);
+			.then(res => {
+				response = res;
 				next();
 			})
 			.catch(error => {
@@ -311,6 +235,51 @@ const pjax = {
 		}
 
 		return false;
+	},
+
+	/**
+	 * Replace target partials on DOM
+	 */
+	replace() {
+		let html = response.data;
+		let modHtml;
+
+		if (settings.replace) {
+			modHtml = $exec(settings.replace, {
+				args: [html, settings]
+			});
+
+			// Returning false prevents PJAX replacement
+			// No explicit return will leave original html alone
+			html = html === false ? false : modHtml || html;
+		}
+
+		// TODO: Warn that route will not replace partials
+		if (html === false) {
+			return;
+		}
+
+		html = $parseHTML('<i>' + html + '</i>').firstChild;
+
+		// Make partial replacements from response
+		// TODO: Change string format to array
+		$each(settings.partials.split(','), sel => {
+			$each(sel, function(el) {
+				const target = $(sel)[0];
+
+				if (target) {
+					const parent = target.parentNode;
+
+					settings.action === 'append' ?
+						parent.appendChild(el) :
+						parent.replaceChild(el, target);
+
+					_reset(parent);
+				}
+			}, {
+				context: html
+			});
+		});
 	},
 
 	/**

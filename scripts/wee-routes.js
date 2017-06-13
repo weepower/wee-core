@@ -7,7 +7,7 @@ import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import { START } from './routes/route';
 import pjax from './routes/pjax';
 
-export const history = new History();
+export let history = new History();
 let hasPjax = false;
 
 /**
@@ -93,28 +93,21 @@ router.pjax = function initPjax(config = {}) {
 		hasPjax = pjax.init(config);
 
 		if (hasPjax) {
-			pjax.onTrigger = function (destination, requestConfig) {
-				history.navigate(destination, route => {
-					// TODO: What to do next?
-					// console.error(route);
-				});
-			};
+			// Prep pjax after initialization of routes
+			this.onReady(() => {
+				pjax.onTrigger = function onPjaxTrigger(destination) {
+					// TODO: Handle PJAX specific errors here? history.push returns promise
+					history.push(destination);
+				};
 
-			// Register pjax hook
-			this.beforeEach(pjax.go);
+				history.begin = pjax.go;
+				history.replace = pjax.replace;
+			});
 		}
 	}
 
-	// Bind popstate event (will do that in History class)
-		// Set config property that is used for history navigations to know that PJAX replacement is needed (would we ever need to bypass this?)
-		// Fallback to manually setting window.location
-	// On popstate/bound event trigger
-		// Wee.history.go - history.navigate
-		// Ensure scroll top
-			// Evaluate scrollBehavior/ensure scroll position on new page
-
 	return this;
-},
+}
 
 /**
  * Register callbacks to be executed on ready
@@ -142,9 +135,9 @@ router.push = function push(path) {
 router.reset = function reset() {
 	resetRouteMap();
 	resetHooks();
-	history.current = START;
 	hasPjax = false;
 	pjax.reset();
+	history = new History();
 }
 
 /**
