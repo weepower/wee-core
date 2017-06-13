@@ -1,11 +1,10 @@
-import { _win } from 'core/variables';
 import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
-import { START } from './routes/route';
 import pjax from './routes/pjax';
+import { $ready } from 'core/dom';
 
 export let history = new History();
 let hasPjax = false;
@@ -190,7 +189,11 @@ router.routes = function routes(key, keyType = 'path') {
  */
 router.run = function runRoutes(value) {
 	if (! value) {
-		history.navigate(this.uri().full);
+		// Process routes when document is loaded
+		$ready(() => {
+			history.navigate(this.uri().full);
+		});
+
 		return this;
 	}
 
