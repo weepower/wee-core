@@ -13,7 +13,7 @@ let current;
  * @private
  * @param {Object} conf - breakpoint rules
  * @param {Array} [conf.args] - callback arguments
- * @param {function} conf.callback
+ * @param {Function} conf.callback
  * @param {boolean} [conf.each=false] - execute for each matching breakpoint
  * @param {boolean} [conf.init=true] - check event on load
  * @param {number} [conf.max] - maximum breakpoint value
@@ -158,7 +158,7 @@ export default {
 	 *
 	 * @param {(Array|Object)} rules - breakpoint rules
 	 * @param {Array} [rules.args] - callback arguments
-	 * @param {function} rules.callback
+	 * @param {Function} rules.callback
 	 * @param {boolean} [rules.each=false] - execute for each matching breakpoint
 	 * @param {boolean} [rules.init=true] - check event on load
 	 * @param {number} [rules.max] - maximum breakpoint value

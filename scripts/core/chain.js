@@ -45,10 +45,10 @@ $.fn = Get.prototype = {
 	/**
 	 * Execute function for each Object element
 	 *
-	 * @param {function} fn
+	 * @param {Function} fn
 	 * @param {Object} [options]
 	 * @param {Array} [options.args]
-	 * @param {context} [options.context=document]
+	 * @param {HTMLElement} [options.context=document]
 	 * @param {boolean} [options.reverse=false]
 	 * @param {Array} [options.scope]
 	 */
@@ -61,7 +61,7 @@ $.fn = Get.prototype = {
 	/**
 	 * Translate Object elements to a new array
 	 *
-	 * @param {function} fn
+	 * @param {Function} fn
 	 * @param {Object} [options]
 	 * @param {Array} [options.args]
 	 * @param {Object} [options.scope]
@@ -102,7 +102,7 @@ $.fn = Get.prototype = {
  * Register a new chainable method
  *
  * @param {(Object|string)} a - method name or Object
- * @param {function} [b]
+ * @param {Function} [b]
  */
 export function $chain(a, b) {
 	if (typeof a == 'string') {

@@ -1,7 +1,7 @@
 /**
  * Wrap function with outer function that passes arguments with proper scope
  *
- * @param {function} fn
+ * @param {Function} fn
  * @param {Object} thisArg
  * @returns {wrap}
  */

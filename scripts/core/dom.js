@@ -143,7 +143,7 @@ export function $sel(selector, context) {
  * Execute function for each matching selection
  *
  * @param {($|Array|HTMLElement|string)} target
- * @param {function} fn
+ * @param {Function} fn
  * @param {Object} [options]
  * @param {Array} [options.args]
  * @param {($|HTMLElement|string)} [options.context=document]
@@ -180,7 +180,7 @@ export function $each(target, fn, options) {
  * Translate items in an array or selection to new Array
  *
  * @param {($|Array|HTMLElement|string)} target - array or selector
- * @param {function} fn
+ * @param {Function} fn
  * @param {Object} [options]
  * @param {Array} [options.args]
  * @param {Object} [options.scope]
