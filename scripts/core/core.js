@@ -20,7 +20,7 @@ function _val(val, options) {
 
 /**
  * Get current environment or set current environment against
- * specified object
+ * specified Object
  *
  * @param {Object} [rules]
  * @param {string} [fallback=local]
@@ -66,7 +66,7 @@ export function $envReset() {
 }
 
 /**
- * Execute specified function or array of functions
+ * Execute specified function or Array of functions
  *
  * @param {Array|function} fn
  * @param {Object} [options]

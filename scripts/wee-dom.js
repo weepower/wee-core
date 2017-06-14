@@ -134,7 +134,7 @@ $chain({
 	 * Get CSS value of first matching selection or set value
 	 * of each matching selection
 	 *
-	 * @param {(object|string)} a
+	 * @param {(Object|string)} a
 	 * @param {(function|string)} [b]
 	 * @returns {($|string)}
 	 */
@@ -326,7 +326,7 @@ $chain({
 	 * Get the unique next sibling of each matching selection
 	 *
 	 * @param filter
-	 * @param {object} [options]
+	 * @param {Object} [options]
 	 * @returns {$}
 	 */
 	next(filter, options) {
@@ -337,7 +337,7 @@ $chain({
 	 * Returns elements not matching the filtered selection
 	 *
 	 * @param filter
-	 * @param {object} [options]
+	 * @param {Object} [options]
 	 * @returns {$}
 	 */
 	not(filter, options) {
@@ -405,7 +405,7 @@ $chain({
 	 * Get the unique previous sibling of each matching selection
 	 *
 	 * @param filter
-	 * @param {object} [options]
+	 * @param {Object} [options]
 	 * @returns {$}
 	 */
 	prev(filter, options) {

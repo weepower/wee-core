@@ -11,16 +11,16 @@ let current;
  * Bind individual rule
  *
  * @private
- * @param {object} conf - breakpoint rules
+ * @param {Object} conf - breakpoint rules
  * @param {Array} [conf.args] - callback arguments
  * @param {function} conf.callback
  * @param {boolean} [conf.each=false] - execute for each matching breakpoint
  * @param {boolean} [conf.init=true] - check event on load
- * @param {int} [conf.max] - maximum breakpoint value
- * @param {int} [conf.min] - minimum breakpoint value
+ * @param {number} [conf.max] - maximum breakpoint value
+ * @param {number} [conf.min] - minimum breakpoint value
  * @param {boolean} [conf.once=false] - only execute the callback once
- * @param {object} [conf.scope] - callback scope
- * @param {int} [conf.size] - specific breakpoint value
+ * @param {Object} [conf.scope] - callback scope
+ * @param {number} [conf.size] - specific breakpoint value
  * @param {boolean} [conf.watch=true] - check event on screen resize
  * @param {string} [conf.namespace] - namespace the event
  */
@@ -53,7 +53,7 @@ function _addRule(conf) {
  * Compare event rules against current size
  *
  * @private
- * @param {object} evt
+ * @param {Object} evt
  * @param {number} size
  * @param {boolean} init
  * @returns {boolean}
@@ -156,17 +156,17 @@ export default {
 	/**
 	 * Map conditional events to breakpoint values
 	 *
-	 * @param {(Array|object)} rules - breakpoint rules
+	 * @param {(Array|Object)} rules - breakpoint rules
 	 * @param {Array} [rules.args] - callback arguments
 	 * @param {function} rules.callback
 	 * @param {boolean} [rules.each=false] - execute for each matching breakpoint
 	 * @param {boolean} [rules.init=true] - check event on load
-	 * @param {int} [rules.max] - maximum breakpoint value
-	 * @param {int} [rules.min] - minimum breakpoint value
+	 * @param {number} [rules.max] - maximum breakpoint value
+	 * @param {number} [rules.min] - minimum breakpoint value
 	 * @param {string} [rules.namespace] - namespace the event
 	 * @param {boolean} [rules.once=false] - only execute the callback once
-	 * @param {object} [rules.scope] - callback scope
-	 * @param {int} [rules.size] - specific breakpoint value
+	 * @param {Object} [rules.scope] - callback scope
+	 * @param {number} [rules.size] - specific breakpoint value
 	 * @param {boolean} [rules.watch=true] - check event on screen resize
 	 */
 	map(rules) {

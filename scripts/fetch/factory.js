@@ -15,7 +15,7 @@ export default function fetchFactory(defaults) {
 	 *
 	 * @private
 	 * @param {XMLHttpRequest} request
-	 * @param {object} conf
+	 * @param {Object} conf
 	 * @returns {*}
 	 */
 	const _settle = function _settle(request, config, resolve, reject) {
@@ -224,7 +224,7 @@ export default function fetchFactory(defaults) {
 		 * @param {boolean} [options.processData=true] - post data in the body
 		 * @param {string} [options.responseType] - set the type of the response
 		 * @param {string} [options.baseUrl=''] - prepended request path
-		 * @param {object} [options.scope] - callback scope
+		 * @param {Object} [options.scope] - callback scope
 		 * @param {(Array|function|string)} [options.send] - executed before Ajax call
 		 * @param {(Array|function|string)} [options.success] - callback if request succeeds
 		 * @param {string} [options.type] - form, html, json, or xml
