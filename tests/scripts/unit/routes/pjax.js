@@ -146,4 +146,53 @@ describe('pjax', () => {
 			done();
 		}, 0);
 	});
+
+	// TODO: Some of this needs to be extracted into E2E/Functional test
+	it('should update on popstate events', done => {
+		$router.pjax().run();
+
+		// Navigate to about page
+		$events.trigger('#about', 'click');
+		server.respond();
+
+		// Navigate to faq page
+		$events.trigger('#faq', 'click');
+		server.respond();
+
+		// Assert we are on FAQ page
+		setTimeout(function() {
+			expect(window.location.pathname).to.equal('/faq');
+			expect($('title').text()).to.equal('FAQ');
+			expect($('main').text()).to.equal('This is the FAQ page');
+
+			// Trigger popstate, clicking back button
+			window.history.back();
+
+			// Server could not respond properly without deferring
+			// history.back must be asynchronous
+			setTimeout(function() {
+				server.respond();
+
+				setTimeout(function() {
+					expect(window.location.pathname).to.equal('/about');
+					expect($('title').text()).to.equal('About');
+					expect($('main').text()).to.equal('This is the about page');
+
+					// Click forward button
+					window.history.forward();
+
+					setTimeout(function() {
+						server.respond();
+
+						setTimeout(function() {
+							expect(window.location.pathname).to.equal('/faq');
+							expect($('title').text()).to.equal('FAQ');
+							expect($('main').text()).to.equal('This is the FAQ page');
+							done();
+						}, 0);
+					}, 100);
+				}, 0);
+			}, 100);
+		}, 0);
+	});
 });
