@@ -14,7 +14,8 @@ module.exports = {
 	options: [
 		['-i, ' + assets.images, 'copy and minify image assets'],
 		['-c, ' + assets.styles, 'compile and minify stylesheets'],
-		['-s, ' + assets.scripts, 'compile and minify scripts']
+		['-s, ' + assets.scripts, 'compile and minify scripts'],
+		['-w, --watch', 'watch files']
 	],
 	action(config, options) {
 		// Set Arguments array
@@ -68,6 +69,18 @@ module.exports = {
 
 				if (spawnCount === lastSpawn && ! error) {
 					console.log(`Finished: ${buildFeedback(feedbackItems)}`);
+				}
+
+				if (options.watch) {
+					// Execute npm build [options]
+					let child = spawn('npm', [baseCommand, 'watch', ansi], {
+						cwd: config.rootPath,
+						stdio: 'inherit'
+					});
+
+					child.on('error', data => {
+						console.log(data);
+					});
 				}
 			});
 		});
