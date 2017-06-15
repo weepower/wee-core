@@ -180,9 +180,10 @@ export default class History {
 		} else {
 			this.readyQueue.push(success);
 
-			if (error) {
-				this.readyErrorQueue.push(error);
-			}
+			// TODO: Uncomment once error handling strategy is implemented
+			// if (error) {
+			// 	this.readyErrorQueue.push(error);
+			// }
 		}
 	}
 
