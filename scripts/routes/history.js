@@ -23,9 +23,14 @@ export default class History {
 			this.readyQueue = [];
 			this.readyErrorQueue = [];
 		}
+		this.popstate = () => {
+			this.replace().then(route => {
+				// TODO: scroll
+			});
+		};
 
 		// TODO: Bind popstate for scrolling
-		// TODO: Bind popstate event
+		_win.addEventListener('popstate', this.popstate);
 	}
 
 	/**

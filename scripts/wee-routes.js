@@ -146,6 +146,7 @@ router.reset = function reset() {
 	resetHooks();
 	hasPjax = false;
 	pjax.reset();
+	window.removeEventListener('popstate', history.popstate);
 	history = new History();
 }
 
