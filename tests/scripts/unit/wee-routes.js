@@ -28,10 +28,10 @@ describe('Router', () => {
 		let state = false;
 
 		beforeEach(() => {
+			$router.reset();
 			$router.map(basicRoutes);
 		});
 		afterEach(() => {
-			$router.reset();
 			state = false;
 		});
 
@@ -48,10 +48,10 @@ describe('Router', () => {
 		let state = false;
 
 		beforeEach(() => {
+			$router.reset();
 			$router.map(basicRoutes);
 		});
 		afterEach(() => {
-			$router.reset();
 			state = false;
 		});
 
@@ -68,8 +68,9 @@ describe('Router', () => {
 		let state = false;
 		let stateArray = [];
 
+		beforeEach($router.reset);
+
 		afterEach(() => {
-			$router.reset();
 			state = false;
 			stateArray = [];
 		});
