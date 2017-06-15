@@ -25,7 +25,13 @@ export function pushState(url, replace = false) {
 		}
 	} catch(e) {
 		// Fallback if something goes wrong
-		_win.location[replace ? 'replace' : 'assign'](url);
+		let win = _win;
+
+		if (this && this.location) {
+			win = this;
+		}
+
+		win.location[replace ? 'replace' : 'assign'](url);
 	}
 }
 
