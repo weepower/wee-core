@@ -17,25 +17,6 @@ function _createMatched(record) {
 	return result;
 }
 
-/**
- * Check top level object equality
- *
- * @param {Object} a
- * @param {Object} b
- * @returns {boolean}
- * @private
- */
-function _isObjectEqual (a = {}, b = {}) {
-	const aKeys = Object.keys(a);
-	const bKeys = Object.keys(b);
-
-	if (aKeys.length !== bKeys.length) {
-		return false
-	}
-
-	return aKeys.every(key => String(a[key]) === String(b[key]));
-}
-
 export const START = createRoute({ path: '/' });
 
 /**
@@ -64,23 +45,13 @@ export function createRoute(location, record = {}) {
 /**
  * Compare route equality
  *
- * @param {Object} newRoute
- * @param {Object} oldRoute
+ * @param {Object} a - route to be compared
+ * @param {Object} b - route to be compared
  * @returns {boolean}
  */
 export function isSameRoute(a, b) {
 	if (b === START) {
 		return a === b;
-	} else if (! b) {
-		return false;
-	} else if (a.path && b.path) {
-		return (
-			a.path.replace(TRAILING_SLASH, '') === b.path.replace(TRAILING_SLASH, '') &&
-			a.hash === b.hash &&
-			_isObjectEqual(a.query, b.query)
-		)
-	} else {
-		return false;
 	}
 
 	return a.full === b.full;
