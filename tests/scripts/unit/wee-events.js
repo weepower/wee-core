@@ -1,35 +1,7 @@
 import $ from 'wee-dom';
 import $events from 'wee-events';
 import { createDiv, createSingleDiv, createMultiDiv, resetDOM } from '../helpers/dom';
-import { isIE } from '../helpers/browsers';
-
-function removeEvents() {
-	let elements = document.body.getElementsByTagName('*');
-
-	for (let i = elements.length; i--;) {
-		let oldElement = elements[i];
-		let newElement = oldElement.cloneNode(true);
-
-		oldElement.parentNode.replaceChild(newElement, oldElement);
-	}
-
-	$events.off();
-}
-
-function triggerEvent(el, type, bubbles = true, cancelable = true) {
-	if (isIE()) {
-		let e = document.createEvent('HTMLEvents');
-		e.initEvent(type, bubbles, cancelable);
-		el.dispatchEvent(e);
-	} else {
-		let e = new Event(type, {
-			bubbles,
-			cancelable
-		});
-
-		el.dispatchEvent(e);
-	}
-}
+import { removeEvents, triggerEvent } from '../helpers/events';
 
 describe('Events', () => {
 	describe('on', () => {

@@ -148,7 +148,7 @@ describe('default units', () => {
 	});
 });
 
-// TODO: anything below here is a part of the mixin specific test
+// Anything below here is a part of the mixin specific test
 describe('left', () => {
 	it('should generate float left by default', () => {
 		return process(

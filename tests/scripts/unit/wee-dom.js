@@ -541,7 +541,6 @@ describe('DOM', () => {
 		it('should set inner html of select', () => {
 			createForm();
 
-			// TODO: do we need to do this?
 			window.atob = false;
 
 			$('.select').html('<option>test</option>');
@@ -1289,6 +1288,7 @@ describe('DOM', () => {
 				expect($(document).width()).to.equal($(document).width());
 			});
 		} else if (isEdge()) {
+			// Cheating the test because Browserstack screen sizes are inconsistent in Edge
 			it('should return the width of window', () => {
 				expect($(window).width()).to.equal($(window).width());
 			});

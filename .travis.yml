@@ -3,6 +3,12 @@ language: node_js
 node_js:
   - '6'
 
+branches:
+  only:
+  - master
+  - develop
+  - v2
+
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start

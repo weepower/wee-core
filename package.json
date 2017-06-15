@@ -25,7 +25,8 @@
     "es6-promise": "^4.1.0",
     "fs-extra": "^2.1.2",
     "glob": "^7.1.1",
-    "node-notifier": "^5.1.2"
+    "node-notifier": "^5.1.2",
+    "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",

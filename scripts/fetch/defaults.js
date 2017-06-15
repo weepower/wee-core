@@ -26,6 +26,7 @@ let defaults = {
 	processData: true,
 	params: {},
 	responseType: 'json',
+	scope: null,
 
 	/**
 	 * Default logic for transforming request body
