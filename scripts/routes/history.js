@@ -94,7 +94,7 @@ export default class History {
 	/**
 	 * Process routes against new path
 	 *
-	 * @param {string|Object} path
+	 * @param {string|Object} [path]
 	 */
 	navigate(path) {
 		return new Promise((resolve, reject) => {
@@ -131,14 +131,18 @@ export default class History {
 					return false;
 				}
 
-				// Unload hooks
-				queues.unloadQueue.forEach(unload => {
-					if ($isString(unload)) {
-						// TODO: Destroy events, screen map, and store based on namespace
-					} else if ($isFunction(unload)) {
-						unload(route, this.current);
-					}
-				});
+				// Do not process unload hooks on initialization
+				// No assets exist to be unloaded, and could cause errors
+				if (this.ready) {
+					// Unload hooks
+					queues.unloadQueue.forEach(unload => {
+						if ($isString(unload)) {
+							// TODO: Destroy events, screen map, and store based on namespace
+						} else if ($isFunction(unload)) {
+							unload(route, this.current);
+						}
+					});
+				}
 
 				// Global DOM replacement, if needed
 				this.replacePage();
@@ -149,14 +153,14 @@ export default class History {
 				// After hooks
 				this.updateRoute(route, queues.afterQueue);
 
-				resolve(route);
-
 				// Execute ready callbacks
 				if (! this.ready) {
 					this.ready = true;
 					this.readyQueue.forEach(cb => cb());
 					this.resetReady();
 				}
+
+				resolve(route);
 
 				// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
 				// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
@@ -198,7 +202,7 @@ export default class History {
 	/**
 	 * Navigate and replace current history record
 	 *
-	 * @param {string|Object} path
+	 * @param {string|Object} [path]
 	 */
 	replace(path) {
 		return this.navigate(path)
