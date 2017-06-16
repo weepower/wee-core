@@ -116,6 +116,8 @@ router.pjax = function initPjax(config = {}) {
  */
 router.onReady = function onReady(success, error) {
 	history.onReady(success, error);
+
+	return this;
 }
 
 /**
