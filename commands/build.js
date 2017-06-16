@@ -4,7 +4,8 @@ const name = 'build';
 const assets = {
 	images: '--images',
 	styles: '--styles',
-	scripts: '--scripts'
+	scripts: '--scripts',
+	fonts: '--fonts'
 };
 
 module.exports = {
@@ -15,6 +16,7 @@ module.exports = {
 		['-i, ' + assets.images, 'copy and minify image assets'],
 		['-c, ' + assets.styles, 'compile and minify stylesheets'],
 		['-s, ' + assets.scripts, 'compile and minify scripts'],
+		['-f, ' + assets.fonts, 'copy fonts'],
 		['-w, --watch', 'watch files']
 	],
 	action(config, options) {
@@ -43,6 +45,12 @@ module.exports = {
 			commands.push([baseCommand, 'build:js', ansi]);
 			option += ' ' + assets.scripts;
 			feedbackItems.push(assets.scripts);
+		}
+
+		if (options.fonts) {
+			commands.push([baseCommand, 'build:fonts', ansi]);
+			option += ' ' + assets.fonts;
+			feedbackItems.push(assets.fonts);
 		}
 
 		if (! commands.length) {
