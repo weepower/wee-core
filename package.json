@@ -16,8 +16,8 @@
     "test:scripts": "karma start ./tests/scripts/config/karma.dev.conf.js",
     "test:styles": "mocha ./tests/styles/**/*.js",
     "test": "NODE_ENV='production' npm run test:scripts",
-    "test:ci-ie": "NODE_ENV='production' karma start ./tests/scripts/config/karma.browserstack.ie.conf.js",
-    "test:ci": "NODE_ENV='production' karma start ./tests/scripts/config/karma.browserstack.conf.js"
+    "test:ci-ie": "karma start ./tests/scripts/config/karma.browserstack.ie.conf.js",
+    "test:ci": "karma start ./tests/scripts/config/karma.browserstack.conf.js"
   },
   "dependencies": {
     "cli-table": "^0.3.1",
