@@ -109,7 +109,7 @@ describe('pjax', () => {
 			expect($('title').text()).to.equal('Modified About');
 			expect($('main').text()).to.equal('Modified about page');
 			done();
-		}, 0);
+		}, 200);
 	});
 
 	it('should add window.history entry', done => {
@@ -131,7 +131,7 @@ describe('pjax', () => {
 			expect($('title').text()).to.equal('About');
 			expect($('main').text()).to.equal('This is the about page');
 			done();
-		}, 0);
+		}, 200);
 	});
 
 	it('should add PJAX header', done => {
@@ -189,10 +189,10 @@ describe('pjax', () => {
 							expect($('title').text()).to.equal('FAQ');
 							expect($('main').text()).to.equal('This is the FAQ page');
 							done();
-						}, 0);
+						}, 100);
 					}, 100);
-				}, 0);
+				}, 100);
 			}, 100);
-		}, 0);
+		}, 100);
 	});
 });
