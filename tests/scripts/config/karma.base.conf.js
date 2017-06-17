@@ -1,28 +1,49 @@
+const fs = require('fs-extra');
+const glob = require('glob');
+const paths = require('../../../utils').paths;
+const args = process.argv.filter(arg => arg.includes('--')).map(arg => {
+	return arg.replace('--', '').split(/=| +/).map(word => word.trim());
+});
+let spec = args.find(arg => arg[0] === 'spec');
+let reporters = ['mocha', 'coverage'];
+let files = [];
+let preprocessors = [];
+
+spec = Array.isArray(spec) ? spec[1] : '';
+
+
+function addFile(file) {
+	files.push(file);
+	preprocessors[file] = ['webpack'];
+}
+
+// Remove coverage if running specific spec file
+// as it gets in the way and is inaccurate
+if (spec.length) {
+	reporters.pop();
+	addFile(paths.tests.scripts + '/unit/' + spec);
+} else {
+	glob.sync(paths.tests.scripts + '/unit/**/*.js').forEach(file => console.error(file));
+}
+
 module.exports = {
-	// base path that will be used to resolve all patterns (eg. files, exclude)
-	basePath: '',
+	// list of files / patterns to load in the browser
+	files,
+
+	// Process files before serving to browser
+	// karma-coverage not registered here because of babel-plugin-istanbul
+	preprocessors,
 
 	// frameworks to use
 	// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
 	frameworks: ['mocha', 'chai'],
-
-	// list of files / patterns to load in the browser
-	files: [
-		'../index.js'
-	],
-
-	// Process files before serving to browser
-	// karma-coverage not registered here because of babel-plugin-istanbul
-	preprocessors: {
-		'../index.js': ['webpack']
-	},
 	webpackMiddleware: {
 		noInfo: true
 	},
 	webpack: require('./webpack.config.js'),
 
 	// Reporters
-	reporters: ['mocha', 'coverage'],
+	reporters: reporters,
 	mochaReporter: {
 		showDiff: true
 	},

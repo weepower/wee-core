@@ -64,6 +64,10 @@ module.exports = {
 			source: projectSourcePath,
 			styles: `${projectSourcePath}/styles`,
 			scripts: `${projectSourcePath}/scripts`
+		},
+		tests: {
+			root: `${basePath}/tests`,
+			scripts: `${basePath}/tests/scripts`
 		}
 	},
 
