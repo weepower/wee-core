@@ -18,7 +18,7 @@ describe('Router: location', () => {
 			const location = parseLocation();
 
 			expect(location.path).to.equal('/path/a');
-			expect(location.full).to.equal('/path/a?some=value&other=value#section-a');
+			expect(location.fullPath).to.equal('/path/a?some=value&other=value#section-a');
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
@@ -34,7 +34,7 @@ describe('Router: location', () => {
 			const location = parseLocation('/path/a?some=value&other=value#section-a');
 
 			expect(location.path).to.equal('/path/a');
-			expect(location.full).to.equal('/path/a?some=value&other=value#section-a');
+			expect(location.fullPath).to.equal('/path/a?some=value&other=value#section-a');
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
@@ -47,7 +47,7 @@ describe('Router: location', () => {
 			const location = parseLocation({ path: '/path/a', query: { some: 'value', other: 'value' }, hash: 'section-a' });
 
 			expect(location.path).to.equal('/path/a');
-			expect(location.full).to.equal('/path/a?some=value&other=value#section-a');
+			expect(location.fullPath).to.equal('/path/a?some=value&other=value#section-a');
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);

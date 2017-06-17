@@ -406,7 +406,7 @@ describe('Router', () => {
 				query: {key: 'value', key2: 'value2'},
 				params: {place: 'stuff'},
 				segments: ['path', 'to', 'stuff'],
-				full: '/path/to/stuff?key=value&key2=value2#hash',
+				fullPath: '/path/to/stuff?key=value&key2=value2#hash',
 				matched: [
 					{
 						before: undefined,
@@ -1067,7 +1067,7 @@ describe('Router', () => {
 		});
 
 		it('should return the full path', () => {
-			expect($router().uri().full).to.equal('/test2?foo=bar&baz=qux#hash');
+			expect($router().uri().fullPath).to.equal('/test2?foo=bar&baz=qux#hash');
 		});
 
 		it('should return the path', () => {
@@ -1108,7 +1108,7 @@ describe('Router', () => {
 
 			it('should return the full path', () => {
 				const result = $router().uri(testUri);
-				expect(result.full).to.equal('/scripts?foo=bar&baz=qux#hash');
+				expect(result.fullPath).to.equal('/scripts?foo=bar&baz=qux#hash');
 			});
 
 			it('should return the path', () => {

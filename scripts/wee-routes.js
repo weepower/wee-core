@@ -194,7 +194,7 @@ router.run = function runRoutes(value) {
 	if (! value) {
 		// Process routes when document is loaded
 		$ready(() => {
-			history.navigate(this.uri().full);
+			history.navigate(this.uri().fullPath);
 		});
 
 		return this;

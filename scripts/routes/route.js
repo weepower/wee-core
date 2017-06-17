@@ -35,7 +35,7 @@ export function createRoute(location, record = {}) {
 		query: location.query,
 		segments: location.segments,
 		params: location.params || {},
-		full: location.full,
+		fullPath: location.fullPath,
 		matched: _createMatched(record)
 	};
 
@@ -54,5 +54,5 @@ export function isSameRoute(a, b) {
 		return a === b;
 	}
 
-	return a.full === b.full;
+	return a.fullPath === b.fullPath;
 }

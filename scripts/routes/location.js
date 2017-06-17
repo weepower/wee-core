@@ -32,7 +32,7 @@ export function parseLocation(value) {
 	const origin = a.href.split('/');
 
 	return {
-		full: '/' + path + search + a.hash,
+		fullPath: '/' + path + search + a.hash,
 		hash: a.hash.slice(1),
 		path: '/' + path,
 		query: search ? $unserialize(search) : {},

@@ -194,12 +194,12 @@ const pjax = {
 		let a = _doc.createElement('a');
 		a.href = to.url;
 
-		if (! supportsPushState || ! _isValid(a, from.full)) {
-			_win.location = to.full;
+		if (! supportsPushState || ! _isValid(a, from.fullPath)) {
+			_win.location = to.fullPath;
 			return false;
 		}
 
-		request.url = to.full;
+		request.url = to.fullPath;
 
 		settings.fetch(request)
 			.then(res => {

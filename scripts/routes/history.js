@@ -195,7 +195,7 @@ export default class History {
 	push(path) {
 		return this.navigate(path)
 			.then(route => {
-				pushState(route.full);
+				pushState(route.fullPath);
 				// TODO: scroll
 			});
 	}
@@ -208,7 +208,7 @@ export default class History {
 	replace(path) {
 		return this.navigate(path)
 			.then(route => {
-				replaceState(route.full);
+				replaceState(route.fullPath);
 				// TODO: scroll
 			});
 	}
