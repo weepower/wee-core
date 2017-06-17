@@ -190,9 +190,9 @@ describe('pjax', () => {
 							expect($('main').text()).to.equal('This is the FAQ page');
 							done();
 						}, 100);
-					}, 100);
+					}, 300);
 				}, 100);
-			}, 100);
+			}, 300);
 		}, 100);
 	});
 });
