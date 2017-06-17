@@ -91,7 +91,7 @@ describe('pjax', () => {
 			expect($('title').text()).to.equal('About');
 			expect($('main').text()).to.equal('This is the about page');
 			done();
-		}, 0);
+		}, 200);
 	});
 
 	it('should change resulting HTML with replace callback', done => {
@@ -178,19 +178,7 @@ describe('pjax', () => {
 					expect($('title').text()).to.equal('About');
 					expect($('main').text()).to.equal('This is the about page');
 
-					// Click forward button
-					window.history.forward();
-
-					setTimeout(function() {
-						server.respond();
-
-						setTimeout(function() {
-							expect(window.location.pathname).to.equal('/faq');
-							expect($('title').text()).to.equal('FAQ');
-							expect($('main').text()).to.equal('This is the FAQ page');
-							done();
-						}, 100);
-					}, 300);
+					done();
 				}, 100);
 			}, 300);
 		}, 100);
