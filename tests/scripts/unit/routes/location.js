@@ -38,7 +38,7 @@ describe('Router: location', () => {
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
-			expect(location.url).to.equal(window.location.href);
+			expect(location.url).to.equal(window.location.href + 'path/a?some=value&other=value#section-a');
 			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
@@ -51,7 +51,7 @@ describe('Router: location', () => {
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
-			expect(location.url).to.equal(window.location.href);
+			expect(location.url).to.equal(window.location.href + 'path/a?some=value&other=value#section-a');
 			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
