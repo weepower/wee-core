@@ -23,7 +23,7 @@ if (spec.length) {
 	reporters.pop();
 	addFile(paths.tests.scripts + '/unit/' + spec);
 } else {
-	glob.sync(paths.tests.scripts + '/unit/**/*.js').forEach(file => console.error(file));
+	glob.sync(paths.tests.scripts + '/unit/**/*.js').forEach(file => addFile(file));
 }
 
 module.exports = {
