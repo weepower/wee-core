@@ -12,6 +12,7 @@ describe('Router: location', () => {
 
 		it('should generate location object based on current location', () => {
 			const location = parseLocation();
+			const origin = window.location.href.split('/').slice(0, 3).join('/');
 
 			expect(location.path).to.equal('/path/a');
 			expect(location.full).to.equal('/path/a?some=value&other=value#section-a');
@@ -19,7 +20,7 @@ describe('Router: location', () => {
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
 			expect(location.url).to.equal(window.location.href);
-			expect(location.origin).to.equal('http://localhost:9877');
+			expect(location.origin).to.equal(origin);
 			expect(location.protocol).to.equal('http');
 		});
 
