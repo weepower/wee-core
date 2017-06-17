@@ -44,9 +44,5 @@ module.exports = {
 		child.on('error', data => {
 			console.log(data);
 		});
-
-		child.on('close', (code) => {
-			console.log(`child process exited with code ${code}`);
-		});
 	}
 };

@@ -1,5 +1,9 @@
 import { parseLocation } from 'routes/location';
 
+function getOrigin() {
+	return window.location.href.split('/').slice(0, 3).join('/');
+}
+
 describe('Router: location', () => {
 	before(() => {
 		window.history.replaceState(0, '', '/');
@@ -19,7 +23,7 @@ describe('Router: location', () => {
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
 			expect(location.url).to.equal(window.location.href);
-			expect(location.origin).to.equal('http://localhost:9877');
+			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
 
@@ -34,8 +38,8 @@ describe('Router: location', () => {
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
-			expect(location.url).to.equal('http://localhost:9877/path/a?some=value&other=value#section-a');
-			expect(location.origin).to.equal('http://localhost:9877');
+			expect(location.url).to.equal(window.location.href + 'path/a?some=value&other=value#section-a');
+			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
 
@@ -47,8 +51,8 @@ describe('Router: location', () => {
 			expect(location.hash).to.equal('section-a');
 			expect(location.query).to.deep.equal({ some: 'value', other: 'value' });
 			expect(location.segments).to.deep.equal(['path', 'a']);
-			expect(location.url).to.equal('http://localhost:9877/path/a?some=value&other=value#section-a');
-			expect(location.origin).to.equal('http://localhost:9877');
+			expect(location.url).to.equal(window.location.href + 'path/a?some=value&other=value#section-a');
+			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
 	});

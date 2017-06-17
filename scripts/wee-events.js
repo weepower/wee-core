@@ -113,7 +113,7 @@ function _bind(els, obj, options) {
  * @private
  * @param {(HTMLElement|string)} [sel]
  * @param {string} [evt]
- * @param {function} [fn]
+ * @param {Function} [fn]
  */
 function _off(sel, evt, fn) {
 	$each(_bound(sel, evt, fn), e => {
@@ -171,14 +171,14 @@ export default {
 	 * Bind event function to element
 	 *
 	 * @param {(HTMLElement|object|string)} target
-	 * @param {(object|string)} a - event name or object of events
-	 * @param {(function|object)} [b] - event callback or options object
-	 * @param {(object|string)} [c] - event options
+	 * @param {(Object|string)} a - event name or object of events
+	 * @param {(Function|object)} [b] - event callback or options object
+	 * @param {(Object|string)} [c] - event options
 	 * @param {Array} [c.args] - callback arguments
 	 * @param {(HTMLElement|string)} [c.context=document]
 	 * @param {(HTMLElement|string)} [c.delegate]
 	 * @param {boolean} [c.once=false] - remove event after first execution
-	 * @param {object} [c.scope]
+	 * @param {Oject} [c.scope]
 	 */
 	on(target, a, b, c) {
 		let evts = [];
@@ -209,8 +209,8 @@ export default {
 	 * Remove specified event from specified element
 	 *
 	 * @param {(HTMLElement|string)} [target]
-	 * @param {(object|string)} a - event name or object of events
-	 * @param {function} [b] - specific function to remove
+	 * @param {(Object|string)} a - event name or object of events
+	 * @param {Function} [b] - specific function to remove
 	 */
 	off(target, a, b) {
 		let obj = a;
@@ -250,7 +250,7 @@ export default {
 	 *
 	 * @param {(boolean|HTMLElement|string)} [target]
 	 * @param {string} [event] - event name to match
-	 * @param {function} [fn] - specific function to match
+	 * @param {Function} [fn] - specific function to match
 	 * @param {HTMLElement} [delegateTarg] - targets of delegated event
 	 * @returns {Array} matches
 	 */
@@ -280,8 +280,8 @@ export default {
 	 * Add a custom event
 	 *
 	 * @param {string} name
-	 * @param {function} on
-	 * @param {function} off
+	 * @param {Function} on
+	 * @param {Function} off
 	 */
 	addEvent(name, on, off) {
 		custom[name] = [on, off];

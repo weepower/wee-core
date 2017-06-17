@@ -28,10 +28,10 @@ let Get = function(sel, context) {
 	};
 
 /**
- * Create chainable Wee object from selection
+ * Create chainable Wee Object from selection
  *
  * @param {(HTMLElement|string)} sel
- * @param {object} [context=document]
+ * @param {Object} [context=document]
  */
 export function $(sel, context) {
 	return new Get(sel, context);
@@ -43,13 +43,13 @@ $.fn = Get.prototype = {
 	length: 0,
 
 	/**
-	 * Execute function for each object element
+	 * Execute function for each Object element
 	 *
-	 * @param fn
-	 * @param {object} [options]
+	 * @param {Function} fn
+	 * @param {Object} [options]
 	 * @param {Array} [options.args]
-	 * @param {context} [options.context=document]
-	 * @param {bool} [options.reverse=false]
+	 * @param {HTMLElement} [options.context=document]
+	 * @param {boolean} [options.reverse=false]
 	 * @param {Array} [options.scope]
 	 */
 	each: function(fn, options) {
@@ -59,12 +59,12 @@ $.fn = Get.prototype = {
 	},
 
 	/**
-	 * Translate object elements to a new array
+	 * Translate Object elements to a new array
 	 *
-	 * @param {function} fn
-	 * @param {object} [options]
+	 * @param {Function} fn
+	 * @param {Object} [options]
 	 * @param {Array} [options.args]
-	 * @param {object} [options.scope]
+	 * @param {Object} [options.scope]
 	 * @returns {Array}
 	 */
 	map: function(fn, options) {
@@ -72,7 +72,7 @@ $.fn = Get.prototype = {
 	},
 
 	/**
-	 * Reverse the order of object elements
+	 * Reverse the order of Object elements
 	 *
 	 * @returns {$}
 	 */
@@ -101,8 +101,8 @@ $.fn = Get.prototype = {
 /**
  * Register a new chainable method
  *
- * @param {(object|string)} a - method name or object
- * @param {function} [b]
+ * @param {(Object|string)} a - method name or Object
+ * @param {Function} [b]
  */
 export function $chain(a, b) {
 	if (typeof a == 'string') {
