@@ -15,7 +15,7 @@
     "dist": "webpack --config=webpack.config.js",
     "test:scripts": "karma start ./tests/scripts/config/karma.dev.conf.js",
     "test:styles": "mocha ./tests/styles/**/*.js",
-    "test": "NODE_ENV='production' npm run test:scripts",
+    "test": "NODE_ENV='production' karma start ./tests/scripts/config/karma.dev.conf.js",
     "test:ci-ie": "karma start ./tests/scripts/config/karma.browserstack.ie.conf.js",
     "test:ci": "karma start ./tests/scripts/config/karma.browserstack.conf.js"
   },
