@@ -114,19 +114,13 @@ export default class History {
 
 			const queues = this.buildQueues(records, handlers);
 			const iterator = (hook, next) => {
+
 				hook(route, this.current, to => {
-					let error = to;
-
 					if (to === false) {
-						error = new QueueError('queue stopped prematurely');
+						to = new QueueError('queue stopped prematurely');
 					}
 
-					if (error instanceof Error) {
-						// TODO: ensureURL
-						throw error;
-					} else {
-						next(to);
-					}
+					next(to);
 				});
 			};
 
