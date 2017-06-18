@@ -2,6 +2,8 @@ import $router from 'wee-routes';
 import sinon from 'sinon';
 import $events from 'wee-events';
 import $ from 'wee-dom';
+import FetchError from 'fetch/error';
+import { QueueError } from 'routes/error';
 
 const start = '<nav><a href="/" id="home">home</a><a href="/about" id="about">About</a><a href="/faq" id="faq">FAQ</a><a href="/contact" id="contact">Contact us</a></nav><main>This is the home page</main>';
 const responses = {
@@ -95,10 +97,13 @@ describe('pjax', () => {
 
 		setTimeout(function() {
 			expect(spy.calledOnce).to.be.true;
-			// expect(spy.args[0][0]).to.be.a('FetchError');
-			// expect(spy.args[0][0]).to.be.a('FetchError');
+
+			// Babel does not extend built-in types so I cannot check
+			// for instanceof FetchError like I would prefer
+			expect(spy.args[0][0].errorType).to.equal('FetchError');
+			expect(spy.args[0][0]).to.be.a('Error');
 			done();
-		}, 200);
+		}, 0);
 	});
 
 	it('should replace target partials on navigation', done => {
@@ -110,24 +115,6 @@ describe('pjax', () => {
 		setTimeout(function() {
 			expect($('title').text()).to.equal('About');
 			expect($('main').text()).to.equal('This is the about page');
-			done();
-		}, 200);
-	});
-
-	it('should change resulting HTML with replace callback', done => {
-
-		$router.pjax({
-			replace() {
-				return '<title>Modified About</title><main>Modified about page</main>';
-			}
-		}).run();
-
-		$events.trigger('#about', 'click');
-		server.respond();
-
-		setTimeout(function() {
-			expect($('title').text()).to.equal('Modified About');
-			expect($('main').text()).to.equal('Modified about page');
 			done();
 		}, 200);
 	});
@@ -167,7 +154,6 @@ describe('pjax', () => {
 		}, 0);
 	});
 
-	// TODO: Some of this needs to be extracted into E2E/Functional test
 	it('should update on popstate events', done => {
 		$router.pjax().run();
 

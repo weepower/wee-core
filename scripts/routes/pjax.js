@@ -239,21 +239,11 @@ const pjax = {
 	 */
 	replace() {
 		let html = response.data;
-		let modHtml;
 
 		if (settings.replace) {
-			modHtml = $exec(settings.replace, {
+			$exec(settings.replace, {
 				args: [html, settings]
 			});
-
-			// Returning false prevents PJAX replacement
-			// No explicit return will leave original html alone
-			html = html === false ? false : modHtml || html;
-		}
-
-		// TODO: Warn that route will not replace partials
-		if (html === false) {
-			return;
 		}
 
 		html = $parseHTML('<i>' + html + '</i>').firstChild;
