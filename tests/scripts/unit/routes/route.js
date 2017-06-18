@@ -1,5 +1,5 @@
 import { parseLocation } from 'routes/location';
-import { createRoute, isSameRoute } from 'routes/route';
+import { createRoute, isRedirect, isSameRoute } from 'routes/route';
 
 describe('Router: route', () => {
 	describe('isSameRoute', () => {
@@ -47,6 +47,15 @@ describe('Router: route', () => {
 			expect(isSameRoute(route, test2)).to.be.true;
 			expect(isSameRoute(route, test3)).to.be.false;
 			expect(isSameRoute(route, test4)).to.be.false;
+		});
+	});
+
+	describe('isRedirect', () => {
+		it('should determine if value could be redirect input', () => {
+			expect(isRedirect('/path')).to.be.true;
+			expect(isRedirect({ path: '/path' })).to.be.true;
+			expect(isRedirect({ name: 'routeName' })).to.be.true;
+			expect(isRedirect({})).to.be.false;
 		});
 	});
 });
