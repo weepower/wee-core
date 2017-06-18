@@ -1283,4 +1283,29 @@ describe('Router', () => {
 			});
 		});
 	});
+
+	describe('onError', () => {
+		beforeEach(() => {
+			$router.reset();
+
+			$router.map([
+				{ path: '/', before(to, from, next) { next(false); } }
+			]);
+		});
+
+		it('should register callback that triggers on error', done => {
+			let spy = sinon.spy();
+
+			setPath('/');
+
+			$router.onError(spy).run();
+
+			setTimeout(function() {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+				done();
+			}, 0);
+		});
+	});
 });

@@ -8,6 +8,9 @@ import { $ready } from 'core/dom';
 
 export let history = new History();
 let hasPjax = false;
+let settings = {
+	onError() {}
+};
 
 /**
  * Set base configurations for router
@@ -109,6 +112,17 @@ router.pjax = function initPjax(config = {}) {
 }
 
 /**
+ * Register onError method
+ *
+ * @param {Function} error
+ */
+router.onError = function onError(error) {
+	settings.onError = error;
+
+	return this;
+}
+
+/**
  * Register callbacks to be executed on ready
  *
  * @param {Function} success
@@ -187,18 +201,16 @@ router.routes = function routes(key, keyType = 'path') {
 /**
  * Evaluate mapped routes against current or provided URL
  *
- * @param {string} value
  * @returns {router}
  */
-router.run = function runRoutes(value) {
-	if (! value) {
-		// Process routes when document is loaded
-		$ready(() => {
-			history.navigate(this.uri().fullPath);
-		});
+router.run = function runRoutes() {
+	// Process routes when document is loaded
+	$ready(() => {
+		history.navigate(this.uri().fullPath)
+			.catch(settings.onError);
+	});
 
-		return this;
-	}
+	return this;
 
 	// TODO: This is going to set the state of the current route in history
 	// TODO: I don't think that will be desirable
