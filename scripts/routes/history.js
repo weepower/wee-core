@@ -73,7 +73,9 @@ export default class History {
 	 * Make sure that URL matches history state
 	 */
 	ensureUrl() {
-		replaceState(this.current.fullPath);
+		if (this.current !== START) {
+			replaceState(this.current.fullPath);
+		}
 	}
 
 	/**
