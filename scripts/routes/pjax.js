@@ -28,6 +28,7 @@ let defaults = {
 };
 let settings = $copy(defaults);
 let response = null;
+let paused = false;
 
 /**
  * Determine if path is valid for history navigation
@@ -163,7 +164,11 @@ const pjax = {
 
 					// Bind designated events
 					$events.on(el, evts, (e, el) => {
-						// TODO: Add warnings
+						if (paused) {
+							warn('pjax has been paused - will not trigger navigation');
+							return;
+						}
+
 						// Don't navigate with control keys
 						if (e.metaKey || e.ctrlKey || e.shiftKey) { return; }
 
@@ -187,6 +192,11 @@ const pjax = {
 	},
 
 	go(to, from, next) {
+		if (paused) {
+			warn('pjax has been paused - will not request partials');
+			return next();
+		}
+
 		let request = settings.request;
 
 		// Navigate to external URL or if history isn't supported
@@ -194,6 +204,7 @@ const pjax = {
 		a.href = to.url;
 
 		if (! supportsPushState || ! _isValid(a, from.fullPath)) {
+			// Will trigger full page reload
 			_win.location = to.fullPath;
 			return false;
 		}
@@ -234,9 +245,30 @@ const pjax = {
 	},
 
 	/**
+	 * Inform if pjax is currently paused
+	 *
+	 * @returns {boolean}
+	 */
+	isPaused() {
+		return paused;
+	},
+
+	/**
+	 * Pause previously bound pjax from triggering
+	 */
+	pause() {
+		paused = true;
+	},
+
+	/**
 	 * Replace target partials on DOM
 	 */
 	replace() {
+		if (paused) {
+			warn('pjax has been paused - will not replace partials');
+			return;
+		}
+
 		let html = response.data;
 
 		if (settings.replace) {
@@ -273,6 +305,13 @@ const pjax = {
 	 */
 	reset() {
 		settings = $copy(defaults);
+	},
+
+	/**
+	 * Resume pjax to normal operating status
+	 */
+	resume() {
+		paused = false;
 	}
 };
 

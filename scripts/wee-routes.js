@@ -99,7 +99,6 @@ router.pjax = function initPjax(config = {}) {
 			// Prep pjax after initialization of routes
 			this.onReady(() => {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
-					// TODO: Handle PJAX specific errors here? history.push returns promise
 					history.push(destination)
 						.catch(error => {
 							settings.onError.forEach(callback => callback(error));
@@ -147,8 +146,13 @@ router.onReady = function onReady(success) {
  * @param {string|Object} path
  * @returns {*}
  */
-router.push = function push(path) {
-	return history.push(path);
+router.push = function push(path, pausePjax = false) {
+	if (pausePjax) {
+		pjax.pause();
+	}
+
+	return history.push(path)
+		.then(pjax.resume, pjax.resume);
 }
 
 /**
@@ -157,8 +161,13 @@ router.push = function push(path) {
  * @param {string|Object} path
  * @returns {*}
  */
-router.replace = function replace(path) {
-	return history.replace(path);
+router.replace = function replace(path, pausePjax = false) {
+	if (pausePjax) {
+		pjax.pause();
+	}
+
+	return history.replace(path)
+		.then(pjax.resume, pjax.resume);
 }
 
 /**

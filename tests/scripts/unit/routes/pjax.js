@@ -4,6 +4,7 @@ import $events from 'wee-events';
 import $ from 'wee-dom';
 import FetchError from 'fetch/error';
 import { QueueError } from 'routes/error';
+import pjax from 'routes/pjax';
 
 const start = '<nav><a href="/" id="home">home</a><a href="/about" id="about">About</a><a href="/faq" id="faq">FAQ</a><a href="/contact" id="contact">Contact us</a></nav><main>This is the home page</main>';
 const responses = {
@@ -188,5 +189,83 @@ describe('pjax', () => {
 				}, 100);
 			}, 300);
 		}, 100);
+	});
+
+	describe('push', () => {
+		it('should trigger PJAX request if enabled', () => {
+			let finish = function() {
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+			};
+
+			$router.pjax().run();
+
+			let process = $router.push('/about');
+			server.respond();
+
+			return process.then(finish, finish);
+		});
+
+		it('should be able to bypass PJAX', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('Homepage');
+				expect($('main').text()).to.equal('This is the home page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			$router.pjax().run();
+
+			let process = $router.push('/about', true);
+			server.respond();
+
+			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+	});
+
+	describe('replace', () => {
+		it('should trigger PJAX request if enabled', () => {
+			let finish = function() {
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+			};
+
+			$router.pjax().run();
+
+			let process = $router.replace('/about');
+			server.respond();
+
+			return process.then(finish, finish);
+		});
+
+		it('should be able to bypass PJAX', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('Homepage');
+				expect($('main').text()).to.equal('This is the home page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			$router.pjax().run();
+
+			let process = $router.replace('/about', true);
+			server.respond();
+
+			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
 	});
 });
