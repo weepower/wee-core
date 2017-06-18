@@ -5,11 +5,12 @@ import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
+import { $isArray } from 'core/types';
 
 export let history = new History();
 let hasPjax = false;
 let settings = {
-	onError() {}
+	onError: []
 };
 
 /**
@@ -99,7 +100,10 @@ router.pjax = function initPjax(config = {}) {
 			this.onReady(() => {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
 					// TODO: Handle PJAX specific errors here? history.push returns promise
-					history.push(destination);
+					history.push(destination)
+						.catch(error => {
+							settings.onError.forEach(callback => callback(error));
+						});
 				};
 
 				history.begin = pjax.go;
@@ -114,10 +118,14 @@ router.pjax = function initPjax(config = {}) {
 /**
  * Register onError method
  *
- * @param {Function} error
+ * @param {Function|Array} error
  */
 router.onError = function onError(error) {
-	settings.onError = error;
+	if ($isArray(error)) {
+		settings.onError = settings.onError.concat(error);
+	} else {
+		settings.onError.push(error);
+	}
 
 	return this;
 }
@@ -163,6 +171,7 @@ router.reset = function reset() {
 	pjax.reset();
 	window.removeEventListener('popstate', history.popstate);
 	history = new History();
+	settings.onError = [];
 }
 
 /**
@@ -206,7 +215,9 @@ router.run = function runRoutes() {
 	// Process routes when document is loaded
 	$ready(() => {
 		history.navigate(this.uri().fullPath)
-			.catch(settings.onError);
+			.catch(error => {
+				settings.onError.forEach(callback => callback(error));
+			});
 	});
 
 	return this;

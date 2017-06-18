@@ -443,6 +443,8 @@ describe('Router', () => {
 		});
 
 		describe('before hooks', () => {
+			beforeEach($router.reset);
+
 			it('should evaluate before hook of matched route record', () => {
 				setPath('/');
 
@@ -624,7 +626,7 @@ describe('Router', () => {
 				expect(state).to.be.false;
 			});
 
-			it('should stop processing of routes if false is passed to "next"', () => {
+			it('should stop processing of routes if false is passed to "next"', done => {
 				setPath('/asdf');
 				let beforeState = 0;
 				let initState = 0;
@@ -654,11 +656,15 @@ describe('Router', () => {
 					}
 				]).run();
 
-				expect(beforeState).to.equal(1);
-				expect(initState).to.equal(0);
+				setTimeout(function() {
+					expect(beforeState).to.equal(1);
+					expect(initState).to.equal(0);
+					done();
+				}, 0);
 			});
 
 			it('should throw error if before queue is stopped', done => {
+				$router.reset();
 				let spy = sinon.spy();
 
 				setPath('/');
@@ -1304,6 +1310,25 @@ describe('Router', () => {
 				expect(spy.calledOnce).to.be.true;
 				expect(spy.args[0][0]).to.be.an('error');
 				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+				done();
+			}, 0);
+		});
+
+		it('should register multiple callbacks that each trigger on error', done => {
+			let spy = sinon.spy();
+			let spy2 = sinon.spy();
+
+			setPath('/');
+
+			$router.onError([spy, spy2]).run();
+
+			setTimeout(function() {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+				expect(spy2.calledOnce).to.be.true;
+				expect(spy2.args[0][0]).to.be.an('error');
+				expect(spy2.args[0][0].message).to.equal('queue stopped prematurely');
 				done();
 			}, 0);
 		});
