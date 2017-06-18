@@ -207,8 +207,7 @@ const pjax = {
 				next();
 			})
 			.catch(error => {
-				// TODO: What to do if AJAX request fails?
-				next(false);
+				next(error);
 			});
 	},
 
