@@ -9,6 +9,7 @@ import { $isFunction, $isString } from '../core/types';
 import { warn } from './warn';
 import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
+import { QueueError, SameRouteError } from './error';
 
 export default class History {
 	constructor() {
@@ -133,10 +134,11 @@ export default class History {
 
 			// Before hooks
 			runQueue(queues.beforeQueue, iterator, error => {
+				// Ensure we are where we started
 				if (error) {
-					reject(error);
+					this.ensureUrl();
 					warn(error.message);
-					return false;
+					return reject(error);
 				}
 
 				// Do not process unload hooks on initialization
