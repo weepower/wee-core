@@ -1,6 +1,6 @@
 // TODO: May need to move promise polyfill to an entry point file if building dist version of Wee
 import 'es6-promise/auto';
-import { match } from './route-matcher';
+import { match, noMatch } from './route-matcher';
 import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
@@ -113,6 +113,10 @@ export default class History {
 				this.ensureUrl();
 				warn('attempted to navigate to current URL');
 				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
+			} else if (noMatch(route)) {
+				this.ensureUrl();
+				warn('no route match was found and notFound has not been registered.');
+				return;
 			}
 
 			const records = this.resolveRecords(route.matched, this.current.matched);
