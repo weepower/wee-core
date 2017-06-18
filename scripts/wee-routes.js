@@ -126,10 +126,9 @@ router.onError = function onError(error) {
  * Register callbacks to be executed on ready
  *
  * @param {Function} success
- * @param {Function} [error]
  */
-router.onReady = function onReady(success, error) {
-	history.onReady(success, error);
+router.onReady = function onReady(success) {
+	history.onReady(success);
 
 	return this;
 }

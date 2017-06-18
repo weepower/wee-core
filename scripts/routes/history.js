@@ -18,10 +18,8 @@ export default class History {
 		this.begin = function(to, from, next) { next(); };
 		this.replacePage = function() {};
 		this.readyQueue = [];
-		this.readyErrorQueue = [];
 		this.resetReady = function resetReady() {
 			this.readyQueue = [];
-			this.readyErrorQueue = [];
 		}
 		this.popstate = () => {
 			this.replace().then(route => {
@@ -177,18 +175,12 @@ export default class History {
 	 * Execute callback(s) after history has been initialized
 	 *
 	 * @param {Function} success
-	 * @param {Function} error
 	 */
-	onReady(success, error) {
+	onReady(success) {
 		if (this.ready) {
 			success();
 		} else {
 			this.readyQueue.push(success);
-
-			// TODO: Uncomment once error handling strategy is implemented
-			// if (error) {
-			// 	this.readyErrorQueue.push(error);
-			// }
 		}
 	}
 
