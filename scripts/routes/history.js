@@ -69,6 +69,13 @@ export default class History {
 	}
 
 	/**
+	 * Make sure that URL matches history state
+	 */
+	ensureUrl() {
+		replaceState(this.current.fullPath);
+	}
+
+	/**
 	 * Extract specific callback from all objects provided
 	 *
 	 * @param {Array} records
@@ -100,11 +107,9 @@ export default class History {
 
 			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
-				// TODO: Come up with error messaging like in fetch
-				reject();
-				// TODO: Ensure URL - replace state?
+				this.ensureUrl();
 				warn('attempted to navigate to current URL');
-				return;
+				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
 			}
 
 			const records = this.resolveRecords(route.matched, this.current.matched);
