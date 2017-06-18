@@ -660,7 +660,7 @@ describe('Router', () => {
 					expect(beforeState).to.equal(1);
 					expect(initState).to.equal(0);
 					done();
-				}, 0);
+				}, 100);
 			});
 
 			it('should throw error if before queue is stopped', done => {
@@ -675,7 +675,7 @@ describe('Router', () => {
 					expect(spy.args[0][0]).to.be.an('error');
 					expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
 					done();
-				}, 0);
+				}, 100);
 			});
 
 			it('should throw custom error if passed to before hook', done => {
@@ -690,7 +690,7 @@ describe('Router', () => {
 					expect(spy.args[0][0]).to.be.an('error');
 					expect(spy.args[0][0].message).to.equal('something went wrong with homepage');
 					done();
-				}, 0);
+				}, 100);
 			});
 		});
 
@@ -1255,7 +1255,7 @@ describe('Router', () => {
 				expect(spy.args[0][0]).to.be.an('error');
 				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
 				done();
-			}, 0);
+			}, 100);
 		});
 
 		it('should register multiple callbacks that each trigger on error', done => {
@@ -1272,7 +1272,7 @@ describe('Router', () => {
 				expect(spy2.args[0][0]).to.be.an('error');
 				expect(spy2.args[0][0].message).to.equal('queue stopped prematurely');
 				done();
-			}, 0);
+			}, 100);
 		});
 	});
 });
