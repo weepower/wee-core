@@ -1,7 +1,15 @@
 export class QueueError extends Error {
-	constructor(message, type = null) {
+	constructor(message) {
 		super(message);
 
-		this.type = type;
+		this.errorType = 'QueueError';
+	}
+}
+
+export class SameRouteError extends Error {
+	constructor(message) {
+		super(message);
+
+		this.errorType = 'SameRouteError';
 	}
 }

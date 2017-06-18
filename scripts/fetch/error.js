@@ -6,5 +6,6 @@ export default class FetchError extends Error {
 		this.request = request;
 		this.response = response;
 		this.code = code;
+		this.errorType = 'FetchError';
 	}
 }
