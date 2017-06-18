@@ -3,7 +3,7 @@ import $fetch from 'wee-fetch';
 import sample from '../helpers/fetch';
 import { $copy, $extend, $type } from 'core/types';
 import defaults from 'fetch/defaults';
-import { createError } from 'fetch/error';
+import FetchError from 'fetch/error';
 import { normalizeHeader } from 'fetch/headers';
 import mockCreateElement from '../helpers/mocks/createElement';
 import { isIE } from '../helpers/browsers';
@@ -825,7 +825,7 @@ describe('fetch', () => {
 
 	describe('error', () => {
 		it('should create new error', () => {
-			const error = createError('This is a new error', 'config', 'ERRORCODE', 'request', 'response');
+			const error = new FetchError('This is a new error', 'config', 'request', 'ERRORCODE', 'response');
 
 			expect(error).to.be.an('error');
 			expect(error.message).to.equal('This is a new error');

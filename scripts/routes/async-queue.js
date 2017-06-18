@@ -11,16 +11,13 @@ export default function runQueue(queue, iterator, callback) {
 		if (index >= queueCount) {
 			callback();
 		} else {
-			iterator(queue[index], next => {
-				if (next === false) {
-					callback({
-						index,
-						message: 'queue stopped prematurely'
-					});
-				} else {
+			if (queue[index]) {
+				iterator(queue[index], () => {
 					step(index + 1);
-				}
-			});
+				});
+			} else {
+				step(index + 1);
+			}
 		}
 	}
 

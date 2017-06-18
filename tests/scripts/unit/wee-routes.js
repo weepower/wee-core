@@ -424,6 +424,22 @@ describe('Router', () => {
 					}
 				]
 			});
+
+			it('should parse url variable parameters and pass to functions', () => {
+				setPath('/blog/5');
+
+				$router().map([
+					{
+						path: '/blog/:id',
+						init(to, from) {
+							state = true;
+							expect(to.params.id).to.equal(5);
+						}
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
 		});
 
 		describe('before hooks', () => {
@@ -641,21 +657,40 @@ describe('Router', () => {
 				expect(beforeState).to.equal(1);
 				expect(initState).to.equal(0);
 			});
-		});
 
-		it('should parse url variable parameters and pass to functions', () => {
-			setPath('/blog/5');
-			$router().map([
-				{
-					path: '/blog/:id',
-					init(to, from) {
-						state = true;
-						expect(to.params.id).to.equal(5);
-					}
-				}
-			]).run();
+			it('should throw error if before queue is stopped', done => {
+				let spy = sinon.spy();
 
-			expect(state).to.be.true;
+				setPath('/');
+
+				$router.map([
+					{ path: '/', before(to, from, next) { next(false); } }
+				]).onError(spy).run();
+
+				setTimeout(function() {
+					expect(spy.calledOnce).to.be.true;
+					expect(spy.args[0][0]).to.be.an('error');
+					expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+					done();
+				}, 0);
+			});
+
+			it('should throw custom error if passed to before hook', done => {
+				let spy = sinon.spy();
+
+				setPath('/');
+
+				$router.map([
+					{ path: '/', before(to, from, next) { next(new Error('something went wrong with homepage')); } }
+				]).onError(spy).run();
+
+				setTimeout(function() {
+					expect(spy.calledOnce).to.be.true;
+					expect(spy.args[0][0]).to.be.an('error');
+					expect(spy.args[0][0].message).to.equal('something went wrong with homepage');
+					done();
+				}, 0);
+			});
 		});
 
 		describe('after hooks', () => {

@@ -81,6 +81,26 @@ describe('pjax', () => {
 		expect($events.bound('a', 'click').length).to.equal(4);
 	});
 
+	it('should throw FetchError if pjax.go request fails', done => {
+		let spy = sinon.spy();
+
+		server.respondWith('GET', '/about', [404, {}, '']);
+
+		$router.pjax()
+			.onError(spy)
+			.run();
+
+		$events.trigger('#about', 'click');
+		server.respond();
+
+		setTimeout(function() {
+			expect(spy.calledOnce).to.be.true;
+			// expect(spy.args[0][0]).to.be.a('FetchError');
+			// expect(spy.args[0][0]).to.be.a('FetchError');
+			done();
+		}, 200);
+	});
+
 	it('should replace target partials on navigation', done => {
 		$router.pjax().run();
 
