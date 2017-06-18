@@ -7,6 +7,7 @@ import { $serializeForm } from 'dom/index';
 import { supportsPushState } from './push-state';
 import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
+import { warn } from './warn';
 
 let defaults = {
 	bind: {
@@ -37,7 +38,6 @@ let response = null;
  * @private
  */
 function _isValid(el, currentPath) {
-	// TODO: Add warnings to reasons for invalid URL
 	// Link has no destination URL
 	if (! el.href) { return false; }
 
@@ -153,8 +153,7 @@ const pjax = {
 
 					// Ensure the path exists and is local
 					if (! evts || ! _isValid(destination)) {
-						// TODO: Warn user that no events were provided or that URL was not valid
-						// TODO: Split out conditional
+						warn('PJAX: no events provided or invalid destination URL ' + destination.href);
 						return;
 					}
 
