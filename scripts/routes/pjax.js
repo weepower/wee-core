@@ -8,6 +8,7 @@ import { supportsPushState } from './push-state';
 import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
 import { warn } from './warn';
+import { parseLocation } from './location';
 
 let defaults = {
 	bind: {
@@ -60,19 +61,7 @@ function _isValid(el, currentPath) {
 	// Link is current page, but with a hash added
 	if (el.hash && el.pathname === currentPath) { return false; }
 
-	if (! currentPath) { return true; }
-
-	// TODO: Remove whitelisting logic
-	let exts = settings.extensions;
-	let segs = currentPath.split('.');
-	let ext;
-
-	if (segs.length > 1) {
-		ext = segs.pop().split(/#|\?/)[0];
-	}
-
-	// No file extension in URL or extension is whitelisted
-	return ! ext || (exts && exts.indexOf(ext) > -1);
+	return true;
 }
 
 /**
@@ -112,6 +101,7 @@ const pjax = {
 	 * @param {($|HTMLElement|string)} [context=document]
 	 */
 	bind(context) {
+		const current = parseLocation();
 		const events = settings.bind;
 		context = context || settings.context;
 
@@ -153,8 +143,9 @@ const pjax = {
 					}
 
 					// Ensure the path exists and is local
-					if (! evts || ! _isValid(destination)) {
-						warn('PJAX: no events provided or invalid destination URL ' + destination.href);
+					if (! evts || ! _isValid(destination, current.path)) {
+						// TODO: Make this print as verbose only
+						// warn('PJAX: no events provided or invalid destination URL ' + destination.href);
 						return;
 					}
 
@@ -163,7 +154,7 @@ const pjax = {
 					$events.off(el, '.pjax');
 
 					// Bind designated events
-					$events.on(el, evts, (e, el) => {
+					$events.on(el, evts, e => {
 						if (paused) {
 							warn('pjax has been paused - will not trigger navigation');
 							return;
