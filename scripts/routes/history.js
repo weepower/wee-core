@@ -10,6 +10,7 @@ import { warn } from './warn';
 import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
 import { QueueError, SameRouteError } from './error';
+import { parseLocation } from './location';
 
 export default class History {
 	constructor() {
@@ -23,8 +24,20 @@ export default class History {
 			this.readyQueue = [];
 		}
 		this.popstate = () => {
+			let location = parseLocation();
+
+			// Leave hash navigation alone
+			if (location.path === this.current.path && location.search === this.current.search) {
+				// TODO: Verbose
+				// warn('hash change caused popstate. popstate callback halted.');
+				return;
+			}
+
 			this.replace().then(route => {
 				// TODO: scroll
+			}).catch(error => {
+				// TODO: What to do with this error?
+				// TODO: Register onError callbacks from routes
 			});
 		};
 
