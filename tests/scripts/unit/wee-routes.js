@@ -407,6 +407,7 @@ describe('Router', () => {
 				hash: 'hash',
 				query: {key: 'value', key2: 'value2'},
 				params: {place: 'stuff'},
+				search: '?key=value&key2=value2',
 				segments: ['path', 'to', 'stuff'],
 				fullPath: '/path/to/stuff?key=value&key2=value2#hash',
 				matched: [
