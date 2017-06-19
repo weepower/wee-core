@@ -35,6 +35,7 @@ export function parseLocation(value) {
 		fullPath: '/' + path + search + a.hash,
 		hash: a.hash.slice(1),
 		path: '/' + path,
+		search: search,
 		query: search ? $unserialize(search) : {},
 		segments: path.split('/'),
 		url: a.href,

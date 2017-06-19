@@ -1,3 +1,4 @@
+import { $isString, $isObject } from 'core/types';
 const TRAILING_SLASH = /\/?$/;
 
 /**
@@ -33,6 +34,7 @@ export function createRoute(location, record = {}) {
 		path: location.path,
 		hash: location.hash,
 		query: location.query,
+		search: location.search,
 		segments: location.segments,
 		params: location.params || {},
 		fullPath: location.fullPath,
@@ -40,6 +42,16 @@ export function createRoute(location, record = {}) {
 	};
 
 	return Object.freeze(route);
+}
+
+/**
+ * Determine if value is intended to be redirect
+ *
+ * @param value
+ * @returns {*}
+ */
+export function isRedirect(value) {
+	return $isString(value) || ($isObject(value) && ($isString(value.path) || $isString(value.name)));
 }
 
 /**

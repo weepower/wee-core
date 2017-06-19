@@ -1,6 +1,6 @@
 // TODO: May need to move promise polyfill to an entry point file if building dist version of Wee
 import 'es6-promise/auto';
-import { match } from './route-matcher';
+import { match, noMatch } from './route-matcher';
 import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
@@ -9,6 +9,8 @@ import { $isFunction, $isString } from '../core/types';
 import { warn } from './warn';
 import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
+import { QueueError, SameRouteError } from './error';
+import { parseLocation } from './location';
 
 export default class History {
 	constructor() {
@@ -18,14 +20,24 @@ export default class History {
 		this.begin = function(to, from, next) { next(); };
 		this.replacePage = function() {};
 		this.readyQueue = [];
-		this.readyErrorQueue = [];
 		this.resetReady = function resetReady() {
 			this.readyQueue = [];
-			this.readyErrorQueue = [];
 		}
 		this.popstate = () => {
+			let location = parseLocation();
+
+			// Leave hash navigation alone
+			if (location.path === this.current.path && location.search === this.current.search) {
+				// TODO: Verbose
+				// warn('hash change caused popstate. popstate callback halted.');
+				return;
+			}
+
 			this.replace().then(route => {
 				// TODO: scroll
+			}).catch(error => {
+				// TODO: What to do with this error?
+				// TODO: Register onError callbacks from routes
 			});
 		};
 
@@ -71,6 +83,15 @@ export default class History {
 	}
 
 	/**
+	 * Make sure that URL matches history state
+	 */
+	ensureUrl() {
+		if (this.current !== START) {
+			replaceState(this.current.fullPath);
+		}
+	}
+
+	/**
 	 * Extract specific callback from all objects provided
 	 *
 	 * @param {Array} records
@@ -102,10 +123,12 @@ export default class History {
 
 			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
-				// TODO: Come up with error messaging like in fetch
-				reject();
-				// TODO: Ensure URL - replace state?
+				this.ensureUrl();
 				warn('attempted to navigate to current URL');
+				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
+			} else if (noMatch(route)) {
+				this.ensureUrl();
+				warn('no route match was found and notFound has not been registered.');
 				return;
 			}
 
@@ -114,7 +137,12 @@ export default class History {
 
 			const queues = this.buildQueues(records, handlers);
 			const iterator = (hook, next) => {
+
 				hook(route, this.current, to => {
+					if (to === false) {
+						to = new QueueError('queue stopped prematurely');
+					}
+
 					next(to);
 				});
 			};
@@ -125,10 +153,11 @@ export default class History {
 
 			// Before hooks
 			runQueue(queues.beforeQueue, iterator, error => {
+				// Ensure we are where we started
 				if (error) {
-					reject(error);
+					this.ensureUrl();
 					warn(error.message);
-					return false;
+					return reject(error);
 				}
 
 				// Do not process unload hooks on initialization
@@ -172,18 +201,12 @@ export default class History {
 	 * Execute callback(s) after history has been initialized
 	 *
 	 * @param {Function} success
-	 * @param {Function} error
 	 */
-	onReady(success, error) {
+	onReady(success) {
 		if (this.ready) {
 			success();
 		} else {
 			this.readyQueue.push(success);
-
-			// TODO: Uncomment once error handling strategy is implemented
-			// if (error) {
-			// 	this.readyErrorQueue.push(error);
-			// }
 		}
 	}
 

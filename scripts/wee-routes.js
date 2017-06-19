@@ -5,9 +5,13 @@ import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
+import { $isArray } from 'core/types';
 
 export let history = new History();
 let hasPjax = false;
+let settings = {
+	onError: []
+};
 
 /**
  * Set base configurations for router
@@ -95,8 +99,10 @@ router.pjax = function initPjax(config = {}) {
 			// Prep pjax after initialization of routes
 			this.onReady(() => {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
-					// TODO: Handle PJAX specific errors here? history.push returns promise
-					history.push(destination);
+					history.push(destination)
+						.catch(error => {
+							settings.onError.forEach(callback => callback(error));
+						});
 				};
 
 				history.begin = pjax.go;
@@ -109,13 +115,27 @@ router.pjax = function initPjax(config = {}) {
 }
 
 /**
+ * Register onError method
+ *
+ * @param {Function|Array} error
+ */
+router.onError = function onError(error) {
+	if ($isArray(error)) {
+		settings.onError = settings.onError.concat(error);
+	} else {
+		settings.onError.push(error);
+	}
+
+	return this;
+}
+
+/**
  * Register callbacks to be executed on ready
  *
  * @param {Function} success
- * @param {Function} [error]
  */
-router.onReady = function onReady(success, error) {
-	history.onReady(success, error);
+router.onReady = function onReady(success) {
+	history.onReady(success);
 
 	return this;
 }
@@ -124,20 +144,30 @@ router.onReady = function onReady(success, error) {
  * Navigate to URL and add item to history
  *
  * @param {string|Object} path
- * @returns {*}
+ * @param {boolean} pausePjax
  */
-router.push = function push(path) {
-	return history.push(path);
+router.push = function push(path, pausePjax = false) {
+	if (pausePjax) {
+		pjax.pause();
+	}
+
+	return history.push(path)
+		.then(pjax.resume, pjax.resume);
 }
 
 /**
- * Navigate to URL and add item to history
+ * Navigate to URL and replace item in history
  *
  * @param {string|Object} path
- * @returns {*}
+ * @param {boolean} pausePjax
  */
-router.replace = function replace(path) {
-	return history.replace(path);
+router.replace = function replace(path, pausePjax = false) {
+	if (pausePjax) {
+		pjax.pause();
+	}
+
+	return history.replace(path)
+		.then(pjax.resume, pjax.resume);
 }
 
 /**
@@ -150,6 +180,7 @@ router.reset = function reset() {
 	pjax.reset();
 	window.removeEventListener('popstate', history.popstate);
 	history = new History();
+	settings.onError = [];
 }
 
 /**
@@ -187,18 +218,18 @@ router.routes = function routes(key, keyType = 'path') {
 /**
  * Evaluate mapped routes against current or provided URL
  *
- * @param {string} value
  * @returns {router}
  */
-router.run = function runRoutes(value) {
-	if (! value) {
-		// Process routes when document is loaded
-		$ready(() => {
-			history.navigate(this.uri().fullPath);
-		});
+router.run = function runRoutes() {
+	// Process routes when document is loaded
+	$ready(() => {
+		history.navigate(this.uri().fullPath)
+			.catch(error => {
+				settings.onError.forEach(callback => callback(error));
+			});
+	});
 
-		return this;
-	}
+	return this;
 
 	// TODO: This is going to set the state of the current route in history
 	// TODO: I don't think that will be desirable

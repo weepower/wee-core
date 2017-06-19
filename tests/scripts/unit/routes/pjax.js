@@ -2,6 +2,9 @@ import $router from 'wee-routes';
 import sinon from 'sinon';
 import $events from 'wee-events';
 import $ from 'wee-dom';
+import FetchError from 'fetch/error';
+import { QueueError } from 'routes/error';
+import pjax from 'routes/pjax';
 
 const start = '<nav><a href="/" id="home">home</a><a href="/about" id="about">About</a><a href="/faq" id="faq">FAQ</a><a href="/contact" id="contact">Contact us</a></nav><main>This is the home page</main>';
 const responses = {
@@ -81,6 +84,29 @@ describe('pjax', () => {
 		expect($events.bound('a', 'click').length).to.equal(4);
 	});
 
+	it('should throw FetchError if pjax.go request fails', done => {
+		let spy = sinon.spy();
+
+		server.respondWith('GET', '/about', [404, {}, '']);
+
+		$router.pjax()
+			.onError(spy)
+			.run();
+
+		$events.trigger('#about', 'click');
+		server.respond();
+
+		setTimeout(function() {
+			expect(spy.calledOnce).to.be.true;
+
+			// Babel does not extend built-in types so I cannot check
+			// for instanceof FetchError like I would prefer
+			expect(spy.args[0][0].errorType).to.equal('FetchError');
+			expect(spy.args[0][0]).to.be.a('Error');
+			done();
+		}, 0);
+	});
+
 	it('should replace target partials on navigation', done => {
 		$router.pjax().run();
 
@@ -90,24 +116,6 @@ describe('pjax', () => {
 		setTimeout(function() {
 			expect($('title').text()).to.equal('About');
 			expect($('main').text()).to.equal('This is the about page');
-			done();
-		}, 200);
-	});
-
-	it('should change resulting HTML with replace callback', done => {
-
-		$router.pjax({
-			replace() {
-				return '<title>Modified About</title><main>Modified about page</main>';
-			}
-		}).run();
-
-		$events.trigger('#about', 'click');
-		server.respond();
-
-		setTimeout(function() {
-			expect($('title').text()).to.equal('Modified About');
-			expect($('main').text()).to.equal('Modified about page');
 			done();
 		}, 200);
 	});
@@ -147,7 +155,6 @@ describe('pjax', () => {
 		}, 0);
 	});
 
-	// TODO: Some of this needs to be extracted into E2E/Functional test
 	it('should update on popstate events', done => {
 		$router.pjax().run();
 
@@ -182,5 +189,83 @@ describe('pjax', () => {
 				}, 100);
 			}, 300);
 		}, 100);
+	});
+
+	describe('push', () => {
+		it('should trigger PJAX request if enabled', () => {
+			let finish = function() {
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+			};
+
+			$router.pjax().run();
+
+			let process = $router.push('/about');
+			server.respond();
+
+			return process.then(finish, finish);
+		});
+
+		it('should be able to bypass PJAX', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('Homepage');
+				expect($('main').text()).to.equal('This is the home page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			$router.pjax().run();
+
+			let process = $router.push('/about', true);
+			server.respond();
+
+			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+	});
+
+	describe('replace', () => {
+		it('should trigger PJAX request if enabled', () => {
+			let finish = function() {
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+			};
+
+			$router.pjax().run();
+
+			let process = $router.replace('/about');
+			server.respond();
+
+			return process.then(finish, finish);
+		});
+
+		it('should be able to bypass PJAX', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/about');
+				expect($('title').text()).to.equal('Homepage');
+				expect($('main').text()).to.equal('This is the home page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			$router.pjax().run();
+
+			let process = $router.replace('/about', true);
+			server.respond();
+
+			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
 	});
 });

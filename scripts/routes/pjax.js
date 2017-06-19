@@ -7,6 +7,8 @@ import { $serializeForm } from 'dom/index';
 import { supportsPushState } from './push-state';
 import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
+import { warn } from './warn';
+import { parseLocation } from './location';
 
 let defaults = {
 	bind: {
@@ -27,6 +29,7 @@ let defaults = {
 };
 let settings = $copy(defaults);
 let response = null;
+let paused = false;
 
 /**
  * Determine if path is valid for history navigation
@@ -37,7 +40,6 @@ let response = null;
  * @private
  */
 function _isValid(el, currentPath) {
-	// TODO: Add warnings to reasons for invalid URL
 	// Link has no destination URL
 	if (! el.href) { return false; }
 
@@ -59,19 +61,7 @@ function _isValid(el, currentPath) {
 	// Link is current page, but with a hash added
 	if (el.hash && el.pathname === currentPath) { return false; }
 
-	if (! currentPath) { return true; }
-
-	// TODO: Remove whitelisting logic
-	let exts = settings.extensions;
-	let segs = currentPath.split('.');
-	let ext;
-
-	if (segs.length > 1) {
-		ext = segs.pop().split(/#|\?/)[0];
-	}
-
-	// No file extension in URL or extension is whitelisted
-	return ! ext || (exts && exts.indexOf(ext) > -1);
+	return true;
 }
 
 /**
@@ -111,6 +101,7 @@ const pjax = {
 	 * @param {($|HTMLElement|string)} [context=document]
 	 */
 	bind(context) {
+		const current = parseLocation();
 		const events = settings.bind;
 		context = context || settings.context;
 
@@ -152,9 +143,9 @@ const pjax = {
 					}
 
 					// Ensure the path exists and is local
-					if (! evts || ! _isValid(destination)) {
-						// TODO: Warn user that no events were provided or that URL was not valid
-						// TODO: Split out conditional
+					if (! evts || ! _isValid(destination, current.path)) {
+						// TODO: Make this print as verbose only
+						// warn('PJAX: no events provided or invalid destination URL ' + destination.href);
 						return;
 					}
 
@@ -163,8 +154,12 @@ const pjax = {
 					$events.off(el, '.pjax');
 
 					// Bind designated events
-					$events.on(el, evts, (e, el) => {
-						// TODO: Add warnings
+					$events.on(el, evts, e => {
+						if (paused) {
+							warn('pjax has been paused - will not trigger navigation');
+							return;
+						}
+
 						// Don't navigate with control keys
 						if (e.metaKey || e.ctrlKey || e.shiftKey) { return; }
 
@@ -188,6 +183,11 @@ const pjax = {
 	},
 
 	go(to, from, next) {
+		if (paused) {
+			warn('pjax has been paused - will not request partials');
+			return next();
+		}
+
 		let request = settings.request;
 
 		// Navigate to external URL or if history isn't supported
@@ -195,6 +195,7 @@ const pjax = {
 		a.href = to.url;
 
 		if (! supportsPushState || ! _isValid(a, from.fullPath)) {
+			// Will trigger full page reload
 			_win.location = to.fullPath;
 			return false;
 		}
@@ -207,8 +208,7 @@ const pjax = {
 				next();
 			})
 			.catch(error => {
-				// TODO: What to do if AJAX request fails?
-				next(false);
+				next(error);
 			});
 	},
 
@@ -236,25 +236,36 @@ const pjax = {
 	},
 
 	/**
+	 * Inform if pjax is currently paused
+	 *
+	 * @returns {boolean}
+	 */
+	isPaused() {
+		return paused;
+	},
+
+	/**
+	 * Pause previously bound pjax from triggering
+	 */
+	pause() {
+		paused = true;
+	},
+
+	/**
 	 * Replace target partials on DOM
 	 */
 	replace() {
-		let html = response.data;
-		let modHtml;
-
-		if (settings.replace) {
-			modHtml = $exec(settings.replace, {
-				args: [html, settings]
-			});
-
-			// Returning false prevents PJAX replacement
-			// No explicit return will leave original html alone
-			html = html === false ? false : modHtml || html;
+		if (paused) {
+			warn('pjax has been paused - will not replace partials');
+			return;
 		}
 
-		// TODO: Warn that route will not replace partials
-		if (html === false) {
-			return;
+		let html = response.data;
+
+		if (settings.replace) {
+			$exec(settings.replace, {
+				args: [html, settings]
+			});
 		}
 
 		html = $parseHTML('<i>' + html + '</i>').firstChild;
@@ -285,6 +296,13 @@ const pjax = {
 	 */
 	reset() {
 		settings = $copy(defaults);
+	},
+
+	/**
+	 * Resume pjax to normal operating status
+	 */
+	resume() {
+		paused = false;
 	}
 };
 

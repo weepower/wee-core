@@ -312,6 +312,10 @@ describe('Router', () => {
 		let state = false;
 		let stateArray = [];
 
+		before(() => {
+			setPath('/');
+		});
+
 		afterEach(() => {
 			$router.reset();
 			state = false;
@@ -319,14 +323,12 @@ describe('Router', () => {
 		});
 
 		it('should match one route', () => {
-			setPath('/');
 			$router.map(basicRoutes).run();
 
 			expect($router.currentRoute().path).to.equal('/');
 		});
 
 		it('should not evaluate identical route two times in a row', () => {
-			setPath('/');
 			$router.map([
 				{ path: '/', init() { stateArray.push('init'); }, update() { stateArray.push('update'); } }
 			]).run();
@@ -405,6 +407,7 @@ describe('Router', () => {
 				hash: 'hash',
 				query: {key: 'value', key2: 'value2'},
 				params: {place: 'stuff'},
+				search: '?key=value&key2=value2',
 				segments: ['path', 'to', 'stuff'],
 				fullPath: '/path/to/stuff?key=value&key2=value2#hash',
 				matched: [
@@ -424,12 +427,33 @@ describe('Router', () => {
 					}
 				]
 			});
+
+			it('should parse url variable parameters and pass to functions', () => {
+				setPath('/blog/5');
+
+				$router().map([
+					{
+						path: '/blog/:id',
+						init(to, from) {
+							state = true;
+							expect(to.params.id).to.equal(5);
+						}
+					}
+				]).run();
+
+				expect(state).to.be.true;
+			});
 		});
 
 		describe('before hooks', () => {
-			it('should evaluate before hook of matched route record', () => {
+			before(() => {
 				setPath('/');
+			});
+			beforeEach(() => {
+				$router.reset();
+			});
 
+			it('should evaluate before hook of matched route record', () => {
 				$router().map([
 					{
 						path: '/',
@@ -451,11 +475,9 @@ describe('Router', () => {
 			});
 
 			it('should resolve before hooks asynchronously', done => {
-				setPath('/test');
-
 				$router.map([
 					{
-						path: '/test',
+						path: '/',
 						before(to, from, next) {
 							setTimeout(() => {
 								state = true;
@@ -472,7 +494,6 @@ describe('Router', () => {
 			});
 
 			it('should evaluate global before hooks', () => {
-				setPath('/');
 				$router.beforeEach((to, from, next) => {
 					stateArray.push('before each');
 				}).run();
@@ -483,10 +504,9 @@ describe('Router', () => {
 			it('should evaluate before hook(s) in specific order', () => {
 				let stateArray = [];
 
-				setPath('/test/1');
 				$router.map([
 					{
-						path: '/test/:id',
+						path: '*',
 						before(to, from, next) {
 							stateArray.push('before');
 							next();
@@ -516,7 +536,7 @@ describe('Router', () => {
 					next();
 				}).run();
 
-				setPath('/test/2');
+				setPath('/other');
 				$router.run();
 
 				expect(stateArray).to.deep.equal(['beforeEach', 'before', 'beforeInit', 'init', 'handlerInit', 'beforeEach', 'before', 'beforeUpdate', 'handlerUpdate']);
@@ -608,8 +628,7 @@ describe('Router', () => {
 				expect(state).to.be.false;
 			});
 
-			it('should stop processing of routes if false is passed to "next"', () => {
-				setPath('/asdf');
+			it('should stop processing of routes if false is passed to "next"', done => {
 				let beforeState = 0;
 				let initState = 0;
 
@@ -638,29 +657,50 @@ describe('Router', () => {
 					}
 				]).run();
 
-				expect(beforeState).to.equal(1);
-				expect(initState).to.equal(0);
+				setTimeout(function() {
+					expect(beforeState).to.equal(1);
+					expect(initState).to.equal(0);
+					done();
+				}, 100);
+			});
+
+			it('should throw error if before queue is stopped', done => {
+				let spy = sinon.spy();
+
+				$router.map([
+					{ path: '/', before(to, from, next) { next(false); } }
+				]).onError(spy).run();
+
+				setTimeout(function() {
+					expect(spy.calledOnce).to.be.true;
+					expect(spy.args[0][0]).to.be.an('error');
+					expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+					done();
+				}, 100);
+			});
+
+			it('should throw custom error if passed to before hook', done => {
+				let spy = sinon.spy();
+
+				$router.map([
+					{ path: '/', before(to, from, next) { next(new Error('something went wrong with homepage')); } }
+				]).onError(spy).run();
+
+				setTimeout(function() {
+					expect(spy.calledOnce).to.be.true;
+					expect(spy.args[0][0]).to.be.an('error');
+					expect(spy.args[0][0].message).to.equal('something went wrong with homepage');
+					done();
+				}, 100);
 			});
 		});
 
-		it('should parse url variable parameters and pass to functions', () => {
-			setPath('/blog/5');
-			$router().map([
-				{
-					path: '/blog/:id',
-					init(to, from) {
-						state = true;
-						expect(to.params.id).to.equal(5);
-					}
-				}
-			]).run();
-
-			expect(state).to.be.true;
-		});
-
 		describe('after hooks', () => {
-			it('should evaluate global after hooks', () => {
+			before(() => {
 				setPath('/');
+			});
+
+			it('should evaluate global after hooks', () => {
 				$router.afterEach((to, from, next) => {
 					stateArray.push('after each');
 				}).run();
@@ -669,10 +709,9 @@ describe('Router', () => {
 			});
 
 			it('should evaluate after hook of matched route record', () => {
-				setPath('/test');
 				$router.map([
 					{
-						path: '/test',
+						path: '/',
 						after() { state = true; }
 					}
 				]).run();
@@ -681,10 +720,9 @@ describe('Router', () => {
 			});
 
 			it('should evaluate after hook(s) in specific order', () => {
-				setPath('/test/1');
 				$router.map([
 					{
-						path: '/test/:id',
+						path: '/',
 						after(to, from) {
 							stateArray.push('after');
 						},
@@ -703,10 +741,10 @@ describe('Router', () => {
 				let toRoutes = [];
 				let fromRoutes = [];
 
-				setPath('/test');
+				setPath('/');
 				$router.map([
 					{
-						path: '/test',
+						path: '/',
 						after(to, from) {
 							toRoutes.push(to);
 							fromRoutes.push(from);
@@ -720,7 +758,7 @@ describe('Router', () => {
 				expect(toRoutes.length).to.equal(2);
 				expect(fromRoutes.length).to.equal(2);
 				toRoutes.forEach(to => {
-					expect(to.path).to.equal('/test');
+					expect(to.path).to.equal('/');
 				});
 				fromRoutes.forEach(from => {
 					expect(from.path).to.equal('/');
@@ -757,20 +795,6 @@ describe('Router', () => {
 				setPath('/test');
 				$router.map([
 					{ path: '/', init() { stateArray.push('home'); } },
-					{ path: '/test', unload() { stateArray.push('test unload'); } }
-				]).run();
-
-				// Leave /test to trigger unload
-				setPath('/');
-				$router.run();
-
-				expect(stateArray).to.deep.equal(['test unload', 'home']);
-			});
-
-			it('should pass unload functions "to" and "from" parameters', () => {
-				setPath('/test');
-				$router.map([
-					{ path: '/', init() { stateArray.push('home'); } },
 					{
 						path: '/test',
 						unload(to, from) {
@@ -788,21 +812,6 @@ describe('Router', () => {
 			});
 		});
 
-		describe('init', () => {
-			it('should execute when route is first matched', () => {
-				setPath('/1');
-				$router.map([
-					{ path: '/:id', init() { state = stateArray.push('init'); } }
-				]).run();
-
-				// Should not run init twice in this scenario
-				setPath('/2');
-				$router.run();
-
-				expect(stateArray).to.deep.equal(['init']);
-			});
-		});
-
 		describe('update', () => {
 			it('should execute if newly matched route is same as current matched route', () => {
 				setPath('/route/1');
@@ -812,19 +821,20 @@ describe('Router', () => {
 
 				setPath('/route/2');
 				$router.run();
-				setPath('/route/3');
-				$router.run();
 
-				expect(stateArray).to.deep.equal(['init', 'update', 'update']);
+				expect(stateArray).to.deep.equal(['init', 'update']);
 			});
 		});
 
 		describe('route handler', () => {
+			before(() => {
+				setPath('/');
+			});
+
 			it('should evaluate after route record callbacks have executed', () => {
-				setPath('/test');
 				$router.map([
 					{
-						path: '/test',
+						path: '/',
 						before(to, from, next) { stateArray.push('before'); next(); },
 						init() { stateArray.push('init'); },
 						handler: new RouteHandler({
@@ -842,9 +852,8 @@ describe('Router', () => {
 					update() { stateArray.push('handler update'); }
 				});
 
-				setPath('/test');
 				$router.map([
-					{ path: '/test', handler: handler },
+					{ path: '/', handler: handler },
 					{ path: '/other', handler: handler }
 				]).run();
 
@@ -900,10 +909,8 @@ describe('Router', () => {
 
 					setPath('/2');
 					$router.run();
-					setPath('/3');
-					$router.run();
 
-					expect(stateArray).to.deep.equal(['before update', 'update', 'before update', 'update']);
+					expect(stateArray).to.deep.equal(['before update', 'update']);
 				});
 
 				it('should execute multiple handlers', () => {
@@ -948,27 +955,6 @@ describe('Router', () => {
 						{ path: '/', init() { stateArray.push('home'); } },
 						{
 							path: '/test',
-							handler: new RouteHandler({
-								unload(to, from) {
-									stateArray.push('unload test');
-								}
-							})
-						}
-					]).run();
-
-					// Leave /test to trigger unload
-					setPath('/');
-					$router.run();
-
-					expect(stateArray).to.deep.equal(['unload test', 'home']);
-				});
-
-				it('should evaluate unload function of multiple handlers', () => {
-					setPath('/test');
-					$router.map([
-						{ path: '/', init() { stateArray.push('home'); } },
-						{
-							path: '/test',
 							handler: [
 								new RouteHandler({
 									unload() {
@@ -997,10 +983,9 @@ describe('Router', () => {
 			it('should be accessible through route objects passed to all callbacks', () => {
 				const meta = { testProp: 'inject' };
 
-				setPath('/test')
 				$router.map([
 					{
-						path: '/test',
+						path: '/',
 						meta: meta,
 						before(to, from, next) {
 							expect(to.meta).to.equal(meta);
@@ -1032,11 +1017,12 @@ describe('Router', () => {
 	});
 
 	describe('segments', () => {
+		before(() => {
+			setPath('/one/two/three/four');
+		});
 		afterEach($router().reset);
 
 		it('should return the current path as an array of it\'s segments', () => {
-			setPath('/one/two/three/four');
-
 			expect($router().segments()).to.be.an('array');
 			expect($router().segments().length).to.equal(4);
 			expect($router().segments()[0]).to.equal('one');
@@ -1046,8 +1032,6 @@ describe('Router', () => {
 		});
 
 		it('should return the segment by index of the current path', () => {
-			setPath('/one/two/three/four');
-
 			expect($router().segments(0)).to.equal('one');
 			expect($router().segments(1)).to.equal('two');
 			expect($router().segments(2)).to.equal('three');
@@ -1058,7 +1042,7 @@ describe('Router', () => {
 	describe('uri', () => {
 		before(() => {
 			$router().map(basicRoutes);
-			setPath('/test2?foo=bar&baz=qux#hash');
+			setPath('/test2/foo/bar?foo=bar&baz=qux#hash');
 		});
 		after($router().reset);
 
@@ -1067,11 +1051,11 @@ describe('Router', () => {
 		});
 
 		it('should return the full path', () => {
-			expect($router().uri().fullPath).to.equal('/test2?foo=bar&baz=qux#hash');
+			expect($router().uri().fullPath).to.equal('/test2/foo/bar?foo=bar&baz=qux#hash');
 		});
 
 		it('should return the path', () => {
-			expect($router().uri().path).to.equal('/test2');
+			expect($router().uri().path).to.equal('/test2/foo/bar');
 		});
 
 		it('should return the query', () => {
@@ -1082,13 +1066,10 @@ describe('Router', () => {
 		});
 
 		it('should return an array of segments', () => {
-			setPath('/test2/foo/bar/baz');
-
 			expect($router().uri().segments).to.be.an('array');
 			expect($router().uri().segments[0]).to.equal('test2');
 			expect($router().uri().segments[1]).to.equal('foo');
 			expect($router().uri().segments[2]).to.equal('bar');
-			expect($router().uri().segments[3]).to.equal('baz');
 		});
 
 		it('should return the full url', () => {
@@ -1143,8 +1124,11 @@ describe('Router', () => {
 		let page1Spy;
 		let page2Spy;
 
-		beforeEach(() => {
+		before(() => {
 			setPath('/');
+		});
+
+		beforeEach(() => {
 			$router.reset();
 			homeSpy = sinon.spy();
 			page1Spy = sinon.spy();
@@ -1246,6 +1230,50 @@ describe('Router', () => {
 			return $router.replace('page1').then(() => {
 				expect(window.history.length).to.equal(initial);
 			});
+		});
+	});
+
+	describe('onError', () => {
+		before(() => {
+			setPath('/');
+		});
+
+		beforeEach(() => {
+			$router.reset();
+
+			$router.map([
+				{ path: '/', before(to, from, next) { next(false); } }
+			]);
+		});
+
+		it('should register callback that triggers on error', done => {
+			let spy = sinon.spy();
+
+			$router.onError(spy).run();
+
+			setTimeout(function() {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+				done();
+			}, 100);
+		});
+
+		it('should register multiple callbacks that each trigger on error', done => {
+			let spy = sinon.spy();
+			let spy2 = sinon.spy();
+
+			$router.onError([spy, spy2]).run();
+
+			setTimeout(function() {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+				expect(spy2.calledOnce).to.be.true;
+				expect(spy2.args[0][0]).to.be.an('error');
+				expect(spy2.args[0][0].message).to.equal('queue stopped prematurely');
+				done();
+			}, 100);
 		});
 	});
 });

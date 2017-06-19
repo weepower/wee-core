@@ -4,7 +4,7 @@ import { _doc, _win } from 'core/variables';
 import { $exec } from 'core/core';
 import { $extend, $isFormData, $isFunction, $isString, $serialize } from 'core/types';
 import { parseHeaders } from 'fetch/headers';
-import { createError } from 'fetch/error';
+import FetchError from 'fetch/error';
 
 export default function fetchFactory(defaults) {
 	let version = 1;
@@ -39,11 +39,11 @@ export default function fetchFactory(defaults) {
 
 				$exec(resolve, exec);
 			} else {
-				exec.args.unshift(createError(
+				exec.args.unshift(new FetchError(
 					'Request failed with status code ' + response.status,
 					response.config,
-					null,
 					response.request,
+					null,
 					response
 				));
 
@@ -175,7 +175,7 @@ export default function fetchFactory(defaults) {
 			] = fn;
 
 		el.onerror = function() {
-			config.args.unshift(createError('JSONP request failed', config, null, null, null));
+			config.args.unshift(new FetchError('JSONP request failed', config));
 
 			reject.apply(config.scope, config.args);
 		};
@@ -284,12 +284,12 @@ export default function fetchFactory(defaults) {
 
 				// Listen for network errors
 				request.onerror = function handleError() {
-					reject(createError('Network Error', config, null, request));
+					reject(new FetchError('Network Error', config, request));
 				};
 
 				// Handle timeout
 				request.ontimeout = function handleTimeout() {
-					reject(createError(`Timeout of ${config.timeout} ms exceeded`, config, 'ECONNABORTED', request));
+					reject(new FetchError(`Timeout of ${config.timeout} ms exceeded`, config, request, 'ECONNABORTED'));
 				};
 
 				// Add X-Requested-With header for same domain requests

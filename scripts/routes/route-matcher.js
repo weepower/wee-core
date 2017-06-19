@@ -60,3 +60,14 @@ export function match(path) {
 	// No match
 	return createRoute(location, notFound);
 }
+
+/**
+ * Evaluates if matched route is actually default notFound route
+ * in which case we want route evaluation stopped
+ *
+ * @param {Object} route
+ * @returns {boolean}
+ */
+export function noMatch(route) {
+	return (route.meta && route.meta.noMatch);
+}

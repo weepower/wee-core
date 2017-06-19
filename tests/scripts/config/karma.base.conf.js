@@ -11,14 +11,20 @@ let preprocessors = [];
 
 spec = Array.isArray(spec) ? spec[1] : '';
 
-
+/**
+ * Add file for processing
+ *
+ * @param {string} file
+ */
 function addFile(file) {
 	files.push(file);
+
+	// Files need to be pre-processed with webpack since we are writing ES2015 in tests
 	preprocessors[file] = ['webpack'];
 }
 
-// Remove coverage if running specific spec file
-// as it gets in the way and is inaccurate
+// Remove coverage if running one spec file
+// as it makes coverage inaccurate
 if (spec.length) {
 	reporters.pop();
 	addFile(paths.tests.scripts + '/unit/' + spec);
