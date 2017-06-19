@@ -34,6 +34,7 @@ export function createRoute(location, record = {}) {
 		path: location.path,
 		hash: location.hash,
 		query: location.query,
+		search: location.search,
 		segments: location.segments,
 		params: location.params || {},
 		fullPath: location.fullPath,
