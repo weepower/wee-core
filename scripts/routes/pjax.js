@@ -12,12 +12,12 @@ import { parseLocation } from './location';
 
 let defaults = {
 	bind: {
-		click: 'a',
-		submit: 'form'
+		click: 'a'
 	},
 	context: 'document',
 	fetch: $fetch.create(),
 	partials: ['title', 'main'],
+	overridePartials: false,
 	request: {
 		method: 'get',
 		responseType: 'text',
@@ -245,6 +245,15 @@ const pjax = {
 	},
 
 	/**
+	 * Override partials to be replaced
+	 *
+	 * @param partials
+	 */
+	override(partials) {
+		settings.overridePartials = partials;
+	},
+
+	/**
 	 * Pause previously bound pjax from triggering
 	 */
 	pause() {
@@ -255,6 +264,8 @@ const pjax = {
 	 * Replace target partials on DOM
 	 */
 	replace() {
+		let partials = settings.overridePartials || settings.partials;
+
 		if (paused) {
 			warn('pjax has been paused - will not replace partials');
 			return;
@@ -302,6 +313,7 @@ const pjax = {
 	 */
 	resume() {
 		paused = false;
+		settings.overridePartials = false;
 	}
 };
 
