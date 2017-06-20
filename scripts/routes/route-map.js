@@ -3,7 +3,10 @@ import PathToRegexp from 'path-to-regexp';
 let pathList = [];
 let pathMap = {};
 let nameMap = {};
-let notFound = setNotFound({
+let notFound;
+
+// Set default notFound route
+setNotFound({
 	path: '*',
 	name: 'notFound',
 	meta: {
