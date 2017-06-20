@@ -17,7 +17,7 @@ let defaults = {
 	},
 	context: 'document',
 	fetch: $fetch.create(),
-	partials: 'title,main',
+	partials: ['title', 'main'],
 	request: {
 		method: 'get',
 		responseType: 'text',
@@ -271,8 +271,7 @@ const pjax = {
 		html = $parseHTML('<i>' + html + '</i>').firstChild;
 
 		// Make partial replacements from response
-		// TODO: Change string format to array
-		$each(settings.partials.split(','), sel => {
+		$each(partials, sel => {
 			$each(sel, function(el) {
 				const target = $(sel)[0];
 
