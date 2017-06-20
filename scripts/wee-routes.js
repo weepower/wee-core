@@ -144,7 +144,7 @@ router.onReady = function onReady(success) {
  * Navigate to URL and add item to history
  *
  * @param {string|Object} path
- * @param {boolean|Array} modifyPjax
+ * @param {boolean|Object} modifyPjax
  */
 router.push = function push(path, modifyPjax = false) {
 	if (modifyPjax === true) {
@@ -161,7 +161,7 @@ router.push = function push(path, modifyPjax = false) {
  * Navigate to URL and replace item in history
  *
  * @param {string|Object} path
- * @param {boolean|Array} modifyPjax
+ * @param {boolean|Ojbect} modifyPjax
  */
 router.replace = function replace(path, modifyPjax = false) {
 	if (modifyPjax === true) {

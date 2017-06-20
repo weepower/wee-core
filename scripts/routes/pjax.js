@@ -11,13 +11,13 @@ import { warn } from './warn';
 import { parseLocation } from './location';
 
 let defaults = {
+	action: 'replace',
 	bind: {
 		click: 'a'
 	},
 	context: 'document',
 	fetch: $fetch.create(),
 	partials: ['title', 'main'],
-	overridePartials: false,
 	request: {
 		method: 'get',
 		responseType: 'text',
@@ -26,6 +26,10 @@ let defaults = {
 		}
 	},
 	replace: null
+};
+let overrides = {
+	partials: false,
+	action: false
 };
 let settings = $copy(defaults);
 let response = null;
@@ -249,8 +253,14 @@ const pjax = {
 	 *
 	 * @param partials
 	 */
-	override(partials) {
-		settings.overridePartials = partials;
+	override(options) {
+		if (options.partials) {
+			overrides.partials = options.partials;
+		}
+
+		if (options.action) {
+			overrides.action = options.action;
+		}
 	},
 
 	/**
@@ -264,7 +274,8 @@ const pjax = {
 	 * Replace target partials on DOM
 	 */
 	replace() {
-		let partials = settings.overridePartials || settings.partials;
+		let partials = overrides.partials || settings.partials;
+		let action = overrides.action || settings.action;
 
 		if (paused) {
 			warn('pjax has been paused - will not replace partials');
@@ -289,7 +300,7 @@ const pjax = {
 				if (target) {
 					const parent = target.parentNode;
 
-					settings.action === 'append' ?
+					action === 'append' ?
 						parent.appendChild(el) :
 						parent.replaceChild(el, target);
 
@@ -313,7 +324,10 @@ const pjax = {
 	 */
 	resume() {
 		paused = false;
-		settings.overridePartials = false;
+		overrides = {
+			action: false,
+			partials: false
+		};
 	}
 };
 
