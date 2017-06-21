@@ -11,13 +11,13 @@ import { warn } from './warn';
 import { parseLocation } from './location';
 
 let defaults = {
+	action: 'replace',
 	bind: {
-		click: 'a',
-		submit: 'form'
+		click: 'a'
 	},
 	context: 'document',
 	fetch: $fetch.create(),
-	partials: 'title,main',
+	partials: ['title', 'main'],
 	request: {
 		method: 'get',
 		responseType: 'text',
@@ -26,6 +26,10 @@ let defaults = {
 		}
 	},
 	replace: null
+};
+let overrides = {
+	partials: false,
+	action: false
 };
 let settings = $copy(defaults);
 let response = null;
@@ -245,6 +249,21 @@ const pjax = {
 	},
 
 	/**
+	 * Override partials to be replaced
+	 *
+	 * @param partials
+	 */
+	override(options) {
+		if (options.partials) {
+			overrides.partials = options.partials;
+		}
+
+		if (options.action) {
+			overrides.action = options.action;
+		}
+	},
+
+	/**
 	 * Pause previously bound pjax from triggering
 	 */
 	pause() {
@@ -255,6 +274,9 @@ const pjax = {
 	 * Replace target partials on DOM
 	 */
 	replace() {
+		let partials = overrides.partials || settings.partials;
+		let action = overrides.action || settings.action;
+
 		if (paused) {
 			warn('pjax has been paused - will not replace partials');
 			return;
@@ -271,15 +293,14 @@ const pjax = {
 		html = $parseHTML('<i>' + html + '</i>').firstChild;
 
 		// Make partial replacements from response
-		// TODO: Change string format to array
-		$each(settings.partials.split(','), sel => {
+		$each(partials, sel => {
 			$each(sel, function(el) {
 				const target = $(sel)[0];
 
 				if (target) {
 					const parent = target.parentNode;
 
-					settings.action === 'append' ?
+					action === 'append' ?
 						parent.appendChild(el) :
 						parent.replaceChild(el, target);
 
@@ -303,6 +324,10 @@ const pjax = {
 	 */
 	resume() {
 		paused = false;
+		overrides = {
+			action: false,
+			partials: false
+		};
 	}
 };
 

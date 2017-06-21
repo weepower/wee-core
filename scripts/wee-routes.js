@@ -144,11 +144,13 @@ router.onReady = function onReady(success) {
  * Navigate to URL and add item to history
  *
  * @param {string|Object} path
- * @param {boolean} pausePjax
+ * @param {boolean|Object} modifyPjax
  */
-router.push = function push(path, pausePjax = false) {
-	if (pausePjax) {
+router.push = function push(path, modifyPjax = false) {
+	if (modifyPjax === true) {
 		pjax.pause();
+	} else if ($isArray(modifyPjax)) {
+		pjax.override(modifyPjax);
 	}
 
 	return history.push(path)
@@ -159,11 +161,13 @@ router.push = function push(path, pausePjax = false) {
  * Navigate to URL and replace item in history
  *
  * @param {string|Object} path
- * @param {boolean} pausePjax
+ * @param {boolean|Ojbect} modifyPjax
  */
-router.replace = function replace(path, pausePjax = false) {
-	if (pausePjax) {
+router.replace = function replace(path, modifyPjax = false) {
+	if (modifyPjax === true) {
 		pjax.pause();
+	} else if ($isArray(modifyPjax)) {
+		pjax.override(modifyPjax);
 	}
 
 	return history.replace(path)

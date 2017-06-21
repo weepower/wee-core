@@ -23,7 +23,11 @@ describe('pjax', () => {
 	let faqSpy;
 	let contactSpy;
 
+	after($router.reset);
+
 	beforeEach(() => {
+		$router.reset();
+
 		// Initialize fake server and initial page load (homepage)
 		window.history.replaceState(0, '', '/');
 		document.body.innerHTML = start;
@@ -70,7 +74,6 @@ describe('pjax', () => {
 
 	afterEach(() => {
 		server.restore();
-		$router.reset();
 		stateArray = [];
 	});
 

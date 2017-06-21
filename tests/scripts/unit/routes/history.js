@@ -4,6 +4,8 @@ import { history } from 'wee-routes';
 import { setPath } from '../../helpers/browsers';
 
 describe('Router: history', () => {
+	after($router.reset);
+
 	beforeEach(() => {
 		$router.reset();
 		window.history.replaceState(0, '', '/');
