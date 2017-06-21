@@ -26,6 +26,10 @@ function setPath(path) {
 describe('Router', () => {
 	after($router.reset);
 
+	before(() => {
+		setPath('/');
+	});
+
 	describe('afterEach', () => {
 		let state = false;
 
