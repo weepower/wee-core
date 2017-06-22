@@ -1,5 +1,5 @@
 import $router from 'wee-routes';
-import { RouteHandler } from 'wee-routes';
+import { history, RouteHandler } from 'wee-routes';
 import sinon from 'sinon';
 
 const basicRoutes = [
@@ -30,6 +30,17 @@ describe('Router', () => {
 		setPath('/');
 	});
 
+	it('should set scroll behavior callback', () => {
+		expect($router.settings.scrollBehavior).to.be.a('function');
+
+		$router({
+			scrollBehavior: true
+		});
+
+		expect($router.settings.scrollBehavior).to.be.true;
+		expect(history.scrollBehavior).to.be.true;
+	});
+
 	describe('afterEach', () => {
 		let state = false;
 
@@ -37,6 +48,7 @@ describe('Router', () => {
 			$router.reset();
 			$router.map(basicRoutes);
 		});
+
 		afterEach(() => {
 			state = false;
 		});
