@@ -5,13 +5,22 @@ import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
-import { $isArray } from 'core/types';
+import { $copy, $extend, $isArray } from 'core/types';
 
-export let history = new History();
-let hasPjax = false;
-let settings = {
+const defaults = {
+	scrollBehavior(to, from, savedPosition) {
+		if (savedPosition) {
+			return savedPosition;
+		} else {
+			return { x: 0, y: 0 };
+		}
+	},
 	onError: []
 };
+let settings = $copy(defaults);
+let hasPjax = false;
+
+export let history = new History(settings.scrollBehavior);
 
 /**
  * Set base configurations for router
@@ -20,8 +29,15 @@ let settings = {
  * @returns {router}
  */
 function router(config = {}) {
+	$extend(settings, config);
+
+	// Update scrollBehavior property in case that was changed
+	history.scrollBehavior = settings.scrollBehavior;
+
 	return router;
 }
+
+router.settings = settings;
 
 /**
  * Register global after hook
@@ -56,7 +72,6 @@ router.currentRoute = function currentRoute() {
 	return history.current;
 }
 
-// TODO: Change map to register
 /**
  * Register routes
  *
@@ -183,8 +198,8 @@ router.reset = function reset() {
 	hasPjax = false;
 	pjax.reset();
 	window.removeEventListener('popstate', history.popstate);
-	history = new History();
-	settings.onError = [];
+	history = new History(settings.scrollBehavior);
+	settings = $copy(defaults);
 }
 
 /**

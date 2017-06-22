@@ -11,20 +11,25 @@ import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
 import { QueueError, SameRouteError } from './error';
 import { parseLocation } from './location';
+import $router from 'wee-routes';
+import { handleScroll, saveScrollPosition } from './scroll';
+import { setStateKey } from './push-state';
 
 export default class History {
-	constructor() {
+	constructor(scrollBehavior) {
 		this.ready = false;
 		this.current = START;
-		this.pending = null;
+		this.previous = null;
 		this.begin = function(to, from, next) { next(); };
 		this.replacePage = function() {};
 		this.readyQueue = [];
 		this.resetReady = function resetReady() {
 			this.readyQueue = [];
 		}
-		this.popstate = () => {
+		this.scrollBehavior = scrollBehavior;
+		this.popstate = (e) => {
 			let location = parseLocation();
+			let scroll = $router.settings.scrollBehavior;
 
 			// Leave hash navigation alone
 			if (location.path === this.current.path && location.search === this.current.search) {
@@ -33,8 +38,18 @@ export default class History {
 				return;
 			}
 
-			this.replace().then(route => {
-				// TODO: scroll
+			if (scroll) {
+				// Update scroll position for URL that was navigated away from
+				saveScrollPosition();
+
+				// Update state key now that we have navigated to different url
+				if (e.state && e.state.key) {
+					setStateKey(e.state.key);
+				}
+			}
+
+			this.navigate().then(route => {
+				handleScroll(route, this.previous, $router.settings.scrollBehavior, true);
 			}).catch(error => {
 				// TODO: What to do with this error?
 				// TODO: Register onError callbacks from routes
@@ -147,7 +162,6 @@ export default class History {
 				});
 			};
 
-			// TODO: Save scroll position
 			// Register global before hook, if necessary - PJAX
 			queues.beforeQueue.unshift(this.begin);
 
@@ -219,7 +233,7 @@ export default class History {
 		return this.navigate(path)
 			.then(route => {
 				pushState(route.fullPath);
-				// TODO: scroll
+				handleScroll(route, this.previous, $router.settings.scrollBehavior);
 			});
 	}
 
@@ -232,7 +246,7 @@ export default class History {
 		return this.navigate(path)
 			.then(route => {
 				replaceState(route.fullPath);
-				// TODO: scroll
+				handleScroll(route, this.previous, $router.settings.scrollBehavior);
 			});
 	}
 
@@ -361,11 +375,11 @@ export default class History {
 	 * @param {Array} [afterQueue]
 	 */
 	updateRoute(route, afterQueue) {
-		const prev = this.current;
+		this.previous = this.current;
 		this.current = route;
 
 		if (afterQueue) {
-			afterQueue.forEach(fn => fn(route, prev));
+			afterQueue.forEach(fn => fn(route, this.previous));
 		}
 	}
 }

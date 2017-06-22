@@ -1,9 +1,28 @@
 import { _win } from 'core/variables';
 import { genTimeKey } from './key';
+import { saveScrollPosition } from './scroll';
 
 let _key = genTimeKey();
 
 export const supportsPushState = _win.history && _win.history.pushState;
+
+/**
+ * Get state key
+ *
+ * @returns {string}
+ */
+export function getStateKey() {
+	return _key;
+}
+
+/**
+ * Set state key
+ *
+ * @param {string} key
+ */
+export function setStateKey(key) {
+	_key = key;
+}
 
 /**
  * Either replace existing History entry or add new entry
@@ -12,9 +31,8 @@ export const supportsPushState = _win.history && _win.history.pushState;
  * @param {boolean} replace=false
  */
 export function pushState(url, replace = false) {
-	// TODO: Save scroll position when pushState is executed
-	// https://github.com/vuejs/vue-router/blob/dev/src/util/push-state.js
-	// saveScrollPosition();
+	// Save scroll position for current URL before navigating elsewhere
+	saveScrollPosition();
 
 	try {
 		if (replace) {
