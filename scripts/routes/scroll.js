@@ -27,10 +27,8 @@ export function handleScroll(to, from, behavior, isPop = false) {
 	}
 
 	if (position) {
-		let el = position.el ? position.el.parentNode : _win;
-
-		$scrollLeft(el, position.x);
-		$scrollTop(el, position.y);
+		$scrollLeft(_win, position.x);
+		$scrollTop(_win, position.y);
 	}
 }
 
@@ -54,24 +52,15 @@ export function getElementPosition(sel) {
 		return false;
 	}
 
-	if (el === _win) {
-		const docEl = _doc.documentElement;
-		const docRect = docEl.getBoundingClientRect();
-		const elRect = el.getBoundingClientRect();
+	const docEl = _doc.documentElement;
+	const docRect = docEl.getBoundingClientRect();
+	const elRect = el.getBoundingClientRect();
 
-		return {
-			el,
-			x: elRect.left - docRect.left,
-			y: elRect.top - docRect.top
-		};
-	} else {
-		return {
-			el,
-			x: el.offsetLeft,
-			y: el.offsetTop
-		};
-	}
-
+	return {
+		el,
+		x: elRect.left - docRect.left,
+		y: elRect.top - docRect.top
+	};
 }
 
 /**
