@@ -143,6 +143,11 @@ export default class History {
 				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
 			} else if (noMatch(route)) {
 				this.ensureUrl();
+
+				if (! this.ready) {
+					this.setReady();
+				}
+
 				warn('no route match was found and notFound has not been registered.');
 				return;
 			}
@@ -198,9 +203,7 @@ export default class History {
 
 				// Execute ready callbacks
 				if (! this.ready) {
-					this.ready = true;
-					this.readyQueue.forEach(cb => cb());
-					this.resetReady();
+					this.setReady();
 				}
 
 				resolve(route);
@@ -366,6 +369,15 @@ export default class History {
 			activated: to.slice(i),
 			deactivated: from.slice(i)
 		};
+	}
+
+	/**
+	 * Establish that router is initialized
+	 */
+	setReady() {
+		this.ready = true;
+		this.readyQueue.forEach(cb => cb());
+		this.resetReady();
 	}
 
 	/**
