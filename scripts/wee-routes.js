@@ -1,4 +1,3 @@
-import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
@@ -6,6 +5,7 @@ import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
 import { $copy, $extend, $isArray } from 'core/types';
+import { uri } from 'wee-location';
 
 const defaults = {
 	scrollBehavior(to, from, savedPosition) {
@@ -242,7 +242,7 @@ router.routes = function routes(key, keyType = 'path') {
 router.run = function runRoutes() {
 	// Process routes when document is loaded
 	$ready(() => {
-		history.navigate(this.uri().fullPath)
+		history.navigate(uri().fullPath)
 			.catch(error => {
 				settings.onError.forEach(callback => callback(error));
 			});
@@ -260,33 +260,6 @@ router.run = function runRoutes() {
 	// } else if (nameMap[value]) {
 	// 	history.navigate(value);
 	// }
-}
-
-// TODO: Perhaps break out location methods into own module
-/**
- * Retrieve the current path's segments as an array or segment by index
- *
- * @param index
- * @returns {Array|string}
- */
-router.segments = function uriSegments(index) {
-	const segments = this.uri().segments;
-
-	if (index >= 0 && segments[index]) {
-		return segments[index];
-	}
-
-	return segments;
-}
-
-/**
- * Retrieve information about current location
- *
- * @param {string} [value]
- * @returns {Object}
- */
-router.uri = function uri(value) {
-	return parseLocation(value);
 }
 
 export default router;

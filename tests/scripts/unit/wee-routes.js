@@ -17,8 +17,6 @@ const basicRoutes = [
 	}
 ];
 
-const testUri = 'https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash';
-
 function setPath(path) {
 	window.history.replaceState(0, '', path);
 }
@@ -1042,109 +1040,6 @@ describe('Router', () => {
 				]).run();
 
 				expect(stateArray).to.deep.equal(['before', 'before init', 'init', 'handler init']);
-			});
-		});
-	});
-
-	describe('segments', () => {
-		before(() => {
-			setPath('/one/two/three/four');
-		});
-		beforeEach($router.reset);
-
-		it('should return the current path as an array of it\'s segments', () => {
-			expect($router().segments()).to.be.an('array');
-			expect($router().segments().length).to.equal(4);
-			expect($router().segments()[0]).to.equal('one');
-			expect($router().segments()[1]).to.equal('two');
-			expect($router().segments()[2]).to.equal('three');
-			expect($router().segments()[3]).to.equal('four');
-		});
-
-		it('should return the segment by index of the current path', () => {
-			expect($router().segments(0)).to.equal('one');
-			expect($router().segments(1)).to.equal('two');
-			expect($router().segments(2)).to.equal('three');
-			expect($router().segments(3)).to.equal('four');
-		});
-	});
-
-	describe('uri', () => {
-		before(() => {
-			$router.map(basicRoutes);
-			setPath('/test2/foo/bar?foo=bar&baz=qux#hash');
-		});
-		after($router.reset);
-
-		it('should return the hash', () => {
-			expect($router.uri().hash).to.equal('hash');
-		});
-
-		it('should return the full path', () => {
-			expect($router.uri().fullPath).to.equal('/test2/foo/bar?foo=bar&baz=qux#hash');
-		});
-
-		it('should return the path', () => {
-			expect($router.uri().path).to.equal('/test2/foo/bar');
-		});
-
-		it('should return the query', () => {
-			expect($router.uri().query).to.be.an('object');
-			expect($router.uri().query).to.include.keys(['foo', 'baz']);
-			expect($router.uri().query.foo).to.equal('bar');
-			expect($router.uri().query.baz).to.equal('qux');
-		});
-
-		it('should return an array of segments', () => {
-			expect($router.uri().segments).to.be.an('array');
-			expect($router.uri().segments[0]).to.equal('test2');
-			expect($router.uri().segments[1]).to.equal('foo');
-			expect($router.uri().segments[2]).to.equal('bar');
-		});
-
-		it('should return the full url', () => {
-			expect($router.uri().url).to.equal(window.location.href);
-		});
-
-		describe('parse', () => {
-			it('should parse a given url', () => {
-				const result = $router.uri(testUri);
-				expect(result).to.be.an('object');
-			});
-
-			it('should return the hash', () => {
-				const result = $router.uri(testUri);
-				expect(result.hash).to.equal('hash');
-			});
-
-			it('should return the full path', () => {
-				const result = $router.uri(testUri);
-				expect(result.fullPath).to.equal('/scripts?foo=bar&baz=qux#hash');
-			});
-
-			it('should return the path', () => {
-				const result = $router.uri(testUri);
-				expect(result.path).to.equal('/scripts');
-			});
-
-			it('should return the query', () => {
-				const result = $router.uri(testUri);
-				expect(result.query).to.be.an('object');
-				expect(result.query).to.include.keys(['foo']);
-				expect(result.query.foo).to.equal('bar');
-				expect(result.query).to.include.keys(['baz']);
-				expect(result.query.baz).to.equal('qux');
-			});
-
-			it('should return an array of segments', () => {
-				const result = $router.uri(testUri);
-				expect(result.segments).to.be.an('array');
-				expect(result.segments[0]).to.equal('scripts');
-			});
-
-			it('should return the full url', () => {
-				const result = $router.uri(testUri);
-				expect(result.url).to.equal('https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash');
 			});
 		});
 	});
