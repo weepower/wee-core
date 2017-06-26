@@ -15,12 +15,13 @@ const defaults = {
 			return { x: 0, y: 0 };
 		}
 	},
+	transition: null,
 	onError: []
 };
 let settings = $copy(defaults);
 let hasPjax = false;
 
-export let history = new History(settings.scrollBehavior);
+export let history = new History(settings);
 
 /**
  * Set base configurations for router
@@ -33,6 +34,7 @@ function router(config = {}) {
 
 	// Update scrollBehavior property in case that was changed
 	history.scrollBehavior = settings.scrollBehavior;
+	history.transition = settings.transition;
 
 	return router;
 }
