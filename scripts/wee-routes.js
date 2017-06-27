@@ -254,7 +254,7 @@ router.run = function runRoutes() {
 
 	// TODO: This is going to set the state of the current route in history
 	// TODO: I don't think that will be desirable
-	// TODO: Do we need a way to evaluate routes without changing history state?
+	// TODO: Do we need a way to evaluate routes without changing history.current?
 	// const { pathMap, nameMap } = getRouteMap();
 	//
 	// if (pathMap[value]) {

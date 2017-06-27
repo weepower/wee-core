@@ -47,7 +47,8 @@ const transition = {
 	 * @param {Object} [from]
 	 */
 	enter(config, to, from) {
-		if (! ready) {
+		// Only enforce if browser supports transitionend event
+		if (! ready && transitionEvent) {
 			return;
 		}
 
