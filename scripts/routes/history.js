@@ -14,9 +14,10 @@ import { parseLocation } from './location';
 import $router from 'wee-routes';
 import { handleScroll, saveScrollPosition } from './scroll';
 import { setStateKey } from './push-state';
+import transitions from './transitions';
 
 export default class History {
-	constructor(scrollBehavior) {
+	constructor(settings) {
 		this.ready = false;
 		this.current = START;
 		this.previous = null;
@@ -26,7 +27,8 @@ export default class History {
 		this.resetReady = function resetReady() {
 			this.readyQueue = [];
 		}
-		this.scrollBehavior = scrollBehavior;
+		this.scrollBehavior = settings.scrollBehavior;
+		this.transition = settings.transition;
 		this.popstate = (e) => {
 			let location = parseLocation();
 			let scroll = $router.settings.scrollBehavior;
@@ -56,7 +58,6 @@ export default class History {
 			});
 		};
 
-		// TODO: Bind popstate for scrolling
 		_win.addEventListener('popstate', this.popstate);
 	}
 
@@ -100,10 +101,12 @@ export default class History {
 	/**
 	 * Make sure that URL matches history state
 	 */
-	ensureUrl() {
+	ensureState() {
 		if (this.current !== START) {
 			replaceState(this.current.fullPath);
 		}
+
+		this.transitionEnter();
 	}
 
 	/**
@@ -136,13 +139,17 @@ export default class History {
 		return new Promise((resolve, reject) => {
 			const route = match(path);
 
+			if (this.current !== START) {
+				this.transitionLeave(route);
+			}
+
 			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
-				this.ensureUrl();
+				this.ensureState();
 				warn('attempted to navigate to current URL');
 				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
 			} else if (noMatch(route)) {
-				this.ensureUrl();
+				this.ensureState();
 
 				if (! this.ready) {
 					this.setReady();
@@ -174,7 +181,7 @@ export default class History {
 			runQueue(queues.beforeQueue, iterator, error => {
 				// Ensure we are where we started
 				if (error) {
-					this.ensureUrl();
+					this.ensureState();
 					warn(error.message);
 					return reject(error);
 				}
@@ -198,8 +205,14 @@ export default class History {
 				// Init/update hooks
 				queues.queue.forEach(fn => fn(route, this.current));
 
+				// Update route
+				this.previous = this.current;
+				this.current = route;
+
 				// After hooks
-				this.updateRoute(route, queues.afterQueue);
+				queues.afterQueue.forEach(fn => fn(this.current, this.previous));
+
+				this.transitionEnter();
 
 				// Execute ready callbacks
 				if (! this.ready) {
@@ -207,9 +220,6 @@ export default class History {
 				}
 
 				resolve(route);
-
-				// TODO: ensureURL? Is there a case for the need to check to make sure that onComplete is updating the URL?
-				// TODO: If history can be turned off, then it may make sense (no popstate binding, no push, replace, etc)
 			});
 		});
 	}
@@ -381,17 +391,22 @@ export default class History {
 	}
 
 	/**
-	 * Update the current route and execute after hooks
-	 *
-	 * @param {*|Object} route - Route object
-	 * @param {Array} [afterQueue]
+	 * Enter new page
 	 */
-	updateRoute(route, afterQueue) {
-		this.previous = this.current;
-		this.current = route;
+	transitionEnter() {
+		if (this.transition) {
+			transitions.enter(this.transition, this.current, this.previous);
+		}
+	}
 
-		if (afterQueue) {
-			afterQueue.forEach(fn => fn(route, this.previous));
+	/**
+	 * Leave current page
+	 *
+	 * @param route
+	 */
+	transitionLeave(route) {
+		if (this.transition) {
+			transitions.leave(this.transition, route, this.previous);
 		}
 	}
 }

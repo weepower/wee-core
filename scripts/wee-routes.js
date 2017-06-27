@@ -1,4 +1,3 @@
-import { parseLocation } from 'routes/location';
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
@@ -6,6 +5,7 @@ import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
 import { $copy, $extend, $isArray } from 'core/types';
+import { uri } from 'wee-location';
 
 const defaults = {
 	scrollBehavior(to, from, savedPosition) {
@@ -15,12 +15,13 @@ const defaults = {
 			return { x: 0, y: 0 };
 		}
 	},
+	transition: null,
 	onError: []
 };
 let settings = $copy(defaults);
 let hasPjax = false;
 
-export let history = new History(settings.scrollBehavior);
+export let history = new History(settings);
 
 /**
  * Set base configurations for router
@@ -33,6 +34,7 @@ function router(config = {}) {
 
 	// Update scrollBehavior property in case that was changed
 	history.scrollBehavior = settings.scrollBehavior;
+	history.transition = settings.transition;
 
 	return router;
 }
@@ -242,7 +244,7 @@ router.routes = function routes(key, keyType = 'path') {
 router.run = function runRoutes() {
 	// Process routes when document is loaded
 	$ready(() => {
-		history.navigate(this.uri().fullPath)
+		history.navigate(uri().fullPath)
 			.catch(error => {
 				settings.onError.forEach(callback => callback(error));
 			});
@@ -252,7 +254,7 @@ router.run = function runRoutes() {
 
 	// TODO: This is going to set the state of the current route in history
 	// TODO: I don't think that will be desirable
-	// TODO: Do we need a way to evaluate routes without changing history state?
+	// TODO: Do we need a way to evaluate routes without changing history.current?
 	// const { pathMap, nameMap } = getRouteMap();
 	//
 	// if (pathMap[value]) {
@@ -260,33 +262,6 @@ router.run = function runRoutes() {
 	// } else if (nameMap[value]) {
 	// 	history.navigate(value);
 	// }
-}
-
-// TODO: Perhaps break out location methods into own module
-/**
- * Retrieve the current path's segments as an array or segment by index
- *
- * @param index
- * @returns {Array|string}
- */
-router.segments = function uriSegments(index) {
-	const segments = this.uri().segments;
-
-	if (index >= 0 && segments[index]) {
-		return segments[index];
-	}
-
-	return segments;
-}
-
-/**
- * Retrieve information about current location
- *
- * @param {string} [value]
- * @returns {Object}
- */
-router.uri = function uri(value) {
-	return parseLocation(value);
 }
 
 export default router;
