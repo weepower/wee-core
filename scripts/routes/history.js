@@ -50,9 +50,11 @@ export default class History {
 				}
 			}
 
-			this.navigate().then(route => {
+			this.navigate(parseLocation().fullPath).then(route => {
+				this.ensureUrl();
 				handleScroll(route, this.previous, $router.settings.scrollBehavior, true);
 			}).catch(error => {
+				console.error(error);
 				// TODO: What to do with this error?
 				// TODO: Register onError callbacks from routes
 			});
@@ -99,14 +101,22 @@ export default class History {
 	}
 
 	/**
-	 * Make sure that URL matches history state
+	 * Ensure that the page is properly set up for viewing
 	 */
 	ensureState() {
-		if (this.current !== START) {
+		this.ensureUrl();
+		this.transitionEnter();
+	}
+
+	/**
+	 * Make sure that URL matches history state
+	 */
+	ensureUrl() {
+		// In case URL gets out of sync with history's current route
+		if (this.current !== START && this.current.fullPath !== parseLocation().fullPath) {
+			console.warn(this.current.fullPath, parseLocation().fullPath);
 			replaceState(this.current.fullPath);
 		}
-
-		this.transitionEnter();
 	}
 
 	/**
