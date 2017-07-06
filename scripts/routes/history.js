@@ -14,7 +14,7 @@ import { parseLocation } from './location';
 import $router from 'wee-routes';
 import { handleScroll, saveScrollPosition } from './scroll';
 import { setStateKey } from './push-state';
-import transitions from './transitions';
+import Transition from './transitions';
 
 export default class History {
 	constructor(settings) {
@@ -103,9 +103,15 @@ export default class History {
 	/**
 	 * Ensure that the page is properly set up for viewing
 	 */
-	ensureState() {
+	ensureState(transitionPromise) {
 		this.ensureUrl();
-		this.transitionEnter();
+		// this.transitionEnter();
+
+		if (transitionPromise) {
+			transitionPromise.then((transition) => {
+				transition.enter(this.current, this.previous);
+			});
+		}
 	}
 
 	/**
@@ -148,18 +154,27 @@ export default class History {
 	navigate(path) {
 		return new Promise((resolve, reject) => {
 			const route = match(path);
+			let asyncTasks = [];
+			let transition = new Transition(this.transition || {});
+			let transitionPromise = null;
 
-			if (this.current !== START) {
-				this.transitionLeave(route);
+			// TODO: Add transition instance to route object/register transition with state
+			// TODO: Use global transition, optionally overriding with route specific transition
+			// TODO: Use transition from route during navigation
+
+			if (this.current !== START && this.transition) {
+				transitionPromise = transition.leave(route, this.current);
+
+				asyncTasks.push(transitionPromise);
 			}
 
 			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
-				this.ensureState();
+				this.ensureState(transitionPromise);
 				warn('attempted to navigate to current URL');
 				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
 			} else if (noMatch(route)) {
-				this.ensureState();
+				this.ensureState(transitionPromise);
 
 				if (! this.ready) {
 					this.setReady();
@@ -174,7 +189,6 @@ export default class History {
 
 			const queues = this.buildQueues(records, handlers);
 			const iterator = (hook, next) => {
-
 				hook(route, this.current, to => {
 					if (to === false) {
 						to = new QueueError('queue stopped prematurely');
@@ -187,15 +201,10 @@ export default class History {
 			// Register global before hook, if necessary - PJAX
 			queues.beforeQueue.unshift(this.begin);
 
-			// Before hooks
-			runQueue(queues.beforeQueue, iterator, error => {
-				// Ensure we are where we started
-				if (error) {
-					this.ensureState();
-					warn(error.message);
-					return reject(error);
-				}
+			// Execute before hooks
+			asyncTasks.push(runQueue(queues.beforeQueue, iterator));
 
+			Promise.all(asyncTasks).then(() => {
 				// Do not process unload hooks on initialization
 				// No assets exist to be unloaded, and could cause errors
 				if (this.ready) {
@@ -222,7 +231,7 @@ export default class History {
 				// After hooks
 				queues.afterQueue.forEach(fn => fn(this.current, this.previous));
 
-				this.transitionEnter();
+				transition.enter(this.current, this.previous);
 
 				// Execute ready callbacks
 				if (! this.ready) {
@@ -230,6 +239,12 @@ export default class History {
 				}
 
 				resolve(route);
+			}).catch((error) => {
+
+				// Ensure we are where we started
+				this.ensureState(transitionPromise);
+				warn(error.message);
+				reject(error);
 			});
 		});
 	}
@@ -398,25 +413,5 @@ export default class History {
 		this.ready = true;
 		this.readyQueue.forEach(cb => cb());
 		this.resetReady();
-	}
-
-	/**
-	 * Enter new page
-	 */
-	transitionEnter() {
-		if (this.transition) {
-			transitions.enter(this.transition, this.current, this.previous);
-		}
-	}
-
-	/**
-	 * Leave current page
-	 *
-	 * @param route
-	 */
-	transitionLeave(route) {
-		if (this.transition) {
-			transitions.leave(this.transition, route, this.previous);
-		}
 	}
 }

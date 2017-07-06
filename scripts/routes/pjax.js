@@ -288,6 +288,11 @@ const pjax = {
 			return;
 		}
 
+		if (! response) {
+			warn('no response to use');
+			return;
+		}
+
 		let html = response.data;
 
 		if (settings.replace) {
@@ -303,12 +308,13 @@ const pjax = {
 			$each(sel, function(el) {
 				const target = $(sel)[0];
 
+				// Retain any classes added dynamically to container
+				el.className = target.className;
+
 				if (target) {
 					const parent = target.parentNode;
 
-					action === 'append' ?
-						parent.appendChild(el) :
-						parent.replaceChild(el, target);
+					target.innerHTML = el.innerHTML
 
 					_reset(parent);
 				}
