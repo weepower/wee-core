@@ -242,26 +242,7 @@ router.routes = function routes(key, keyType = 'path') {
  * @returns {router}
  */
 router.run = function runRoutes() {
-	// Process routes when document is loaded
-	$ready(() => {
-		history.navigate(uri().fullPath)
-			.catch(error => {
-				settings.onError.forEach(callback => callback(error));
-			});
-	});
-
-	return this;
-
-	// TODO: This is going to set the state of the current route in history
-	// TODO: I don't think that will be desirable
-	// TODO: Do we need a way to evaluate routes without changing history.current?
-	// const { pathMap, nameMap } = getRouteMap();
-	//
-	// if (pathMap[value]) {
-	// 	history.navigate(value);
-	// } else if (nameMap[value]) {
-	// 	history.navigate(value);
-	// }
+	return history.navigate(uri().fullPath);
 }
 
 export default router;
