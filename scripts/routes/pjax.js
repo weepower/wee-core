@@ -96,7 +96,8 @@ function _reset(sel) {
 }
 
 const pjax = {
-	// Empty callback - will be defined by router.pjax
+	// Empty callbacks - will be defined by router.pjax
+	onError() {},
 	onTrigger() {},
 
 	/**
@@ -223,6 +224,11 @@ const pjax = {
 	 */
 	init(options) {
 		if (supportsPushState) {
+			if (options.onError) {
+				this.onError = options.onError;
+				delete options.onError;
+			}
+
 			settings = $extend(settings, options);
 
 			// https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration

@@ -15,8 +15,7 @@ const defaults = {
 			return { x: 0, y: 0 };
 		}
 	},
-	transition: null,
-	onError: []
+	transition: null
 };
 let settings = $copy(defaults);
 let hasPjax = false;
@@ -118,7 +117,7 @@ router.pjax = function initPjax(config = {}) {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
 					history.push(destination)
 						.catch(error => {
-							settings.onError.forEach(callback => callback(error));
+							pjax.onError(error);
 						});
 				};
 
@@ -126,21 +125,6 @@ router.pjax = function initPjax(config = {}) {
 				history.replacePage = pjax.replace;
 			});
 		}
-	}
-
-	return this;
-}
-
-/**
- * Register onError method
- *
- * @param {Function|Array} error
- */
-router.onError = function onError(error) {
-	if ($isArray(error)) {
-		settings.onError = settings.onError.concat(error);
-	} else {
-		settings.onError.push(error);
 	}
 
 	return this;

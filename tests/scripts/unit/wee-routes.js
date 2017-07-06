@@ -1157,48 +1157,4 @@ describe('Router', () => {
 			});
 		});
 	});
-
-	describe('onError', () => {
-		before(() => {
-			setPath('/');
-		});
-
-		beforeEach(() => {
-			$router.reset();
-
-			$router.map([
-				{ path: '/', before(to, from, next) { next(false); } }
-			]);
-		});
-
-		it('should register callback that triggers on error', done => {
-			let spy = sinon.spy();
-
-			$router.onError(spy).run();
-
-			setTimeout(function() {
-				expect(spy.calledOnce).to.be.true;
-				expect(spy.args[0][0]).to.be.an('error');
-				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
-				done();
-			}, 100);
-		});
-
-		it('should register multiple callbacks that each trigger on error', done => {
-			let spy = sinon.spy();
-			let spy2 = sinon.spy();
-
-			$router.onError([spy, spy2]).run();
-
-			setTimeout(function() {
-				expect(spy.calledOnce).to.be.true;
-				expect(spy.args[0][0]).to.be.an('error');
-				expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
-				expect(spy2.calledOnce).to.be.true;
-				expect(spy2.args[0][0]).to.be.an('error');
-				expect(spy2.args[0][0].message).to.equal('queue stopped prematurely');
-				done();
-			}, 100);
-		});
-	});
 });
