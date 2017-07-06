@@ -1,5 +1,5 @@
 import $router from 'wee-routes';
-import transition from 'routes/transitions';
+import Transition from 'routes/transitions';
 import { $hasClass } from 'dom/index';
 import setPath from '../../helpers/routes';
 import sinon from 'sinon';
@@ -15,26 +15,31 @@ describe('Router: transitions', () => {
 		$router.reset();
 	});
 
-	it('should remove a class from the designated element on initial evaluation', done => {
+	it('should remove a class from the designated element on initial evaluation', (done) => {
+		let state = false;
+		const finish = function() {
+			expect($hasClass(document.body, hideClass)).to.be.false;
+			expect(state).to.be.true;
+		}
+
 		$router({
 			transition: {
 				target: 'body',
-				class: hideClass
+				class: hideClass,
+				timeout: 200
 			}
 		}).map([
 			{
 				path: '/',
 				init() {
 					// Make sure class is not added by router on initial evaluation
+					state = true;
 					expect(document.body.className).to.equal('');
 					document.body.className = hideClass;
 					expect($hasClass(document.body, hideClass)).to.be.true;
 				}
 			}
-		]).onError(done).onReady(() => {
-			expect($hasClass(document.body, hideClass)).to.be.false;
-			done();
-		}).run();
+		]).run().then(finish, finish).then(done, done);
 	});
 
 	describe('with history navigation', () => {
@@ -91,13 +96,15 @@ describe('Router: transitions', () => {
 			return promise.then(finish, finish);
 		});
 
-		it('should execute enter and leave callbacks', () => {
+		it('should execute enter and leave callbacks', done => {
 			let enterSpy = sinon.spy();
-			let leaveSpy = sinon.spy();
+			let leaveSpy = sinon.stub();
+			leaveSpy.callsArg(2);
+
 			let finish = function() {
-				expect(beforeSpy.calledOnce).to.be.true;
-				expect(enterSpy.calledOnce).to.be.true;
-				expect(leaveSpy.calledOnce).to.be.true;
+				expect(beforeSpy.callCount).to.equal(1);
+				expect(enterSpy.callCount).to.equal(2); // Initial run + push
+				expect(leaveSpy.callCount).to.equal(1);
 			}
 
 			$router({
@@ -110,9 +117,9 @@ describe('Router: transitions', () => {
 					path: '/other',
 					before: beforeSpy // Ensure that init is getting executed
 				}
-			]);
-
-			return $router.push('/other').then(finish, finish);
+			]).run().then(() => {
+				return $router.push('/other');
+			}).then(finish, finish).then(done, done);
 		});
 	});
 
@@ -121,10 +128,12 @@ describe('Router: transitions', () => {
 			document.body.className = hideClass;
 			expect($hasClass(document.body, hideClass)).to.be.true;
 
-			transition.enter({
+			const transition = new Transition({
 				target: 'body',
 				class: hideClass
 			});
+
+			transition.enter();
 
 			expect($hasClass(document.body, hideClass)).to.be.false;
 		});
@@ -134,9 +143,11 @@ describe('Router: transitions', () => {
 			let from = {};
 			let spy = sinon.spy();
 
-			transition.enter({
+			const transition = new Transition({
 				enter: spy
-			}, to, from);
+			});
+
+			transition.enter(to, from);
 
 			expect(spy.calledOnce).to.be.true;
 			expect(spy.calledWith(to, from)).to.be.true;
@@ -145,10 +156,12 @@ describe('Router: transitions', () => {
 
 	describe('leave', () => {
 		it('should add class to designated element', () => {
-			transition.leave({
+			const transition = new Transition({
 				target: 'body',
 				class: hideClass
 			});
+
+			transition.leave();
 
 			expect($hasClass(document.body, hideClass)).to.be.true;
 			document.body.className = '';
@@ -158,10 +171,11 @@ describe('Router: transitions', () => {
 			let to = {};
 			let from = {};
 			let spy = sinon.spy();
-
-			transition.leave({
+			const transition = new Transition({
 				leave: spy
-			}, to, from);
+			});
+
+			transition.leave(to, from);
 
 			expect(spy.calledOnce).to.be.true;
 			expect(spy.calledWith(to, from)).to.be.true;

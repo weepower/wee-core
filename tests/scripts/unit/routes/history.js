@@ -13,21 +13,21 @@ describe('Router: history', () => {
 
 	it('should execute onReady after $router has already been initialized', done => {
 		let spy = sinon.spy();
+		const finish = function() {
+			expect(history.ready).to.be.true;
+
+			$router.onReady(spy);
+
+			expect(spy.called).to.be.true;
+		};
 
 		$router.map([
 			{ path: '/' }
-		]).run();
-
-		expect(history.ready).to.be.true;
-
-		$router.onReady(spy);
-
-		expect(spy.called).to.be.true;
-		done();
+		]).run().then(finish, finish).then(done, done);
 	});
 
 	describe('navigate', () => {
-		it('should throw SameRouteError when navigating to current URL', () => {
+		it('should throw SameRouteError when navigating to current URL', done => {
 			const resolveSpy = sinon.spy();
 			const rejectSpy = sinon.spy();
 			const finish = function() {
@@ -43,9 +43,9 @@ describe('Router: history', () => {
 
 			$router.map([
 				{ path: '/' }
-			]).run();
-
-			return history.navigate('/').then(resolveSpy, rejectSpy).then(finish, finish);
+			]).run().then(() => {
+				return history.navigate('/');
+			}, done).then(resolveSpy, rejectSpy).then(finish, finish).then(done, done);
 		});
 	});
 });
