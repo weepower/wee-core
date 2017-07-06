@@ -2,19 +2,7 @@ import { $each } from 'core/dom';
 import { _doc } from 'core/variables';
 import { _slice } from 'core/types';
 import { $addClass, $removeClass } from 'dom/index';
-
-let complete = 0;
-let transitionEvent = _whichTransitionEvent();
-let ready = true;
-let pending = false;
-let countEvents = function countEvents() {
-	complete += 1;
-
-	if (pending && pending.elements.length === complete) {
-		ready = true;
-		transition.enter(pending.config);
-	}
-};
+import { warn } from './warn';
 
 /**
  * Detect what transition property to listen for
@@ -38,78 +26,74 @@ function _whichTransitionEvent() {
 	}
 }
 
-const transition = {
-	/**
-	 * Enter the new page
-	 *
-	 * @param {Object} config
-	 * @param {Object} [to]
-	 * @param {Object} [from]
-	 */
-	enter(config, to, from) {
-		// Only enforce if browser supports transitionend event
-		if (! ready && transitionEvent) {
-			return;
-		}
+const transitionEvent = _whichTransitionEvent();
 
-		if (pending && pending.elements.length) {
-			pending.elements.forEach((el) => {
-				el.removeEventListener(transitionEvent, countEvents);
-				$removeClass(el, config.class);
-			});
-
-			this.reset();
-		} else if (config.target && config.class) {
-			$each(config.target, (el) => {
-				$removeClass(el, config.class);
-			});
-		}
-
-		if (config.enter) {
-			config.enter(to, from);
-		}
-	},
-
-	/**
-	 * Leave the current page
-	 *
-	 * @param {Object} config
-	 * @param {Object} [to]
-	 * @param {Object} [from]
-	 */
-	leave(config, to, from) {
-		if (config.target && config.class) {
-			let elements = _slice.call(_doc.querySelectorAll(config.target));
-
-			if (elements.length) {
-				ready = false;
-
-				$each(elements, (el) => {
-					el.addEventListener(transitionEvent, countEvents);
-
-					$addClass(el, config.class);
-				});
-
-				pending = {
-					config,
-					elements
-				};
-			}
-		}
-
-		if (config.leave) {
-			config.leave(to, from);
-		}
-	},
-
-	/**
-	 * Reset module state
-	 */
-	reset() {
-		ready = true;
-		complete = 0;
-		pending = false;
+export default class Transition {
+	constructor(config) {
+		this.transitionEvent = transitionEvent;
+		this.elements = config.target ? _slice.call(_doc.querySelectorAll(config.target)) : [];
+		this.class = config.class || null;
+		this.enterCallback = config.enter || null;
+		this.leaveCallback = config.leave || null;
+		this.timeout = config.timeout || null;
+		this.countEvents = null;
+		this.completed = 0;
 	}
-};
+	enter(to, from) {
+		if (this.class) {
+			if (! this.elements.length) {
+				warn('no elements found - cannot apply enter transition');
+			}
 
-export default transition;
+			this.elements.forEach((el) => {
+				el.removeEventListener(this.transitionEvent, this.countEvents);
+				$removeClass(el, this.class);
+			});
+		}
+
+		if (this.enterCallback) {
+			this.enterCallback(to, from);
+		}
+	}
+	leave(to, from) {
+		const scope = this;
+
+		return new Promise((resolve, reject) => {
+			if (this.class) {
+				if (! this.elements.length) {
+					warn('no elements found - cannot apply leave transition');
+					return resolve(scope);
+				}
+
+				this.countEvents = function countEvents() {
+					scope.completed += 1;
+
+					if (scope.elements.length === scope.completed) {
+						resolve(scope);
+					}
+				};
+
+				// Add class to targets
+				$each(this.elements, (el) => {
+					el.addEventListener(this.transitionEvent, this.countEvents);
+
+					$addClass(el, this.class);
+				});
+			} else if (this.leaveCallback) {
+				this.leaveCallback(to, from, (error) => {
+					if (error) {
+						return reject(error);
+					}
+
+					resolve(scope);
+				});
+			}
+
+			if (this.timeout) {
+				setTimeout(() => {
+					resolve(scope);
+				}, this.timeout);
+			}
+		});
+	}
+}
