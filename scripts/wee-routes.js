@@ -15,7 +15,9 @@ const defaults = {
 			return { x: 0, y: 0 };
 		}
 	},
-	transition: null
+	transition: {
+		timeout: 0
+	}
 };
 let settings = $copy(defaults);
 let hasPjax = false;
@@ -184,8 +186,8 @@ router.reset = function reset() {
 	hasPjax = false;
 	pjax.reset();
 	window.removeEventListener('popstate', history.popstate);
-	history = new History(settings.scrollBehavior);
 	settings = $copy(defaults);
+	history = new History(settings);
 }
 
 /**

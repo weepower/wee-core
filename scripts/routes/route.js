@@ -1,5 +1,5 @@
 import { $isString, $isObject } from 'core/types';
-const TRAILING_SLASH = /\/?$/;
+import Transition from './transitions';
 
 /**
  * Find all ancestor routes
@@ -38,7 +38,8 @@ export function createRoute(location, record = {}) {
 		segments: location.segments,
 		params: location.params || {},
 		fullPath: location.fullPath,
-		matched: _createMatched(record)
+		matched: _createMatched(record),
+		transition: record.transition ? new Transition(record.transition) : null
 	};
 
 	return Object.freeze(route);

@@ -105,7 +105,6 @@ export default class History {
 	 */
 	ensureState(transitionPromise) {
 		this.ensureUrl();
-		// this.transitionEnter();
 
 		if (transitionPromise) {
 			transitionPromise.then((transition) => {
@@ -154,15 +153,11 @@ export default class History {
 	navigate(path) {
 		return new Promise((resolve, reject) => {
 			const route = match(path);
+			const transition = route.transition || new Transition(this.transition || {});
 			let asyncTasks = [];
-			let transition = new Transition(this.transition || {});
 			let transitionPromise = null;
 
-			// TODO: Add transition instance to route object/register transition with state
-			// TODO: Use global transition, optionally overriding with route specific transition
-			// TODO: Use transition from route during navigation
-
-			if (this.current !== START && this.transition) {
+			if (this.current !== START) {
 				transitionPromise = transition.leave(route, this.current);
 
 				asyncTasks.push(transitionPromise);

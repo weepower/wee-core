@@ -456,7 +456,8 @@ describe('Router', () => {
 							path: '/path/to/:place',
 							regex: /^\/path\/to\/((?:[^\/]+?))(?:\/(?=$))?$/i
 						}
-					]
+					],
+					transition: null
 				});
 
 				done();

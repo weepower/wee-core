@@ -27,6 +27,7 @@ function _whichTransitionEvent() {
 }
 
 const transitionEvent = _whichTransitionEvent();
+const supportsTransitionEvent = transitionEvent ? true : false;
 
 export default class Transition {
 	constructor(config) {
@@ -35,10 +36,17 @@ export default class Transition {
 		this.class = config.class || null;
 		this.enterCallback = config.enter || null;
 		this.leaveCallback = config.leave || null;
-		this.timeout = config.timeout || null;
+		this.timeout = typeof config.timeout === 'number' ? config.timeout : null;
 		this.countEvents = null;
 		this.completed = 0;
 	}
+
+	/**
+	 * Remove class from target/execute enterCallback
+	 *
+	 * @param {Object} to
+	 * @param {Object} from
+	 */
 	enter(to, from) {
 		if (this.class) {
 			if (! this.elements.length) {
@@ -46,7 +54,10 @@ export default class Transition {
 			}
 
 			this.elements.forEach((el) => {
-				el.removeEventListener(this.transitionEvent, this.countEvents);
+				if (supportsTransitionEvent) {
+					el.removeEventListener(this.transitionEvent, this.countEvents);
+				}
+
 				$removeClass(el, this.class);
 			});
 		}
@@ -55,6 +66,14 @@ export default class Transition {
 			this.enterCallback(to, from);
 		}
 	}
+
+	/**
+	 * Apply class to target/execute leaveCallback
+	 *
+	 * @param {Object} to
+	 * @param {Object} from
+	 * @returns {Promise}
+	 */
 	leave(to, from) {
 		const scope = this;
 
@@ -75,10 +94,16 @@ export default class Transition {
 
 				// Add class to targets
 				$each(this.elements, (el) => {
-					el.addEventListener(this.transitionEvent, this.countEvents);
+					if (supportsTransitionEvent) {
+						el.addEventListener(this.transitionEvent, this.countEvents);
+					}
 
 					$addClass(el, this.class);
 				});
+
+				if (! supportsTransitionEvent) {
+					resolve(scope);
+				}
 			} else if (this.leaveCallback) {
 				this.leaveCallback(to, from, (error) => {
 					if (error) {
@@ -89,7 +114,7 @@ export default class Transition {
 				});
 			}
 
-			if (this.timeout) {
+			if (this.timeout !== null) {
 				setTimeout(() => {
 					resolve(scope);
 				}, this.timeout);
