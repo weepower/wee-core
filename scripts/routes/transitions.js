@@ -32,7 +32,7 @@ const supportsTransitionEvent = transitionEvent ? true : false;
 export default class Transition {
 	constructor(config) {
 		this.transitionEvent = transitionEvent;
-		this.elements = config.target ? _slice.call(_doc.querySelectorAll(config.target)) : [];
+		this.target = config.target || null;
 		this.class = config.class || null;
 		this.enterCallback = config.enter || null;
 		this.leaveCallback = config.leave || null;
@@ -42,18 +42,31 @@ export default class Transition {
 	}
 
 	/**
+	 * Select DOM element(s)
+	 *
+	 * @param {string} target
+	 * @returns {*}
+	 * @private
+	 */
+	_select(target) {
+		return _slice.call(_doc.querySelectorAll(target));
+	}
+
+	/**
 	 * Remove class from target/execute enterCallback
 	 *
 	 * @param {Object} to
 	 * @param {Object} from
 	 */
 	enter(to, from) {
-		if (this.class) {
-			if (! this.elements.length) {
+		if (this.class && this.target) {
+			let elements = this._select(this.target);
+
+			if (! elements.length) {
 				warn('no elements found - cannot apply enter transition');
 			}
 
-			this.elements.forEach((el) => {
+			elements.forEach((el) => {
 				if (supportsTransitionEvent) {
 					el.removeEventListener(this.transitionEvent, this.countEvents);
 				}
@@ -78,8 +91,10 @@ export default class Transition {
 		const scope = this;
 
 		return new Promise((resolve, reject) => {
-			if (this.class) {
-				if (! this.elements.length) {
+			if (this.class && this.target) {
+				let elements = this._select(this.target);
+
+				if (! elements.length) {
 					warn('no elements found - cannot apply leave transition');
 					return resolve(scope);
 				}
@@ -87,13 +102,13 @@ export default class Transition {
 				this.countEvents = function countEvents() {
 					scope.completed += 1;
 
-					if (scope.elements.length === scope.completed) {
+					if (elements.length === scope.completed) {
 						resolve(scope);
 					}
 				};
 
 				// Add class to targets
-				$each(this.elements, (el) => {
+				$each(elements, (el) => {
 					if (supportsTransitionEvent) {
 						el.addEventListener(this.transitionEvent, this.countEvents);
 					}
@@ -106,7 +121,7 @@ export default class Transition {
 				}
 			} else if (this.leaveCallback) {
 				this.leaveCallback(to, from, (error) => {
-					if (error) {
+					if (error instanceof Error) {
 						return reject(error);
 					}
 
