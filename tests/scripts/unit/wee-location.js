@@ -15,12 +15,14 @@ describe('location', () => {
 		beforeEach($router.reset);
 
 		it('should return the current path as an array of it\'s segments', () => {
-			expect($location.segments()).to.be.an('array');
-			expect($location.segments().length).to.equal(4);
-			expect($location.segments()[0]).to.equal('one');
-			expect($location.segments()[1]).to.equal('two');
-			expect($location.segments()[2]).to.equal('three');
-			expect($location.segments()[3]).to.equal('four');
+			const segs = $location.segments();
+
+			expect(segs).to.be.an('array');
+			expect(segs.length).to.equal(4);
+			expect(segs[0]).to.equal('one');
+			expect(segs[1]).to.equal('two');
+			expect(segs[2]).to.equal('three');
+			expect(segs[3]).to.equal('four');
 		});
 
 		it('should return the segment by index of the current path', () => {
