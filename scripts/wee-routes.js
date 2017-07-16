@@ -15,8 +15,9 @@ const defaults = {
 			return { x: 0, y: 0 };
 		}
 	},
-	transition: null,
-	onError: []
+	transition: {
+		timeout: 0
+	}
 };
 let settings = $copy(defaults);
 let hasPjax = false;
@@ -118,7 +119,7 @@ router.pjax = function initPjax(config = {}) {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
 					history.push(destination)
 						.catch(error => {
-							settings.onError.forEach(callback => callback(error));
+							pjax.onError(error);
 						});
 				};
 
@@ -126,21 +127,6 @@ router.pjax = function initPjax(config = {}) {
 				history.replacePage = pjax.replace;
 			});
 		}
-	}
-
-	return this;
-}
-
-/**
- * Register onError method
- *
- * @param {Function|Array} error
- */
-router.onError = function onError(error) {
-	if ($isArray(error)) {
-		settings.onError = settings.onError.concat(error);
-	} else {
-		settings.onError.push(error);
 	}
 
 	return this;
@@ -200,8 +186,8 @@ router.reset = function reset() {
 	hasPjax = false;
 	pjax.reset();
 	window.removeEventListener('popstate', history.popstate);
-	history = new History(settings.scrollBehavior);
 	settings = $copy(defaults);
+	history = new History(settings);
 }
 
 /**
@@ -242,26 +228,7 @@ router.routes = function routes(key, keyType = 'path') {
  * @returns {router}
  */
 router.run = function runRoutes() {
-	// Process routes when document is loaded
-	$ready(() => {
-		history.navigate(uri().fullPath)
-			.catch(error => {
-				settings.onError.forEach(callback => callback(error));
-			});
-	});
-
-	return this;
-
-	// TODO: This is going to set the state of the current route in history
-	// TODO: I don't think that will be desirable
-	// TODO: Do we need a way to evaluate routes without changing history.current?
-	// const { pathMap, nameMap } = getRouteMap();
-	//
-	// if (pathMap[value]) {
-	// 	history.navigate(value);
-	// } else if (nameMap[value]) {
-	// 	history.navigate(value);
-	// }
+	return history.navigate(uri().fullPath);
 }
 
 export default router;

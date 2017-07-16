@@ -96,7 +96,8 @@ function _reset(sel) {
 }
 
 const pjax = {
-	// Empty callback - will be defined by router.pjax
+	// Empty callbacks - will be defined by router.pjax
+	onError() {},
 	onTrigger() {},
 
 	/**
@@ -223,6 +224,11 @@ const pjax = {
 	 */
 	init(options) {
 		if (supportsPushState) {
+			if (options.onError) {
+				this.onError = options.onError;
+				delete options.onError;
+			}
+
 			settings = $extend(settings, options);
 
 			// https://developers.google.com/web/updates/2015/09/history-api-scroll-restoration
@@ -282,6 +288,11 @@ const pjax = {
 			return;
 		}
 
+		if (! response) {
+			warn('no response to use');
+			return;
+		}
+
 		let html = response.data;
 
 		if (settings.replace) {
@@ -297,12 +308,13 @@ const pjax = {
 			$each(sel, function(el) {
 				const target = $(sel)[0];
 
+				// Retain any classes added dynamically to container
+				el.className = target.className;
+
 				if (target) {
 					const parent = target.parentNode;
 
-					action === 'append' ?
-						parent.appendChild(el) :
-						parent.replaceChild(el, target);
+					target.innerHTML = el.innerHTML
 
 					_reset(parent);
 				}

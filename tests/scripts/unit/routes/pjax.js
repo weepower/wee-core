@@ -15,7 +15,7 @@ const responses = {
 	contactConfirmation: '<title>Contact confirmation</title><main>This is the contact confirmation page</main>'
 };
 
-describe('pjax', () => {
+describe('Router: pjax', () => {
 	let stateArray = [];
 	let server;
 	let homeSpy;
@@ -89,125 +89,138 @@ describe('pjax', () => {
 
 	it('should throw FetchError if pjax.go request fails', done => {
 		let spy = sinon.spy();
+		let finish = function() {
+			$events.trigger('#about', 'click');
+			server.respond();
+
+			setTimeout(function() {
+				expect(spy.calledOnce).to.be.true;
+
+				// Babel does not extend built-in types so I cannot check
+				// for instanceof FetchError like I would prefer
+				expect(spy.args[0][0].errorType).to.equal('FetchError');
+				expect(spy.args[0][0]).to.be.a('Error');
+				done();
+			}, 0);
+		}
 
 		server.respondWith('GET', '/about', [404, {}, '']);
 
-		$router.pjax()
-			.onError(spy)
-			.run();
-
-		$events.trigger('#about', 'click');
-		server.respond();
-
-		setTimeout(function() {
-			expect(spy.calledOnce).to.be.true;
-
-			// Babel does not extend built-in types so I cannot check
-			// for instanceof FetchError like I would prefer
-			expect(spy.args[0][0].errorType).to.equal('FetchError');
-			expect(spy.args[0][0]).to.be.a('Error');
-			done();
-		}, 0);
+		$router.pjax({
+				onError: spy
+			})
+			.run()
+			.then(finish, finish);
 	});
 
 	it('should replace target partials on navigation', done => {
-		$router.pjax().run();
+		function finish() {
+			$events.trigger('#about', 'click');
+			server.respond();
 
-		$events.trigger('#about', 'click');
-		server.respond();
+			setTimeout(function() {
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+				done();
+			}, 200);
+		}
 
-		setTimeout(function() {
-			expect($('title').text()).to.equal('About');
-			expect($('main').text()).to.equal('This is the about page');
-			done();
-		}, 200);
+		$router.pjax().run().then(finish, finish);
 	});
 
 	it('should add window.history entry', done => {
-		$router.pjax().run();
+		function finish() {
+			// Ensure that history.length is not at max of 50 entries
+			while (window.history.length > 49) {
+				window.history.back();
+			}
 
-		// Ensure that history.length is not at max of 50 entries
-		while (window.history.length > 49) {
-			window.history.back();
+			const initial = window.history.length;
+
+			// Triggering PJAX should call $router.push which will add history entry
+			$events.trigger('#about', 'click');
+			server.respond();
+
+			setTimeout(function() {
+				expect(window.history.length).to.equal(initial + 1);
+				expect($('title').text()).to.equal('About');
+				expect($('main').text()).to.equal('This is the about page');
+				done();
+			}, 200);
 		}
 
-		const initial = window.history.length;
-
-		// Triggering PJAX should call $router.push which will add history entry
-		$events.trigger('#about', 'click');
-		server.respond();
-
-		setTimeout(function() {
-			expect(window.history.length).to.equal(initial + 1);
-			expect($('title').text()).to.equal('About');
-			expect($('main').text()).to.equal('This is the about page');
-			done();
-		}, 200);
+		$router.pjax().run().then(finish, finish);
 	});
 
 	it('should add PJAX header', done => {
-		$router.pjax().run();
+		function finish() {
+			$events.trigger('#contact', 'click');
+			server.respond();
 
-		$events.trigger('#contact', 'click');
-		server.respond();
+			setTimeout(function() {
+				expect(server.requests[0].requestHeaders['X-PJAX']).to.equal('true');
+				expect(server.requests.length).to.equal(1);
+				done();
+			}, 0);
+		}
 
-		setTimeout(function() {
-			expect(server.requests[0].requestHeaders['X-PJAX']).to.equal('true');
-			expect(server.requests.length).to.equal(1);
-			done();
-		}, 0);
+		$router.pjax().run().then(finish, finish);
 	});
 
 	it('should update on popstate events', done => {
-		$router.pjax().run();
+		function finish() {
+			// Navigate to about page
+			$events.trigger('#about', 'click');
+			server.respond();
 
-		// Navigate to about page
-		$events.trigger('#about', 'click');
-		server.respond();
+			// Navigate to faq page
+			$events.trigger('#faq', 'click');
+			server.respond();
 
-		// Navigate to faq page
-		$events.trigger('#faq', 'click');
-		server.respond();
-
-		// Assert we are on FAQ page
-		setTimeout(function() {
-			expect(window.location.pathname).to.equal('/faq');
-			expect($('title').text()).to.equal('FAQ');
-			expect($('main').text()).to.equal('This is the FAQ page');
-
-			// Trigger popstate, clicking back button
-			window.history.back();
-
-			// Server could not respond properly without deferring
-			// history.back must be asynchronous
+			// Assert we are on FAQ page
 			setTimeout(function() {
-				server.respond();
+				expect(window.location.pathname).to.equal('/faq');
+				expect($('title').text()).to.equal('FAQ');
+				expect($('main').text()).to.equal('This is the FAQ page');
 
+				// Trigger popstate, clicking back button
+				window.history.back();
+
+				// Server could not respond properly without deferring
+				// history.back must be asynchronous
 				setTimeout(function() {
-					expect(window.location.pathname).to.equal('/about');
-					expect($('title').text()).to.equal('About');
-					expect($('main').text()).to.equal('This is the about page');
+					server.respond();
 
-					done();
-				}, 100);
-			}, 300);
-		}, 100);
+					setTimeout(function() {
+						expect(window.location.pathname).to.equal('/about');
+						expect($('title').text()).to.equal('About');
+						expect($('main').text()).to.equal('This is the about page');
+
+						done();
+					}, 100);
+				}, 300);
+			}, 100);
+		}
+
+		$router.pjax().run().then(finish, finish);
 	});
 
 	describe('push', () => {
-		it('should trigger PJAX request if enabled', () => {
+		it('should trigger PJAX request if enabled', done => {
 			let finish = function() {
 				expect(window.location.pathname).to.equal('/about');
 				expect($('title').text()).to.equal('About');
 				expect($('main').text()).to.equal('This is the about page');
 			};
 
-			$router.pjax().run();
+			$router.pjax().run()
+				.then(() => {
+					let promise = $router.push('/about');
 
-			let process = $router.push('/about');
-			server.respond();
+					server.respond();
 
-			return process.then(finish, finish);
+					return promise;
+				}, done).then(finish, finish).then(done, done);
 		});
 
 		it('should be able to bypass PJAX', () => {
@@ -234,19 +247,21 @@ describe('pjax', () => {
 	});
 
 	describe('replace', () => {
-		it('should trigger PJAX request if enabled', () => {
+		it('should trigger PJAX request if enabled', done => {
 			let finish = function() {
 				expect(window.location.pathname).to.equal('/about');
 				expect($('title').text()).to.equal('About');
 				expect($('main').text()).to.equal('This is the about page');
 			};
 
-			$router.pjax().run();
+			$router.pjax().run()
+				.then(() => {
+					let promise = $router.replace('/about');
 
-			let process = $router.replace('/about');
-			server.respond();
+					server.respond();
 
-			return process.then(finish, finish);
+					return promise;
+				}, done).then(finish, finish).then(done, done);
 		});
 
 		it('should be able to bypass PJAX', () => {

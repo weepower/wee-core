@@ -2,19 +2,7 @@ import { $each } from 'core/dom';
 import { _doc } from 'core/variables';
 import { _slice } from 'core/types';
 import { $addClass, $removeClass } from 'dom/index';
-
-let complete = 0;
-let transitionEvent = _whichTransitionEvent();
-let ready = true;
-let pending = false;
-let countEvents = function countEvents() {
-	complete += 1;
-
-	if (pending && pending.elements.length === complete) {
-		ready = true;
-		transition.enter(pending.config);
-	}
-};
+import { warn } from './warn';
 
 /**
  * Detect what transition property to listen for
@@ -38,78 +26,114 @@ function _whichTransitionEvent() {
 	}
 }
 
-const transition = {
-	/**
-	 * Enter the new page
-	 *
-	 * @param {Object} config
-	 * @param {Object} [to]
-	 * @param {Object} [from]
-	 */
-	enter(config, to, from) {
-		// Only enforce if browser supports transitionend event
-		if (! ready && transitionEvent) {
-			return;
-		}
+const transitionEvent = _whichTransitionEvent();
+const supportsTransitionEvent = transitionEvent ? true : false;
 
-		if (pending && pending.elements.length) {
-			pending.elements.forEach((el) => {
-				el.removeEventListener(transitionEvent, countEvents);
-				$removeClass(el, config.class);
-			});
-
-			this.reset();
-		} else if (config.target && config.class) {
-			$each(config.target, (el) => {
-				$removeClass(el, config.class);
-			});
-		}
-
-		if (config.enter) {
-			config.enter(to, from);
-		}
-	},
+export default class Transition {
+	constructor(config) {
+		this.transitionEvent = transitionEvent;
+		this.target = config.target || null;
+		this.class = config.class || null;
+		this.enterCallback = config.enter || null;
+		this.leaveCallback = config.leave || null;
+		this.timeout = typeof config.timeout === 'number' ? config.timeout : null;
+		this.countEvents = null;
+		this.completed = 0;
+	}
 
 	/**
-	 * Leave the current page
+	 * Select DOM element(s)
 	 *
-	 * @param {Object} config
-	 * @param {Object} [to]
-	 * @param {Object} [from]
+	 * @param {string} target
+	 * @returns {*}
+	 * @private
 	 */
-	leave(config, to, from) {
-		if (config.target && config.class) {
-			let elements = _slice.call(_doc.querySelectorAll(config.target));
+	_select(target) {
+		return _slice.call(_doc.querySelectorAll(target));
+	}
 
-			if (elements.length) {
-				ready = false;
+	/**
+	 * Remove class from target/execute enterCallback
+	 *
+	 * @param {Object} to
+	 * @param {Object} from
+	 */
+	enter(to, from) {
+		if (this.class && this.target) {
+			let elements = this._select(this.target);
 
+			if (! elements.length) {
+				warn('no elements found - cannot apply enter transition');
+			}
+
+			elements.forEach((el) => {
+				if (supportsTransitionEvent) {
+					el.removeEventListener(this.transitionEvent, this.countEvents);
+				}
+
+				$removeClass(el, this.class);
+			});
+		}
+
+		if (this.enterCallback) {
+			this.enterCallback(to, from);
+		}
+	}
+
+	/**
+	 * Apply class to target/execute leaveCallback
+	 *
+	 * @param {Object} to
+	 * @param {Object} from
+	 * @returns {Promise}
+	 */
+	leave(to, from) {
+		const scope = this;
+
+		return new Promise((resolve, reject) => {
+			if (this.class && this.target) {
+				let elements = this._select(this.target);
+
+				if (! elements.length) {
+					warn('no elements found - cannot apply leave transition');
+					return resolve(scope);
+				}
+
+				this.countEvents = function countEvents() {
+					scope.completed += 1;
+
+					if (elements.length === scope.completed) {
+						resolve(scope);
+					}
+				};
+
+				// Add class to targets
 				$each(elements, (el) => {
-					el.addEventListener(transitionEvent, countEvents);
+					if (supportsTransitionEvent) {
+						el.addEventListener(this.transitionEvent, this.countEvents);
+					}
 
-					$addClass(el, config.class);
+					$addClass(el, this.class);
 				});
 
-				pending = {
-					config,
-					elements
-				};
+				if (! supportsTransitionEvent) {
+					resolve(scope);
+				}
+			} else if (this.leaveCallback) {
+				this.leaveCallback(to, from, (error) => {
+					if (error instanceof Error) {
+						return reject(error);
+					}
+
+					resolve(scope);
+				});
 			}
-		}
 
-		if (config.leave) {
-			config.leave(to, from);
-		}
-	},
-
-	/**
-	 * Reset module state
-	 */
-	reset() {
-		ready = true;
-		complete = 0;
-		pending = false;
+			if (this.timeout !== null) {
+				setTimeout(() => {
+					resolve(scope);
+				}, this.timeout);
+			}
+		});
 	}
-};
-
-export default transition;
+}

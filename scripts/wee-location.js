@@ -1,7 +1,7 @@
 import { parseLocation } from 'routes/location';
 
 /**
- * Retrieve information about current location
+ * Retrieve information about current location or provided URL
  *
  * @param {string} [value]
  * @returns {Object}
