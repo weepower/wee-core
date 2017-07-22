@@ -14,6 +14,48 @@ describe('Store', () => {
 		};
 	});
 
+	/**
+	 * Push or concatenate values into array
+	 *
+	 * @private
+	 */
+	describe('_add', () => {
+		beforeEach(() => {
+			storeDouble.$.prop = [1, 2];
+		});
+
+		it('should concatenate provided array to existing property', () => {
+			const result = $store._add('concat', storeDouble, observeDouble, 'prop', [3, 4, 5], false);
+
+			expect(result).to.deep.equal([1, 2, 3, 4, 5]);
+		});
+
+		it('should concatenate provided array at beginning of existing property', () => {
+			const result = $store._add('concat', storeDouble, observeDouble, 'prop', [3, 4, 5], true);
+
+			expect(result).to.deep.equal([3, 4, 5, 1, 2]);
+		});
+
+		it('should push value into end of existing property', () => {
+			const result = $store._add('push', storeDouble, observeDouble, 'prop', 5, false);
+
+			expect(result).to.deep.equal([1, 2, 5]);
+		});
+
+		it('should push value into end of existing property', () => {
+			const result = $store._add('push', storeDouble, observeDouble, 'prop', 5, true);
+
+			expect(result).to.deep.equal([5, 1, 2]);
+		});
+
+		it('should push/concatenate value onto $ if no key provided', () => {
+			storeDouble.$ = {};
+			const result = $store._add('push', storeDouble, observeDouble, 5, true);
+
+			expect(result).to.deep.equal([5]);
+		});
+	});
+
 	describe('_storage', () => {
 		it('should retrieve data storage root, key, and value', () => {
 			storeDouble.$.test = true;
@@ -165,6 +207,30 @@ describe('Store', () => {
 			expect($store.has('propExists')).to.be.true;
 			expect($store.has('unknownProp')).to.be.false;
 			expect($store.has('undefinedProp')).to.be.false;
+		});
+	});
+
+	describe('push', () => {
+		it('should push or prepend value to property', () => {
+			$store.set('prop', [1, 2]);
+			const result = $store.push('prop', 3);
+
+			expect(result).to.deep.equal([1, 2, 3]);
+
+			const result2 = $store.push('prop', 0, true);
+			expect(result2).to.deep.equal([0, 1, 2, 3]);
+		});
+	});
+
+	describe('concat', () => {
+		it('should concatenate array to existing array property', () => {
+			$store.set('prop', [1, 2]);
+			const result = $store.concat('prop', [3, 4]);
+
+			expect(result).to.deep.equal([1, 2, 3, 4]);
+
+			const result2 = $store.concat('prop', [-1, 0], true);
+			expect(result2).to.deep.equal([-1, 0, 1, 2, 3, 4]);
 		});
 	});
 });

@@ -1,5 +1,5 @@
 import { $exec } from 'core/core';
-import { $isObject, $isFunction, $type } from 'core/types';
+import { $copy, $isObject, $isFunction, $toArray, $type } from 'core/types';
 import { U } from 'core/variables';
 
 export class Store {
@@ -13,8 +13,60 @@ export class Store {
 	}
 
 	/**
-	 * Get global variable
+	 * Push or concatenate values into array
 	 *
+	 * @param {string} type
+	 * @param {Object} obj
+	 * @param {Object} obs
+	 * @param {string} key
+	 * @param {Array|*} val
+	 * @param {boolean} prepend
+	 * @returns {*}
+	 * @private
+	 */
+	_add(type, obj, obs, key, val, prepend) {
+		if (prepend === U) {
+			prepend = val;
+			val = key;
+		}
+
+		const stored = this._storage(obj, key, true);
+		const seg = stored[1];
+		const orig = $copy(stored[2]);
+		let root = stored[0];
+
+		// If store property is not already an array, set to empty array
+		if (! Array.isArray(orig)) {
+			root[seg] = [];
+		}
+
+		if (type === 'concat') {
+			root[seg] = prepend ?
+				$toArray(val).concat(root[seg]) :
+				root[seg].concat(val);
+		} else {
+			prepend ?
+				root[seg].unshift(val) :
+				root[seg].push(val);
+		}
+
+		// TODO: Observables
+		// _trigger(obj, obs, key, orig, root[seg],
+		// 	type == 1 ? 'concat' : 'push');
+
+		return root[seg];
+	}
+
+	/**
+	 * Get variable
+	 *
+	 * @param {Object} obj
+	 * @param {Object} obs
+	 * @param {string} key
+	 * @param {*} fallback
+	 * @param {boolean} set
+	 * @param {Object} options
+	 * @returns {*}
 	 * @private
 	 */
 	_get(obj, obs, key, fallback, set, options) {
@@ -81,6 +133,12 @@ export class Store {
 	/**
 	 * Set variable
 	 *
+	 * @param {Object} obj
+	 * @param {Object} obs
+	 * @param {string} key
+	 * @param {*} val
+	 * @param {Object} options
+	 * @returns {*}
 	 * @private
 	 */
 	_set(obj, obs, key, val, options) {
@@ -118,9 +176,9 @@ export class Store {
 	 * @param {string} key
 	 * @param {*} [fallback]
 	 * @param {boolean} [set=false]
-	 * @param {object} [options] - available for fallback functions
+	 * @param {Object} [options] - available for fallback functions
 	 * @param {Array} [options.args]
-	 * @param {object} [options.scope]
+	 * @param {Object} [options.scope]
 	 * @returns {*} value
 	 */
 	get(key, fallback, set = false, options) {
@@ -168,6 +226,30 @@ export class Store {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Push value into global array
+	 *
+	 * @param {string} key
+	 * @param {*} val
+	 * @param {boolean} [prepend=false]
+	 * @returns {Array|Object} value
+	 */
+	push(key, val, prepend = false) {
+		return this._add('push', this.store, this.observe, key, val, prepend);
+	}
+
+	/**
+	 * Concatenate values into global storage
+	 *
+	 * @param {string} key
+	 * @param {*} val
+	 * @param {boolean} [prepend=false]
+	 * @returns {Array|Object} value
+	 */
+	concat(key, val, prepend = false) {
+		return this._add('concat', this.store, this.observe, key, val, prepend);
 	}
 }
 
