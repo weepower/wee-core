@@ -156,4 +156,15 @@ describe('Store', () => {
 			expect($store.get('propA.propB.propC')).to.be.true;
 		});
 	});
+
+	describe('has', () => {
+		it('check if property is set', () => {
+			$store.set('propExists', true);
+			$store.set('undefinedProp', undefined);
+
+			expect($store.has('propExists')).to.be.true;
+			expect($store.has('unknownProp')).to.be.false;
+			expect($store.has('undefinedProp')).to.be.false;
+		});
+	});
 });

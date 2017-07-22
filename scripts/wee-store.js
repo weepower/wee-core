@@ -1,5 +1,5 @@
 import { $exec } from 'core/core';
-import { $isFunction, $type } from 'core/types';
+import { $isObject, $isFunction, $type } from 'core/types';
 import { U } from 'core/variables';
 
 export class Store {
@@ -139,6 +139,35 @@ export class Store {
 	 */
 	set(key, val, options) {
 		return this._set(this.store, this.observe, key, val, options);
+	}
+
+	/**
+	 * Check if storage criteria is set
+	 *
+	 * @param {string} key
+	 * @param {*} [val]
+	 * @returns {boolean}
+	 */
+	has(key, val) {
+		const resp = this._storage(this.store, key)[2];
+
+		if (resp === U) {
+			return false;
+		}
+
+		if (val !== U) {
+			if ($isObject(resp)) {
+				return resp.hasOwnProperty(val);
+			}
+
+			if (Array.isArray(resp)) {
+				return resp.indexOf(val) > -1;
+			}
+
+			return resp === val;
+		}
+
+		return true;
 	}
 }
 
