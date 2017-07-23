@@ -12,6 +12,7 @@ describe('Store', () => {
 		observeDouble = {
 			$: {}
 		};
+		$store.store.$ = {};
 	});
 
 	/**
@@ -231,6 +232,36 @@ describe('Store', () => {
 
 			const result2 = $store.concat('prop', [-1, 0], true);
 			expect(result2).to.deep.equal([-1, 0, 1, 2, 3, 4]);
+		});
+	});
+
+	describe('merge', () => {
+		it('should merge value into existing property, creating new object reference', () => {
+			let orig = { name: 'Donald Draper' }
+			$store.set('prop', orig);
+			const result = $store.merge('prop', { age: 35 });
+
+			expect(result).to.deep.equal({
+				name: 'Donald Draper',
+				age: 35
+			});
+			expect(orig).to.deep.equal({ name: 'Donald Draper' });
+		});
+	});
+
+	describe('drop', () => {
+		it('should delete top level property from store', () => {
+			$store.set('prop', true);
+			$store.drop('prop');
+
+			expect($store.get('prop')).to.be.null;
+		});
+
+		it('should delete by index if root is array', () => {
+			$store.set(['one', 'two', 'three']);
+			$store.drop(1); // Array index
+
+			expect($store.get()).to.deep.equal(['one', 'three']);
 		});
 	});
 });

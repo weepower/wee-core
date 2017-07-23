@@ -1,5 +1,5 @@
 import { $exec } from 'core/core';
-import { $copy, $isObject, $isFunction, $toArray, $type } from 'core/types';
+import { $copy, $extend, $isObject, $isFunction, $toArray, $type } from 'core/types';
 import { U } from 'core/variables';
 
 export class Store {
@@ -64,12 +64,12 @@ export class Store {
 	 * @param {Object} obs
 	 * @param {string} key
 	 * @param {*} fallback
-	 * @param {boolean} set
-	 * @param {Object} options
+	 * @param {boolean} [set=false]
+	 * @param {Object} [options={}]
 	 * @returns {*}
 	 * @private
 	 */
-	_get(obj, obs, key, fallback, set, options) {
+	_get(obj, obs, key, fallback, set = false, options = {}) {
 		const resp = this._storage(obj, key)[2];
 
 		if (resp !== U) {
@@ -137,11 +137,11 @@ export class Store {
 	 * @param {Object} obs
 	 * @param {string} key
 	 * @param {*} val
-	 * @param {Object} options
+	 * @param {Object} [options={}]
 	 * @returns {*}
 	 * @private
 	 */
-	_set(obj, obs, key, val, options) {
+	_set(obj, obs, key, val, options = {}) {
 		let stored = this._storage(obj, key, true);
 		let seg = stored[1];
 		let data = seg === '$' ?
@@ -250,6 +250,36 @@ export class Store {
 	 */
 	concat(key, val, prepend = false) {
 		return this._add('concat', this.store, this.observe, key, val, prepend);
+	}
+
+	/**
+	 * Extend object into global storage
+	 *
+	 * @param {string} key
+	 * @param {Object} val
+	 * @returns {Object} value
+	 */
+	merge(key, val) {
+		val = $extend(true, {}, this._get(this.store, this.observe, key, {}), val);
+
+		return this._set(this.store, this.observe, key, val);
+	}
+
+	drop(key) {
+		const stored = this._storage(this.store, key);
+		let root = stored[0];
+		let seg = stored[1];
+		let orig = $copy(stored[2]);
+		let arr = Array.isArray(root);
+
+		arr ?
+			root.splice(seg, 1) :
+			delete root[seg];
+
+		// TODO: Observables
+		// _trigger(this.store, this.observe, key, orig, root[seg], 'drop');
+
+		return orig;
 	}
 }
 
