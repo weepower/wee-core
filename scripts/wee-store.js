@@ -8,11 +8,22 @@ import StoreError from 'store/error';
 let instances = {};
 
 export class Store {
-	constructor(name) {
+	constructor(name, options = {}) {
+		if (typeof options.browserStorage === 'string') {
+			this.browserStore = options.browserStorage === 'local' ?
+				window.localStorage :
+				window.sessionStorage;
+		} else {
+			this.browserStore = null;
+		}
+
 		this.name = name;
-		this.store = {
-			$: {}
-		};
+		this.keepInMemory = options.keepInMemory || true;
+		this.prefix = options.prefix || 'wee';
+		this.browserStoreKey = `${this.prefix}_${this.name}`;
+		this.store = this.browserStore && this.browserStore.getItem(this.browserStoreKey) ?
+			JSON.parse(this.browserStore.getItem(this.browserStoreKey)) :
+			{ $: {} };
 		this.observe = {
 			$: {}
 		};
@@ -22,21 +33,22 @@ export class Store {
 	 * Push or concatenate values into array
 	 *
 	 * @param {string} type - 'concat' or 'push'
-	 * @param {Object} obj
+	 * @param {Object} store
 	 * @param {Object} obs
 	 * @param {string} key
 	 * @param {Array|*} val
 	 * @param {boolean} prepend
+	 * @param {boolean} [sync = true]
 	 * @returns {*}
 	 * @private
 	 */
-	_add(type, obj, obs, key, val, prepend) {
+	_add(type, store, obs, key, val, prepend, sync = true) {
 		if (prepend === U) {
 			prepend = val;
 			val = key;
 		}
 
-		const stored = this._storage(obj, key, true);
+		const stored = this._storage(store, key, true);
 		const seg = stored[1];
 		const orig = $copy(stored[2]);
 		let root = stored[0];
@@ -56,8 +68,12 @@ export class Store {
 				root[seg].push(val);
 		}
 
+		if (sync) {
+			this._syncStore(store);
+		}
+
 		// TODO: Observables
-		// _trigger(obj, obs, key, orig, root[seg],
+		// _trigger(store, obs, key, orig, root[seg],
 		// 	type == 1 ? 'concat' : 'push');
 
 		return root[seg];
@@ -66,7 +82,7 @@ export class Store {
 	/**
 	 * Get variable
 	 *
-	 * @param {Object} obj
+	 * @param {Object} store
 	 * @param {Object} obs
 	 * @param {string} key
 	 * @param {*} fallback
@@ -75,8 +91,8 @@ export class Store {
 	 * @returns {*}
 	 * @private
 	 */
-	_get(obj, obs, key, fallback, set = false, options = {}) {
-		const resp = this._storage(obj, key)[2];
+	_get(store, obs, key, fallback, set = false, options = {}) {
+		const resp = this._storage(store, key)[2];
 
 		if (resp !== U) {
 			return resp;
@@ -84,11 +100,27 @@ export class Store {
 
 		if (fallback !== U) {
 			return set ?
-				this._set(obj, obs, key, fallback, options) :
+				this._set(store, obs, key, fallback, options) :
 				this._val(fallback, options);
 		}
 
 		return null;
+	}
+
+	/**
+	 * Ensure that in memory store is up to date
+	 *
+	 * @param {Object} store
+	 * @private
+	 */
+	_syncStore(store) {
+		if (this.browserStore) {
+			this.browserStore.setItem(this.browserStoreKey, JSON.stringify(store));
+		}
+
+		if (this.keepInMemory) {
+			this.store = store;
+		}
 	}
 
 	/**
@@ -139,16 +171,17 @@ export class Store {
 	/**
 	 * Set variable
 	 *
-	 * @param {Object} obj
+	 * @param {Object} store
 	 * @param {Object} obs
 	 * @param {string} key
 	 * @param {*} val
 	 * @param {Object} [options={}]
+	 * @param {boolean} [sync=true]
 	 * @returns {*}
 	 * @private
 	 */
-	_set(obj, obs, key, val, options = {}) {
-		let stored = this._storage(obj, key, true);
+	_set(store, obs, key, val, options = {}, sync = true) {
+		let stored = this._storage(store, key, true);
 		let seg = stored[1];
 		let data = seg === '$' ?
 				this._val(key, val) :
@@ -156,8 +189,12 @@ export class Store {
 
 		stored[0][seg] = data;
 
+		if (sync) {
+			this._syncStore(store);
+		}
+
 		// TODO: Observables
-		// _trigger(obj, obs, key, _copy(stored[2]), data, 'set');
+		// _trigger(store, obs, key, _copy(stored[2]), data, 'set');
 
 		return data;
 	}
@@ -188,7 +225,21 @@ export class Store {
 	 * @returns {*} value
 	 */
 	get(key, fallback, set = false, options) {
-		return this._get(this.store, this.observe, key, fallback, set, options);
+		return this._get(this.getStore(), this.observe, key, fallback, set, options);
+	}
+
+	/**
+	 * Return storage object from either memory or localStorage/sessionStorage
+	 *
+	 * @returns {Object}
+	 * @private
+	 */
+	getStore() {
+		if (! this.keepInMemory && this.browserStore) {
+			return JSON.parse(this.browserStore.getItem(this.browserStoreKey));
+		}
+
+		return this.store;
 	}
 
 	/**
@@ -202,7 +253,7 @@ export class Store {
 	 * @returns {*} value
 	 */
 	set(key, val, options) {
-		return this._set(this.store, this.observe, key, val, options);
+		return this._set(this.getStore(), this.observe, key, val, options);
 	}
 
 	/**
@@ -213,7 +264,7 @@ export class Store {
 	 * @returns {boolean}
 	 */
 	has(key, val) {
-		const resp = this._storage(this.store, key)[2];
+		const resp = this._storage(this.getStore(), key)[2];
 
 		if (resp === U) {
 			return false;
@@ -243,7 +294,7 @@ export class Store {
 	 * @returns {Array|Object} value
 	 */
 	push(key, val, prepend = false) {
-		return this._add('push', this.store, this.observe, key, val, prepend);
+		return this._add('push', this.getStore(), this.observe, key, val, prepend);
 	}
 
 	/**
@@ -255,7 +306,7 @@ export class Store {
 	 * @returns {Array|Object} value
 	 */
 	concat(key, val, prepend = false) {
-		return this._add('concat', this.store, this.observe, key, val, prepend);
+		return this._add('concat', this.getStore(), this.observe, key, val, prepend);
 	}
 
 	/**
@@ -266,19 +317,21 @@ export class Store {
 	 * @returns {Object} value
 	 */
 	merge(key, val) {
-		val = $extend(true, {}, this._get(this.store, this.observe, key, {}), val);
+		const store = this.getStore();
+		val = $extend(true, {}, this._get(store, this.observe, key, {}), val);
 
-		return this._set(this.store, this.observe, key, val);
+		return this._set(store, this.observe, key, val);
 	}
 
 	/**
-	 * Remove store property
+	 * Remove top-level store property
 	 *
 	 * @param {string} key
 	 * @returns {*}
 	 */
 	drop(key) {
-		const stored = this._storage(this.store, key);
+		const store = this.getStore();
+		const stored = this._storage(store, key);
 		let root = stored[0];
 		let seg = stored[1];
 		let orig = $copy(stored[2]);
@@ -288,8 +341,10 @@ export class Store {
 			root.splice(seg, 1) :
 			delete root[seg];
 
+		this._syncStore(store);
+
 		// TODO: Observables
-		// _trigger(this.store, this.observe, key, orig, root[seg], 'drop');
+		// _trigger(this.getStore(), this.observe, key, orig, root[seg], 'drop');
 
 		return orig;
 	}
@@ -301,6 +356,8 @@ export class Store {
 	 * @param {($|HTMLElement|string)} context
 	 */
 	setVar(context) {
+		const store = this.getStore();
+
 		$each('[data-set]', (el) => {
 			const key = el.getAttribute('data-set');
 			const val = _castString(el.getAttribute('data-value'));
@@ -308,12 +365,15 @@ export class Store {
 
 			if ((! name && this.name === 'default') || name === this.name) {
 				key.slice(-2) == '[]' ?
-					this._add('push', this.store, this.observe, key.slice(0, -2), val, false) :
-					this._set(this.store, this.observe, key, val);
+					this._add('push', store, this.observe, key.slice(0, -2), val, false, false) :
+					this._set(store, this.observe, key, val, {}, false);
 			}
 		}, {
 			context: context
 		});
+
+		// Prevented _syncStore in _add and _set inside $each for performance
+		this._syncStore(store);
 	}
 
 	/**
@@ -321,6 +381,10 @@ export class Store {
 	 */
 	destroy() {
 		delete instances[this.name];
+
+		if (this.browserStore) {
+			this.browserStore.removeItem(this.browserStoreKey);
+		}
 	}
 }
 

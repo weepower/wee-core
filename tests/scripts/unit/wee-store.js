@@ -21,6 +21,24 @@ describe('Store', () => {
 		expect($store.name).to.equal('default');
 	});
 
+	it('should retrieve pre-existing data from local/session storage', () => {
+		const store = {
+			$: {
+				exists: true
+			}
+		};
+		window.localStorage.setItem('wee_instance', JSON.stringify(store))
+
+		let $instance = new Store('instance', {
+			browserStorage: 'local'
+		});
+
+		expect($instance.store).to.deep.equal(store);
+
+		// Cleanup
+		window.localStorage.removeItem('wee_instance');
+	});
+
 	/**
 	 * Push or concatenate values into array
 	 *
@@ -154,6 +172,37 @@ describe('Store', () => {
 			// Testing exact object reference
 			expect(storeDouble.$).to.equal(newStore);
 		});
+
+		it('should save data in local storage', () => {
+			$store.browserStore = window.localStorage;
+			$store._set(storeDouble, observeDouble, 'prop', true);
+
+			$store.browserStore = null;
+
+			expect(JSON.parse(window.localStorage.getItem('wee_default'))).to.deep.equal({
+				$: {
+					prop: true
+				}
+			});
+
+			// Cleanup
+			window.localStorage.removeItem('wee_default');
+		});
+
+		it('should save data in session storage', () => {
+			$store.browserStore = window.sessionStorage;
+			$store._set(storeDouble, observeDouble, 'prop', true);
+
+			$store.browserStore = null;
+
+			expect(JSON.parse(window.sessionStorage.getItem('wee_default'))).to.deep.equal({
+				$: {
+					prop: true
+				}
+			});
+
+			window.sessionStorage.removeItem('wee_default');
+		});
 	});
 
 	describe('_get', () => {
@@ -203,6 +252,30 @@ describe('Store', () => {
 		it('should retrieve multi-level property', () => {
 			$store.set('propA.propB.propC', true);
 			expect($store.get('propA.propB.propC')).to.be.true;
+		});
+	});
+
+	describe('getStore', () => {
+		it('should retrieve storage object', () => {
+			expect($store.getStore()).to.deep.equal({ $: {} });
+		});
+
+		it('should retrieve storage object from session/local storage', () => {
+			let stub = sinon.stub(window.localStorage, 'getItem');
+
+			stub.withArgs('wee_default').returns(null);
+
+			// Set proper conditions for retrieving from browser storage
+			$store.browserStore = window.localStorage;
+			$store.keepInMemory = false;
+			$store.getStore();
+
+			expect(stub.calledOnce).to.be.true;
+
+			// Cleanup
+			$store.browserStore = null;
+			$store.keepInMemory = true;
+			stub.restore();
 		});
 	});
 
