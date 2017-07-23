@@ -271,6 +271,12 @@ export class Store {
 		return this._set(this.store, this.observe, key, val);
 	}
 
+	/**
+	 * Remove store property
+	 *
+	 * @param {string} key
+	 * @returns {*}
+	 */
 	drop(key) {
 		const stored = this._storage(this.store, key);
 		let root = stored[0];
@@ -289,6 +295,7 @@ export class Store {
 	}
 
 	/**
+	 * Set variables from DOM
 	 *
 	 * @param {string} store
 	 * @param {($|HTMLElement|string)} context
