@@ -1,9 +1,15 @@
 import { $exec } from 'core/core';
-import { $copy, $extend, $isObject, $isFunction, $toArray, $type } from 'core/types';
+import { _castString, $copy, $extend, $isObject, $isFunction, $toArray, $type } from 'core/types';
+import { $each } from 'core/dom';
 import { U } from 'core/variables';
+import { warn } from 'core/warn';
+import StoreError from 'store/error';
+
+let instances = {};
 
 export class Store {
-	constructor() {
+	constructor(name) {
+		this.name = name;
 		this.store = {
 			$: {}
 		};
@@ -15,7 +21,7 @@ export class Store {
 	/**
 	 * Push or concatenate values into array
 	 *
-	 * @param {string} type
+	 * @param {string} type - 'concat' or 'push'
 	 * @param {Object} obj
 	 * @param {Object} obs
 	 * @param {string} key
@@ -281,6 +287,53 @@ export class Store {
 
 		return orig;
 	}
+
+	/**
+	 *
+	 * @param {string} store
+	 * @param {($|HTMLElement|string)} context
+	 */
+	setVar(context) {
+		$each('[data-set]', (el) => {
+			const key = el.getAttribute('data-set');
+			const val = _castString(el.getAttribute('data-value'));
+			const name = el.getAttribute('data-store');
+
+			if ((! name && this.name === 'default') || name === this.name) {
+				key.slice(-2) == '[]' ?
+					this._add('push', this.store, this.observe, key.slice(0, -2), val, false) :
+					this._set(this.store, this.observe, key, val);
+			}
+		}, {
+			context: context
+		});
+	}
+
+	/**
+	 * Remove reference to store instance
+	 */
+	destroy() {
+		delete instances[this.name];
+	}
 }
 
-export default new Store();
+const store = new Store('default');
+
+store.create = function createStore(name) {
+	if (! name) {
+		throw new StoreError('No name provided when creating new store instance');
+	}
+
+	if (instances[name]) {
+		warn('store', `creation of a store instance named ${name} was attempted but already exists`);
+		return instances[name];
+	}
+
+	const instance = new Store(name);
+
+	instances[instance.name] = instance;
+
+	return instance;
+}
+
+export default store;

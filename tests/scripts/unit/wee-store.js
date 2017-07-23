@@ -1,5 +1,7 @@
 import $store from 'wee-store';
 import sinon from 'sinon';
+import { Store } from 'wee-store';
+import StoreError from 'store/error';
 
 describe('Store', () => {
 	let storeDouble;
@@ -13,6 +15,10 @@ describe('Store', () => {
 			$: {}
 		};
 		$store.store.$ = {};
+	});
+
+	it('should have name property of "default"', () => {
+		expect($store.name).to.equal('default');
 	});
 
 	/**
@@ -262,6 +268,101 @@ describe('Store', () => {
 			$store.drop(1); // Array index
 
 			expect($store.get()).to.deep.equal(['one', 'three']);
+		});
+	});
+
+	describe('create', () => {
+		it('should create a new instance of Store', () => {
+			const $new = $store.create('newStore');
+
+			expect($new).to.be.instanceof(Store);
+			expect($new.name).to.equal('newStore');
+		});
+
+		it('should throw error if no name is provided', () => {
+			expect($store.create).to.throw();
+			expect($store.create).to.throw('No name');
+		});
+
+		it('should return existing instance instead of re-creating', () => {
+			const $instance = $store.create('instance');
+
+			$instance.set('prop', true);
+
+			expect($store.create('instance').get('prop')).to.be.true;
+
+			$instance.destroy();
+		});
+	});
+
+	describe('setVar', () => {
+		before(() => {
+			document.body.innerHTML = `<meta data-set="global" data-value="true">
+					<meta data-set="list[]" data-value="1">
+					<meta data-set="list[]" data-value="2">
+					<meta data-set="list[]" data-value="3">
+					
+					<meta data-set="object.propA" data-value='{"innerA":1}'>
+					<meta data-set="object.propA.innerB" data-value="2">
+					<meta data-set="object.propB" data-value="1">
+					<meta data-set="object2.propA.dynamicInner" data-value="true">
+					<meta data-set="object2.propB" data-value="1">
+					
+					<meta data-store="instance" data-set="instanceProp" data-value="cool">`;
+		});
+
+		it('should set properties from DOM', () => {
+			$store.setVar();
+
+			expect($store.get('global')).to.be.true;
+		});
+
+		it('should build array from multiple element attributes', () => {
+			$store.setVar();
+
+			expect($store.get('list')).to.deep.equal([1, 2, 3]);
+		});
+
+		it('should build object from multiple element attributes', () => {
+			$store.setVar();
+
+			expect($store.get('object')).to.deep.equal({
+				propA: {
+					innerA: 1, // Parsed from JSON value
+					innerB: 2
+				},
+				propB: 1
+			});
+			expect($store.get('object2')).to.deep.equal({
+				propA: {
+					dynamicInner: true // This property was set on object that did not exist yet
+				},
+				propB: 1
+			});
+		});
+
+		it('should set values only intended for specific instance', () => {
+			let $instance = $store.create('instance');
+
+			$instance.setVar();
+
+			expect($instance.get()).to.deep.equal({
+				instanceProp: 'cool'
+			});
+
+			$instance.destroy();
+		});
+	});
+
+	describe('destroy', () => {
+		it('should remove reference to store instance', () => {
+			let instance = $store.create('instance');
+
+			expect($store.create('instance')).to.equal(instance);
+
+			instance.destroy();
+
+			expect($store.create('instance')).to.not.equal(instance);
 		});
 	});
 });
