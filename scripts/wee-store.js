@@ -108,10 +108,6 @@ export class Store {
 			this._syncStore(store);
 		}
 
-		// TODO: Observables
-		// _trigger(store, obs, key, orig, root[seg],
-		// 	type == 1 ? 'concat' : 'push');
-
 		return root[seg];
 	}
 
@@ -228,9 +224,6 @@ export class Store {
 		if (sync) {
 			this._syncStore(store);
 		}
-
-		// TODO: Observables
-		// _trigger(store, obs, key, _copy(stored[2]), data, 'set');
 
 		return data;
 	}
@@ -378,9 +371,6 @@ export class Store {
 			delete root[seg];
 
 		this._syncStore(store);
-
-		// TODO: Observables
-		// _trigger(this.getStore(), this.observe, key, orig, root[seg], 'drop');
 
 		return orig;
 	}
