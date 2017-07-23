@@ -21,6 +21,12 @@ module.exports = function(config) {
 				os: 'OS X',
 				os_version: 'Sierra'
 			},
+			chrome_windows: {
+				base: 'BrowserStack',
+				browser: 'chrome',
+				os: 'Windows',
+				os_version: '10'
+			},
 			edge_windows: {
 				base: 'BrowserStack',
 				browser: 'Edge',
@@ -29,6 +35,6 @@ module.exports = function(config) {
 			}
 		},
 
-		browsers: ['safari_mac', 'firefox_mac', 'chrome_mac', 'edge_windows']
+		browsers: ['safari_mac', 'firefox_mac', 'chrome_mac', 'chrome_windows', 'edge_windows']
 	}));
 };

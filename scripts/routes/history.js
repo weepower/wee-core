@@ -6,7 +6,7 @@ import RouteHandler from './route-handler';
 import runQueue from './async-queue';
 import { getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
-import { warn } from './warn';
+import { warn } from 'core/warn';
 import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
 import { QueueError, SameRouteError } from './error';
@@ -36,7 +36,7 @@ export default class History {
 			// Leave hash navigation alone
 			if (location.path === this.current.path && location.search === this.current.search) {
 				// TODO: Verbose
-				// warn('hash change caused popstate. popstate callback halted.');
+				// warn('routes', 'hash change caused popstate. popstate callback halted.');
 				return;
 			}
 
@@ -119,7 +119,7 @@ export default class History {
 	ensureUrl() {
 		// In case URL gets out of sync with history's current route
 		if (this.current !== START && this.current.fullPath !== parseLocation().fullPath) {
-			console.warn(this.current.fullPath, parseLocation().fullPath);
+			console.warn('routes', this.current.fullPath, parseLocation().fullPath);
 			replaceState(this.current.fullPath);
 		}
 	}
@@ -166,8 +166,8 @@ export default class History {
 			// Do not navigate if destination is same as current route
 			if (isSameRoute(route, this.current)) {
 				this.ensureState(transitionPromise);
-				warn('attempted to navigate to current URL');
-				return reject(new SameRouteError('attempted to navigate to ' + route.fullPath));
+				warn('routes', 'attempted to navigate to current URL');
+				return reject(new SameRouteError('Attempted to navigate to ' + route.fullPath));
 			} else if (noMatch(route)) {
 				this.ensureState(transitionPromise);
 
@@ -175,7 +175,7 @@ export default class History {
 					this.setReady();
 				}
 
-				warn('no route match was found and notFound has not been registered.');
+				warn('routes', 'no route match was found and notFound has not been registered.');
 				return;
 			}
 
@@ -186,7 +186,7 @@ export default class History {
 			const iterator = (hook, next) => {
 				hook(route, this.current, to => {
 					if (to === false) {
-						to = new QueueError('queue stopped prematurely');
+						to = new QueueError('Queue stopped prematurely');
 					}
 
 					next(to);
@@ -238,7 +238,7 @@ export default class History {
 
 				// Ensure we are where we started
 				this.ensureState(transitionPromise);
-				warn(error.message);
+				warn('routes', error.message);
 				reject(error);
 			});
 		});

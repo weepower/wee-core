@@ -2,7 +2,7 @@ import { $each } from 'core/dom';
 import { _doc } from 'core/variables';
 import { _slice } from 'core/types';
 import { $addClass, $removeClass } from 'dom/index';
-import { warn } from './warn';
+import { warn } from 'core/warn';
 
 /**
  * Detect what transition property to listen for
@@ -63,7 +63,7 @@ export default class Transition {
 			let elements = this._select(this.target);
 
 			if (! elements.length) {
-				warn('no elements found - cannot apply enter transition');
+				warn('routes', 'no elements found - cannot apply enter transition');
 			}
 
 			elements.forEach((el) => {
@@ -95,7 +95,7 @@ export default class Transition {
 				let elements = this._select(this.target);
 
 				if (! elements.length) {
-					warn('no elements found - cannot apply leave transition');
+					warn('routes', 'no elements found - cannot apply leave transition');
 					return resolve(scope);
 				}
 
