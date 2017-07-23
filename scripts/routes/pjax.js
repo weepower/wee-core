@@ -7,7 +7,7 @@ import { $serializeForm } from 'dom/index';
 import { supportsPushState } from './push-state';
 import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
-import { warn } from './warn';
+import { warn } from 'core/warn';
 import { parseLocation } from './location';
 
 let defaults = {
@@ -150,7 +150,7 @@ const pjax = {
 					// Ensure the path exists and is local
 					if (! evts || ! _isValid(destination, current.path)) {
 						// TODO: Make this print as verbose only
-						// warn('PJAX: no events provided or invalid destination URL ' + destination.href);
+						// warn('routes', 'PJAX: no events provided or invalid destination URL ' + destination.href);
 						return;
 					}
 
@@ -161,7 +161,7 @@ const pjax = {
 					// Bind designated events
 					$events.on(el, evts, e => {
 						if (paused) {
-							warn('pjax has been paused - will not trigger navigation');
+							warn('routes', 'pjax has been paused - will not trigger navigation');
 							return;
 						}
 
@@ -189,7 +189,7 @@ const pjax = {
 
 	go(to, from, next) {
 		if (paused) {
-			warn('pjax has been paused - will not request partials');
+			warn('routes', 'pjax has been paused - will not request partials');
 			return next();
 		}
 
@@ -284,12 +284,12 @@ const pjax = {
 		let action = overrides.action || settings.action;
 
 		if (paused) {
-			warn('pjax has been paused - will not replace partials');
+			warn('routes', 'pjax has been paused - will not replace partials');
 			return;
 		}
 
 		if (! response) {
-			warn('no response to use');
+			warn('routes', 'no response to use');
 			return;
 		}
 
