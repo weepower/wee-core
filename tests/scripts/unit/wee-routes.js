@@ -703,7 +703,7 @@ describe('Router', () => {
 				const finish = function() {
 					expect(spy.calledOnce).to.be.true;
 					expect(spy.args[0][0]).to.be.an('error');
-					expect(spy.args[0][0].message).to.equal('queue stopped prematurely');
+					expect(spy.args[0][0].message).to.equal('Queue stopped prematurely');
 				}
 
 				$router.map([
