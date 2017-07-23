@@ -174,7 +174,7 @@ describe('Store', () => {
 		});
 
 		it('should save data in local storage', () => {
-			$store.browserStore = window.localStorage;
+			$store.browserStore = $store.localStorage;
 			$store._set(storeDouble, observeDouble, 'prop', true);
 
 			$store.browserStore = null;
@@ -190,7 +190,7 @@ describe('Store', () => {
 		});
 
 		it('should save data in session storage', () => {
-			$store.browserStore = window.sessionStorage;
+			$store.browserStore = $store.sessionStorage;
 			$store._set(storeDouble, observeDouble, 'prop', true);
 
 			$store.browserStore = null;
@@ -261,21 +261,24 @@ describe('Store', () => {
 		});
 
 		it('should retrieve storage object from session/local storage', () => {
-			let stub = sinon.stub(window.localStorage, 'getItem');
-
-			stub.withArgs('wee_default').returns(null);
+			const origLocalStorage = $store.localStorage;
+			let state = false;
 
 			// Set proper conditions for retrieving from browser storage
-			$store.browserStore = window.localStorage;
 			$store.keepInMemory = false;
+			$store.localStorage.getItem = function(fn) {
+				state = true;
+				return null;
+			};
+			$store.browserStore = $store.localStorage;
 			$store.getStore();
-
-			expect(stub.calledOnce).to.be.true;
 
 			// Cleanup
 			$store.browserStore = null;
 			$store.keepInMemory = true;
-			stub.restore();
+			$store.localStorage = origLocalStorage;
+
+			expect(state).to.be.true;
 		});
 	});
 

@@ -7,12 +7,48 @@ import StoreError from 'store/error';
 
 let instances = {};
 
+/**
+ * Create wrapper for browser storage api
+ *
+ * @param {string} type
+ * @returns {*}
+ * @private
+ */
+function _storageFactory(type) {
+	let storage;
+
+	if (type === 'local') {
+		storage = window.localStorage;
+	} else if (type === 'session') {
+		storage = window.sessionStorage;
+	} else {
+		return null;
+	}
+
+	return {
+		getItem(key) {
+			return JSON.parse(storage.getItem(key));
+		},
+		setItem(key, value) {
+			value = JSON.stringify(value);
+
+			return storage.setItem(key, value);
+		},
+		removeItem(key) {
+			return storage.removeItem(key);
+		}
+	};
+}
+
 export class Store {
 	constructor(name, options = {}) {
+		this.localStorage = _storageFactory('local');
+		this.sessionStorage = _storageFactory('session');
+
 		if (typeof options.browserStorage === 'string') {
 			this.browserStore = options.browserStorage === 'local' ?
-				window.localStorage :
-				window.sessionStorage;
+				this.localStorage :
+				this.sessionStorage;
 		} else {
 			this.browserStore = null;
 		}
@@ -22,7 +58,7 @@ export class Store {
 		this.prefix = options.prefix || 'wee';
 		this.browserStoreKey = `${this.prefix}_${this.name}`;
 		this.store = this.browserStore && this.browserStore.getItem(this.browserStoreKey) ?
-			JSON.parse(this.browserStore.getItem(this.browserStoreKey)) :
+			this.browserStore.getItem(this.browserStoreKey) :
 			{ $: {} };
 		this.observe = {
 			$: {}
@@ -115,7 +151,7 @@ export class Store {
 	 */
 	_syncStore(store) {
 		if (this.browserStore) {
-			this.browserStore.setItem(this.browserStoreKey, JSON.stringify(store));
+			this.browserStore.setItem(this.browserStoreKey, store);
 		}
 
 		if (this.keepInMemory) {
@@ -236,7 +272,7 @@ export class Store {
 	 */
 	getStore() {
 		if (! this.keepInMemory && this.browserStore) {
-			return JSON.parse(this.browserStore.getItem(this.browserStoreKey));
+			return this.browserStore.getItem(this.browserStoreKey);
 		}
 
 		return this.store;
