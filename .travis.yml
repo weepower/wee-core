@@ -3,6 +3,12 @@ language: node_js
 node_js:
   - '6'
 
+branches:
+  only:
+  - master
+  - develop
+  - v2
+
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
@@ -17,8 +23,8 @@ branches:
   - v2
 
 script:
-  - npm run test:ci
-  - bash <(curl -s https://codecov.io/bash) -F unit
-  - npm run test:ci-ie
-  - bash <(curl -s https://codecov.io/bash) -F unit_ie
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci-ie; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit_ie; fi'
   - npm run test:styles

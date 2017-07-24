@@ -80,9 +80,9 @@ function _toDashed(name) {
  *
  * @private
  * @param {($|HTMLElement|string)} target
- * @param {int} dir
+ * @param {number} dir
  * @param filter
- * @param {object} [options]
+ * @param {Object} [options]
  * @returns {HTMLElement}
  */
 function _getSibling(target, dir, filter, options) {
@@ -478,7 +478,7 @@ export function $empty(target) {
  * Get indexed node of matching selection
  *
  * @param {($|HTMLElement|string)} target
- * @param {int} index
+ * @param {number} index
  * @param {($|HTMLElement|string)} [context=document]
  * @returns {HTMLElement}
  */
@@ -603,7 +603,7 @@ export function $html(target, value) {
  * to it's siblings
  *
  * @param {($|HTMLElement|string)} target
- * @returns {int}
+ * @returns {number}
  */
 export function $index(target) {
 	let el = $sel(target)[0],
@@ -1208,8 +1208,8 @@ export function $siblings(target, filter) {
  * Get subset of selection matches from specified range
  *
  * @param {($|HTMLElement|string)} target
- * @param {int} start
- * @param {int} end
+ * @param {number} start
+ * @param {number} end
  * @returns {Array} elements
  */
 export function $slice(target, start, end) {

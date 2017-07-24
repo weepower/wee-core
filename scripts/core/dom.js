@@ -19,10 +19,10 @@ function _contains(source, target) {
 }
 
 /**
- * Convert selection to array
+ * Convert selection to Array
  *
  * @param {($|HTMLElement|string)} selector
- * @param {object} [options]
+ * @param {Object} [options]
  * @param {(HTMLElement|string)} [options.context=document]
  * @returns {($|Array)} nodes
  */
@@ -143,7 +143,7 @@ export function $sel(selector, context) {
  * Execute function for each matching selection
  *
  * @param {($|Array|HTMLElement|string)} target
- * @param {function} fn
+ * @param {Function} fn
  * @param {Object} [options]
  * @param {Array} [options.args]
  * @param {($|HTMLElement|string)} [options.context=document]
@@ -177,13 +177,13 @@ export function $each(target, fn, options) {
 }
 
 /**
- * Translate items in an array or selection to new array
+ * Translate items in an array or selection to new Array
  *
  * @param {($|Array|HTMLElement|string)} target - array or selector
- * @param {function} fn
- * @param {object} [options]
+ * @param {Function} fn
+ * @param {Object} [options]
  * @param {Array} [options.args]
- * @param {object} [options.scope]
+ * @param {Object} [options.scope]
  * @returns {Array}
  */
 export function $map(target, fn, options) {
@@ -285,7 +285,7 @@ export function $setRef(context) {
 }
 
 /**
- * Create new array with only unique values from source array
+ * Create new Array with only unique values from source Array
  *
  * @param {Array} array
  * @returns {Array} unique values

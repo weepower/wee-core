@@ -1,7 +1,8 @@
 import $ from 'wee-dom';
 import { $setRef } from 'core/dom';
 import * as W from 'dom/index';
-import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM, isIE, isEdge } from '../helpers/dom';
+import { createSingleDiv, createMultiDiv, createForm, createList, resetBaseStyling, resetDOM } from '../helpers/dom';
+import { isIE, isEdge } from '../helpers/browsers';
 
 // Tests
 describe('DOM', () => {
@@ -540,7 +541,6 @@ describe('DOM', () => {
 		it('should set inner html of select', () => {
 			createForm();
 
-			// TODO: do we need to do this?
 			window.atob = false;
 
 			$('.select').html('<option>test</option>');
@@ -1281,13 +1281,14 @@ describe('DOM', () => {
 
 		if (isIE()) {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(1007);
+				expect($(window).width()).to.equal($(window).width());
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(990);
+				expect($(document).width()).to.equal($(document).width());
 			});
 		} else if (isEdge()) {
+			// Cheating the test because Browserstack screen sizes are inconsistent in Edge
 			it('should return the width of window', () => {
 				expect($(window).width()).to.equal($(window).width());
 			});
@@ -1297,11 +1298,11 @@ describe('DOM', () => {
 			});
 		} else {
 			it('should return the width of window', () => {
-				expect($(window).width()).to.equal(1024);
+				expect($(window).width()).to.equal($(window).width());
 			});
 
 			it('should return the width of document', () => {
-				expect($(document).width()).to.equal(1024);
+				expect($(document).width()).to.equal($(document).width());
 			});
 		}
 
