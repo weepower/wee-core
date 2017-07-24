@@ -1,6 +1,6 @@
 import { $exec } from './core/core';
 import { _doc , U} from './core/variables';
-import { $toArray } from './core/types';
+import { $toArray, $extend } from './core/types';
 import { $each } from 'core/dom';
 
 const groups = {};
@@ -13,10 +13,17 @@ const _load = {
 		const js = _doc.createElement('script');
 
 		js.async = conf.async === true;
-		js.onload = function() {
+		js.onload = () => {
 			loaded[js.src] = js;
 			_done(conf.group);
-		}
+		};
+
+		js.onerror = () => {
+			_fail(conf.group);
+		};
+
+		js.src = path;
+		_doc.head.appendChild(js);
 	},
 
 	/**
@@ -226,16 +233,16 @@ export default {
 	 * @returns {boolean} ready
 	 */
 	ready(group, options, poll) {
-		var set = groups[group],
-			complete = set && ! set[0];
+		let set = groups[group];
+		let complete = set && ! set[0];
 
 		if (options === U) {
 			return complete;
 		}
 
 		if (complete) {
-			var conf = W.$extend(set[1], options),
-				hasErrors = set[2];
+			let conf = $extend(set[1], options);
+			let hasErrors = set[2];
 			options = {
 				args: conf.args,
 				scope: conf.scope
