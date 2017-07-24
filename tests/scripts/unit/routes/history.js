@@ -38,7 +38,7 @@ describe('Router: history', () => {
 				// Should return on first rejection
 				expect(rejectSpy.args[0].length).to.equal(1);
 				expect(error.errorType).to.equal('SameRouteError');
-				expect(error.message).to.equal('attempted to navigate to /');
+				expect(error.message).to.equal('Attempted to navigate to /');
 			}
 
 			$router.map([
