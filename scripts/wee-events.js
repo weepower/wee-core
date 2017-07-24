@@ -166,7 +166,7 @@ function _bound(target, event = '', fn = null, delegateTarg = undefined) {
 	return matches;
 }
 
-export default {
+const module = {
 	/**
 	 * Bind event function to element
 	 *
@@ -287,3 +287,14 @@ export default {
 		custom[name] = [on, off];
 	}
 }
+
+/**
+ * Unbind namespaced events
+ *
+ * @param {string} namespace
+ */
+export function unbindEvents(namespace) {
+	module.off(false, '.' + namespace);
+};
+
+export default module;

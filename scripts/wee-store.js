@@ -433,4 +433,29 @@ store.create = function createStore(name) {
 	return instance;
 }
 
+/**
+ * Return all store instances
+ *
+ * @param {string} name
+ * @returns {*}
+ */
+store.instances = function getInstances(name) {
+	if (name) {
+		return instances[name];
+	}
+
+	return instances;
+}
+
+/**
+ * Destroy store instance
+ *
+ * @param {string} name
+ */
+export function destroyStore(name) {
+	if (instances[name]) {
+		instances[name].destroy();
+	}
+}
+
 export default store;
