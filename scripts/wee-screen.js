@@ -129,7 +129,7 @@ function _size() {
 	)
 }
 
-export default {
+const module = {
 	/**
 	 * Retrieve bound mappings
 	 *
@@ -200,3 +200,7 @@ export default {
 		});
 	}
 }
+
+export const resetScreen = module.reset;
+
+export default module;

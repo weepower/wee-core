@@ -15,6 +15,9 @@ import $router from 'wee-routes';
 import { handleScroll, saveScrollPosition } from './scroll';
 import { setStateKey } from './push-state';
 import Transition from './transitions';
+import { destroyStore } from 'wee-store';
+import { unbindEvents } from 'wee-events';
+import { resetScreen } from 'wee-screen';
 
 export default class History {
 	constructor(settings) {
@@ -206,7 +209,10 @@ export default class History {
 					// Unload hooks
 					queues.unloadQueue.forEach(unload => {
 						if ($isString(unload)) {
-							// TODO: Destroy events, screen map, and store based on namespace
+							// Remove all namespaced entities
+							destroyStore(unload);
+							unbindEvents(unload);
+							resetScreen(unload);
 						} else if ($isFunction(unload)) {
 							unload(route, this.current);
 						}

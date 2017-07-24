@@ -1,6 +1,9 @@
 import $router from 'wee-routes';
 import { history, RouteHandler } from 'wee-routes';
 import sinon from 'sinon';
+import $screen from 'wee-screen';
+import $events from 'wee-events';
+import $store from 'wee-store';
 
 const basicRoutes = [
 	{
@@ -846,6 +849,40 @@ describe('Router', () => {
 					setPath('/');
 					$router.run().then(() => {
 						expect(stateArray).to.deep.equal(['/', '/test', 'home']);
+					}).then(done, done);
+				}).run();
+			});
+
+			it('should unload namespaced events, screen maps, and data stores', done => {
+				$router.reset();
+				$events.on('body', 'click.test', () => {});
+				$screen.map([
+					{
+						size: 4,
+						callback() {},
+						namespace: 'test'
+					}
+				]);
+				$store.create('test');
+
+				expect($screen.bound('test').length).to.equal(1);
+				expect($events.bound(false, '.test').length).to.equal(1);
+				expect(Object.keys($store.instances()).length).to.equal(1);
+
+				setPath('/test');
+				$router.map([
+					{ path: '/', init() { } },
+					{
+						path: '/test',
+						unload: 'test'
+					}
+				]).onReady(() => {
+					// Leave /test to trigger unload
+					setPath('/');
+					$router.run().then(() => {
+						expect($screen.bound('test').length).to.equal(0);
+						expect($events.bound(false, '.test').length).to.equal(0);
+						expect(Object.keys($store.instances()).length).to.equal(0);
 					}).then(done, done);
 				}).run();
 			});
