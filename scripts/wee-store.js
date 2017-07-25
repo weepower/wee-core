@@ -267,11 +267,11 @@ export class Store {
 	 * @param {Object} options
 	 */
 	configure(options) {
-		if (options.browserStorage) {
+		if (options.hasOwnProperty('browserStorage')) {
 			this._setBrowserStorage(options.browserStorage);
 		}
 
-		if (options.keepInMemory) {
+		if (options.hasOwnProperty('keepInMemory')) {
 			this.keepInMemory = options.keepInMemory;
 		}
 	}
@@ -450,7 +450,14 @@ export class Store {
 
 const store = new Store('default');
 
-store.create = function createStore(name) {
+/**
+ * Instantiate new Store instance
+ *
+ * @param {string} name
+ * @param {Object} options
+ * @returns {*}
+ */
+store.create = function createStore(name, options = {}) {
 	if (! name) {
 		throw new StoreError('No name provided when creating new store instance');
 	}
@@ -460,7 +467,7 @@ store.create = function createStore(name) {
 		return instances[name];
 	}
 
-	const instance = new Store(name);
+	const instance = new Store(name, options);
 
 	instances[instance.name] = instance;
 
