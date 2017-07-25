@@ -51,9 +51,13 @@ export class Store {
 		this.keepInMemory = options.keepInMemory || true;
 		this.prefix = options.prefix || 'wee';
 		this.browserStoreKey = `${this.prefix}_${this.name}`;
-		this.store = this.browserStore && this.browserStore.getItem(this.browserStoreKey) ?
-			this.browserStore.getItem(this.browserStoreKey) :
-			{ $: {} };
+
+		if (this.browserStore && this.browserStore.getItem(this.browserStoreKey)) {
+			this.store = this.browserStore.getItem(this.browserStoreKey)
+		} else {
+			this._syncStore({ $: {} });
+		}
+
 		this.observe = {
 			$: {}
 		};
