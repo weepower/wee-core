@@ -8,7 +8,7 @@ const loaded = {};
 let root = '';
 let groupId = 1;
 
-const _load = {
+export const _load = {
 	js(path, conf) {
 		const js = _doc.createElement('script');
 
@@ -31,7 +31,7 @@ const _load = {
 	 *
 	 * @private
 	 * @param {string} path
-	 * @param {object} conf
+	 * @param {Object} conf
 	 * @param {string} conf.group
 	 */
 	css(path, conf) {
@@ -57,15 +57,19 @@ const _load = {
 	 *
 	 * @private
 	 * @param {string} path
-	 * @param {object} conf
+	 * @param {Object} conf
 	 * @param {string} conf.group
 	 */
 	img(path, conf) {
-		var img = new Image();
+		let img = new Image();
 
-		img.onload = () => _done(conf.group);
+		img.onload = function() {
+			_done(conf.group);
+		};
 
-		img.onerror = () => _fail(conf.group);
+		img.onerror = function() {
+			_fail(conf.group);
+		};
 
 		img.src = path;
 	}
@@ -91,9 +95,10 @@ function _fail(group) {
  */
 function _done(group) {
 	groups[group][0]--;
+	module.ready(group, {}, false);
 }
 
-export default {
+const module = {
 	/**
 	 * Get current asset root or set with specified value
 	 *
@@ -101,7 +106,7 @@ export default {
 	 * @returns {string} root
 	 */
 	root(value) {
-		if (value) {
+		if (typeof value === 'string') {
 			root = value;
 		}
 
@@ -111,7 +116,7 @@ export default {
 	/**
 	 * Load specified assets with set options
 	 *
-	 * @param {object} options
+	 * @param {Object} options
 	 * @param {boolean} [options.async=false]
 	 * @param {boolean} [options.cache=false]
 	 * @param {(Array|string)} [options.css]
@@ -129,7 +134,7 @@ export default {
 		const css = $toArray(options.css);
 		const img = $toArray(options.img);
 		const root = options.root !== U ? options.root : this.root();
-		const assets = [];
+		let assets = {};
 		let i = 0;
 		let type;
 
@@ -141,7 +146,7 @@ export default {
 		// Determine file type
 		for (; i < files.length; i++) {
 			let ext = files[i].split('.').pop().split(/#|\?/)[0];
-			type = ext == 'js' || ext == 'css' ?
+			type = ext === 'js' || ext === 'css' ?
 				ext : /(gif|jpe?g|png|svg|webp)$/i.test(ext) ?
 					'img' : '';
 
@@ -172,8 +177,8 @@ export default {
 		// Request each specified file
 		for (let file in assets) {
 			if (assets.hasOwnProperty(file)) {
-				const noCache = options.cache === false;
-				const a = _doc.createElement('a');
+				let noCache = options.cache === false;
+				let a = _doc.createElement('a');
 
 				type = assets[file];
 				a.href = (root && /^(https?:)?\/\//i.test(file) ? '' : root) +
@@ -224,10 +229,10 @@ export default {
 	 * Execute callback when specified references are ready
 	 *
 	 * @param {string} group
-	 * @param {object} [options]
+	 * @param {Object} [options]
 	 * @param {Array} [options.args]
 	 * @param {(Array|function|string)} [options.error]
-	 * @param {object} [options.scope]
+	 * @param {Object} [options.scope]
 	 * @param {(Array|function|string)} [options.success]
 	 * @param {boolean} [poll=false]
 	 * @returns {boolean} ready
@@ -255,10 +260,12 @@ export default {
 			}
 		} else if (poll) {
 			setTimeout(() => {
-				this.assets.ready(group, options, true);
+				this.ready(group, options, true);
 			}, 20);
 		}
 	}
 }
 
 $each('link[rel="stylesheet"], script[src]', el => loaded[el.src || el.href] = el);
+
+export default module;
