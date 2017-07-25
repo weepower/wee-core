@@ -32,7 +32,21 @@ if (spec.length) {
 	glob.sync(paths.tests.scripts + '/unit/**/*.js').forEach(file => addFile(file));
 }
 
+// Inject test file for assets module
+files.push({
+	pattern: paths.tests.scripts + '/helpers/files/*',
+	watched: false,
+	served: true,
+	included: false
+});
+
 module.exports = {
+	basePath: '../..',
+
+	proxies: {
+		'/files': '/base/scripts/helpers/files/'
+	},
+
 	// list of files / patterns to load in the browser
 	files,
 

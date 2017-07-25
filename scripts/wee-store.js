@@ -45,13 +45,7 @@ export class Store {
 		this.localStorage = _storageFactory('local');
 		this.sessionStorage = _storageFactory('session');
 
-		if (typeof options.browserStorage === 'string') {
-			this.browserStore = options.browserStorage === 'local' ?
-				this.localStorage :
-				this.sessionStorage;
-		} else {
-			this.browserStore = null;
-		}
+		this._setBrowserStorage(options.browserStorage, false);
 
 		this.name = name;
 		this.keepInMemory = options.keepInMemory || true;
@@ -229,6 +223,27 @@ export class Store {
 	}
 
 	/**
+	 * Set a browser storage to be used for persistence of data
+	 *
+	 * @param {string} storageType
+	 * @param {boolean} [sync=true]
+	 */
+	_setBrowserStorage(storageType, sync = true) {
+		if (typeof storageType === 'string') {
+			this.browserStore = storageType === 'local' ?
+				this.localStorage :
+				this.sessionStorage;
+
+			// If store already contains data that needs to be saved to browser storage
+			if (sync) {
+				this.browserStore.setItem(this.browserStoreKey, this.store);
+			}
+		} else {
+			this.browserStore = null;
+		}
+	}
+
+	/**
 	 * Get value from function or directly
 	 *
 	 * @private
@@ -240,6 +255,21 @@ export class Store {
 		return $isFunction(val) ?
 			$exec(val, options) :
 			val;
+	}
+
+	/**
+	 * Configure instance after initial creation
+	 *
+	 * @param {Object} options
+	 */
+	configure(options) {
+		if (options.browserStorage) {
+			this._setBrowserStorage(options.browserStorage);
+		}
+
+		if (options.keepInMemory) {
+			this.keepInMemory = options.keepInMemory;
+		}
 	}
 
 	/**

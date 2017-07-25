@@ -227,6 +227,31 @@ describe('Store', () => {
 		});
 	});
 
+	describe('_setBrowserStorage', () => {
+		it('should set designated browser storage and sync data from store', () => {
+			$store.set('existing', true);
+			$store._setBrowserStorage('session');
+
+			// Make sure pre-existing store data is in session storage now
+			expect(JSON.parse(window.sessionStorage.getItem('wee_default'))).to.deep.equal({
+				$: {
+					existing: true
+				}
+			});
+
+			// Make sure that new properties are being set
+			$store.set('newProp', true);
+			expect(JSON.parse(window.sessionStorage.getItem('wee_default'))).to.deep.equal({
+				$: {
+					existing: true,
+					newProp: true
+				}
+			});
+
+			window.sessionStorage.removeItem('wee_default');
+		});
+	});
+
 	describe('set', () => {
 		it('should set property', () => {
 			$store.set('prop', true);
@@ -439,6 +464,22 @@ describe('Store', () => {
 			instance.destroy();
 
 			expect($store.create('instance')).to.not.equal(instance);
+		});
+	});
+
+	describe('configure', () => {
+		it('should set browserStorage', () => {
+			$store.configure({ browserStorage: 'local' });
+
+			expect($store.browserStore).to.equal($store.localStorage);
+		});
+
+		it('should set keepInMemory', () => {
+			$store.configure({ keepInMemory: false });
+
+			expect($store.keepInMemory).to.be.true;
+
+			$store.keepInMemory = false;
 		});
 	});
 });
