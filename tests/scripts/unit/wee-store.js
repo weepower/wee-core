@@ -308,13 +308,23 @@ describe('Store', () => {
 	});
 
 	describe('has', () => {
-		it('check if property is set', () => {
-			$store.set('propExists', true);
+		it('should check if property is set', () => {
+			$store.set('boolean', true);
 			$store.set('undefinedProp', undefined);
 
-			expect($store.has('propExists')).to.be.true;
+			expect($store.has('boolean')).to.be.true;
 			expect($store.has('unknownProp')).to.be.false;
 			expect($store.has('undefinedProp')).to.be.false;
+		});
+
+		it('should check if property has specified value', () => {
+			$store.set('object', { test: true });
+			$store.set('array', [1, 2]);
+			$store.set('string', 'test');
+
+			expect($store.has('object', 'test')).to.be.true;
+			expect($store.has('array', 1)).to.be.true;
+			expect($store.has('string', 'test')).to.be.true;
 		});
 	});
 
@@ -464,6 +474,19 @@ describe('Store', () => {
 			instance.destroy();
 
 			expect($store.create('instance')).to.not.equal(instance);
+			instance.destroy();
+		});
+
+		it('should remove browser storage property', () => {
+			let instance = $store.create('instance', { browserStorage: 'local' });
+
+			expect(JSON.parse(window.localStorage.getItem('wee_instance'))).to.deep.equal({
+				$: {}
+			});
+
+			instance.destroy();
+
+			expect(window.localStorage.getItem('wee_instance')).to.be.null;
 		});
 	});
 
@@ -477,9 +500,20 @@ describe('Store', () => {
 		it('should set keepInMemory', () => {
 			$store.configure({ keepInMemory: false });
 
-			expect($store.keepInMemory).to.be.true;
+			expect($store.keepInMemory).to.be.false;
 
-			$store.keepInMemory = false;
+			// Cleanup
+			$store.keepInMemory = true;
+		});
+	});
+
+	describe('instances', () => {
+		it('should retrieve specific instance', () => {
+			let instance = $store.create('test');
+
+			expect($store.instances('test')).to.equal(instance);
+
+			instance.destroy();
 		});
 	});
 });

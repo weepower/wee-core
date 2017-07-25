@@ -21,8 +21,6 @@ function _storageFactory(type) {
 		storage = window.localStorage;
 	} else if (type === 'session') {
 		storage = window.sessionStorage;
-	} else {
-		return null;
 	}
 
 	return {
