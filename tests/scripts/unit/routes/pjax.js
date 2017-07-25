@@ -237,12 +237,40 @@ describe('Router: pjax', () => {
 				expect(pjax.isPaused()).to.be.false;
 			};
 
-			$router.pjax().run();
+			return $router.pjax().run().then(() => {
+				let process = $router.push('/about', true);
 
-			let process = $router.push('/about', true);
-			server.respond();
+				server.respond();
 
-			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+				return process.then(resolveSpy, rejectSpy)
+					.then(finish, finish);
+			});
+		});
+
+		it('should override pjax partials', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/faq');
+				expect($('title').text()).to.equal('Homepage'); // Title from previous page
+				expect($('main').text()).to.equal('This is the FAQ page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			return $router.pjax().run().then(() => {
+				let process = $router.push('/faq', {
+					partials: ['main'] // Leaving out title from partials list
+				});
+
+				server.respond();
+
+				return process.then(resolveSpy, rejectSpy)
+					.then(finish, finish);
+			});
 		});
 	});
 
@@ -284,6 +312,32 @@ describe('Router: pjax', () => {
 			server.respond();
 
 			return process.then(resolveSpy, rejectSpy).then(finish, finish);
+		});
+
+		it('should override pjax partials', () => {
+			let resolveSpy = sinon.spy();
+			let rejectSpy = sinon.spy();
+			let finish = function() {
+				expect(resolveSpy.calledOnce).to.be.true;
+				expect(rejectSpy.called).to.be.false;
+				expect(window.location.pathname).to.equal('/faq');
+				expect($('title').text()).to.equal('Homepage'); // Title from previous page
+				expect($('main').text()).to.equal('This is the FAQ page');
+
+				// Make sure that pjax was re-enabled after request
+				expect(pjax.isPaused()).to.be.false;
+			};
+
+			return $router.pjax().run().then(() => {
+				let process = $router.replace('/faq', {
+					partials: ['main'] // Leaving out title from partials list
+				});
+
+				server.respond();
+
+				return process.then(resolveSpy, rejectSpy)
+					.then(finish, finish);
+			});
 		});
 	});
 });

@@ -4,7 +4,7 @@ import History from './routes/history';
 import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
-import { $copy, $extend, $isArray } from 'core/types';
+import { $copy, $extend, $isArray, $isObject } from 'core/types';
 import { uri } from 'wee-location';
 
 const defaults = {
@@ -152,7 +152,7 @@ router.onReady = function onReady(success) {
 router.push = function push(path, modifyPjax = false) {
 	if (modifyPjax === true) {
 		pjax.pause();
-	} else if ($isArray(modifyPjax)) {
+	} else if ($isObject(modifyPjax)) {
 		pjax.override(modifyPjax);
 	}
 
@@ -169,7 +169,7 @@ router.push = function push(path, modifyPjax = false) {
 router.replace = function replace(path, modifyPjax = false) {
 	if (modifyPjax === true) {
 		pjax.pause();
-	} else if ($isArray(modifyPjax)) {
+	} else if ($isObject(modifyPjax)) {
 		pjax.override(modifyPjax);
 	}
 
