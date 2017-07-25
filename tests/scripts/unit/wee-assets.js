@@ -26,7 +26,7 @@ describe('Assets', () => {
 		it('should load a single image file', done => {
 			$assets.load({
 				cache: false,
-				img: '/files/sample.jpg',
+				images: '/files/sample.jpg',
 				success() {
 					done();
 				},
@@ -38,7 +38,7 @@ describe('Assets', () => {
 
 		it('should load a single js file', done => {
 			$assets.load({
-				js: '/files/sample.js',
+				scripts: '/files/sample.js',
 				success() {
 					done();
 				},
@@ -50,7 +50,7 @@ describe('Assets', () => {
 
 		it('should load a single css file', done => {
 			$assets.load({
-				css: '/files/sample.css',
+				styles: '/files/sample.css',
 				success() {
 					done();
 				},
@@ -84,6 +84,31 @@ describe('Assets', () => {
 			$assets.load({
 				cache: false,
 				files: ['/files/sample.css', '/files/sample.js', '/files/sample.jpg'],
+				success() {
+					done();
+				},
+				error() {
+					done(new Error('stylesheet not loaded'));
+				}
+			});
+		});
+
+		it('should fail if file cannot be found', done => {
+			$assets.load({
+				cache: false,
+				files: ['/unknown.jpg', 'unknown.js', 'unknown.css'],
+				success() {
+					done(new Error('stylesheet not loaded'));
+				},
+				error() {
+					done();
+				}
+			});
+		});
+
+		it('should skip loading a pre-loaded asset', done => {
+			$assets.load({
+				scripts: ['/files/sample.js'],
 				success() {
 					done();
 				},

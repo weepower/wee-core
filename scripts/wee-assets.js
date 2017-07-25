@@ -119,20 +119,20 @@ const module = {
 	 * @param {Object} options
 	 * @param {boolean} [options.async=false]
 	 * @param {boolean} [options.cache=false]
-	 * @param {(Array|string)} [options.css]
+	 * @param {(Array|string)} [options.styles]
 	 * @param {(Array|function|string)} [options.error]
 	 * @param {(Array|string)} [options.files]
 	 * @param {string} [options.group]
-	 * @param {(Array|string)} [options.img]
-	 * @param {(Array|string)} [options.js]
+	 * @param {(Array|string)} [options.images]
+	 * @param {(Array|string)} [options.scripts]
 	 * @param {string} [options.root]
 	 * @param {(Array|function|string)} [options.success]
 	 */
 	load(options) {
 		const files = $toArray(options.files);
-		const js = $toArray(options.js);
-		const css = $toArray(options.css);
-		const img = $toArray(options.img);
+		const js = $toArray(options.scripts);
+		const css = $toArray(options.styles);
+		const img = $toArray(options.images);
 		const root = options.root !== U ? options.root : this.root();
 		let assets = {};
 		let i = 0;
@@ -266,6 +266,9 @@ const module = {
 	}
 }
 
+/**
+ * Cache existing CSS and JavaScript assets
+ */
 $each('link[rel="stylesheet"], script[src]', el => loaded[el.src || el.href] = el);
 
 export default module;
