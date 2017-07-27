@@ -12,7 +12,7 @@ export default function runQueue(queue, iterator) {
 				resolve();
 			} else {
 				if (queue[index]) {
-					iterator(queue[index], error => {
+					iterator(queue[index], (error) => {
 						if (error instanceof Error) {
 							reject(error);
 						} else {

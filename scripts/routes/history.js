@@ -187,7 +187,7 @@ export default class History {
 
 			const queues = this.buildQueues(records, handlers);
 			const iterator = (hook, next) => {
-				hook(route, this.current, to => {
+				hook(route, this.current, (to) => {
 					if (to === false) {
 						to = new QueueError('Queue stopped prematurely');
 					}
