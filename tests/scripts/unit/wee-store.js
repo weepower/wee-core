@@ -1,6 +1,6 @@
 import $store from 'wee-store';
 import sinon from 'sinon';
-import { Store } from 'wee-store';
+import { Store, $setVar } from 'wee-store';
 import StoreError from 'store/error';
 
 describe('Store', () => {
@@ -514,6 +514,30 @@ describe('Store', () => {
 			expect($store.instances('test')).to.equal(instance);
 
 			instance.destroy();
+		});
+	});
+
+	describe('$setVar', () => {
+		before(() => {
+			document.body.innerHTML = `<meta data-set="global" data-value="true">
+					<meta data-set="list[]" data-value="1">
+					<meta data-set="list[]" data-value="2">
+					<meta data-set="list[]" data-value="3">
+					
+					<meta data-store="instance" data-set="instanceProp" data-value="cool">
+					<meta data-store="otherInstance" data-set="instanceProp" data-value="dope">`;
+		});
+
+		it('should refresh all stores with properties from DOM', () => {
+			const instance = $store.create('instance');
+			const otherInstance = $store.create('otherInstance');
+
+			$setVar();
+
+			expect(instance.get('instanceProp')).to.equal('cool');
+			expect(otherInstance.get('instanceProp')).to.equal('dope');
+			expect($store.get('global')).to.be.true;
+			expect($store.get('list')).to.be.array;
 		});
 	});
 });

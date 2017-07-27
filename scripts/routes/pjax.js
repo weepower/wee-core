@@ -9,6 +9,7 @@ import $fetch from 'wee-fetch';
 import $ from 'wee-dom';
 import { warn } from 'core/warn';
 import { parseLocation } from './location';
+import { $setVar } from 'wee-store';
 
 let defaults = {
 	action: 'replace',
@@ -89,8 +90,7 @@ function _path(loc) {
 function _reset(sel) {
 	response = null;
 	$setRef(sel);
-	// TODO: Uncomment when $setVar is added
-	// $setVar(sel);
+	$setVar(sel);
 
 	pjax.bind(sel);
 }
@@ -281,7 +281,6 @@ const pjax = {
 	 */
 	replace() {
 		let partials = overrides.partials || settings.partials;
-		let action = overrides.action || settings.action;
 
 		if (paused) {
 			warn('routes', 'pjax has been paused - will not replace partials');

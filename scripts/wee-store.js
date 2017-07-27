@@ -415,17 +415,12 @@ export class Store {
 	 */
 	setVar(context) {
 		const store = this.getStore();
+		const storeFilter = this.name !== 'default' ?
+			`[data-store="${this.name}"]` :
+			':not([data-store])';
 
-		$each('[data-set]', (el) => {
-			const key = el.getAttribute('data-set');
-			const val = _castString(el.getAttribute('data-value'));
-			const name = el.getAttribute('data-store');
-
-			if ((! name && this.name === 'default') || name === this.name) {
-				key.slice(-2) == '[]' ?
-					this._add('push', store, this.observe, key.slice(0, -2), val, false, false) :
-					this._set(store, this.observe, key, val, {}, false);
-			}
+		$each(`[data-set]${storeFilter}`, (el) => {
+			_setVar(this, el);
 		}, {
 			context: context
 		});
@@ -447,6 +442,32 @@ export class Store {
 }
 
 const store = new Store('default');
+
+function _setVar(instance, el) {
+	const key = el.getAttribute('data-set');
+	const val = _castString(el.getAttribute('data-value'));
+	const store = instance.getStore();
+
+	key.slice(-2) == '[]' ?
+		instance._add('push', store, instance.observe, key.slice(0, -2), val, false, false) :
+		instance._set(store, instance.observe, key, val, {}, false);
+}
+
+/**
+ * Refresh all stores
+ *
+ * @param context
+ */
+export function $setVar(context) {
+	$each(`[data-set]`, (el) => {
+		const name = el.getAttribute('data-store');
+		let instance = name && instances[name] ? instances[name] : store;
+
+		_setVar(instance, el);
+	}, {
+		context: context
+	});
+}
 
 /**
  * Instantiate new Store instance
