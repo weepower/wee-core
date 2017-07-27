@@ -95,10 +95,10 @@ function _fail(group) {
  */
 function _done(group) {
 	groups[group][0]--;
-	module.ready(group, {}, false);
+	assetModule.ready(group, {}, false);
 }
 
-const module = {
+const assetModule = {
 	/**
 	 * Get current asset root or set with specified value
 	 *
@@ -271,4 +271,4 @@ const module = {
  */
 $each('link[rel="stylesheet"], script[src]', el => loaded[el.src || el.href] = el);
 
-export default module;
+export default assetModule;

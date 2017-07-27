@@ -129,7 +129,7 @@ function _size() {
 	)
 }
 
-const module = {
+const screenModule = {
 	/**
 	 * Retrieve bound mappings
 	 *
@@ -201,6 +201,6 @@ const module = {
 	}
 }
 
-export const resetScreen = module.reset;
+export const resetScreen = screenModule.reset;
 
-export default module;
+export default screenModule;

@@ -166,7 +166,7 @@ function _bound(target, event = '', fn = null, delegateTarg = undefined) {
 	return matches;
 }
 
-const module = {
+const eventsModule = {
 	/**
 	 * Bind event function to element
 	 *
@@ -294,7 +294,7 @@ const module = {
  * @param {string} namespace
  */
 export function unbindEvents(namespace) {
-	module.off(false, '.' + namespace);
+	eventsModule.off(false, '.' + namespace);
 };
 
-export default module;
+export default eventsModule;
