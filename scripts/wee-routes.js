@@ -228,7 +228,9 @@ router.routes = function routes(key, keyType = 'path') {
  * @returns {router}
  */
 router.run = function runRoutes() {
-	return history.navigate(uri().fullPath);
+	return $ready().then(() => {
+		return history.navigate(uri().fullPath);
+	});
 }
 
 export default router;

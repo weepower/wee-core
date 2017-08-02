@@ -267,31 +267,22 @@ describe('Core: DOM', () => {
 
 	describe('$ready', () => {
 		it('should execute callback when document has finished loading', done => {
-			let state = false;
-
-			$ready(() => {
-				state = true;
-				expect(state).to.be.true;
-				done();
-			});
+			$ready().then(done, done);
 		});
 
-		it('should execute callback when document has not yet finished loading', done => {
-			let registry = {},
-				state = false;
+		it('should execute callback when document has not yet finished loading', () => {
+			let registry = {};
 
-			$ready.call({
+			let promise = $ready.call({
 				readyState: 'loading',
 				addEventListener: function(key, cb) {
 					registry[key] = cb;
 				}
-			}, () => {
-				state = true;
-				expect(state).to.be.true;
-				done();
 			});
 
 			registry['DOMContentLoaded']();
+
+			return promise;
 		});
 	});
 

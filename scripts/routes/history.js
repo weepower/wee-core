@@ -241,7 +241,6 @@ export default class History {
 
 				resolve(route);
 			}).catch((error) => {
-
 				// Ensure we are where we started
 				this.ensureState(transitionPromise);
 				warn('routes', error.message);

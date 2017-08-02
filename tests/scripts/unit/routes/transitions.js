@@ -50,13 +50,11 @@ describe('Router: transitions', () => {
 			beforeSpy.callsArg(2);
 
 			setPath('/');
-
-			$router.map([
-				{ path: '/' }
-			]).run();
+			$router.reset();
 		});
 
 		it('should add and then remove a class on history navigation', () => {
+			let bodyHadHideClass = false;
 			let events = [];
 			let originalAddEventListener = document.body.addEventListener;
 
@@ -66,37 +64,39 @@ describe('Router: transitions', () => {
 			};
 
 			let finish = function() {
+				expect(bodyHadHideClass).to.be.true;
 				expect(beforeSpy.calledOnce).to.be.true;
 				expect($hasClass(document.body, hideClass)).to.be.false;
 			}
 
-			$router({
+			return $router({
 				transition: {
 					target: 'body',
 					class: hideClass
 				}
 			}).map([
+				{ path: '/' },
 				{
 					path: '/other',
 					before: beforeSpy, // Ensure that init is getting executed
 					init() {
-						expect($hasClass(document.body, hideClass)).to.be.true;
+						bodyHadHideClass = $hasClass(document.body, hideClass);
 					}
 				}
-			]);
+			]).run().then(() => {
+				let promise = $router.push('/other');
 
-			let promise = $router.push('/other');
+				// Trigger fake events
+				events.forEach(fn => fn());
 
-			// Trigger fake events
-			events.forEach(fn => fn());
+				// Reset addEventListener on body
+				document.body.addEventListener = originalAddEventListener;
 
-			// Reset addEventListener on body
-			document.body.addEventListener = originalAddEventListener;
-
-			return promise.then(finish, finish);
+				return promise;
+			}).then(finish, finish);
 		});
 
-		it('should execute enter and leave callbacks', done => {
+		it('should execute enter and leave callbacks', () => {
 			let enterSpy = sinon.spy();
 			let leaveSpy = sinon.stub();
 			leaveSpy.callsArg(2);
@@ -107,19 +107,20 @@ describe('Router: transitions', () => {
 				expect(leaveSpy.callCount).to.equal(1);
 			}
 
-			$router({
+			return $router({
 				transition: {
 					enter: enterSpy,
 					leave: leaveSpy
 				}
 			}).map([
+				{ path: '/' },
 				{
 					path: '/other',
 					before: beforeSpy // Ensure that init is getting executed
 				}
 			]).run().then(() => {
 				return $router.push('/other');
-			}).then(finish, finish).then(done, done);
+			}).then(finish, finish);
 		});
 	});
 

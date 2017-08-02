@@ -75,12 +75,13 @@ describe('Router', () => {
 			state = false;
 		});
 
-		it('should register global before hook', () => {
-			$router.beforeEach(() => {
+		it('should register global before hook', done => {
+			$router.beforeEach((to, from, next) => {
 				state = true;
-			}).run();
-
-			expect(state).to.be.true;
+				next();
+			}).run().then(() => {
+				expect(state).to.be.true;
+			}).then(done, done);
 		});
 	});
 
@@ -492,7 +493,7 @@ describe('Router', () => {
 				$router.reset();
 			});
 
-			it('should evaluate before hook of matched route record', () => {
+			it('should evaluate before hook of matched route record', done => {
 				$router().map([
 					{
 						path: '/',
@@ -508,9 +509,10 @@ describe('Router', () => {
 							next();
 						}
 					}
-				]).run();
-
-				expect(state).to.equal('home');
+				]).run().then(() => {
+					expect(state).to.equal('home');
+					done();
+				});
 			});
 
 			it('should resolve before hooks asynchronously', done => {
@@ -529,12 +531,13 @@ describe('Router', () => {
 				}).then(done, done);
 			});
 
-			it('should evaluate global before hooks', () => {
+			it('should evaluate global before hooks', done => {
 				$router.beforeEach((to, from, next) => {
 					stateArray.push('before each');
-				}).run();
-
-				expect(stateArray).to.deep.equal(['before each']);
+					next();
+				}).run().then(() => {
+					expect(stateArray).to.deep.equal(['before each']);
+				}).then(done, done);
 			});
 
 			it('should evaluate before hook(s) in specific order', done => {
@@ -579,7 +582,7 @@ describe('Router', () => {
 				}).then(done, done);
 			});
 
-			it('should all be passed "to", "from", and "next" parameters', () => {
+			it('should all be passed "to", "from", and "next" parameters', (done) => {
 				let toRoutes = [];
 				let fromRoutes = [];
 				let nextFns = [];
@@ -608,23 +611,23 @@ describe('Router', () => {
 					fromRoutes.push(from);
 					nextFns.push(next);
 					next();
-				}).run();
-
-				expect(toRoutes.length).to.equal(3);
-				expect(fromRoutes.length).to.equal(3);
-				expect(nextFns.length).to.equal(3);
-				toRoutes.forEach(to => {
-					expect(to.path).to.equal('/test');
-				});
-				fromRoutes.forEach(from => {
-					expect(from.path).to.equal('/');
-				});
-				nextFns.forEach(next => {
-					expect(next).to.be.function;
-				});
+				}).run().then(() => {
+					expect(toRoutes.length).to.equal(3);
+					expect(fromRoutes.length).to.equal(3);
+					expect(nextFns.length).to.equal(3);
+					toRoutes.forEach(to => {
+						expect(to.path).to.equal('/test');
+					});
+					fromRoutes.forEach(from => {
+						expect(from.path).to.equal('/');
+					});
+					nextFns.forEach(next => {
+						expect(next).to.be.function;
+					});
+				}).then(done, done);
 			});
 
-			it('should evaluate parent before hooks before children route records', () => {
+			it('should evaluate parent before hooks before children route records', (done) => {
 				setPath('/parent/other/child');
 
 				$router.map(basicRoutes.concat([
@@ -644,9 +647,9 @@ describe('Router', () => {
 							}
 						]
 					}
-				])).run();
-
-				expect(stateArray).to.deep.equal(['parent', 'child']);
+				])).run().then(() => {
+					expect(stateArray).to.deep.equal(['parent', 'child']);
+				}).then(done, done);
 			});
 
 			it('should not resolve if "next" is not executed', () => {

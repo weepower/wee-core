@@ -1,3 +1,4 @@
+import 'es6-promise/auto';
 import { _$, _body, _doc, _html, _win, U } from './variables';
 import { $exec } from './core';
 import { _extend, _slice, $toArray } from './types';
@@ -239,19 +240,23 @@ export function $parseHTML(html) {
 *
 * @param {(Array|function|string)} fn
 */
-export function $ready(fn) {
-	let doc = _doc;
+export function $ready() {
+	return new Promise((resolve) => {
+		let doc = _doc;
 
-	// This is for testing only
-	if (this && this.readyState) {
-		doc = this;
-	}
+		// This is for testing only
+		if (this && this.readyState) {
+			doc = this;
+		}
 
-	doc.readyState === 'complete' ?
-		$exec(fn) :
-		doc.addEventListener('DOMContentLoaded', () => {
-			$exec(fn);
-		});
+		if (doc.readyState === 'complete') {
+			resolve();
+		} else {
+			doc.addEventListener('DOMContentLoaded', () => {
+				resolve();
+			});
+		}
+	});
 }
 
 /**
