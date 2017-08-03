@@ -1,4 +1,4 @@
-import $router from 'wee-routes';
+import $router, { history } from 'wee-routes';
 import sinon from 'sinon';
 import $events from 'wee-events';
 import $ from 'wee-dom';
@@ -87,30 +87,31 @@ describe('Router: pjax', () => {
 		expect($events.bound('a', 'click').length).to.equal(4);
 	});
 
-	it('should throw FetchError if pjax.go request fails', done => {
+	it('should throw error if pjax.go request fails', done => {
 		let spy = sinon.spy();
+		let historyStub = sinon.stub(history, 'push');
+		historyStub.returns(Promise.reject());
+
 		let finish = function() {
 			$events.trigger('#about', 'click');
-			server.respond();
 
-			setTimeout(function() {
+			// Triggering click event is an asynchronous action
+			// Need to move assertion to next tick
+			setTimeout(() => {
 				expect(spy.calledOnce).to.be.true;
 
-				// Babel does not extend built-in types so I cannot check
-				// for instanceof FetchError like I would prefer
-				expect(spy.args[0][0].errorType).to.equal('FetchError');
-				expect(spy.args[0][0]).to.be.a('Error');
+				// Cleanup
+				historyStub.restore();
 				done();
 			}, 0);
 		}
-
-		server.respondWith('GET', '/about', [404, {}, '']);
 
 		$router.pjax({
 				onError: spy
 			})
 			.run()
-			.then(finish, finish);
+			.then(finish, finish)
+			.catch(done);
 	});
 
 	it('should replace target partials on navigation', done => {

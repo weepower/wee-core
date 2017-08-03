@@ -714,7 +714,7 @@ describe('Router', () => {
 
 				$router.map([
 					{ path: '/', before(to, from, next) { next(false); } }
-				]).run().catch(spy).then(finish, finish).then(done, done);
+				]).onError(spy).run().then(finish, finish).then(done, done);
 			});
 
 			it('should throw custom error if passed to before hook', done => {
@@ -727,7 +727,7 @@ describe('Router', () => {
 
 				$router.map([
 					{ path: '/', before(to, from, next) { next(new Error('something went wrong with homepage')); } }
-				]).run().catch(spy).then(finish, finish).then(done, done);
+				]).onError(spy).run().then(finish, finish).then(done, done);
 			});
 		});
 
@@ -1206,6 +1206,44 @@ describe('Router', () => {
 			return $router.replace('page1').then(() => {
 				expect(window.history.length).to.equal(initial);
 			});
+		});
+	});
+
+	describe('onError', () => {
+		before(() => {
+			setPath('/');
+		});
+
+		beforeEach(() => {
+			$router.reset();
+
+			$router.map([
+				{ path: '/', before(to, from, next) { next(false); } }
+			]);
+		});
+
+		it('should register callback that triggers on error', done => {
+			let spy = sinon.spy();
+
+			$router.onError(spy).run().then(() => {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('Queue stopped prematurely');
+			}).then(done, done);
+		});
+
+		it('should register multiple callbacks that each trigger on error', done => {
+			let spy = sinon.spy();
+			let spy2 = sinon.spy();
+
+			$router.onError([spy, spy2]).run().then(() => {
+				expect(spy.calledOnce).to.be.true;
+				expect(spy.args[0][0]).to.be.an('error');
+				expect(spy.args[0][0].message).to.equal('Queue stopped prematurely');
+				expect(spy2.calledOnce).to.be.true;
+				expect(spy2.args[0][0]).to.be.an('error');
+				expect(spy2.args[0][0].message).to.equal('Queue stopped prematurely');
+			}).then(done, done);
 		});
 	});
 });

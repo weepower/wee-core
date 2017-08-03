@@ -4,7 +4,7 @@ import { match, noMatch } from './route-matcher';
 import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
-import { getHooks } from './global-hooks';
+import { getErrorHandlers, getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
 import { warn } from 'core/warn';
 import { _win } from 'core/variables';
@@ -53,13 +53,12 @@ export default class History {
 				}
 			}
 
-			this.navigate(parseLocation().fullPath).then(route => {
+			this.navigate(parseLocation().fullPath).then((route) => {
 				this.ensureUrl();
 				handleScroll(route, this.previous, $router.settings.scrollBehavior, true);
-			}).catch(error => {
-				console.error(error);
-				// TODO: What to do with this error?
-				// TODO: Register onError callbacks from routes
+			}, (error) => {
+				this.ensureUrl();
+				getErrorHandlers().forEach(fn => fn(error));
 			});
 		};
 

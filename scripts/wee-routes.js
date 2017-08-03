@@ -1,10 +1,10 @@
 import Handler from 'routes/route-handler';
 import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
 import History from './routes/history';
-import { addAfterEach, addBeforeEach, resetHooks } from './routes/global-hooks';
+import { addAfterEach, addBeforeEach, addOnError, getErrorHandlers, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
 import { $ready } from 'core/dom';
-import { $copy, $extend, $isArray, $isObject } from 'core/types';
+import { $copy, $extend, $isObject, $toArray } from 'core/types';
 import { uri } from 'wee-location';
 
 const defaults = {
@@ -103,6 +103,17 @@ router.notFound = function notFound(route) {
 }
 
 /**
+ * Register one or more error handlers
+ *
+ * @param {Function|Array} handlers
+ */
+router.onError = function addRouterError(handlers) {
+	$toArray(handlers).forEach((fn) => addOnError(fn));
+
+	return this;
+}
+
+/**
  * Configure and initialize pjax navigation
  *
  * @param {Object} config
@@ -118,7 +129,8 @@ router.pjax = function initPjax(config = {}) {
 			this.onReady(() => {
 				pjax.onTrigger = function onPjaxTrigger(destination) {
 					history.push(destination)
-						.catch(error => {
+						.catch((error) => {
+							getErrorHandlers().forEach(fn => fn(error));
 							pjax.onError(error);
 						});
 				};
@@ -229,7 +241,10 @@ router.routes = function routes(key, keyType = 'path') {
  */
 router.run = function runRoutes() {
 	return $ready().then(() => {
-		return history.navigate(uri().fullPath);
+		return history.navigate(uri().fullPath)
+			.catch((error) => {
+				getErrorHandlers().forEach(fn => fn(error));
+			});
 	});
 }
 

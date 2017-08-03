@@ -1,7 +1,8 @@
 import sinon from 'sinon';
 import $router from 'wee-routes';
 import { history } from 'wee-routes';
-import { setPath } from '../../helpers/browsers';
+import setPath from '../../helpers/routes';
+import { parseLocation } from 'routes/location';
 
 describe('Router: history', () => {
 	after($router.reset);
@@ -46,6 +47,66 @@ describe('Router: history', () => {
 			]).run().then(() => {
 				return history.navigate('/');
 			}, done).then(resolveSpy, rejectSpy).then(finish, finish).then(done, done);
+		});
+	});
+
+	describe('popstate', () => {
+		let stub;
+		let origScrollBehavior;
+
+		beforeEach(() => {
+			stub = sinon.stub(history, 'navigate');
+			origScrollBehavior = $router.settings.scrollBehavior;
+			$router.settings.scrollBehavior = false;
+		});
+
+		afterEach(() => {
+			stub.restore();
+			$router.settings.scrollBehavior = origScrollBehavior;
+			$router.reset();
+		});
+
+		it('should return early if navigating to internal link URL', (done) => {
+			stub.returns(new Promise((resolve) => resolve()));
+
+			// Set current path
+			setPath('/');
+			history.current = parseLocation();
+
+			// Navigate to new page link
+			setPath('/some-path');
+
+			history.popstate(); // Should execute 'navigate'
+			history.current = parseLocation();
+
+			// Navigate to internal link
+			setPath('/some-path#id');
+
+			history.popstate(); // Should not execute 'navigate'
+
+			setTimeout(() => {
+				expect(stub.calledOnce).to.be.true;
+				done();
+			}, 0);
+		});
+
+		it('should execute error handlers when navigation fails', (done) => {
+			let spy = sinon.spy();
+
+			$router.onError(spy);
+			stub.returns(Promise.reject(new Error()));
+
+			history.current = parseLocation();
+
+			setPath('/new-url');
+			// Navigate should catch error and call registered onError method
+			history.popstate();
+
+			setTimeout(() => {
+				expect(stub.calledOnce).to.be.true;
+				expect(spy.calledOnce).to.be.true;
+				done();
+			}, 0);
 		});
 	});
 });

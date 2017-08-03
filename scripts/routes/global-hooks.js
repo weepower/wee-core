@@ -1,5 +1,6 @@
 let beforeEach = [];
 let afterEach = [];
+let onError = [];
 
 /**
  * Add beforeEach function to registry
@@ -20,6 +21,15 @@ export function addAfterEach(fn) {
 }
 
 /**
+ * Add onError function to registry
+ *
+ * @param {function} fn
+ */
+export function addOnError(fn) {
+	onError.push(fn);
+}
+
+/**
  * Get all registered functions
  *
  * @returns {Object}
@@ -32,9 +42,19 @@ export function getHooks() {
 }
 
 /**
+ * Get all registered error handlers
+ *
+ * @returns {Array}
+ */
+export function getErrorHandlers() {
+	return onError;
+}
+
+/**
  * Reset all hooks
  */
 export function resetHooks() {
 	beforeEach = [];
 	afterEach = [];
+	onError = [];
 }

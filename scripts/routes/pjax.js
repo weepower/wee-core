@@ -288,7 +288,7 @@ const pjax = {
 		}
 
 		if (! response) {
-			warn('routes', 'no response to use');
+			warn('routes', 'no response to use for partial replacement');
 			return;
 		}
 
