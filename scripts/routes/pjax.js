@@ -29,10 +29,9 @@ let defaults = {
 	replace: null
 };
 let overrides = {
-	partials: false,
-	action: false
+	partials: false
 };
-let settings = $copy(defaults);
+export let settings = $copy(defaults);
 let response = null;
 let paused = false;
 
@@ -267,10 +266,6 @@ const pjax = {
 		if (options.partials) {
 			overrides.partials = options.partials;
 		}
-
-		if (options.action) {
-			overrides.action = options.action;
-		}
 	},
 
 	/**
@@ -340,7 +335,6 @@ const pjax = {
 	resume() {
 		paused = false;
 		overrides = {
-			action: false,
 			partials: false
 		};
 	}
