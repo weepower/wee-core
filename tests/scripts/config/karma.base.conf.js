@@ -44,7 +44,7 @@ module.exports = {
 	basePath: '../..',
 
 	proxies: {
-		'/files/': '/base/scripts/helpers/files/'
+		'/files': '/base/scripts/helpers/files/'
 	},
 
 	// list of files / patterns to load in the browser
