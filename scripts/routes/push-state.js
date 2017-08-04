@@ -4,7 +4,9 @@ import { saveScrollPosition } from './scroll';
 
 let _key = genTimeKey();
 
-export const supportsPushState = _win.history && _win.history.pushState;
+export function supportsPushState() {
+	return _win.history && _win.history.pushState;
+};
 
 /**
  * Get state key

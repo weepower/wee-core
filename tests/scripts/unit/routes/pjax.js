@@ -2,9 +2,10 @@ import $router, { history } from 'wee-routes';
 import sinon from 'sinon';
 import $events from 'wee-events';
 import $ from 'wee-dom';
-import FetchError from 'fetch/error';
 import { QueueError } from 'routes/error';
 import pjax from 'routes/pjax';
+import * as pjaxModule from 'routes/pjax';
+import * as pushState from 'routes/push-state';
 
 const start = '<nav><a href="/" id="home">home</a><a href="/about" id="about">About</a><a href="/faq" id="faq">FAQ</a><a href="/contact" id="contact">Contact us</a></nav><main>This is the home page</main>';
 const responses = {
@@ -339,6 +340,52 @@ describe('Router: pjax', () => {
 				return process.then(resolveSpy, rejectSpy)
 					.then(finish, finish);
 			});
+		});
+	});
+
+	describe('init', () => {
+		it('should return false if push state is not supported', () => {
+			let stub = sinon.stub(pushState, 'supportsPushState');
+			stub.returns(false);
+
+			expect(pjax.init()).to.be.false;
+
+			// Cleanup
+			stub.restore();
+		});
+	});
+
+	describe('go', () => {
+		it('should execute "next", passing in error if fetch request fails', (done) => {
+			let nextSpy = sinon.spy();
+			let stub = sinon.stub(pjaxModule.settings, 'fetch');
+			let error = new Error();
+			stub.returns(Promise.reject(error));
+
+			pjax.go({}, {}, nextSpy);
+
+			setTimeout(() => {
+				expect(nextSpy.calledOnce).to.be.true;
+				expect(nextSpy.calledWith(error)).to.be.true;
+
+				// Cleanup
+				stub.restore();
+
+				done();
+			}, 0);
+		});
+
+		it('should return false if not pushState not supported', () => {
+			let locationStub = sinon.stub(pjax, '_setWindowLocation');
+			let pushStateStub = sinon.stub(pushState, 'supportsPushState');
+			pushStateStub.returns(false);
+			locationStub.returns(false);
+
+			expect(pjax.go({}, {})).to.be.false;
+
+			// Cleanup
+			pushStateStub.restore();
+			locationStub.restore();
 		});
 	});
 });

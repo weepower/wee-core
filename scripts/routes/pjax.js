@@ -96,6 +96,10 @@ function _reset(sel) {
 }
 
 const pjax = {
+	_setWindowLocation(location) {
+		_win.location = location;
+	},
+
 	// Empty callbacks - will be defined by router.pjax
 	onError() {},
 	onTrigger() {},
@@ -110,7 +114,7 @@ const pjax = {
 		const events = settings.bind;
 		context = context || settings.context;
 
-		if (supportsPushState) {
+		if (supportsPushState()) {
 			const keys = Object.keys(events);
 			let i = 0;
 
@@ -199,9 +203,9 @@ const pjax = {
 		let a = _doc.createElement('a');
 		a.href = to.url;
 
-		if (! supportsPushState || ! _isValid(a, from.fullPath)) {
+		if (! supportsPushState() || ! _isValid(a, from.fullPath)) {
 			// Will trigger full page reload
-			_win.location = to.fullPath;
+			this._setWindowLocation(to.fullPath);
 			return false;
 		}
 
@@ -222,8 +226,8 @@ const pjax = {
 	 *
 	 * @param {Object} options
 	 */
-	init(options) {
-		if (supportsPushState) {
+	init(options = {}) {
+		if (supportsPushState()) {
 			if (options.onError) {
 				this.onError = options.onError;
 				delete options.onError;
