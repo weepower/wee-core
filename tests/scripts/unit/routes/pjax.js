@@ -372,7 +372,7 @@ describe('Router: pjax', () => {
 				stub.restore();
 
 				done();
-			}, 0);
+			}, 50);
 		});
 
 		it('should return false if not pushState not supported', () => {
