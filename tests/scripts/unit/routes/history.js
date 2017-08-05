@@ -106,7 +106,7 @@ describe('Router: history', () => {
 				expect(stub.calledOnce).to.be.true;
 				expect(spy.calledOnce).to.be.true;
 				done();
-			}, 0);
+			}, 50);
 		});
 	});
 });
