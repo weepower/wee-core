@@ -1686,7 +1686,7 @@ module.exports = (vars = {}) => {
 		 * @return {Array}
 		 */
 		row(margin) {
-			margin = margin || vars.grid.margin.replace('%', '');
+			margin = margin === 0 ? 0 : margin || vars.grid.margin.replace('%', '');
 			margin = parseInt(margin);
 
 			return [

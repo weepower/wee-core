@@ -1946,6 +1946,14 @@ describe('row', () => {
 			{ mixins: mixins }
 		);
 	});
+
+	it('should handle margin of 0', () => {
+		return process(
+			`.block { row(0); }`,
+			`.block { margin-left: 0%; max-width: 100%; &:after { clear: both; content: ''; display: block } }`,
+			{ mixins: mixins }
+		);
+	});
 });
 
 describe('rowModify', () => {
