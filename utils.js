@@ -9,6 +9,16 @@ const projectSourcePath = `${projectPath}/source`;
 
 module.exports = {
 	/**
+	 * Prep a string to become file/folder name
+	 *
+	 * @param  {string} string
+	 * @return {string}
+	 */
+	fileFormat(string) {
+		return string.trim().replace(/\s+|_/g, '-').toLowerCase();
+	},
+
+	/**
 	 * Notify through a natively available notification option
 	 *
 	 * @param {object} options
@@ -67,11 +77,13 @@ module.exports = {
 	paths: {
 		root: basePath,
 		styles: `${basePath}/styles`,
+		commands: `${basePath}/commands`,
 		project: {
 			root: projectPath,
 			source: projectSourcePath,
 			styles: `${projectSourcePath}/styles`,
-			scripts: `${projectSourcePath}/scripts`
+			scripts: `${projectSourcePath}/scripts`,
+			components: `${projectSourcePath}/components`
 		},
 		tests: {
 			root: `${basePath}/tests`,
