@@ -8,7 +8,7 @@ function parser (str) {
 	const START = /^\/\*\*?/;
 	const END = /^\*\//;
 	const CONTENT = /(^[^@]+)?(@.*)/;
-	const PARSE_PARAM = /(?:^(param|return)\s+)(?:\{([^\}]+)\}\s*)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/g;
+	const PARSE_PARAM = /(?:^(param|return)s?\s+)(?:\{([^\}]+)\}\s*)?(?:\[([\S]+)\]\s*|([\S]+)\s*)?(?:- +([\S ]+))?/;
 
 	let lines = str.split(/[\r\n]/);
 	let linesLength = lines.length;
@@ -44,9 +44,13 @@ function parser (str) {
 
 				comment.description = contentBreakdown[1].trim();
 
-				lines.shift();
+				if (! lines[0].trim().length) {
+					lines.shift();
+				}
 
 				lines.forEach(param => {
+					param = param.trim();
+
 					let name = '';
 					let required = true;
 					let match = PARSE_PARAM.exec(param);
@@ -94,7 +98,7 @@ function parser (str) {
 		}
 
 		if (! isComment && comment.end && i > comment.end && afterCount < 2) {
-			if (!isWhitespace(line)) {
+			if (! isWhitespace(line)) {
 				comment.codeStart = i;
 			}
 
@@ -120,13 +124,13 @@ function parser (str) {
 function stripStars(str) {
   str = str.replace(/^\s*/, '');
   if (str.charAt(0) === '/') {
-    str = str.slice(1);
+	str = str.slice(1);
   }
   if (str.charAt(0) === '*') {
-    str = str.slice(1);
+	str = str.slice(1);
   }
   if (str.charAt(0) === ' ') {
-    str = str.slice(1);
+	str = str.slice(1);
   }
   return str;
 }
