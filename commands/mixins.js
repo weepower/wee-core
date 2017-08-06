@@ -39,12 +39,15 @@ module.exports = {
 
 		if (mixin === undefined) {
 			list.sort((a, b) => {
-			if (a.code < b.code)
-				return -1;
-			  if (a.code > b.code)
-				return 1;
-		 	return 0;
-		});
+				if (a.code < b.code) {
+					return -1;
+				} else if (a.code > b.code) {
+					return 1;
+				}
+
+				return 0;
+			});
+
 			list.forEach(item => {
 				let name = item.code.split('(')[0];
 
@@ -92,7 +95,7 @@ module.exports = {
 		}
 
 		if (found === false) {
-			console.log(`${mixin} not found`);
+			utils.logError(`${mixin} not found`);
 		}
 	}
 };

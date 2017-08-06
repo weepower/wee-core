@@ -7,6 +7,7 @@ const assets = {
 	scripts: '--scripts',
 	fonts: '--fonts'
 };
+const { logError, logSuccess } = require('../utils');
 
 module.exports = {
 	name: name,
@@ -69,14 +70,14 @@ module.exports = {
 
 			child.on('error', data => {
 				error = true;
-				console.log(data);
+				logError(data);
 			});
 
 			child.on('close', (code) => {
 				spawnCount += 1;
 
 				if (spawnCount === lastSpawn && ! error) {
-					console.log(`Finished: ${buildFeedback(feedbackItems)}`);
+					logSuccess(`Finished: ${buildFeedback(feedbackItems)}`);
 				}
 
 				if (options.watch) {
@@ -87,7 +88,7 @@ module.exports = {
 					});
 
 					child.on('error', data => {
-						console.log(data);
+						logError(data);
 					});
 				}
 			});

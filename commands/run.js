@@ -17,7 +17,7 @@ module.exports = {
 
 		if (options.local) {
 			if (! project.server.proxy) {
-				utils.notify({icon: 'error', message: 'Set proxy domain in wee.json'}, 'error');
+				utils.logError('Set proxy domain in wee.json');
 				process.exit();
 			}
 
@@ -42,7 +42,7 @@ module.exports = {
 		});
 
 		child.on('error', data => {
-			console.log(data);
+			utils.logError(data);
 		});
 	}
 };

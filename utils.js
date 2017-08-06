@@ -39,15 +39,23 @@ module.exports = {
 	/**
 	 * Log an error to the console
 	 *
-	 * @param {string} position
 	 * @param {string} message
 	 * @param {string} [details]
 	 */
-	logError(position, message, details) {
+	logError(message, details) {
 		console.log(
-			chalk.bgBlack.bold('[' + position + '] ') +
+			chalk.red.bold('error: ') +
 			message + ' ' + (details || '')
 		);
+	},
+
+	/**
+	 * Log a success message to the console
+	 *
+	 * @param  {string} message
+	 */
+	logSuccess(message) {
+		console.log(chalk.green(message));
 	},
 
 	logList(name, desc) {
