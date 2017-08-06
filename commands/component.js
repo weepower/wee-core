@@ -1,7 +1,4 @@
-const exec = require('child_process').exec;
-const spawn = require('child_process').spawn;
 const fs = require('fs-extra');
-const path = require('path');
 const { paths, logError, logSuccess, fileFormat } = require('../utils');
 
 module.exports = {
