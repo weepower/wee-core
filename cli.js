@@ -78,7 +78,11 @@ module.exports = function(rootPath, program) {
 			.usage(command.usage || command.name)
 			.description(command.description || '');
 
-		if (command.options.length) {
+		if (command.arguments) {
+			result.arguments(command.arguments);
+		}
+
+		if (command.options && command.options.length) {
 			command.options.forEach(option => {
 				result.option(option[0], option[1], option[2] || {});
 			});
