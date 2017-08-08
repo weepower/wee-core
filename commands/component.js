@@ -36,11 +36,11 @@ module.exports = {
 		fs.mkdirSync(componentPath);
 
 		if (options.clean) {
-			fs.ensureFileSync(`${componentPath}/${name}.${fileExt.script}`);
-			fs.ensureFileSync(`${componentPath}/${name}.${fileExt.style}`);
+			fs.ensureFileSync(`${componentPath}/index.${fileExt.script}`);
+			fs.ensureFileSync(`${componentPath}/index.${fileExt.style}`);
 		} else {
-			fs.copySync(`${templatesPath}/template.${fileExt.script}`, `${componentPath}/${name}.${fileExt.script}`);
-			fs.copySync(`${templatesPath}/template.${fileExt.style}`, `${componentPath}/${name}.${fileExt.style}`);
+			fs.copySync(`${templatesPath}/template.${fileExt.script}`, `${componentPath}/index.${fileExt.script}`);
+			fs.copySync(`${templatesPath}/template.${fileExt.style}`, `${componentPath}/index.${fileExt.style}`);
 		}
 
 		logSuccess(`Component created successfully.`);
