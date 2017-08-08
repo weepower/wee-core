@@ -8,7 +8,8 @@ module.exports = {
 	options: [
 		['-n, --name <name>', 'name of component'],
 		['-v, --vue', 'create vue component'],
-		['-c, --clean', 'strip out kick starter text in files']
+		['-c, --clean', 'strip out kick starter text in files'],
+		['-r, --root', 'vue only - configure as root component (mounted to page)']
 	],
 	action(config, options) {
 		// Require name option be provided
@@ -18,18 +19,23 @@ module.exports = {
 		}
 
 		// Normalize directory name
-		const name = fileFormat(options.name);
-		const componentPath = `${paths.project.components}/${name}`;
+		const fileName = fileFormat(options.name);
+		const constructorName = fileName.split('-').map((word, i) => {
+			return word.substr(0, 1).toUpperCase() + word.substr(1);
+		}).join('');
+		const variableName = constructorName.substr(0, 1).toLowerCase() + constructorName.substr(1);
+		const componentPath = `${paths.project.components}/${fileName}`;
 		const templatesPath = `${paths.commands}/helpers/component`;
-		const filePath = `${componentPath}/${name}`;
+		const filePath = `${componentPath}/${fileName}`;
 		const fileExt = {
 			style: 'pcss',
 			script: options.vue ? 'vue' : 'js'
 		};
+		const rootComponentScript = eval('`' + fs.readFileSync(`${templatesPath}/root-component-template.js`) + '`');
 
 		// Create component directory
 		if (fs.existsSync(componentPath)) {
-			logError(`component named "${name}" already exists`);
+			logError(`component named "${fileName}" already exists`);
 			process.exit();
 		}
 
@@ -38,9 +44,17 @@ module.exports = {
 		if (options.clean) {
 			fs.ensureFileSync(`${componentPath}/index.${fileExt.script}`);
 			fs.ensureFileSync(`${componentPath}/index.${fileExt.style}`);
+
+			if (options.hasOwnProperty('root') && options.hasOwnProperty('vue')) {
+				fs.ensureFileSync(`${componentPath}/index.js`);
+			}
 		} else {
 			fs.copySync(`${templatesPath}/template.${fileExt.script}`, `${componentPath}/index.${fileExt.script}`);
 			fs.copySync(`${templatesPath}/template.${fileExt.style}`, `${componentPath}/index.${fileExt.style}`);
+
+			if (options.hasOwnProperty('root') && options.hasOwnProperty('vue')) {
+				fs.writeFileSync(`${componentPath}/index.js`, rootComponentScript);
+			}
 		}
 
 		logSuccess(`Component created successfully.`);
