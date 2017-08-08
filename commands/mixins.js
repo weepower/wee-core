@@ -63,7 +63,7 @@ module.exports = {
 				let mixinName = item.code.split('(')[0];
 				let mixinTable = new Table({
 					head: [chalk.green('Name'), chalk.green('Type'), chalk.green('Description'), chalk.green('Required')],
-					colWidths: [18, 20, 25, 10]
+					colWidths: [18, 20, 55, 10]
 				});
 
 				if (mixinName.includes(mixin)) {
