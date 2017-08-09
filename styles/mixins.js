@@ -7,10 +7,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Absolute positioning
 		 *
-		 * @param {string|number} [top]
-		 * @param {string|number} [right]
-		 * @param {string|number} [bottom]
-		 * @param {string|number} [left]
+		 * @param {keyword|number} [top] - sets top edge of el
+		 * @param {keyword|number} [right] - sets right edge of el
+		 * @param {keyword|number} [bottom] - sets bottom edge of el
+		 * @param {keyword|number} [left] - sets left edge of el
 		 * @returns {Array}
 		 */
 		absolute(top, right, bottom, left) {
@@ -40,9 +40,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background
 		 *
-		 * @param {number|string} [color] - Hex value
+		 * @param {number|keyword} [color] - Hex value or color var
 		 * @param {number|string} [opacity] - Opacity or filename
-		 * @param {string} [repeat] - Repeat or attachment
+		 * @param {string|keyword} [repeat] - Repeat or attachment
 		 * @param {number|string} [attachment] - Attachment or x
 		 * @param {number|string} [x] - X or y
 		 * @param {number|string} [y]
@@ -87,11 +87,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background Image
 		 *
-		 * @param {string} filename
-		 * @param {string} [repeat]
-		 * @param {string} [position]
-		 * @param {string} [size]
-		 * @param {string} [attachment]
+		 * @param {string} filename - path to filename
+		 * @param {keyword} [repeat] - background-repeat
+		 * @param {keyword} [position] - background-position
+		 * @param {keyword|number} [size] - background-size
+		 * @param {keyword} [attachment] - background-attachment
 		 * @returns {Array}
 		 */
 		backgroundImage(filename, repeat = 'no-repeat', position, size, attachment) {
@@ -118,10 +118,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Background gradient
 		 *
-		 * @param {string} [color] - Hex value
-		 * @param {string} [start]
-		 * @param {string} [end]
-		 * @param {number} [angle]
+		 * @param {number|keyword} [color] - Hex value or var
+		 * @param {string} [start] - rgba color value
+		 * @param {string} [end] - rgba color value
+		 * @param {number} [angle] - direction of gradient
 		 * @returns {Array}
 		 */
 		backgroundGradient(color = 'gray', start = 'rgba(0, 0, 0, .8)', end = 'rgba(0, 0, 0, .2)', angle = 180) {
@@ -155,8 +155,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Display block
 		 *
-		 * @param {number|string} [width]
-		 * @param {number|string} [height]
+		 * @param {number|keyword} [width] - element width
+		 * @param {number|keyword} [height] - element height
 		 * @returns {Array}
 		 */
 		block(width, height) {
@@ -187,10 +187,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set border properties
 		 *
-		 * @param {boolean|number|string} keyword
-		 * @param {number|string} [color]
-		 * @param {number|string} [width]
-		 * @param {string} [style]
+		 * @param {boolean|number|keyword} keyword - border to set
+		 * @param {number|keyword} [color] - border color
+		 * @param {number|keyword} [width] - border width
+		 * @param {keyword} [style] - border style
 		 * @returns {Array}
 		 */
 		border(keyword, color = vars.border.color, width = vars.border.width, style = vars.border.style) {
@@ -273,11 +273,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Sets image to element border
 		 *
-		 * @param filename
-		 * @param {number|string} [slice]
-		 * @param {number|string} [width]
-		 * @param {number|string} [outset]
-		 * @param {string} [repeat]
+		 * @param {string} filename - path to file
+		 * @param {number|keyword} [slice] - divides the image
+		 * @param {number|keyword} [width] - border width
+		 * @param {number|keyword} [outset] - amount image extends beyond box
+		 * @param {keyword} [repeat] - specifies if image repeats
 		 * @returns {Object}
 		 */
 		borderImage(filename, slice = '100%', width = 1, outset = 0, repeat = 'stretch') {
@@ -291,7 +291,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Apply default value to box sizing
 		 *
-		 * @param {string} value
+		 * @param {keyword} value - alter the default CSS box model
 		 * @returns {Declaration}
 		 */
 		boxSizing(value = 'border-box') {
@@ -301,10 +301,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Create a triangle
 		 *
-		 * @param keyword
-		 * @param {string} [color] - hex value
-		 * @param {number|string} [size]
-		 * @param {number|string} [width]
+		 * @param {keyword} keyword - direction of triangle
+		 * @param {number|keyword} [color] - hex value or color var
+		 * @param {number|keyword} [size] - triangle size
+		 * @param {number|keyword} [width] - triangle width
 		 * @returns {Array}
 		 */
 		triangle(keyword, color = vars.colors.darkGray, size = '5px', width = size) {
@@ -342,8 +342,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * A block level element, centered with margin
 		 *
-		 * @param {number|string} [maxWidth]
-		 * @param {number|string} [margin]
+		 * @param {number|keyword} [maxWidth] - max width of container
+		 * @param {number|keyword} [margin] - sets left and right margin
 		 * @returns {Array}
 		 */
 		centeredBlock(maxWidth, margin) {
@@ -367,7 +367,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Clear left, right, or both
 		 *
-		 * @param {string} [value=both]
+		 * @param {keyword} [value] - side a floating el is not allowed
 		 * @returns {Object}
 		 */
 		clear(value = 'both') {
@@ -391,10 +391,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid column
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} [share]
-		 * @param {number} [columns]
-		 * @param {string} [margin]
+		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number} [share] - share/span of total columns
+		 * @param {number} [columns] - number of columns
+		 * @param {string} [margin] - if "spaced" sets margin left
 		 * @returns {Array}
 		 */
 		column(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
@@ -436,10 +436,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Modify grid column
 		 *
-		 * @param {number|string} keyword
-		 * @param {number} [share]
-		 * @param {number} [columns]
-		 * @param {string} [margin]
+		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number} [share] - share/span of total columns
+		 * @param {number} [columns] - number of columns
+		 * @param {string} [margin] - if "spaced" sets margin left
 		 * @returns {Array|Object}
 		 */
 		columnModify(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
@@ -468,7 +468,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Reset grid column
 		 *
-		 * @param {boolean} [resetMargin]
+		 * @param {boolean} [resetMargin] - Reset left margin
 		 * @returns {Array}
 		 */
 		columnReset(resetMargin = false) {
@@ -487,8 +487,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Pull grid column
 		 *
-		 * @param {number} share
-		 * @param {number} [columns]
+		 * @param {number} share - share/span of total columns
+		 * @param {number} [columns] - number of columns
 		 * @returns {Array}
 		 */
 		columnPull(share, columns = vars.grid.columns) {
@@ -501,8 +501,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Push grid column
 		 *
-		 * @param {number} share
-		 * @param {number} [columns]
+		 * @param {number} share - share/span of total columns
+		 * @param {number} [columns] - number of columns
 		 * @returns {Array}
 		 */
 		columnPush(share, columns = vars.grid.columns) {
@@ -515,10 +515,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Column Offset
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} share
-		 * @param {number} [columns]
-		 * @param {number|string} [margin]
+		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number} [share] - share/span of total columns
+		 * @param {number} [columns] - number of columns
+		 * @param {string} [margin] - if "spaced" sets margin left
 		 * @returns {Object}
 		 */
 		columnOffset(keyword, share, columns = vars.grid.columns, margin = (toPercentage(toNumber(vars.grid.margin) / 2))) {
@@ -540,10 +540,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Columns
 		 *
-		 * @param {number} count
-		 * @param {number|string} gap
-		 * @param {string} style
-		 * @param {number|string} width
+		 * @param {number} count - number of columns
+		 * @param {number|string} gap - size of the gap between columns
+		 * @param {string} style -  style of the rule drawn between columns
+		 * @param {number|string} width - specifies the minimum column width
 		 * @returns {Array}
 		 */
 		columns(count = 2, gap, style, width = '1px') {
@@ -593,7 +593,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Hide overflow
 		 *
-		 * @param {string} [keyword]
+		 * @param {keyword} [keyword] - horizontal or vertical overflow
 		 * @returns {Object}
 		 */
 		crop(keyword) {
@@ -613,7 +613,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Scroll overflow
 		 *
-		 * @param {string} [keyword]
+		 * @param {keyword} [keyword] - horizontal or vertical overflow
 		 * @returns {Object}
 		 */
 		scroll(keyword) {
@@ -633,7 +633,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set display
 		 *
-		 * @param  {string} value
+		 * @param  {keyword} value - type of rendering box
 		 * @return {Object}
 		 */
 		display(value) {
@@ -655,7 +655,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set element filter
 		 *
-		 * @param {string} value
+		 * @param {string} value - defines visual effects applied to an el
 		 * @returns {Object}
 		 */
 		filter(value) {
@@ -665,7 +665,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Blur filter
 		 *
-		 * @param {string} value
+		 * @param {string} value - radius of applied blur
 		 * @returns {Object}
 		 */
 		blur(value = '2px') {
@@ -675,7 +675,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Brightness filter
 		 *
-		 * @param {number} value
+		 * @param {number} value - brightness level
 		 * @returns {Object}
 		 */
 		brightness(value = 0.5) {
@@ -685,7 +685,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Contrast filter
 		 *
-		 * @param {number} value
+		 * @param {number} value - adjusts the contrast
 		 * @returns {Object}
 		 */
 		contrast(value = 1.5) {
@@ -695,7 +695,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grayscale filter
 		 *
-		 * @param {number} value
+		 * @param {number} value - % of grayscale conversion
 		 * @returns {Object}
 		 */
 		grayscale(value = 1) {
@@ -705,7 +705,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Hue rotate filter
 		 *
-		 * @param {string} value
+		 * @param {string} value - degree of color adjustment
 		 * @returns {Object}
 		 */
 		hueRotate(value = '180deg') {
@@ -715,7 +715,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Invert filter
 		 *
-		 * @param {number} value
+		 * @param {number} value - amount of invert conversion
 		 * @returns {Object}
 		 */
 		invert(value = 1) {
@@ -723,7 +723,7 @@ module.exports = (vars = {}) => {
 		},
 
 		/**
-		 * Saturate filter
+		 * Saturate filter - amount of saturate conversion
 		 *
 		 * @param {number} value
 		 * @returns {Object}
@@ -735,7 +735,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Sepai filter
 		 *
-		 * @param {number} value
+		 * @param {number} value - amount of sepai conversion
 		 * @returns {Object}
 		 */
 		sepia(value = 0.5) {
@@ -745,11 +745,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Drop shadow
 		 *
-		 * @param {string} color
-		 * @param {string} x
-		 * @param {string} y
-		 * @param {number} blur
-		 * @param {number} opacity
+		 * @param {string} color - rgba color value
+		 * @param {unit} x - x offset
+		 * @param {unit} y - y offset
+		 * @param {number} [blur] - radius of applied blur
+		 * @param {number} [opacity] - value of applied opacity
 		 * @returns {Object}
 		 */
 		dropShadow(color, x = '1px', y = '1px', blur = 0, opacity = vars.default.opacity) {
@@ -771,7 +771,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Ellipsis
 		 *
-		 * @param {boolean|number|string} [maxWidth]
+		 * @param {boolean|number|keyword} [maxWidth] - max width of container
 		 * @returns {Array}
 		 */
 		ellipsis(maxWidth = false) {
@@ -791,10 +791,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Fixed positioning
 		 *
-		 * @param {number|string} [top]
-		 * @param {number|string} [right]
-		 * @param {number|string} [bottom]
-		 * @param {number|string} [left]
+		 * @param {number|keyword} [top] - sets top edge of el
+		 * @param {number|keyword} [right] - sets right edge of el
+		 * @param {number|keyword} [bottom] - sets bottom edge of el
+		 * @param {number|keyword} [left] - sets left edge of el
 		 * @returns {Array}
 		 */
 		fixed(top, right, bottom, left) {
@@ -824,9 +824,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Flex positioning
 		 *
-		 * @param {number} grow
-		 * @param {number} shrink
-		 * @param {string} basis
+		 * @param {number|keyword} grow - space inside flex container item takes up
+		 * @param {number|keyword} shrink - flex items shrink to fill the container
+		 * @param {unit|keyword} basis - initial main size of a flex item
 		 * @returns {Array}
 		 */
 		flex(grow = 0, shrink = 0, basis = 'auto') {
@@ -840,11 +840,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Flex container
 		 *
-		 * @param {string} [direction]
-		 * @param {string} [wrap]
-		 * @param {string} [justify]
-		 * @param {string} [align]
-		 * @param {string} [alignContent]
+		 * @param {keyword} [direction] - how items are placed and their direction
+		 * @param {keyword} [wrap] - force items to single line or wrap to next line
+		 * @param {keyword} [justify] - defines the alignment along the main axis
+		 * @param {keyword} [align] - how flex items are laid out along the cross axis
+		 * @param {keyword} [alignContent] - defines cross-axis space between and around container
 		 * @returns {Array}
 		 */
 		flexContainer(direction = 'row', wrap = 'nowrap', justify = 'flex-start', align = 'stretch', alignContent = 'stretch') {
@@ -861,12 +861,12 @@ module.exports = (vars = {}) => {
 		/**
 		 * Font setting
 		 *
-		 * @param {string} [family]
-		 * @param {number} size
-		 * @param {number|string} weight
-		 * @param {number|string} lineHeight
-		 * @param {string} style
-		 * @param {number|string} spacing
+		 * @param {string} [family] - font family name
+		 * @param {unit} size - font size
+		 * @param {number|keyword} weight - font weight
+		 * @param {number|keyword} lineHeight - amount of space used for lines
+		 * @param {string} style - normal, italic, or oblique face
+		 * @param {number|string} spacing - amount of space between letters
 		 * @returns {Array}
 		 */
 		font(family = vars.font.family, size, weight, lineHeight, style, spacing) {
@@ -940,8 +940,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Display inline block
 		 *
-		 * @param {number|string} [width]
-		 * @param {number|string} [height]
+		 * @param {number|keyword} [width] - element width
+		 * @param {number|keyword} [height] - element height
 		 * @returns {Array}
 		 */
 		inlineBlock(width, height) {
@@ -963,10 +963,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Inline grid column
 		 *
-		 * @param {string} [keyword]
-		 * @param {number} share
-		 * @param {number} [columns]
-		 * @param {number|string} [margin]
+		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number} [share] - share/span of total columns
+		 * @param {number} [columns] - number of columns
+		 * @param {string} [margin] - if "spaced" sets margin left
 		 * @param {boolean} [spaceless]
 		 */
 		inlineColumn(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
@@ -1013,8 +1013,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Inline grid row
 		 *
-		 * @param {string} [margin]
-		 * @param {boolean} [spaceless]
+		 * @param {string} [margin] - left margin
+		 * @param {boolean} [spaceless] - Add whitespace hack
 		 * @returns {Array}
 		 */
 		inlineRow(margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
@@ -1042,7 +1042,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Float left or position left
 		 *
-		 * @param {string} [value]
+		 * @param {keyword} [value] - sets element left edge position
 		 * @return {Object}
 		 */
 		left(value) {
@@ -1074,12 +1074,12 @@ module.exports = (vars = {}) => {
 		/**
 		 * Output font icon
 		 *
-		 * @param {string} icon
-		 * @param {number|string} [size]
-		 * @param {boolean|number} [rotate]
-		 * @param {number|string} [weight]
-		 * @param {boolean} [sharpen]
-		 * @param {string} [font]
+		 * @param {keyword} icon - font icon variable
+		 * @param {number|unit} [size] - font size
+		 * @param {number} [rotate] - degree/angle to rotate icon
+		 * @param {number|keyword} [weight] - font weight
+		 * @param {boolean} [sharpen] - true or false
+		 * @param {string} [font] - font family name
 		 * @returns {Array}
 		 */
 		icon(icon, size = 'inherit', rotate = false, weight = 'normal', sharpen = true, font = vars.icon.family) {
@@ -1106,11 +1106,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Modify font icon
 		 *
-		 * @param {boolean|string} [icon]
-		 * @param {boolean|number|string} [size]
-		 * @param {boolean|number} [rotate]
-		 * @param {boolean|number|string} [weight]
-		 * @param {boolean} [sharpen]
+		 * @param {keyword} icon - font icon variable
+		 * @param {number|unit} [size] - font size
+		 * @param {number} [rotate] - degree/angle to rotate icon
+		 * @param {number|keyword} [weight] - font weight
+		 * @param {boolean} [sharpen] - true or false
 		 * @returns {Array}
 		 */
 		iconModify(icon = false, size = false, rotate = false, weight = false, sharpen = false) {
@@ -1165,11 +1165,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Margin
 		 *
-		 * @param {string} keyword
-		 * @param {number|string} top
-		 * @param {number|string} right
-		 * @param {number|string} bottom
-		 * @param {number|string} left
+		 * @param {keyword} keyword - horizontal or vertical
+		 * @param {number|keyword} top - sets top edge margin
+		 * @param {number|keyword} right - sets right edge margin
+		 * @param {number|keyword} bottom - sets bottom edge margin
+		 * @param {number|keyword} left - sets left edge margin
 		 * @returns {Array|Object}
 		 */
 		margin(keyword, top, right, bottom, left) {
@@ -1211,8 +1211,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Output max-width and/or max-height
 		 *
-		 * @param {number|string} width
-		 * @param {number|string} [height]
+		 * @param {number|keyword} width - container max width
+		 * @param {number|keyword} [height] - container max height
 		 * @returns {Array}
 		 */
 		maxSize(width, height) {
@@ -1232,8 +1232,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Output min-width and/or min-height
 		 *
-		 * @param {string|number} width
-		 * @param {string|number} height
+		 * @param {number|keyword} width - container min width
+		 * @param {number|keyword} height - container min height
 		 * @return {Array}
 		 */
 		minSize(width, height) {
@@ -1253,7 +1253,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Square
 		 *
-		 * @param {number|string} size
+		 * @param {number|keyword} size - width and height of container
 		 * @returns {Array}
 		 */
 		square(size) {
@@ -1266,8 +1266,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set image aspect ratio
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} [ratio]
+		 * @param {number|keyword} [keyword] - embed
+		 * @param {number} [ratio] - proportion between two unitless values
 		 * @returns {Array}
 		 */
 		ratio(keyword, ratio = 16 / 9) {
@@ -1302,9 +1302,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Creates a circle
 		 *
-		 * @param {number} diameter
-		 * @param {boolean} [crop]
-		 * @param {string} [display]
+		 * @param {number} diameter - width and height of element
+		 * @param {boolean} [crop] - overflow hidden true/false
+		 * @param {string} [display] - set element display property
 		 * @returns {Array}
 		 */
 		circle(diameter, crop, display = 'block') {
@@ -1346,8 +1346,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Opacity
 		 *
-		 * @param {number|string} value
-		 * @param {boolean} hideBackface
+		 * @param {number|keyword} value - specifies level of transparency
+		 * @param {boolean} hideBackface - true or false
 		 * @return {Array}
 		 */
 		opacity(value, hideBackface = false) {
@@ -1365,7 +1365,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set opacity to 1
 		 *
-		 * @param {boolean} hideBackface
+		 * @param {boolean} hideBackface - true or false
 		 * @return {Array}
 		 */
 		opaque(hideBackface = false) {
@@ -1375,11 +1375,11 @@ module.exports = (vars = {}) => {
 		/**
 		 * Padding
 		 *
-		 * @param {string} keyword
-		 * @param {number|string} top
-		 * @param {number|string} right
-		 * @param {number|string} bottom
-		 * @param {number|string} left
+		 * @param {keyword} keyword - horizontal or vertical
+		 * @param {number|keyword} top - sets top edge padding
+		 * @param {number|keyword} right - sets right edge padding
+		 * @param {number|keyword} bottom - sets bottom edge padding
+		 * @param {number|keyword} left - sets left edge padding
 		 * @returns {Array|boolean}
 		 */
 		padding(keyword, top, right, bottom, left) {
@@ -1421,7 +1421,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Styles form placeholder text
 		 *
-		 * @param color
+		 * @param {number|keyword} color - hex value or color variable
 		 * @returns {*[]}
 		 */
 		placeholder(color = vars.input.placeholder.color) {
@@ -1441,9 +1441,9 @@ module.exports = (vars = {}) => {
 		 * Prefix
 		 *
 		 * @param {string} [value]
-		 * @param {number|string} [margin]
-		 * @param {boolean|string} [font]
-		 * @param {boolean|string} [color]
+		 * @param {number|keyword} [margin] - sets right margin
+		 * @param {string} [font] - font family name
+		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Object}
 		 */
 		prefix(value = '-', margin = '.5em', font = false, color = false) {
@@ -1471,9 +1471,9 @@ module.exports = (vars = {}) => {
 		 * Suffix
 		 *
 		 * @param {string} [value]
-		 * @param {number|string} [margin]
-		 * @param {boolean|string} [font]
-		 * @param {boolean|string} [color]
+		 * @param {number|keyword} [margin] - sets left margin
+		 * @param {string} [font] - font family name
+		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Object}
 		 */
 		suffix(value = '-', margin = '.5em', font = false, color = false) {
@@ -1500,10 +1500,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Wraps a text element
 		 *
-		 * @param {string} [value]
-		 * @param {number|string} [margin]
-		 * @param {boolean|string} [font]
-		 * @param {boolean|string} [color]
+		 * @param {string} [value] -
+		 * @param {number|keyword} [margin] - sets left and right margin
+		 * @param {string} [font] - font family name
+		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Array}
 		 */
 		bookends(value = '-', margin = '.5em', font = false, color = false) {
@@ -1516,7 +1516,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Sets overflow to hidden and resize to both
 		 *
-		 * @param {string} value
+		 * @param {keyword} value - el is resizable if so, which direction
 		 * @returns {Array}
 		 */
 		resizable(value = 'both') {
@@ -1529,7 +1529,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Float right or position right
 		 *
-		 * @param {string} [value]
+		 * @param {keyword} [value] - sets el right edge position
 		 * @return {Object}
 		 */
 		right(value) {
@@ -1543,7 +1543,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Rotate transform function
 		 *
-		 * @param {number} [angle]
+		 * @param {number} [angle] - degree/angle to rotate element
 		 * @returns {Object}
 		 */
 		rotate(angle = 45) {
@@ -1553,8 +1553,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Scale transform function
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} [value]
+		 * @param {number|keyword} [keyword] - x or y
+		 * @param {number|unit} [value] - scaling vector
 		 * @returns {Object}
 		 */
 		scale(keyword, value = 1) {
@@ -1576,9 +1576,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Skew transform function
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number|string} [x]
-		 * @param {number|string} [y]
+		 * @param {number|keyword} [keyword] - x or y
+		 * @param {number|keyword} [x] - sets angle/degree for x axis
+		 * @param {number|keyword} [y] - sets angle/degree for y axis
 		 * @returns {Object}
 		 */
 		skew(keyword, x = '45deg', y = '45deg') {
@@ -1603,10 +1603,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Translate transform function
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number|string} [x]
-		 * @param {number|string} [y]
-		 * @param {number|string} [z]
+		 * @param {number|keyword} [keyword] - x, y, or z
+		 * @param {number|keyword} [x] - sets angle/degree for x axis
+		 * @param {number|keyword} [y] - sets angle/degree for y axis
+		 * @param {number|keyword} [z] - sets angle/degree for z axis
 		 * @returns {Object}
 		 */
 		translate(keyword, x = 0, y = 0, z) {
@@ -1642,8 +1642,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Border radius
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number|string} [radius]
+		 * @param {number|keyword} [keyword] - top, right, bottom, left
+		 * @param {number|keyword} [radius] - value defines how rounded el's corners are
 		 * @returns {Array}
 		 */
 		rounded(keyword, radius = vars.default.radius) {
@@ -1682,7 +1682,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid row
 		 *
-		 * @param  {string|number} margin
+		 * @param  {number|keyword} margin - sets margin left
 		 * @return {Array}
 		 */
 		row(margin) {
@@ -1699,7 +1699,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid row modify
 		 *
-		 * @param  {string|number} margin
+		 * @param  {string|number} margin - sets margin left
 		 * @return {Array}
 		 */
 		rowModify(margin) {
@@ -1727,8 +1727,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Selection
 		 *
-		 * @param {string} [color]
-		 * @param {string} [background]
+		 * @param {number|keyword} [color] - hex value or color var
+		 * @param {string} [background] - selection background color
 		 * @returns {Object}
 		 */
 		selection(color = vars.selection.color, background = vars.selection.background) {
@@ -1744,8 +1744,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set box shadow to an element
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} [opacity]
+		 * @param {number|keyword} [keyword] - light
+		 * @param {number} [opacity] - specifies level of transparency
 		 * @returns {Object}
 		 */
 		shadow(keyword, opacity = vars.default.opacity) {
@@ -1774,8 +1774,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set width and/or height
 		 *
-		 * @param  {string} width
-		 * @param  {string} height
+		 * @param  {string} width - set element width
+		 * @param  {string} height - set element height
 		 * @return {Array}
 		 */
 		size(width, height) {
@@ -1804,9 +1804,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set bottom margin and display block
 		 *
-		 * @param {number|string} [margin]
-		 * @param {number|string} [width]
-		 * @param {number|string} [height]
+		 * @param {number|string} [margin] - sets margin bottom
+		 * @param {number|string} [width] - set element width
+		 * @param {number|string} [height] - set element height
 		 * @returns {Array}
 		 */
 		spacedBlock(margin = vars.block.margin.bottom, width, height) {
@@ -1829,8 +1829,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * SVG stroke color and width
 		 *
-		 * @param {string} [color]
-		 * @param {number|string} [width]
+		 * @param {number|keyword} [color] - hex value or color variable
+		 * @param {number|string} [width] - sets stroke width
 		 * @returns {Array}
 		 */
 		stroke(color, width) {
@@ -1848,8 +1848,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Adds a text shadow
 		 *
-		 * @param {number|string} [keyword]
-		 * @param {number} [opacity]
+		 * @param {number|keyword} [keyword] - light
+		 * @param {number} [opacity] - specifies level of transparency
 		 * @returns {Object}
 		 */
 		textShadow(keyword, opacity = vars.default.opacity) {
@@ -1908,10 +1908,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Transition shorthand declaration
 		 *
-		 * @param {string} [property]
-		 * @param {string} [duration]
-		 * @param {string} [easing]
-		 * @param {string} [delay]
+		 * @param {keyword} [property] - all or none
+		 * @param {string} [duration] - sets duration of animation
+		 * @param {keyword} [easing] - transition timing function
+		 * @param {string} [delay] - sets when transition starts
 		 * @returns {Object}
 		 */
 		transition(property = 'all', duration = vars.default.duration, easing = vars.default.timing, delay = '0s') {
@@ -1929,7 +1929,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set opacity to 0
 		 *
-		 * @param {boolean} hideBackface
+		 * @param {boolean} hideBackface - true or false
 		 * @return {Array}
 		 */
 		transparent(hideBackface = false) {
@@ -1939,8 +1939,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Underline text
 		 *
-		 * @param {string} [style]
-		 * @param {string} [color]
+		 * @param {keyword} [style] - sets text-decoration style
+		 * @param {number|keyword} [color] - sets text-decoration color
 		 * @returns {Object}
 		 */
 		underline(style, color = 'inherit') {
@@ -1981,7 +1981,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set visibility property
 		 *
-		 * @param  {string} [value]
+		 * @param  {keyword} [value] - sets visible of element
 		 * @return {Object}
 		 */
 		visibility(value) {
