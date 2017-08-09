@@ -7,10 +7,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Absolute positioning
 		 *
-		 * @param {keyword|number} [top] - sets top edge of el
-		 * @param {keyword|number} [right] - sets right edge of el
-		 * @param {keyword|number} [bottom] - sets bottom edge of el
-		 * @param {keyword|number} [left] - sets left edge of el
+		 * @param {keyword|number} [top] - top position of el
+		 * @param {keyword|number} [right] - right position of el
+		 * @param {keyword|number} [bottom] - bottom position of el
+		 * @param {keyword|number} [left] - left position of el
 		 * @returns {Array}
 		 */
 		absolute(top, right, bottom, left) {
@@ -343,7 +343,7 @@ module.exports = (vars = {}) => {
 		 * A block level element, centered with margin
 		 *
 		 * @param {number|keyword} [maxWidth] - max width of container
-		 * @param {number|keyword} [margin] - sets left and right margin
+		 * @param {number|keyword} [margin] - left and right margin
 		 * @returns {Array}
 		 */
 		centeredBlock(maxWidth, margin) {
@@ -391,10 +391,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid column
 		 *
-		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number|keyword} [keyword] - set margin between "spaced" columns
 		 * @param {number} [share] - share/span of total columns
 		 * @param {number} [columns] - number of columns
-		 * @param {string} [margin] - if "spaced" sets margin left
+		 * @param {string} [margin] - if "spaced", sets margin left
 		 * @returns {Array}
 		 */
 		column(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
@@ -436,10 +436,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Modify grid column
 		 *
-		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number|keyword} [keyword] - set margin between columns "spaced"
 		 * @param {number} [share] - share/span of total columns
 		 * @param {number} [columns] - number of columns
-		 * @param {string} [margin] - if "spaced" sets margin left
+		 * @param {string} [margin] - if "spaced", sets margin left
 		 * @returns {Array|Object}
 		 */
 		columnModify(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin) {
@@ -515,10 +515,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Column Offset
 		 *
-		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number|keyword} [keyword] - set margin between columns "spaced"
 		 * @param {number} [share] - share/span of total columns
 		 * @param {number} [columns] - number of columns
-		 * @param {string} [margin] - if "spaced" sets margin left
+		 * @param {string} [margin] - if "spaced", sets margin left
 		 * @returns {Object}
 		 */
 		columnOffset(keyword, share, columns = vars.grid.columns, margin = (toPercentage(toNumber(vars.grid.margin) / 2))) {
@@ -963,10 +963,10 @@ module.exports = (vars = {}) => {
 		/**
 		 * Inline grid column
 		 *
-		 * @param {number|keyword} [keyword] - Set margin between columns "spaced"
+		 * @param {number|keyword} [keyword] - set margin between columns "spaced"
 		 * @param {number} [share] - share/span of total columns
 		 * @param {number} [columns] - number of columns
-		 * @param {string} [margin] - if "spaced" sets margin left
+		 * @param {string} [margin] - if "spaced", sets margin left
 		 * @param {boolean} [spaceless]
 		 */
 		inlineColumn(keyword, share, columns = vars.grid.columns, margin = vars.grid.margin, spaceless = vars.grid.spaceless) {
@@ -1304,7 +1304,7 @@ module.exports = (vars = {}) => {
 		 *
 		 * @param {number} diameter - width and height of element
 		 * @param {boolean} [crop] - overflow hidden true/false
-		 * @param {string} [display] - set element display property
+		 * @param {string} [display] - element display property
 		 * @returns {Array}
 		 */
 		circle(diameter, crop, display = 'block') {
@@ -1376,10 +1376,10 @@ module.exports = (vars = {}) => {
 		 * Padding
 		 *
 		 * @param {keyword} keyword - horizontal or vertical
-		 * @param {number|keyword} top - sets top edge padding
-		 * @param {number|keyword} right - sets right edge padding
-		 * @param {number|keyword} bottom - sets bottom edge padding
-		 * @param {number|keyword} left - sets left edge padding
+		 * @param {number|keyword} top - top edge padding
+		 * @param {number|keyword} right - right edge padding
+		 * @param {number|keyword} bottom - bottom edge padding
+		 * @param {number|keyword} left - left edge padding
 		 * @returns {Array|boolean}
 		 */
 		padding(keyword, top, right, bottom, left) {
@@ -1441,7 +1441,7 @@ module.exports = (vars = {}) => {
 		 * Prefix
 		 *
 		 * @param {string} [value]
-		 * @param {number|keyword} [margin] - sets right margin
+		 * @param {number|keyword} [margin] - right margin
 		 * @param {string} [font] - font family name
 		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Object}
@@ -1471,7 +1471,7 @@ module.exports = (vars = {}) => {
 		 * Suffix
 		 *
 		 * @param {string} [value]
-		 * @param {number|keyword} [margin] - sets left margin
+		 * @param {number|keyword} [margin] - left margin
 		 * @param {string} [font] - font family name
 		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Object}
@@ -1501,7 +1501,7 @@ module.exports = (vars = {}) => {
 		 * Wraps a text element
 		 *
 		 * @param {string} [value] -
-		 * @param {number|keyword} [margin] - sets left and right margin
+		 * @param {number|keyword} [margin] - left and right margin
 		 * @param {string} [font] - font family name
 		 * @param {number|keyword} [color] - hex value or color var
 		 * @returns {Array}
@@ -1577,8 +1577,8 @@ module.exports = (vars = {}) => {
 		 * Skew transform function
 		 *
 		 * @param {number|keyword} [keyword] - x or y
-		 * @param {number|keyword} [x] - sets angle/degree for x axis
-		 * @param {number|keyword} [y] - sets angle/degree for y axis
+		 * @param {number|keyword} [x] - angle/degree for x axis
+		 * @param {number|keyword} [y] - angle/degree for y axis
 		 * @returns {Object}
 		 */
 		skew(keyword, x = '45deg', y = '45deg') {
@@ -1604,9 +1604,9 @@ module.exports = (vars = {}) => {
 		 * Translate transform function
 		 *
 		 * @param {number|keyword} [keyword] - x, y, or z
-		 * @param {number|keyword} [x] - sets angle/degree for x axis
-		 * @param {number|keyword} [y] - sets angle/degree for y axis
-		 * @param {number|keyword} [z] - sets angle/degree for z axis
+		 * @param {number|keyword} [x] - angle/degree for x axis
+		 * @param {number|keyword} [y] - angle/degree for y axis
+		 * @param {number|keyword} [z] - angle/degree for z axis
 		 * @returns {Object}
 		 */
 		translate(keyword, x = 0, y = 0, z) {
@@ -1682,7 +1682,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid row
 		 *
-		 * @param  {number|keyword} margin - sets margin left
+		 * @param  {number|keyword} margin - margin left
 		 * @return {Array}
 		 */
 		row(margin) {
@@ -1699,7 +1699,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Grid row modify
 		 *
-		 * @param  {string|number} margin - sets margin left
+		 * @param  {string|number} margin - margin left
 		 * @return {Array}
 		 */
 		rowModify(margin) {
@@ -1774,8 +1774,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set width and/or height
 		 *
-		 * @param  {string} width - set element width
-		 * @param  {string} height - set element height
+		 * @param  {string} width - element width
+		 * @param  {string} height - element height
 		 * @return {Array}
 		 */
 		size(width, height) {
@@ -1804,9 +1804,9 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set bottom margin and display block
 		 *
-		 * @param {number|string} [margin] - sets margin bottom
-		 * @param {number|string} [width] - set element width
-		 * @param {number|string} [height] - set element height
+		 * @param {number|string} [margin] - margin bottom
+		 * @param {number|string} [width] - element width
+		 * @param {number|string} [height] - element height
 		 * @returns {Array}
 		 */
 		spacedBlock(margin = vars.block.margin.bottom, width, height) {
@@ -1830,7 +1830,7 @@ module.exports = (vars = {}) => {
 		 * SVG stroke color and width
 		 *
 		 * @param {number|keyword} [color] - hex value or color variable
-		 * @param {number|string} [width] - sets stroke width
+		 * @param {number|string} [width] - stroke width
 		 * @returns {Array}
 		 */
 		stroke(color, width) {
@@ -1909,7 +1909,7 @@ module.exports = (vars = {}) => {
 		 * Transition shorthand declaration
 		 *
 		 * @param {keyword} [property] - all or none
-		 * @param {string} [duration] - sets duration of animation
+		 * @param {string} [duration] - duration of animation
 		 * @param {keyword} [easing] - transition timing function
 		 * @param {string} [delay] - sets when transition starts
 		 * @returns {Object}
@@ -1939,8 +1939,8 @@ module.exports = (vars = {}) => {
 		/**
 		 * Underline text
 		 *
-		 * @param {keyword} [style] - sets text-decoration style
-		 * @param {number|keyword} [color] - sets text-decoration color
+		 * @param {keyword} [style] - text-decoration style
+		 * @param {number|keyword} [color] - text-decoration color
 		 * @returns {Object}
 		 */
 		underline(style, color = 'inherit') {
@@ -1981,7 +1981,7 @@ module.exports = (vars = {}) => {
 		/**
 		 * Set visibility property
 		 *
-		 * @param  {keyword} [value] - sets visible of element
+		 * @param  {keyword} [value] - visibility of element
 		 * @return {Object}
 		 */
 		visibility(value) {
