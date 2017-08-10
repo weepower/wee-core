@@ -11,7 +11,7 @@ const { logError, logSuccess } = require('../utils');
 
 module.exports = {
 	name: name,
-	description: 'Compile project assets',
+	description: 'compile project assets',
 	usage: '- wee build [options]',
 	options: [
 		['-i, ' + assets.images, 'copy and minify image assets'],

@@ -5,7 +5,7 @@ const utils = require('../utils');
 
 module.exports = {
 	name: 'run',
-	description: 'Run development server',
+	description: 'run development server',
 	usage: '- wee run [options]',
 	options: [
 		['-l, --local', 'wrap proxy around local dev domain'],

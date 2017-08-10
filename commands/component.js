@@ -3,7 +3,7 @@ const { paths, logError, logSuccess, fileFormat } = require('../utils');
 
 module.exports = {
 	name: 'component',
-	description: 'Create component folder and files',
+	description: 'create component folder and files',
 	usage: '- wee component [options]',
 	options: [
 		['-n, --name <name>', 'name of component'],

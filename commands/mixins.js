@@ -7,7 +7,7 @@ const Table = require('cli-table');
 
 module.exports = {
 	name: 'mixins',
-	description: 'Print postcss mixins',
+	description: 'print postcss mixins',
 	usage: '- wee mixins [options]',
 	options: [
 		['-p, --project', 'print project specific mixins']
