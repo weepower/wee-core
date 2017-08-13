@@ -3657,7 +3657,7 @@ describe('loadFont', () => {
 						font-family: foo;
 						font-weight: normal;
 						font-style: normal;
-						src: url('../fonts/foo.woff2'), url('../fonts/foo.woff'), url('../fonts/foo.ttf')
+						src: url("../fonts/foo.woff2") format('woff2'), url("../fonts/foo.woff") format('woff'), url("../fonts/foo.ttf") format('truetype')
 					}
 				}
 			`,
@@ -4267,11 +4267,11 @@ describe('icon', () => {
 	it('should output icon with default values', () => {
 		return process(
 			`.block {
-				icon('\\e800');
+				icon(e800);
 			}`,
 			`.block {
 				content: '\\e800';
-				font-family: fontello;
+				font-family: icomoon;
 				font-size: inherit;
 				font-weight: normal;
 				line-height: 0;
@@ -4287,11 +4287,11 @@ describe('icon', () => {
 	it('should output icon with provided values', () => {
 		return process(
 			`.block {
-				icon('\\e800', 1.5, 90deg, 300);
+				icon(e800, 1.5, 90deg, 300);
 			}`,
 			`.block {
 				content: '\\e800';
-				font-family: fontello;
+				font-family: icomoon;
 				font-size: 1.5rem;
 				font-weight: 300;
 				line-height: 0;
@@ -4308,7 +4308,7 @@ describe('icon', () => {
 	it('should update font-family when passing font argument', () => {
 		return process(
 			`.block {
-				icon('\\e800', font: 'test');
+				icon(e800, font: 'test');
 			}`,
 			`.block {
 				content: '\\e800';

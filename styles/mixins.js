@@ -1082,13 +1082,13 @@ module.exports = (vars = {}) => {
 		 * @param {string} [font] - font family name
 		 * @returns {Array}
 		 */
-		icon(icon, size = 'inherit', rotate = false, weight = 'normal', sharpen = true, font = vars.icon.family) {
+		icon(icon, size = 'inherit', rotate = false, weight = 'normal', height = 0, sharpen = true, font = vars.icon.family) {
 			let props = [
-				decl('content', icon),
+				decl('content', `'\\${icon}'`),
 			];
 
 			props = props.concat(
-				this.font(font, size, weight, 0, 'normal'),
+				this.font(font, size, weight, height, 'normal'),
 				this.inlineBlock()
 			);
 
@@ -1154,10 +1154,10 @@ module.exports = (vars = {}) => {
 			}
 
 			let props = [],
-				filePath = `${vars.font.path}${file}`;
+				filePath = vars.font.path + file;
 
 			props = props.concat(this.font(name, false, weight, false, style));
-			props.push(decl('src', `url('${filePath}.woff2'), url('${filePath}.woff'), url('${filePath}.ttf')`));
+			props.push(decl('src', `url("${filePath}.woff2") format('woff2'), url("${filePath}.woff") format('woff'), url("${filePath}.ttf") format('truetype')`));
 
 			return rule('@font-face', props);
 		},
