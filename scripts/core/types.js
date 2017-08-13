@@ -385,13 +385,14 @@ export function $unserialize(str) {
 		.split('&').forEach(function(el) {
 		let split = el.split('='),
 			key = split[0].replace('[]', ''),
-			val = (split[1] || '').replace(/\+/g, ' ') || '';
+			val = (split[1] || '').replace(/\+/g, ' ') || '',
+			isArrayProp = /\[\]/.test(split[0]);
 
 		if (obj.hasOwnProperty(key)) {
 			obj[key] = $toArray(obj[key]);
 			obj[key].push(_castString(val));
 		} else {
-			obj[key] = _castString(val);
+			obj[key] = isArrayProp ? [_castString(val)] : _castString(val);
 		}
 	});
 

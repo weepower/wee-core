@@ -55,5 +55,16 @@ describe('Router: location', () => {
 			expect(location.origin).to.equal(getOrigin());
 			expect(location.protocol).to.equal('http');
 		});
+
+		it('should build array from array style query params', () => {
+			const url = '/path?state[]=US';
+			const oneQuery = parseLocation(url);
+			const multipleQuery = parseLocation(url + '&state[]=CA');
+
+			expect(multipleQuery.query).to.deep.equal({
+				state: ['US', 'CA']
+			});
+			expect(oneQuery.query).to.deep.equal({ state: ['US'] });
+		});
 	});
 });

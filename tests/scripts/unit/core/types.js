@@ -254,5 +254,9 @@ describe('Core: Types', () => {
 		it('should convert serialized string back to object', () => {
 			expect($unserialize('a=1&b=2&c=3&d[]=0&d[]=1')).to.deep.equal({a: 1, b: 2, c: 3, d: [0, 1]});
 		});
+
+		it('should convert single array style serialized string to object', () => {
+			expect($unserialize('d[]=0')).to.deep.equal({d: [0]});
+		});
 	});
 });
