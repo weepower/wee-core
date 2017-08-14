@@ -4,7 +4,7 @@ export default class Topic {
 	constructor(namespace = null, parent = null) {
 		this.namespace = namespace;
 		this.subscribers = [];
-		this.topics = [];
+		this.topics = {};
 		this.parent = parent;
 		this.stopped = false;
 	}
@@ -24,6 +24,12 @@ export default class Topic {
 		return subscriber;
 	}
 
+	/**
+	 * Retrieve registered subscriber from topic
+	 *
+	 * @param {Function|string} identifier
+	 * @returns {*}
+	 */
 	getSubscriber(identifier) {
 		const length = this.subscribers.length;
 
@@ -34,6 +40,25 @@ export default class Topic {
 				return subscriber;
 			}
 		}
+	}
+
+	/**
+	 * Add child topic
+	 *
+	 * @param {string} topicName
+	 */
+	addTopic(topicName) {
+		this.topics[topicName] = new Topic((this.namespace ? this.namespace + '.' : '') + topicName, this);
+	}
+
+	/**
+	 * Register child topic
+	 *
+	 * @param {string} topicName
+	 * @returns {Topic}
+	 */
+	getTopic(topicName) {
+		return this.topics[topicName];
 	}
 
 	/**

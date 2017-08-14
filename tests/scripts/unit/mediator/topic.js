@@ -30,11 +30,29 @@ describe('Mediator: Topic', () => {
 		const topic = new Topic();
 
 		topic.addSubscriber(fn);
-
 		topic.publish(data);
 
 		expect(fn.calledOnce).to.be.true;
 		expect(fn.args[0]).to.deep.equal(data);
+	});
+
+	it('should register child topics', () => {
+		const topic = new Topic('parent');
+
+		topic.addTopic('child');
+
+		expect(topic.topics['child']).to.be.instanceOf(Topic);
+		expect(topic.topics['child'].namespace).to.equal('parent.child');
+	});
+
+	it('should retrieve child topics', () => {
+		const topic = new Topic('parent');
+
+		topic.addTopic('child');
+		const childTopic = topic.getTopic('child');
+
+		expect(childTopic).to.be.instanceOf(Topic);
+		expect(childTopic.namespace).to.equal('parent.child');
 	});
 
 	describe('removeSubscriber', () => {
