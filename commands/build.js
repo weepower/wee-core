@@ -16,8 +16,9 @@ module.exports = {
 	options: [
 		['-i, ' + assets.images, 'copy and minify image assets'],
 		['-c, ' + assets.styles, 'compile and minify stylesheets'],
-		['-s, ' + assets.scripts, 'compile and minify scripts'],
+		['-s, ' + assets.scripts, 'bundle scripts - development only'],
 		['-f, ' + assets.fonts, 'copy fonts'],
+		['-p, --prod', 'build and minify all assets for production'],
 		['-w, --watch', 'watch files']
 	],
 	action(config, options) {
@@ -52,6 +53,11 @@ module.exports = {
 			commands.push([baseCommand, 'build:fonts', ansi]);
 			option += ' ' + assets.fonts;
 			feedbackItems.push(assets.fonts);
+		}
+
+		if (options.prod) {
+			commands.push([baseCommand, 'build:prod', ansi]);
+			feedbackItems.push('build:prod');
 		}
 
 		if (! commands.length) {
