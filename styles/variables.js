@@ -96,7 +96,7 @@ variables.h5 = '2rem';
 variables.h6 = '1.6rem';
 
 variables.icon = {
-	family: 'icomoon'
+	family: 'icons'
 };
 
 variables.image = {
