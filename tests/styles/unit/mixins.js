@@ -4271,7 +4271,7 @@ describe('icon', () => {
 			}`,
 			`.block {
 				content: '\\e800';
-				font-family: icomoon;
+				font-family: icons;
 				font-size: inherit;
 				font-weight: normal;
 				line-height: 0;
@@ -4291,7 +4291,7 @@ describe('icon', () => {
 			}`,
 			`.block {
 				content: '\\e800';
-				font-family: icomoon;
+				font-family: icons;
 				font-size: 1.5rem;
 				font-weight: 300;
 				line-height: 0;
