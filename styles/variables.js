@@ -127,7 +127,7 @@ variables.border = {
 };
 
 variables.paragraph = {
-	color: '$font.color',
+	color: 'inherit',
 	weight: '$font.weight.normal',
 	lineHeight: '1.7em',
 	margin: {
