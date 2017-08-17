@@ -50,9 +50,9 @@
     "mocha": "^3.2.0",
     "postcss-js-mixins": "^2.5.0",
     "postcss-variables": "^1.1.0",
-    "postcss-wee-syntax": "^2.0.1",
     "sinon": "^2.3.2",
     "webpack": "^2.2.1"
     "postcss": "^6.0.9",
+    "postcss-wee-syntax": "^3.0.0",
   }
 }
