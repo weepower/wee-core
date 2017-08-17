@@ -8,8 +8,8 @@ describe('Mediator: Topic', () => {
 
 		expect(topic.namespace).to.equal('channel');
 		expect(topic).to.be.instanceOf(Topic);
-		expect(topic.subscribers).to.be.array;
-		expect(topic.topics).to.be.array;
+		expect(topic.subscribers).to.be.an('array')
+		expect(topic.topics).to.be.an('object');
 		expect(topic.parent).to.be.null;
 		expect(topic.stopped).to.be.false;
 	});

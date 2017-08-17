@@ -16,7 +16,7 @@ describe('Router: push-state', () => {
 		push.pushState('/path2');
 
 		window.addEventListener('popstate', e => {
-			expect(e.state.key).to.be.defined;
+			expect(e.state.key).to.exist;
 			expect(e.state.key).to.equal(1234);
 			done();
 		});

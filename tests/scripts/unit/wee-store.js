@@ -259,11 +259,11 @@ describe('Store', () => {
 			expect($store.store.$.prop).to.be.true;
 		});
 
-		it('should set mult-level property', () => {
+		it('should set multi-level property', () => {
 			$store.set('propA.propB.propC', true);
 
-			expect($store.store.$.propA).to.be.an.object;
-			expect($store.store.$.propA.propB).to.be.an.object;
+			expect($store.store.$.propA).to.be.an('object');
+			expect($store.store.$.propA.propB).to.be.an('object');
 			expect($store.store.$.propA.propB.propC).to.be.true;
 		});
 	});
@@ -412,13 +412,13 @@ describe('Store', () => {
 					<meta data-set="list[]" data-value="1">
 					<meta data-set="list[]" data-value="2">
 					<meta data-set="list[]" data-value="3">
-					
+
 					<meta data-set="object.propA" data-value='{"innerA":1}'>
 					<meta data-set="object.propA.innerB" data-value="2">
 					<meta data-set="object.propB" data-value="1">
 					<meta data-set="object2.propA.dynamicInner" data-value="true">
 					<meta data-set="object2.propB" data-value="1">
-					
+
 					<meta data-store="instance" data-set="instanceProp" data-value="cool">`;
 		});
 
@@ -523,7 +523,7 @@ describe('Store', () => {
 					<meta data-set="list[]" data-value="1">
 					<meta data-set="list[]" data-value="2">
 					<meta data-set="list[]" data-value="3">
-					
+
 					<meta data-store="instance" data-set="instanceProp" data-value="cool">
 					<meta data-store="otherInstance" data-set="instanceProp" data-value="dope">`;
 		});
@@ -537,7 +537,7 @@ describe('Store', () => {
 			expect(instance.get('instanceProp')).to.equal('cool');
 			expect(otherInstance.get('instanceProp')).to.equal('dope');
 			expect($store.get('global')).to.be.true;
-			expect($store.get('list')).to.be.array;
+			expect($store.get('list')).to.be.an('array');
 		});
 	});
 });

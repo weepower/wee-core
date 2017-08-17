@@ -84,7 +84,7 @@ describe('Core: Chain', () => {
 
 	describe('toArray', () => {
 		it('should be chainable method', () => {
-			expect($('.test').toArray()).to.be.array;
+			expect($('.test').toArray()).to.be.an('array');
 		});
 	});
 });

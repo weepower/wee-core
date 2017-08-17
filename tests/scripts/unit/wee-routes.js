@@ -622,7 +622,7 @@ describe('Router', () => {
 						expect(from.path).to.equal('/');
 					});
 					nextFns.forEach(next => {
-						expect(next).to.be.function;
+						expect(next).to.be.a('function');
 					});
 				}).then(done, done);
 			});

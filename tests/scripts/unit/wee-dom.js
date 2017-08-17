@@ -1126,7 +1126,7 @@ describe('DOM', () => {
 			let $result = W.$slice('.child', 0, 2);
 
 			expect($result.length).to.equal(2);
-			expect($result).to.be.array;
+			expect($result).to.be.an('array');
 			expect($result[0].innerText).to.equal('1');
 		});
 	});
