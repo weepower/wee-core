@@ -12,5 +12,5 @@ module.exports = Object.assign(base, {
 	},
 	autoWatch: false,
 	singleRun: true,
-	reporters: ['mocha', 'BrowserStack']
+	reporters: ['dots', 'BrowserStack']
 });
