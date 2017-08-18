@@ -201,7 +201,7 @@ describe('Router: pjax', () => {
 						done();
 					}, 100);
 				}, 300);
-			}, 100);
+			}, 300);
 		}
 
 		$router.pjax().run().then(finish, finish);
