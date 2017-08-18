@@ -3,8 +3,8 @@ import { _$, _body, _doc, _html, _win, U } from './variables';
 import { $exec } from './core';
 import { _extend, _slice, $toArray } from './types';
 
-let range,
-	refs = {};
+let range;
+let refs = {};
 
 /**
  * Check if a node contains another node

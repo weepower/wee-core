@@ -28,7 +28,7 @@ export default function fetchFactory(defaults) {
 			let responseUrl = request.responseURL;
 
 			// The request errored out and we didn't get a response, this will be handled by onerror instead
-			// With one exception: request that using file: protocol, most browsers
+			// With one exception: request that's using file: protocol, most browsers
 			// will return status as 0 even though it's a successful request
 			if (response.status === 0 && ! (responseUrl && responseUrl.indexOf('file:') === 0)) {
 				return;
