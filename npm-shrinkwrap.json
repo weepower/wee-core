@@ -1,6 +1,6 @@
 {
   "name": "wee-core",
-  "version": "2.0.0-alpha.28",
+  "version": "2.0.0-alpha.29",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -5032,9 +5032,9 @@
       }
     },
     "postcss-js-mixins": {
-      "version": "2.5.2",
-      "resolved": "https://registry.npmjs.org/postcss-js-mixins/-/postcss-js-mixins-2.5.2.tgz",
-      "integrity": "sha512-DpUP10V5TowIN1H/pgRHVlofa32FUvgVkosYcrqY97vqClz70ndw7iYdlcXdYOrJEMcyI96YDpw0/EEGO18coA==",
+      "version": "2.5.3",
+      "resolved": "https://registry.npmjs.org/postcss-js-mixins/-/postcss-js-mixins-2.5.3.tgz",
+      "integrity": "sha512-ord4Y08bYWuq2YD0Wuk+lbVyRse+Mozz0+slGjpyNN5uOQEg+Uc0WZiVkg87P5Xlm7imPuOe8o9D/9CPlRpNvg==",
       "dev": true,
       "requires": {
         "postcss": "6.0.9",
@@ -13424,6 +13424,11 @@
       "requires": {
         "setimmediate": "1.0.5"
       }
+    },
+    "tinycolor2": {
+      "version": "1.4.1",
+      "resolved": "https://registry.npmjs.org/tinycolor2/-/tinycolor2-1.4.1.tgz",
+      "integrity": "sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g="
     },
     "tmp": {
       "version": "0.0.31",
