@@ -43,7 +43,7 @@ export class Mediator {
 	on(topicName, fn) {
 		const topic = this.getTopic(topicName);
 
-		topic.addSubscriber(fn);
+		return topic.addSubscriber(fn);
 	}
 
 	/**
@@ -56,6 +56,16 @@ export class Mediator {
 		const topic = this.getTopic(topicName);
 
 		topic.publish(args);
+	}
+
+	/**
+	 * Remove subscriber by id or all subscribers from topic
+	 *
+	 * @param  {string} topicName
+	 * @param  {string} identifier
+	 */
+	remove(topicName, identifier) {
+		this.getTopic(topicName).removeSubscriber(identifier);
 	}
 }
 

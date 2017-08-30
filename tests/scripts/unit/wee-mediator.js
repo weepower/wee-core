@@ -2,6 +2,10 @@ import sinon from 'sinon';
 import $mediator, { Mediator } from 'wee-mediator';
 
 describe('Mediator', () => {
+	beforeEach(() => {
+		$mediator.remove('newTopic');
+	});
+
 	it('should subscribe an action to a topic', () => {
 		const message = 'hello world';
 		let spy = sinon.spy();
@@ -41,6 +45,28 @@ describe('Mediator', () => {
 		expect(firstSpy.args[0][0]).to.equal(message);
 		expect(secondSpy.calledOnce).to.be.true;
 		expect(secondSpy.args[0][0]).to.equal(message);
+
+		$mediator.remove('newTopic', firstSpy);
+		$mediator.emit('newTopic', message);
+
+		expect(firstSpy.calledOnce).to.be.true;
+		expect(secondSpy.calledTwice).to.be.true;
+	});
+
+	it('should remove all subscribers from a topic', () => {
+		const message = 'hello world';
+		let firstSpy = sinon.spy();
+		let secondSpy = sinon.spy();
+
+		$mediator.on('newTopic', firstSpy);
+		$mediator.on('newTopic', secondSpy);
+		$mediator.emit('newTopic', message);
+
+		expect($mediator.getTopic('newTopic').subscribers.length).to.equal(2);
+
+		$mediator.remove('newTopic');
+
+		expect($mediator.getTopic('newTopic').subscribers.length).to.equal(0);
 	});
 
 	describe('getTopic', () => {

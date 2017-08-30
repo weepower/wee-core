@@ -37,7 +37,7 @@ export function matchRoute (regex, path, params = {}) {
 /**
  * Evaluate given path against registered route records
  *
- * @param {string} [path]
+ * @param {string|Object} [path]
  * @returns {Object}
  */
 export function match(path) {
