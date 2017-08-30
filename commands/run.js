@@ -32,7 +32,7 @@ module.exports = {
 
 		// Update wee.json
 		if (projectUpdated) {
-			fs.writeJsonSync(config.rootPath + '/wee.json', project);
+			fs.writeJsonSync(config.rootPath + '/wee.json', project, { spaces: '\t' });
 		}
 
 		// Execute npm run
