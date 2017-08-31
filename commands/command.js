@@ -4,8 +4,8 @@ const { paths, logError, logSuccess, fileFormat } = require('../utils');
 
 module.exports = {
 	name: 'command',
-	description: 'create component folder and files',
-	usage: '- wee component [options]',
+	description: 'create new cli command',
+	usage: '- wee command [options]',
 	options: [
 		['-n, --name <command-name>', 'name of command']
 	],
@@ -21,7 +21,7 @@ module.exports = {
 			process.exit();
 		}
 
-		// Create component directory
+		// Check for command existence
 		if (fs.existsSync(`${commandPath}/${fileName}.js`)) {
 			logError(`command named "${fileName}" already exists`);
 			process.exit();
