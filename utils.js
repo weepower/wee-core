@@ -81,6 +81,7 @@ module.exports = {
 		project: {
 			root: projectPath,
 			source: projectSourcePath,
+			commands: `${projectSourcePath}/commands`,
 			styles: `${projectSourcePath}/styles`,
 			scripts: `${projectSourcePath}/scripts`,
 			components: `${projectSourcePath}/components`

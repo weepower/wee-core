@@ -57,6 +57,6 @@ module.exports = {
 			}
 		}
 
-		logSuccess(`Component created successfully.`);
+		logSuccess(`Component created successfully`);
 	}
 };
