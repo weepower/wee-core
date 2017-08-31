@@ -1,4 +1,3 @@
-const path = require('path');
 const { logError, logSuccess } = require('${weeCore}/utils');
 
 // Refer to https://github.com/tj/commander.js for documentation
