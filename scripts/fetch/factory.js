@@ -217,7 +217,6 @@ export default function fetchFactory(defaults) {
 		 * @param {Object} [options.data] - object to serialize and pass along with request
 		 * @param {(Array|Function|string)} [options.error] - callback if request fails
 		 * @param {Object} [options.headers] - request headers
-		 * @param {boolean} [options.json=false] - evaluate the response as JSON and return object
 		 * @param {(boolean|string)} [options.jsonp=false] - boolean or callback query parameter override
 		 * @param {string} [options.jsonpCallback] - override the name of the JSONP callback function
 		 * @param {string} [options.method=get] - request verb
