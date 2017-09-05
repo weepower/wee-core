@@ -1,4 +1,4 @@
-import * as $location from 'wee-location';
+import $location from 'wee-location';
 import $router from 'wee-routes';
 
 const testUri = 'https://www.weepower.com:9000/scripts?foo=bar&baz=qux#hash';

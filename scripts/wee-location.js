@@ -25,3 +25,8 @@ export function segments(index) {
 
 	return segments;
 }
+
+export default {
+	uri,
+	segments
+};
