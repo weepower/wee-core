@@ -1,14 +1,13 @@
-[![Wee Core](https://www.weepower.com/repo/logo.svg)](https://www.weepower.com)
+[![Wee Core](https://www.weepower.com/assets/images/logo.svg)](https://www.weepower.com)
 
-This repository is part of the [Wee framework](https://github.com/weepower/wee).
+This repository is the main dependency of [Wee framework](https://github.com/weepower/wee).
 
 [![Build Status](https://travis-ci.org/weepower/wee-core.svg?branch=master)](https://travis-ci.org/weepower/wee-core)
 [![NPM version](https://img.shields.io/npm/v/wee-core.svg?style=flat)](https://www.npmjs.com/package/wee-core)
 
 ## Bugs
 
-Have a bug or a feature request? [Open a new issue](https://github.com/weepower/wee/issues).  
-To view the working to-do list check out our public [Trello board](https://trello.com/b/7KbnQra9/wee).
+Have a bug or a feature request? [Open a new issue](https://github.com/weepower/wee/issues).
 
 Automated testing generously provided by [BrowserStack](https://www.browserstack.com).
 
