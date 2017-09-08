@@ -6,7 +6,7 @@ module.exports = {
 	description: 'create component folder and files',
 	usage: '- wee component [options]',
 	options: [
-		['-n, --name <name>', 'name of component'],
+		['-n, --name <component-name>', 'name of component'],
 		['-v, --vue', 'create vue component'],
 		['-c, --clean', 'strip out kick starter text in files'],
 		['-r, --root', 'vue only - configure as root component (mounted to page)']

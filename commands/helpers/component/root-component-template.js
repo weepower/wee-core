@@ -11,7 +11,7 @@ let ${variableName};
 export default new RouteHandler({
 	init() {
 		// TODO: Set mounting selector
-		${variableName} = new ${constructorName}().$mount('.selector');
+		${variableName} = new ${constructorName}().$mount('.js-${fileName}');
 	},
 	unload() {
 		${variableName}.$destroy();
