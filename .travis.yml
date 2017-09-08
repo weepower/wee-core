@@ -1,23 +1,30 @@
 language: node_js
+
 node_js:
-  - '6'
+  - 'node'
+
+branches:
+  only:
+  - master
+  - develop
+  - v2
+
+before_install:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 
 install:
-  - npm install -g codecov
-  - cd ..
-  - wget https://github.com/weepower/wee/archive/master.zip
-  - unzip master.zip
-  - mv wee-master wee
-  - cd wee && npm install
-  - rm -rf node_modules/wee-core
-  - cd .. && cp -r wee-core wee/node_modules/wee-core
-  - npm install -g wee-cli
-  - cd wee && wee run
-  - cd node_modules/wee-core
   - npm install
 
-script:
-  - ./node_modules/.bin/intern-runner config=js/tests/ci-config.js reporters=Lcov
+branches:
+  only:
+  - master
+  - develop
+  - v2
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci-ie; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit_ie; fi'
+  - npm run test:styles

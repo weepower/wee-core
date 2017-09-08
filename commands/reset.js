@@ -1,22 +1,20 @@
-(function() {
-	'use strict';
+const fs = require('fs-extra');
+const { paths, logSuccess } = require('../utils');
 
-	module.exports = function(config) {
-		var fs = require('fs-extra'),
-			path = require('path'),
-			files = [
-				'LICENSE',
-				'README.md',
-				'source/modules/welcome'
-			];
+const files = [
+	'/LICENSE',
+	'/README.md',
+	'/source/components/welcome'
+];
 
-		files.forEach(function(file) {
-			fs.remove(path.join(config.rootPath, file));
-		});
+module.exports = {
+	name: 'reset',
+	description: 'Remove sample project files',
+	usage: '- wee reset',
+	options: [],
+	action() {
+		files.forEach(file => fs.removeSync(paths.project.root + file));
 
-		Wee.notify({
-			title: 'Project Reset',
-			message: 'Sample project files have been removed'
-		});
-	};
-})();
+		logSuccess('Sample project files have been removed');
+	}
+};

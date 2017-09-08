@@ -1,31 +1,48 @@
-/* global __dirname */
+const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
+const fs = require('fs-extra');
+const utils = require('../utils');
 
-(function() {
-	'use strict';
+module.exports = {
+	name: 'run',
+	description: 'run development server',
+	usage: '- wee run [options]',
+	options: [
+		['-l, --local', 'wrap proxy around local dev domain'],
+		['-s, --static', 'serve static files']
+	],
+	action(config, options) {
+		let project = config.project,
+			projectUpdated = false;
 
-	var gruntPath = __dirname + '/../Gruntfile.js',
-		grunt = require('grunt'),
-		build = require(gruntPath);
+		if (options.local) {
+			if (! project.server.proxy) {
+				utils.logError('Set proxy domain in wee.json');
+				process.exit();
+			}
 
-	module.exports = function(config) {
-		var options = {
-				b: __dirname,
-				gruntfile: gruntPath
-			},
-			task = config.options.length ?
-				config.options[0] :
-				'default';
+			project.server.static = false;
+			projectUpdated = true;
+		}
 
-		// Pass through additional flags
-		Object.keys(config.args).forEach(function(key) {
-			var val = config.args[key];
-			options[key] = val === '' ? true : val;
+		if (options.static && ! project.server.static) {
+			project.server.static = true;
+			projectUpdated = true;
+		}
+
+		// Update wee.json
+		if (projectUpdated) {
+			fs.writeJsonSync(config.rootPath + '/wee.json', project, { spaces: '\t' });
+		}
+
+		// Execute npm run
+		let child = spawn('npm', ['start', '--ansi'], {
+			cwd: config.rootPath,
+			stdio: 'inherit'
 		});
 
-		build(grunt);
-
-		grunt.tasks([
-			task
-		], options);
-	};
-})();
+		child.on('error', data => {
+			utils.logError(data);
+		});
+	}
+};

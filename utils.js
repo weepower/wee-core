@@ -1,230 +1,105 @@
-/* global __dirname, config, reloadPaths */
+const chalk = require('chalk');
+const fs = require('fs-extra');
+const notifier = require('node-notifier');
+const path = require('path');
+const process = require('process');
+const basePath = __filename.split('/').slice(0, -1).join('/');
+const projectPath = process.env.PWD;
+const projectSourcePath = `${projectPath}/source`;
 
-(function(W) {
-	'use strict';
+module.exports = {
+	/**
+	 * Prep a string to become file/folder name
+	 *
+	 * @param  {string} string
+	 * @return {string}
+	 */
+	fileFormat(string) {
+		return string.split(/(?=[A-Z])/g).map((word) => {
+			return word.toLowerCase();
+		}).join('-');
+	},
 
-	var chalk = require('chalk'),
-		fs = require('fs-extra'),
-		notifier = require('node-notifier'),
-		path = require('path');
+	/**
+	 * Notify through a natively available notification option
+	 *
+	 * @param {object} options
+	 * @param {string} [type=notice]
+	 * @param {boolean} [log=true]
+	 */
+	notify(options, type, log) {
+		options.icon = __dirname + '/images/' + (type || 'notice') + '.png';
+		options.group = 1;
 
-	W.fn.extend({
-		/**
-		 * Build root or relative path
-		 *
-		 * @param {string} loc
-		 * @param {string} file
-		 * @returns {string} path
-		 */
-		buildPath: function(loc, file) {
-			return file.substring(0, 2) === './' ?
-				file :
-				path.join(loc, file);
-		},
-
-		/**
-		 * Append minified extension
-		 *
-		 * @param {string} dest
-		 * @param {string} src
-		 * @param {string} ext
-		 * @returns {string} path
-		 */
-		getMinExtension: function(dest, src, ext) {
-			var dir = src.substring(0, src.lastIndexOf('/')),
-				filename = src.substring(src.lastIndexOf('/'), src.length);
-			filename = filename.substring(0, filename.lastIndexOf('.'));
-
-			return dest + '/' + dir + filename + ext;
-		},
-
-		/**
-		 * Validate source file
-		 *
-		 * @param {string} root
-		 * @param {object} config
-		 * @param {string} file
-		 */
-		validate: function(root, config, file) {
-			var ext = path.extname(file);
-
-			if (['temp', '/vendor'].indexOf(file) < 0) {
-				if (ext === '.js') {
-					var validate = config.script.validate,
-						src = fs.readFileSync(file, {
-							encoding: 'utf-8'
-						});
-
-					if (validate.jshint) {
-						this.validateJshint(
-							path.join(root, validate.jshint),
-							file,
-							src
-						);
-					}
-
-					if (validate.jscs) {
-						this.validateJscs(
-							path.join(root, validate.jscs),
-							file,
-							src
-						);
-					}
-				}
-			}
-		},
-
-		/**
-		 * Validate JavaScript source file using JSHint
-		 *
-		 * @param {object} rules
-		 * @param {string} file
-		 * @param {string} src
-		 */
-		validateJshint: function(rules, file, src) {
-			var jshint = require('jshint').JSHINT,
-				config = fs.readJsonSync(rules);
-
-			if (! jshint(src, config)) {
-				var out = jshint.data(),
-					errors = out.errors,
-					total = errors.length;
-
-				console.log(
-					chalk.bgRed('JSHint error' +
-						((total > 1) ? 's' : '') + ' in ' + file + '.')
-				);
-
-				errors.forEach(function(error) {
-					if (error) {
-						W.logError(
-							error.line + ':' + error.character,
-							error.reason,
-							error.evidence
-						);
-					}
-				});
-
-				console.log('\n');
-
-				this.notify({
-					title: 'JSHint Validation Error',
-					message: 'Check console for error details'
-				}, 'error', false);
-			}
-		},
-
-		/**
-		 * Validate JavaScript source file using JSCS
-		 *
-		 * @param {object} rules
-		 * @param {string} file
-		 * @param {string} src
-		 */
-		validateJscs: function(rules, file, src) {
-			var JSCS = require('jscs'),
-				jscsConfig = fs.readJsonSync(rules),
-				checker = new JSCS();
-
-			checker.registerDefaultRules();
-			checker.configure(jscsConfig);
-
-			var errors = checker.checkString(src),
-				errorList = errors.getErrorList(),
-				total = errorList.length;
-
-			if (total > 0) {
-				console.log(
-					chalk.bgRed('JSCS error' +
-					((total > 1) ? 's' : '') + ' in ' + file + '.')
-				);
-
-				errorList.forEach(function(error) {
-					if (error) {
-						W.logError(
-							error.line + ':' + error.column,
-							error.rule,
-							error.message
-						);
-					}
-				});
-
-				console.log('\n');
-
-				this.notify({
-					title: 'JSCS Validation Error',
-					message: 'Check console for error details'
-				}, 'error', false);
-			}
-		},
-
-		/**
-		 * Log an error to the console
-		 *
-		 * @param {string} position
-		 * @param {string} message
-		 * @param {string} [details]
-		 */
-		logError: function(position, message, details) {
-			console.log(
-				chalk.bgBlack.bold('[' + position + '] ') +
-				message + ' ' + (details || '')
-			);
-		},
-
-		/**
-		 * Notify through a natively available notification option
-		 *
-		 * @param {object} options
-		 * @param {string} [type=notice]
-		 * @param {boolean} [log=true]
-		 */
-		notify: function(options, type, log) {
-			options.icon = __dirname + '/build/img/' + (type || 'notice') + '.png';
-			options.group = 1;
-
-			if (type == 'error' || type == 'fail') {
-				options.group = 2;
-				options.sound = true;
-				options.wait = true;
-			}
-
-			if (log !== false) {
-				console.log(options.message);
-			}
-
-			notifier.notify(options);
-
-			if (type == 'fail') {
-				process.exit(1);
-			}
-		},
-
-		/**
-		 * Push full server watch path
-		 *
-		 * @param {string} url
-		 */
-		serverWatch: function(url) {
-			if (url.substring(0, 4) !== 'http') {
-				reloadPaths.push(
-					path.join(config.paths.root, url)
-				);
-			}
-		},
-
-		/**
-		 * Bind additional sourcemap configs
-		 *
-		 * @param {object} grunt
-		 * @param {object} obj
-		 */
-		addMaps: function(grunt, obj) {
-			for (var key in obj) {
-				grunt.config.set(key + '.options.sourceMap', true);
-				grunt.config.set(key + '.options.sourceMapIncludeSources', true);
-				grunt.config.set(key + '.options.sourceMapName', obj[key]);
-			}
+		if (type == 'error' || type == 'fail') {
+			options.group = 2;
+			options.sound = true;
+			options.wait = true;
 		}
-	});
-})(Wee);
+
+		if (log !== false) {
+			console.log(options.message);
+		}
+
+		notifier.notify(options);
+
+		if (type == 'fail') {
+			process.exit(1);
+		}
+	},
+
+	/**
+	 * Log an error to the console
+	 *
+	 * @param {string} message
+	 * @param {string} [details]
+	 */
+	logError(message, details) {
+		console.log(
+			chalk.red.bold('error: ') +
+			message + ' ' + (details || '')
+		);
+	},
+
+	/**
+	 * Log a success message to the console
+	 *
+	 * @param  {string} message
+	 */
+	logSuccess(message) {
+		console.log(chalk.green(message));
+	},
+
+	logList(name, desc) {
+		console.log(
+			`\n${chalk.green.bgBlack.bold(name)} - ${chalk.white.bgBlack(desc)}`
+		);
+	},
+
+	paths: {
+		root: basePath,
+		styles: `${basePath}/styles`,
+		commands: `${basePath}/commands`,
+		project: {
+			root: projectPath,
+			source: projectSourcePath,
+			commands: `${projectSourcePath}/commands`,
+			styles: `${projectSourcePath}/styles`,
+			scripts: `${projectSourcePath}/scripts`,
+			components: `${projectSourcePath}/components`
+		},
+		tests: {
+			root: `${basePath}/tests`,
+			scripts: `${basePath}/tests/scripts`
+		}
+	},
+
+	trimRight(str) {
+		return str.replace(/\s+$/, '');
+	},
+
+	stripStars(line) {
+	let re = /^(?:\s*[\*]{1,2}\s)/;
+		return this.trimRight(line.replace(re, ''));
+	}
+};

@@ -1,0 +1,120 @@
+.form {
+	spaced();
+}
+.fieldset {
+	border: 0;
+	spaced();
+}
+.legend {
+	border: 0;
+	color: $legend.color;
+	line-height: $font.lineHeight;
+	font($legend.family, $legend.size);
+	spacedBlock($legend.margin.bottom);
+}
+.label {
+	font-weight: $label.weight;
+	line-height: $label.lineHeight;
+	spacedBlock($label.margin.bottom);
+}
+.input,
+.select,
+.textarea {
+	background-clip: border-box;
+	color: $input.color;
+	margin: 0;
+	min-height: $input.minHeight;
+	min-width: $input.minWidth;
+	outline: 0;
+	padding: $input.padding.vertical $input.padding.horizontal;
+	width: 100%;
+	background($input.background);
+	border($input.border.color, $input.border.width);
+	font($input.family, $input.size, $input.weight.normal);
+	rounded($input.border.radius);
+	spaced($input.margin.bottom);
+	&:hover {
+		border-color: $input.hover.border.color;
+	}
+	&:focus {
+		border-color: $input.focus.border.color;
+		&:required {
+			&:invalid {
+				border-color: $input.invalid.border.color;
+				color: $input.invalid.color;
+				background($input.invalid.background);
+			}
+		}
+	}
+	&:invalid {
+		color: $input.invalid.color;
+		background($input.invalid.background);
+		border($input.invalid.border.color, $input.invalid.border.width);
+		&:hover {
+			border-color: $input.invalid.hover.border.color;
+		}
+		&:focus {
+			border-color: $input.invalid.focus.border.color;
+		}
+	}
+	&:required {
+		color: $input.required.color;
+		background($input.required.background);
+		border($input.required.border.color, $input.required.border.width);
+		&:hover {
+			border-color: $input.required.hover.border.color;
+		}
+		&:focus {
+			border-color: $input.required.focus.border.color;
+		}
+	}
+}
+.input {
+	placeholder();
+	&::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+	&[disabled],
+	&$(input.disabled.modifier) {
+		color: $input.disabled.color;
+		cursor: $input.disabled.cursor;
+		background($input.disabled.background);
+	}
+	&.-search {
+		-webkit-appearance: textfield;
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {
+			-webkit-appearance: none;
+			hide();
+		}
+	}
+	&.-checkbox,
+	&.-radio {
+		padding: 0;
+		margin-right: $checkbox.margin.right;
+	}
+	&.-reset,
+	&.-submit {
+		-webkit-appearance: button;
+		cursor: pointer;
+	}
+}
+.select {
+	cursor: pointer;
+	padding-right: $input.padding.vertical;
+	&[multiple] {
+		min-height: $multiSelect.minHeight;
+		vertical-align: top;
+		&:after {
+			content: ' ';
+		}
+	}
+}
+.textarea {
+	line-height: $textarea.lineHeight;
+	min-height: $textarea.minHeight;
+	padding: $textarea.padding.vertical $textarea.padding.horizontal;
+	vertical-align: top;
+	resizable($textarea.resize);
+}
