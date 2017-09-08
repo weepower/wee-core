@@ -45,12 +45,12 @@ variables.grid = {
 };
 
 variables.colors = {
-	primary: '#349bb9',
-	secondary: '#70c1b3',
-	tertiary: '#f18f01',
-	info: '#00f',
-	success: '#008000',
-	warning: '#f00',
+	primary: '#5789ff',
+	secondary: '#121212',
+	tertiary: '#ff9b57',
+	info: '#1a28ff',
+	success: '#2ed183',
+	warning: '#ff4121',
 	white: '#fff',
 	lightestGray: defer(darken, ['$colors.white', 4]),
 	lighterGray: defer(darken, ['$colors.white', 10]),
