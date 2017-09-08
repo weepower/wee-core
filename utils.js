@@ -15,7 +15,9 @@ module.exports = {
 	 * @return {string}
 	 */
 	fileFormat(string) {
-		return string.trim().replace(/[^A-Za-z0-9]/g, '-').toLowerCase();
+		return string.split(/(?=[A-Z])/g).map((word) => {
+			return word.toLowerCase();
+		}).join('-');
 	},
 
 	/**
