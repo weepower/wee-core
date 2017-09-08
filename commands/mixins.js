@@ -12,7 +12,6 @@ module.exports = {
 	options: [
 		['-p, --project', 'print project specific mixins']
 	],
-
 	action(config, a, b) {
 		let mixin;
 		let options;
