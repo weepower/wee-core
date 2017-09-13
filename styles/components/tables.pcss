@@ -1,4 +1,5 @@
 .table {
+	spaced();
 	border-collapse: collapse;
 	border-spacing: 0;
 	empty-cells: show;
@@ -6,7 +7,6 @@
 	min-width: 100%;
 	table-layout: fixed;
 	word-wrap: break-word;
-	spaced();
 	td,
 	th {
 		line-height: $table.cell.lineHeight;
@@ -23,9 +23,9 @@
 		}
 	}
 	caption {
+		background($table.caption.background);
 		font-style: $table.caption.style;
 		padding: $table.caption.padding.vertical $table.caption.padding.horizontal;
-		background($table.caption.background);
 	}
 	img {
 		vertical-align: top;
