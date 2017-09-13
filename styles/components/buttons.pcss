@@ -1,6 +1,7 @@
 .button,
 $(coloredButton.class) {
-	-webkit-appearance: button;
+	font($button.family, $button.size, $button.weight);
+	transition($button.transition.property, $button.transition.duration);
 	cursor: pointer;
 	display: inline-block;
 	line-height: 1em;
@@ -9,8 +10,6 @@ $(coloredButton.class) {
 	padding: $button.padding.vertical $button.padding.horizontal;
 	text-align: center;
 	text-shadow: none;
-	font($button.family, $button.size, $button.weight);
-	transition($button.transition.property, $button.transition.duration);
 	&:active {
 		transition($button.active.transition.property);
 	}
@@ -20,10 +19,10 @@ $(coloredButton.class) {
 	}
 }
 .button {
+	border($button.border.color);
 	background-color: $button.background;
 	border-radius: $button.border.radius;
 	color: $button.color;
-	border($button.border.color);
 	&:hover {
 		background-color: $button.hover.background;
 		color: $button.color;
@@ -34,10 +33,10 @@ $(coloredButton.class) {
 	}
 }
 $(coloredButton.class) {
+	border($coloredButton.border.color);
 	background-color: $coloredButton.background;
 	border-radius: $coloredButton.border.radius;
 	color: $coloredButton.color;
-	border($coloredButton.border.color);
 	&:hover {
 		background-color: $coloredButton.hover.background;
 		color: $coloredButton.color;
@@ -51,14 +50,19 @@ $(coloredButton.class) {
 $(coloredButton.class) {
 	&[disabled],
 	&$(button.disabled.modifier) {
+		border($button.disabled.border.color);
 		background-color: $button.disabled.background;
 		color: $button.disabled.color;
 		cursor: $button.disabled.cursor;
-		border($button.disabled.border.color);
 		&:active,
 		&:hover {
 			background-color: $button.disabled.background;
 			color: $button.disabled.color;
 		}
 	}
+}
+
+a.button,
+a.$(coloredButton.class) {
+	-webkit-appearance: none;
 }
