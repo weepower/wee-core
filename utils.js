@@ -6,7 +6,11 @@ const process = require('process');
 const basePath = __filename.split('/').slice(0, -1).join('/');
 const projectPath = process.env.PWD;
 const weeConfig = require('./config');
-const projectSourcePath = `${projectPath}/${weeConfig.paths.source}`;
+let projectSourcePath = `${projectPath}`;
+
+projectSourcePath += weeConfig.paths ?
+	`/${weeConfig.paths.source}` :
+	'/source';
 
 module.exports = {
 	/**
