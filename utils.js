@@ -5,7 +5,12 @@ const path = require('path');
 const process = require('process');
 const basePath = __filename.split('/').slice(0, -1).join('/');
 const projectPath = process.env.PWD;
-const projectSourcePath = `${projectPath}/source`;
+const weeConfig = require('./config');
+let projectSourcePath = `${projectPath}`;
+
+projectSourcePath += weeConfig.paths ?
+	`/${weeConfig.paths.source}` :
+	'/source';
 
 module.exports = {
 	/**
@@ -103,3 +108,5 @@ module.exports = {
 		return this.trimRight(line.replace(re, ''));
 	}
 };
+
+
