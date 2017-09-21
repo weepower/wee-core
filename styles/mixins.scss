@@ -1,0 +1,174 @@
+/*------------------------------------*\
+	# Positioning
+\*------------------------------------*/
+
+@mixin position($type, $top: 0, $right: 0, $bottom: 0, $left: 0) {
+	position: $type;
+
+	@each $data in top $top, right $right, bottom $bottom, left $left {
+		#{nth($data, 1)}: nth($data, 2);
+	}
+}
+
+@mixin absolute(
+	$top: $position-default,
+	$right: $position-default,
+	$bottom: $position-default,
+	$left: $position-default
+) {
+	@include position(absolute, $top, $right, $bottom, $left);
+}
+@mixin relative(
+	$top: $position-default,
+	$right: $position-default,
+	$bottom: $position-default,
+	$left: $position-default
+) {
+	@include position(relative, $top, $right, $bottom, $left);
+}
+@mixin fixed(
+	$top: $position-default,
+	$right: $position-default,
+	$bottom: $position-default,
+	$left: $position-default
+) {
+	@include position(fixed, $top, $right, $bottom, $left);
+}
+
+/*------------------------------------*\
+	# Borders
+\*------------------------------------*/
+
+@mixin border($value) {
+
+}
+
+/*------------------------------------*\
+	# Font Selection
+\*------------------------------------*/
+
+@mixin font(
+	$family: false,
+	$size: false,
+	$weight: false,
+	$lineHeight: false,
+	$style: false
+) {
+	font-family: $family;
+
+	@if ($size) {
+		font-size: $size;
+	}
+
+	@if ($weight) {
+		font-weight: $weight;
+	}
+
+	@if ($lineHeight) {
+		line-height: $lineHeight;
+	}
+
+	@if ($style) {
+		font-style: $style;
+	}
+}
+
+/*------------------------------------*\
+	# Heading
+\*------------------------------------*/
+
+@mixin heading($fontSize: false) {
+	@include font($headingFont, $fontSize, $headingFontWeight, $headingLineHeight);
+}
+
+/*------------------------------------*\
+	# Rounded Corners
+\*------------------------------------*/
+
+@mixin rounded($keyword, $value: $defaultRadius) {
+	$keywords: top, right, bottom, left;
+
+	background-clip: border-box;
+
+	@if (index($keywords, $keyword)) {
+		@if ($keyword == left or $keyword == right) {
+			$corners: border-top-#{$keyword}-radius,
+				border-bottom-#{$keyword}-radius;
+		} @elseif ($keyword == top or $keyword == bottom) {
+			$corners: border-#{$keyword}-left-radius,
+				border-#{$keyword}-right-radius;
+		}
+
+		@each $corner in $corners {
+			$corner: $value;
+		}
+	} @else {
+		// If no keyword, assume first parameter is the value
+		$value: $keyword;
+		border-radius: $value;
+	}
+}
+
+/*------------------------------------*\
+	# Margin
+\*------------------------------------*/
+
+@mixin margin($keyword, $value) {
+	$keywords: vertical, horizontal;
+
+	@if (index($keywords, $keyword)) {
+		@if ($keyword == vertical) {
+			margin-top: $value;
+			margin-bottom: $value;
+		} @else if ($keyword == horizontal) {
+			margin-left: $value;
+			margin-right: $value;
+		}
+	} @else {
+		@error "Must provide a keyword (horizontal, vertical)"
+	}
+}
+
+
+/*------------------------------------*\
+	# Resizable
+\*------------------------------------*/
+
+@mixin resizable($value: both) {
+	overflow: hidden;
+	resize: $value;
+}
+
+
+/*------------------------------------*\
+	# Placeholder
+\*------------------------------------*/
+
+@mixin placeholder {
+	@include optional-at-root('::-webkit-input-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root('::-moz-placeholder') {
+		@content;
+	}
+
+	@include optional-at-root(':-ms-input-placeholder') {
+		@content;
+	}
+}
+
+
+/*------------------------------------*\
+	# Utility
+\*------------------------------------*/
+
+@mixin optional-at-root($sel) {
+	@at-root #{if(not &, $sel, selector-append(&, $sel))} {
+		@content;
+	}
+}
