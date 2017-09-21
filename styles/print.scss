@@ -10,7 +10,7 @@ html {
 	font-size: 70%;
 }
 body {
-	padding: $print.page.margin;
+	padding: $printPageMargin;
 }
 header[role='banner'],
 footer[role='contentinfo'],
