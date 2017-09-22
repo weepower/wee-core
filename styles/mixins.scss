@@ -140,7 +140,7 @@
 	padding-top: ((1 / $ratio) * 100%);
 }
 
-@include size($width, $height: false) {
+@mixin size($width, $height: false) {
 	width: $width;
 
 	@if ($height) {
@@ -399,7 +399,7 @@
 }
 
 // TODO: Double check autoprefixer on this one
-@include selection($color: $selectionColor, $background: $selectionBackground) {
+@mixin selection($color: $selectionColor, $background: $selectionBackground) {
 	&::selection {
 		background: $background;
 		color: $color;
