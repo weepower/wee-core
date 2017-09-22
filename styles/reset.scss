@@ -20,7 +20,8 @@ body {
 	@include font(
 		$family: $baseFont,
 		$weight: $normalFontWeight,
-		$lineHeight: $baseLineHeight
+		$lineHeight: $baseLineHeight,
+		$size: $baseFontSize
 	);
 
 	background-color: $bodyBackground;
