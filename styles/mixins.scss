@@ -1,3 +1,421 @@
+
+
+/*------------------------------------*\
+	# Alignment
+\*------------------------------------*/
+
+@mixin clearfix() {
+	&:after {
+		clear: both;
+		content: '';
+		display: block;
+	}
+}
+
+@mixin inlineBlock($width: false, $height: false) {
+	display: inline-block;
+
+	@if ($width != false) {
+		width: $width;
+	}
+
+	@if ($height != false) {
+		height: $height;
+	}
+}
+
+
+/*------------------------------------*\
+	# Display
+\*------------------------------------*/
+
+@mixin block($width: false, $height: $false) {
+	display: block;
+
+	@if ($width) {
+		width: $width;
+	}
+
+	@if ($height) {
+		height: $height;
+	}
+}
+
+@mixin spacedBlock($margin: $blockMarginBottom) {
+	display: block;
+	margin-bottom: $margin;
+};
+
+
+/*------------------------------------*\
+	# Content
+\*------------------------------------*/
+
+@mixin prefix($value: '-', $margin: .5em, $font: false, $color: false) {
+	&::before {
+		content: $value;
+
+		@if ($font != false) {
+			@include font($baseFont);
+		}
+
+		@if ($color != false) {
+			color: $color;
+		}
+
+	}
+}
+
+@mixin suffix($value: '-', $margin: .5em, $font: false, $color: false) {
+	&::before {
+		content: $value;
+
+		@if ($font != false) {
+			@include font($baseFont);
+		}
+
+		@if ($color != false) {
+			color: $color;
+		}
+
+	}
+}
+
+@mixin bookends($value: '-', $margin: .5em, $font: false, $color: $false) {
+	@include prefix($value, $margin, $font, $color);
+	@include suffix($value, $margin, $font, $color);
+}
+
+
+/*------------------------------------*\
+	# Blocks
+\*------------------------------------*/
+
+@mixin centeredBlock($maxWidth: $false, $margin: $false) {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	@if ($maxWidth != false) {
+		max-width: $maxWidth;
+	}
+
+	@if ($margin != false) {
+		margin-bottom: $margin;
+	}
+}
+
+
+/*------------------------------------*\
+	# Sizing
+\*------------------------------------*/
+
+@mixin circle($diameter, $crop: false, $display: false) {
+	@include rounded($diameter / 2);
+
+	height: $diameter;
+	width: $diameter;
+
+	@if ($crop != false) {
+		overflow: hidden;
+	}
+
+	@if ($display != false) {
+		display: $display;
+	}
+}
+
+@mixin ratio($keyword: false, $ratio: 16 / 9) {
+	@if ($keyword != false and $keyword == embed) {
+		overflow: hidden;
+		position: relative;
+		&::before {
+			content: '';
+			@include ratio($ratio);
+		}
+	}
+
+	display: block;
+	height: 0;
+	padding-top: ((1 / $ratio) * 100%);
+}
+
+@include size($width, $height: false) {
+	width: $width;
+
+	@if ($height) {
+		height: $height
+	} @else {
+		height: width;
+	}
+}
+
+
+/*------------------------------------*\
+	# Shapes
+\*------------------------------------*/
+
+@mixin triangle($keyword, $color: $darkGray, $size: 5px, $width: $size) {
+	content: '';
+	height: 0;
+	width: 0;
+
+	@if ($keyword == up or $keyword == down) {
+		border-left: $width solid transparent;
+		border-right: $width solid transparent;
+
+		@if ($keyword == up) {
+			border-bottom: $width solid $color;
+		} @else {
+			border-top: $width solid $color;
+		}
+	}
+
+	@if ($keyword == left or $keyword == right) {
+		border-bottom: $width solid transparent;
+		border-top: $width solid transparent;
+
+		@if ($keyword == left) {
+			border-right: $width solid $color;
+		} @else {
+			border-left: $width solid $color;
+		}
+	}
+}
+
+/*------------------------------------*\
+	# Font Loading
+\*------------------------------------*/
+
+@mixin loadFont($name, $file: $name, $weight: normal, $style: normal) {
+	@font-face {
+		font-family: '#{$name}';
+		font-style: $style;
+		font-weight: $weight;
+
+		@if ($woff2Enabled) {
+			src: url('#{$fontPath}#{$file}.woff2') format('woff2'),
+				 url('#{$fontPath}#{$file}.woff') format('woff'),
+				 url('#{$fontPath}#{$file}.ttf') format('truetype');
+		} @else {
+			src: url('#{$fontPath}#{$file}.woff') format('woff'),
+				 url('#{$fontPath}#{$file}.ttf') format('truetype');
+		}
+	}
+}
+
+
+/*------------------------------------*\
+	# Grid
+\*------------------------------------*/
+
+@mixin row($margin: $gridMargin) {
+	@include clearfix();
+
+	margin-left: ($margin * -1);
+	max-width: (100% + $margin);
+}
+
+@mixin rowModify($margin: $gridMargin) {
+	margin-left: ($margin * -1);
+	max-width: (100% + $margin);
+}
+
+@mixin rowReset() {
+	margin-left: 0;
+	max-width: none;
+}
+
+@mixin column($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin) {
+	float: left;
+
+	@if ($keyword != false) {
+		@if ($keyword == spaced) {
+			margin-left: $margin;
+			width: ((100% / $columns) * $share) - $margin;
+		} @else {
+			// If keyword is not "spaced", shift values
+			$columns: $share;
+			$share: $keyword;
+
+			width: ((100% / $columns) * $share);
+		}
+	} @else {
+		width: 100%;
+	}
+}
+
+@mixin columnModify($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin) {
+	@if ($keyword != false) {
+		@if ($keyword == spaced) {
+			margin-left: $gridMargin;
+			width: ((100% / $columns) * $share) - $margin;
+		} @else {
+			// If keyword is not "spaced", shift values
+			$columns: $share;
+			$share: $keyword;
+
+			width: ((100% / $columns) * $share);
+		}
+	}
+}
+
+@mixin columnReset($resetMargin: false) {
+	float: none;
+	width: auto;
+
+	@if ($resetMargin != false) {
+		margin-left: 0;
+	}
+}
+
+@mixin columnPull($share, $columns: $gridColumns) {
+	position: relative;
+	right: ((100% / $columns) * $share);
+}
+
+@mixin columnPush($share, $columns: $gridColumns) {
+	left: ((100% / $columns) * $share);
+	position: relative;
+}
+
+@mixin columnOffset($keyword: false, $share: false, $columns: $gridColumns, $margin: ($gridMargin / 2)) {
+	@if ($keyword != false) {
+		@if ($keyword == spaced) {
+			margin-left: ((100% / $columns) * $share) - $margin;
+		} @else {
+			// If keyword is not "spaced", shift values
+			$columns: $share;
+			$share: $keyword;
+
+			margin-left: ((100% / $columns) * $share);
+		}
+	}
+}
+
+
+/*------------------------------------*\
+	# Inline Grid
+\*------------------------------------*/
+
+@mixin inlineRow($margin: $gridMargin, $spaceless: $gridSpaceless) {
+	@if ($spaceless != true) {
+		letter-spacing: -.32em;
+	}
+
+	margin-left: ($margin * -1);
+	max-width: (100% + $margin);
+}
+
+@mixin inlineColumn($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin, $spaceless: $gridSpaceless) {
+	display: inline-block;
+	vertical-align: top;
+
+	@if ($keyword == spaced) {
+		margin-left: $margin;
+		@if ($share != false) {
+			width: ((100% / $columns) * $share) - $margin;
+		}
+	} @else {
+		// Shift arguments
+		$spaceless: $margin;
+		$columns: $share;
+		$share: $keyword;
+
+		width: ((100% / $columns) * $share);
+
+		@if ($spaceless != true) {
+			margin-right: -.32em;
+		}
+	}
+
+	// TODO: come back to this, there was a conditional around it checking for "spaceless"
+	letter-spacing: normal;
+}
+
+
+/*------------------------------------*\
+	# Text Styling
+\*------------------------------------*/
+
+@mixin ellipsis($maxWidth: false) {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	@if ($maxWidth != false) {
+		max-width: $maxWidth;
+	}
+}
+
+
+/*------------------------------------*\
+	# Other
+\*------------------------------------*/
+
+@mixin hideText() {
+	overflow: hidden;
+	text-indent: 110%;
+	white-space: nowrap;
+}
+
+@mixin icon($icon, $size: inherit, $rotate: false, $weight: normal, $lineHeight: 0, $sharpen: true, $font: $iconFontFamily) {
+	@include font($font, $size, $weight, $lineHeight, $weight);
+
+	content: "#{$icon}";
+	display: inline-block;
+
+	@if ($rotate != false) {
+		transform: rotate($rotate);
+	}
+
+	@if ($sharpen != false) {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+@mixin iconModify($icon: false, $size: false, $rotate: false, $weight: false, $sharpen: false) {
+	@if ($icon != false) {
+		content: "#{$icon}";
+	}
+
+	@if ($size != false) {
+		font-size: $size;
+	}
+
+	@if ($rotate != false) {
+		transform: rotate($rotate)
+	}
+
+	@if ($weight != false) {
+		font-weight: $weight;
+	}
+
+	@if ($sharpen != false) {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+// TODO: Double check autoprefixer on this one
+@include selection($color: $selectionColor, $background: $selectionBackground) {
+	&::selection {
+		background: $background;
+		color: $color;
+		text-shadow: none;
+	}
+}
+
+@mixin noClear() {
+	&::-ms-clear {
+		display: none;
+	}
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+}
+
 /*------------------------------------*\
 	# Positioning
 \*------------------------------------*/
@@ -35,13 +453,6 @@
 	@include position(fixed, $top, $right, $bottom, $left);
 }
 
-/*------------------------------------*\
-	# Borders
-\*------------------------------------*/
-
-@mixin border($value) {
-
-}
 
 /*------------------------------------*\
 	# Font Selection
@@ -109,24 +520,37 @@
 	}
 }
 
+@mixin addSpace($type, $keyword, $value) {
+	$keywords: vertical, horizontal;
+
+	@if (index($keywords, $keyword)) {
+		@if ($keyword == vertical) {
+			#{$type}-top: $value;
+			#{$type}-bottom: $value;
+		} @else if ($keyword == horizontal) {
+			#{$type}-left: $value;
+			#{$type}-right: $value;
+		}
+	} @else {
+		@error "Must provide a keyword (horizontal, vertical)"
+	}
+}
+
 /*------------------------------------*\
 	# Margin
 \*------------------------------------*/
 
 @mixin margin($keyword, $value) {
-	$keywords: vertical, horizontal;
+	@include addSpace(margin, $keyword, $value);
+}
 
-	@if (index($keywords, $keyword)) {
-		@if ($keyword == vertical) {
-			margin-top: $value;
-			margin-bottom: $value;
-		} @else if ($keyword == horizontal) {
-			margin-left: $value;
-			margin-right: $value;
-		}
-	} @else {
-		@error "Must provide a keyword (horizontal, vertical)"
-	}
+
+/*------------------------------------*\
+	# Padding
+\*------------------------------------*/
+
+@mixin padding($keyword, $value) {
+	@include addSpace(padding, $keyword, $value);
 }
 
 
