@@ -8,8 +8,13 @@
 	margin-left: auto;
 	margin-right: auto;
 	box-sizing: content-box;
-	max-width: $maxWidth;
-	min-width: $minWidth;
+	@if ($maxWidth != false) {
+		max-width: $maxWidth;
+	}
+
+	@if ($minWidth != false) {
+		min-width: $minWidth;
+	}
 }
 .js-hide {
 	display: none !important;
