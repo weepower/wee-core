@@ -12,6 +12,12 @@
 	}
 }
 
+
+// Display inline block
+//
+// @param $width - element width
+// @param $height - element height
+//
 @mixin inlineBlock($width: false, $height: false) {
 	display: inline-block;
 
@@ -29,6 +35,11 @@
 	# Display
 \*------------------------------------*/
 
+// Display block
+//
+// @param $width
+// @param $height
+//
 @mixin block($width: false, $height: $false) {
 	display: block;
 
@@ -41,9 +52,23 @@
 	}
 }
 
-@mixin spacedBlock($margin: $blockMarginBottom) {
+// Display block and set bottom margin
+//
+// @param $margin - margin bottom
+// @param $width - element width
+// @param $height - element height
+//
+@mixin spacedBlock($margin: $blockMarginBottom, $width: false, $height: false) {
 	display: block;
 	margin-bottom: $margin;
+
+	@if ($width != false) {
+		width: $width;
+	}
+
+	@if ($height != false) {
+		height: $height;
+	}
 };
 
 
@@ -51,6 +76,13 @@
 	# Content
 \*------------------------------------*/
 
+// Prefix
+//
+// @param $value
+// @param $margin - right margin
+// @param $font - font family name
+// @param $color - hex value or color var
+//
 @mixin prefix($value: '-', $margin: .5em, $font: false, $color: false) {
 	&::before {
 		content: $value;
@@ -66,6 +98,14 @@
 	}
 }
 
+
+// Suffix
+//
+// @param $value
+// @param $margin - left margin
+// @param $font - font family name
+// @param $color - hex value or color var
+//
 @mixin suffix($value: '-', $margin: .5em, $font: false, $color: false) {
 	&::before {
 		content: $value;
@@ -81,6 +121,13 @@
 	}
 }
 
+// Bookends
+//
+// @param $value
+// @param $margin - left and right margin
+// @param $font - font family name
+// @param $color - hex value or color
+//
 @mixin bookends($value: '-', $margin: .5em, $font: false, $color: $false) {
 	@include prefix($value, $margin, $font, $color);
 	@include suffix($value, $margin, $font, $color);
@@ -91,6 +138,11 @@
 	# Blocks
 \*------------------------------------*/
 
+// A block level element, centered with margin
+//
+// @param $maxWidth - max width of container
+// @param $margin - left and right margin
+//
 @mixin centeredBlock($maxWidth: $false, $margin: $false) {
 	display: block;
 	margin-left: auto;
