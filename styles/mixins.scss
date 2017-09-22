@@ -4,6 +4,8 @@
 	# Alignment
 \*------------------------------------*/
 
+// Clearfix
+//
 @mixin clearfix() {
 	&:after {
 		clear: both;
