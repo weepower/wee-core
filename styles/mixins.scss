@@ -164,7 +164,7 @@
 //  # Sizing
 //------------------------------------*/
 
-@mixin circle($diameter, $crop: false, $display: false) {
+@mixin circle($diameter, $crop: false, $display: block) {
 	@include rounded($diameter / 2);
 
 	height: $diameter;
@@ -185,22 +185,49 @@
 		position: relative;
 		&::before {
 			content: '';
-			@include ratio($ratio);
+			display: block;
+			height: 0;
+			padding-top: ((1 / $ratio) * 100%);
 		}
-	}
+	} @else {
+		// Shift arguments
+		@if ($keyword != false) {
+			$ratio: $keyword;
+		}
 
-	display: block;
-	height: 0;
-	padding-top: ((1 / $ratio) * 100%);
+		display: block;
+		height: 0;
+		padding-top: ((1 / $ratio) * 100%);
+	}
 }
 
 @mixin size($width, $height: false) {
 	width: $width;
 
-	@if ($height) {
+	@if ($height != false) {
 		height: $height
 	} @else {
-		height: width;
+		height: $width;
+	}
+}
+
+@mixin maxSize($width, $height: false) {
+	max-width: $width;
+
+	@if ($height != false) {
+		max-height: $height
+	} @else {
+		max-height: $width;
+	}
+}
+
+@mixin minSize($width, $height: false) {
+	min-width: $width;
+
+	@if ($height != false) {
+		min-height: $height
+	} @else {
+		min-height: $width;
 	}
 }
 
@@ -478,31 +505,33 @@
 	position: $type;
 
 	@each $data in top $top, right $right, bottom $bottom, left $left {
-		#{nth($data, 1)}: nth($data, 2);
+		@if (nth($data, 2) != false) {
+			#{nth($data, 1)}: nth($data, 2);
+		}
 	}
 }
 
 @mixin absolute(
-	$top: $position-default,
-	$right: $position-default,
-	$bottom: $position-default,
-	$left: $position-default
+	$top: false,
+	$right: false,
+	$bottom: false,
+	$left: false
 ) {
 	@include position(absolute, $top, $right, $bottom, $left);
 }
 @mixin relative(
-	$top: $position-default,
-	$right: $position-default,
-	$bottom: $position-default,
-	$left: $position-default
+	$top: false,
+	$right: false,
+	$bottom: false,
+	$left: false
 ) {
 	@include position(relative, $top, $right, $bottom, $left);
 }
 @mixin fixed(
-	$top: $position-default,
-	$right: $position-default,
-	$bottom: $position-default,
-	$left: $position-default
+	$top: false,
+	$right: false,
+	$bottom: false,
+	$left: false
 ) {
 	@include position(fixed, $top, $right, $bottom, $left);
 }

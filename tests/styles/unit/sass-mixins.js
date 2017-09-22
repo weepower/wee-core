@@ -312,1051 +312,370 @@ describe('font', () => {
 		);
 	});
 });
-//
-// describe('unstyled', () => {
-// 	it('output list-style: none', () => {
-// 		return process(
-// 			`.block {
-// 				unstyled();
-// 			}`,
-// 			`.block {
-// 				list-style: none;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('absolute', () => {
-// 	it('output absolute position by default', () => {
-// 		return process(
-// 			`.block {
-// 				absolute();
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output absolute position with supplied arguments', () => {
-// 		return process(
-// 			`.block {
-// 				absolute(4, 3);
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 				top: 4rem;
-// 				right: 3rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output absolute position with supplied arguments', () => {
-// 		return process(
-// 			`.block {
-// 				absolute(4, 3, 2, 1);
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 				top: 4rem;
-// 				right: 3rem;
-// 				bottom: 2rem;
-// 				left: 1rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output absolute position with supplied arguments with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				absolute(4px, 3em, 2pt, 1mm);
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 				top: 4px;
-// 				right: 3em;
-// 				bottom: 2pt;
-// 				left: 1mm;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output absolute position with supplied object arguments', () => {
-// 		return process(
-// 			`.block {
-// 				absolute(bottom: 3, top: 4);
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 				top: 4rem;
-// 				bottom: 3rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output absolute position with supplied object arguments with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				absolute(bottom: 3px, top: 4in);
-// 			}`,
-// 			`.block {
-// 				position: absolute;
-// 				top: 4in;
-// 				bottom: 3px;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('fixed', () => {
-// 	it('output fixed position by default', () => {
-// 		return process(
-// 			`.block {
-// 				fixed();
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output fixed position with supplied arguments', () => {
-// 		return process(
-// 			`.block {
-// 				fixed(4, 3);
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 				top: 4rem;
-// 				right: 3rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output fixed position with supplied arguments', () => {
-// 		return process(
-// 			`.block {
-// 				fixed(4, 3, 2, 1);
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 				top: 4rem;
-// 				right: 3rem;
-// 				bottom: 2rem;
-// 				left: 1rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output fixed position with supplied arguments with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				fixed(4px, 3em, 2pt, 1mm);
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 				top: 4px;
-// 				right: 3em;
-// 				bottom: 2pt;
-// 				left: 1mm;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output fixed position with supplied object arguments', () => {
-// 		return process(
-// 			`.block {
-// 				fixed(bottom: 3, top: 4);
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 				top: 4rem;
-// 				bottom: 3rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('output fixed position with supplied object arguments with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				fixed(bottom: 3px, top: 4in);
-// 			}`,
-// 			`.block {
-// 				position: fixed;
-// 				top: 4in;
-// 				bottom: 3px;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('size', () => {
-// 	it('should use first argument for width and height with default unit', () => {
-// 		return process(
-// 			`.block {
-// 				size(100);
-// 			}`,
-// 			`.block {
-// 				width: 100rem;
-// 				height: 100rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use first argument for width and height with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				size(100%);
-// 			}`,
-// 			`.block {
-// 				width: 100%;
-// 				height: 100%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use arguments for width and height', () => {
-// 		return process(
-// 			`.block {
-// 				size(100%, 20%);
-// 			}`,
-// 			`.block {
-// 				width: 100%;
-// 				height: 20%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('maxSize', () => {
-// 	it('should use first argument for width and height with default unit', () => {
-// 		return process(
-// 			`.block {
-// 				maxSize(100);
-// 			}`,
-// 			`.block {
-// 				max-width: 100rem;
-// 				max-height: 100rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use first argument for width and height with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				maxSize(100%);
-// 			}`,
-// 			`.block {
-// 				max-width: 100%;
-// 				max-height: 100%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use arguments for width and height', () => {
-// 		return process(
-// 			`.block {
-// 				maxSize(100%, 20%);
-// 			}`,
-// 			`.block {
-// 				max-width: 100%;
-// 				max-height: 20%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('minSize', () => {
-// 	it('should use first argument for width and height with default unit', () => {
-// 		return process(
-// 			`.block {
-// 				minSize(100);
-// 			}`,
-// 			`.block {
-// 				min-width: 100rem;
-// 				min-height: 100rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use first argument for width and height with override unit', () => {
-// 		return process(
-// 			`.block {
-// 				minSize(100%);
-// 			}`,
-// 			`.block {
-// 				min-width: 100%;
-// 				min-height: 100%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use arguments for width and height', () => {
-// 		return process(
-// 			`.block {
-// 				minSize(100%, 20%);
-// 			}`,
-// 			`.block {
-// 				min-width: 100%;
-// 				min-height: 20%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('square', () => {
-// 	it('should use argument for width and height', () => {
-// 		return process(
-// 			`.block {
-// 				square(100px);
-// 			}`,
-// 			`.block {
-// 				height: 100px;
-// 				width: 100px;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should use argument for width and height with default unit', () => {
-// 		return process(
-// 			`.block {
-// 				square(10);
-// 			}`,
-// 			`.block {
-// 				height: 10rem;
-// 				width: 10rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('ratio', () => {
-// 	describe('with keyword', () => {
-// 		it('should output default values', () => {
-// 			return process(
-// 				stripIndent`
-// 					.block {
-// 						ratio(embed);
-// 					}
-// 				`,
-// 				stripIndent`
-// 					.block {
-// 						overflow: hidden;
-// 						position: relative;
-// 						&:before {
-// 							content: '';
-// 							display: block;
-// 							height: 0;
-// 							padding-top: 56.25%
-// 						}
-// 					}
-// 				`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-//
-// 		it('should handle ratio', () => {
-// 			return process(
-// 				stripIndent`
-// 					.block {
-// 						ratio(embed, 4/3);
-// 					}
-// 				`,
-// 				stripIndent`
-// 					.block {
-// 						overflow: hidden;
-// 						position: relative;
-// 						&:before {
-// 							content: '';
-// 							display: block;
-// 							height: 0;
-// 							padding-top: 75%
-// 						}
-// 					}
-// 				`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-// 	});
-//
-// 	describe('without keyword', () => {
-// 		it('should output default values', () => {
-// 			return process(
-// 				`.block {
-// 					ratio();
-// 				}`,
-// 				`.block {
-// 					display: block;
-// 					height: 0;
-// 					padding-top: 56.25%;
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-//
-// 		it('should handle ratio', () => {
-// 			return process(
-// 				`.block {
-// 					ratio(4/3);
-// 				}`,
-// 				`.block {
-// 					display: block;
-// 					height: 0;
-// 					padding-top: 75%;
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-// 	});
-// });
-//
-// describe('circle', () => {
-// 	it('should handle diameter', () => {
-// 		return process(
-// 			`.block {
-// 				circle(.5);
-// 			}`,
-// 			`.block {
-// 				height: 0.5rem;
-// 				width: 0.5rem;
-// 				display: block;
-// 				background-clip: border-box;
-// 				border-radius: 0.25rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle diameter and crop', () => {
-// 		return process(
-// 			`.block {
-// 				circle(.5, true);
-// 			}`,
-// 			`.block {
-// 				height: 0.5rem;
-// 				width: 0.5rem;
-// 				display: block;
-// 				background-clip: border-box;
-// 				border-radius: 0.25rem;
-// 				overflow: hidden;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle key value pairs', () => {
-// 		return process(
-// 			`.block {
-// 				circle(.5, display: inline);
-// 			}`,
-// 			`.block {
-// 				height: 0.5rem;
-// 				width: 0.5rem;
-// 				display: inline-block;
-// 				background-clip: border-box;
-// 				border-radius: 0.25rem;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('bold', () => {
-// 	it('should output font-weight with default bold font weight', () => {
-// 		return process(
-// 			`.block {
-// 				bold();
-// 			}`,
-// 			`.block {
-// 				font-weight: bold;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('italic', () => {
-// 	it('should output italic font', () => {
-// 		return process(
-// 			`.block {
-// 				italic();
-// 			}`,
-// 			`.block {
-// 				font-style: italic;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('background', () => {
-// 	it('should output declaration with default value', () => {
-// 		return process(
-// 			`.block {
-// 				background();
-// 			}`,
-// 			`.block {
-// 				background: #fff;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output a string', () => {
-// 		return process(
-// 			`.block {
-// 				background('this is a string');
-// 			}`,
-// 			`.block {
-// 				background: 'this is a string';
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output opacity as second parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, .4);
-// 				background(blue, .5);
-// 			}`,
-// 			`.block {
-// 				background: rgba(255, 255, 255, 0.4);
-// 				background: rgba(0, 0, 255, 0.5);
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output opacity as second parameter as a percentage', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 40%);
-// 			}`,
-// 			`.block {
-// 				background: rgba(255, 255, 255, 0.4);
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output url() as second parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, url('../path/file.ext'));
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../path/file.ext');
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output url() as second parameter with default file path', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 'test.jpg');
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../images/test.jpg');
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output x position as third parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 'test.jpg', center);
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../images/test.jpg') center;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output y position as forth parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 'test/test.jpg', center, center);
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../images/test/test.jpg') center center;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output repeat as fifth parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 'test.jpg', center, center, no-repeat);
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../images/test.jpg') center center no-repeat;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output attachment as sixth parameter', () => {
-// 		return process(
-// 			`.block {
-// 				background(#fff, 'test.jpg', center, center, no-repeat, fixed);
-// 			}`,
-// 			`.block {
-// 				background: #fff url('../images/test.jpg') center center no-repeat fixed;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('backgroundGradient', () => {
-// 	describe('with keyword', () => {
-// 		it('should handle dark', () => {
-// 			return process(
-// 				`.block {
-// 					backgroundGradient(dark);
-// 				}`,
-// 				`.block {
-// 					background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-//
-// 		it('should handle light with angle', () => {
-// 			return process(
-// 				`.block {
-// 					backgroundGradient(light, angle: 45);
-// 				}`,
-// 				`.block {
-// 					background: linear-gradient(45deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-// 	});
-//
-// 	describe('without keyword', () => {
-// 		it('should output default values', () => {
-// 			return process(
-// 				`.block {
-// 				backgroundGradient();
-// 			}`,
-// 				`.block {
-// 				background-color: gray;
-// 				background: linear-gradient(180deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
-// 			}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-//
-// 		it('should handle color and angle', () => {
-// 			return process(
-// 				`.block {
-// 					backgroundGradient(blue, angle: 90);
-// 				}`,
-// 				`.block {
-// 					background-color: blue;
-// 					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, .2));
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-//
-// 		it('should handle key value pairs', () => {
-// 			return process(
-// 				`.block {
-// 					backgroundGradient(angle: 90, end: rgba(0, 0, 0, 0));
-// 				}`,
-// 				`.block {
-// 					background-color: gray;
-// 					background: linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0, 0));
-// 				}`,
-// 				{ mixins: mixins }
-// 			);
-// 		});
-// 	});
-// });
-//
-// describe('backgroundImage', () => {
-// 	it('should handle filename', () => {
-// 		return process(
-// 			`.block {
-// 				backgroundImage(foo.jpg);
-// 			}`,
-// 			`.block {
-// 				background-image: url('../images/foo.jpg');
-// 				background-repeat: no-repeat;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle filename with position', () => {
-// 		return process(
-// 			`.block {
-// 				backgroundImage(foo.jpg, position: 10% 25%);
-// 			}`,
-// 			`.block {
-// 				background-image: url('../images/foo.jpg');
-// 				background-repeat: no-repeat;
-// 				background-position: 10% 25%;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle filename with size', () => {
-// 		return process(
-// 			`.block {
-// 				backgroundImage(foo.jpg, size: cover);
-// 			}`,
-// 			`.block {
-// 				background-image: url('../images/foo.jpg');
-// 				background-repeat: no-repeat;
-// 				background-size: cover;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle key value pairs', () => {
-// 		return process(
-// 			`.block {
-// 				backgroundImage(size: cover, foo.jpg, repeat-x, attachment: fixed);
-// 			}`,
-// 			`.block {
-// 				background-image: url('../images/foo.jpg');
-// 				background-repeat: repeat-x;
-// 				background-size: cover;
-// 				background-attachment: fixed;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('border', () => {
-// 	it('should output default properties if no args are supplied', () => {
-// 		return process(
-// 			`.block {
-// 				border();
-// 			}`,
-// 			`.block {
-// 				border: 1px solid #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output default properties with supplied color', () => {
-// 		return process(
-// 			`.block {
-// 				border(#000);
-// 			}`,
-// 			`.block {
-// 				border: 1px solid #000;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle width, style, and color arguments', () => {
-// 		return process(
-// 			`.block {
-// 				border(black, 1px, solid);
-// 			}`,
-// 			`.block {
-// 				border: 1px solid black;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output top border with default properties', () => {
-// 		return process(
-// 			`.block {
-// 				border(top);
-// 			}`,
-// 			`.block {
-// 				border-top: 1px solid #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output left border with default properties', () => {
-// 		return process(
-// 			`.block {
-// 				border(left);
-// 			}`,
-// 			`.block {
-// 				border-left: 1px solid #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output horizontal borders with default properties', () => {
-// 		return process(
-// 			`.block {
-// 				border(horizontal);
-// 			}`,
-// 			`.block {
-// 				border-left: 1px solid #bfbfbf;
-// 				border-right: 1px solid #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output vertical borders with default properties', () => {
-// 		return process(
-// 			`.block {
-// 				border(vertical);
-// 			}`,
-// 			`.block {
-// 				border-top: 1px solid #bfbfbf;
-// 				border-bottom: 1px solid #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output left border with supplied color', () => {
-// 		return process(
-// 			`.block {
-// 				border(left, #000);
-// 			}`,
-// 			`.block {
-// 				border-left: 1px solid #000;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output top border with supplied color', () => {
-// 		return process(
-// 			`.block {
-// 				border(top, #000);
-// 			}`,
-// 			`.block {
-// 				border-top: 1px solid #000;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output horizontal border with supplied color', () => {
-// 		return process(
-// 			`.block {
-// 				border(horizontal, #000);
-// 			}`,
-// 			`.block {
-// 				border-left: 1px solid #000;
-// 				border-right: 1px solid #000;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output top border with supplied parameters', () => {
-// 		return process(
-// 			`.block {
-// 				border(top, black, 1px, solid);
-// 			}`,
-// 			`.block {
-// 				border-top: 1px solid black;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output top and bottom border with supplied parameters', () => {
-// 		return process(
-// 			`.block {
-// 				border(vertical, black, 1px, solid);
-// 			}`,
-// 			`.block {
-// 				border-top: 1px solid black;
-// 				border-bottom: 1px solid black;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output top and bottom border with supplied parameters', () => {
-// 		return process(
-// 			`.block {
-// 				border(black, style: dotted);
-// 			}`,
-// 			`.block {
-// 				border: 1px dotted black;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output default params when not provided', () => {
-// 		return process(
-// 			`.block {
-// 				border(blue);
-// 				border(width: $border.width, style: dotted);
-// 			}`,
-// 			`.block {
-// 				border: 1px solid blue;
-// 				border: 1px dotted #bfbfbf;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should return border: none if first param is false, 0, none', () => {
-// 		return process(
-// 			`.block {
-// 				border(false);
-// 				border(0);
-// 				border(none);
-// 			}`,
-// 			`.block {
-// 				border: none;
-// 				border: none;
-// 				border: none;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('borderImage', () => {
-// 	it('should output filename with default values', () => {
-// 		return process(
-// 			`.block {
-// 				borderImage(foo.jpg);
-// 			}`,
-// 			`.block {
-// 				border-image: url('../images/foo.jpg') 100% 1 0 stretch;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output nothing when no values are passed', () => {
-// 		return process(
-// 			`.block {
-// 				borderImage();
-// 			}`,
-// 			`.block {
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should output provided values', () => {
-// 		return process(
-// 			`.block {
-// 				borderImage(foo.jpg, 50%, 3);
-// 			}`,
-// 			`.block {
-// 				border-image: url('../images/foo.jpg') 50% 3 0 stretch;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle key value pairs', () => {
-// 		return process(
-// 			`.block {
-// 				borderImage(foo.jpg, outset: 1.5, repeat: round);
-// 			}`,
-// 			`.block {
-// 				border-image: url('../images/foo.jpg') 100% 1 1.5 round;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
-//
-// describe('triangle', () => {
-// 	it('should handle up keyword', () => {
-// 		return process(
-// 			`.block {
-// 				triangle(up);
-// 			}`,
-// 			`.block {
-// 				content: '';
-// 				height: 0;
-// 				width: 0;
-// 				border-left: 5px solid transparent;
-// 				border-right: 5px solid transparent;
-// 				border-bottom: 5px solid #737373;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle left keyword with color and size values', () => {
-// 		return process(
-// 			`.block {
-// 				triangle(left, blue, 2px);
-// 			}`,
-// 			`.block {
-// 				content: '';
-// 				height: 0;
-// 				width: 0;
-// 				border-top: 2px solid transparent;
-// 				border-bottom: 2px solid transparent;
-// 				border-right: 2px solid blue;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-//
-// 	it('should handle key value pairs', () => {
-// 		return process(
-// 			`.block {
-// 				triangle(right, size: 3px, width: 4px);
-// 			}`,
-// 			`.block {
-// 				content: '';
-// 				height: 0;
-// 				width: 0;
-// 				border-top: 4px solid transparent;
-// 				border-bottom: 4px solid transparent;
-// 				border-left: 3px solid #737373;
-// 			}`,
-// 			{ mixins: mixins }
-// 		);
-// 	});
-// });
+
+describe('absolute', () => {
+	it('output absolute position by default', () => {
+		return process(
+			`.block {
+				@include absolute();
+			}`,
+			`.block {
+				position: absolute;
+			}`
+		);
+	});
+
+	it('output absolute position with supplied arguments', () => {
+		return process(
+			`.block {
+				@include absolute(4rem, 3rem);
+			}`,
+			`.block {
+				position: absolute;
+				top: 4rem;
+				right: 3rem;
+			}`
+		);
+	});
+
+	it('output absolute position with supplied arguments', () => {
+		return process(
+			`.block {
+				@include absolute(4rem, 3rem, 2rem, 1rem);
+			}`,
+			`.block {
+				position: absolute;
+				top: 4rem;
+				right: 3rem;
+				bottom: 2rem;
+				left: 1rem;
+			}`
+		);
+	});
+
+	it('output absolute position with supplied named arguments', () => {
+		return process(
+			`.block {
+				@include absolute($bottom: 3rem, $top: 4rem);
+			}`,
+			`.block {
+				position: absolute;
+				top: 4rem;
+				bottom: 3rem;
+			}`
+		);
+	});
+});
+
+describe('fixed', () => {
+	it('output fixed position by default', () => {
+		return process(
+			`.block {
+				@include fixed();
+			}`,
+			`.block {
+				position: fixed;
+			}`,
+		);
+	});
+
+	it('output fixed position with supplied arguments', () => {
+		return process(
+			`.block {
+				@include fixed(4rem, 3rem);
+			}`,
+			`.block {
+				position: fixed;
+				top: 4rem;
+				right: 3rem;
+			}`
+		);
+	});
+
+	it('output fixed position with supplied arguments', () => {
+		return process(
+			`.block {
+				@include fixed(4rem, 3rem, 2rem, 1rem);
+			}`,
+			`.block {
+				position: fixed;
+				top: 4rem;
+				right: 3rem;
+				bottom: 2rem;
+				left: 1rem;
+			}`
+		);
+	});
+
+	it('output fixed position with supplied named arguments', () => {
+		return process(
+			`.block {
+				@include fixed($bottom: 3rem, $top: 4rem);
+			}`,
+			`.block {
+				position: fixed;
+				top: 4rem;
+				bottom: 3rem;
+			}`
+		);
+	});
+});
+
+describe('size', () => {
+	it('should use first argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				@include size(100rem);
+			}`,
+			`.block {
+				width: 100rem;
+				height: 100rem;
+			}`
+		);
+	});
+
+	it('should use arguments for width and height', () => {
+		return process(
+			`.block {
+				@include size(100%, 20%);
+			}`,
+			`.block {
+				width: 100%;
+				height: 20%;
+			}`
+		);
+	});
+});
+
+describe('maxSize', () => {
+	it('should use first argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				@include maxSize(100rem);
+			}`,
+			`.block {
+				max-width: 100rem;
+				max-height: 100rem;
+			}`
+		);
+	});
+
+	it('should use arguments for width and height', () => {
+		return process(
+			`.block {
+				@include maxSize(100%, 20%);
+			}`,
+			`.block {
+				max-width: 100%;
+				max-height: 20%;
+			}`
+		);
+	});
+});
+
+describe('minSize', () => {
+	it('should use first argument for width and height with default unit', () => {
+		return process(
+			`.block {
+				@include minSize(100rem);
+			}`,
+			`.block {
+				min-width: 100rem;
+				min-height: 100rem;
+			}`
+		);
+	});
+
+	it('should use arguments for width and height', () => {
+		return process(
+			`.block {
+				@include minSize(100%, 20%);
+			}`,
+			`.block {
+				min-width: 100%;
+				min-height: 20%;
+			}`
+		);
+	});
+});
+
+
+describe('ratio', () => {
+	describe('with keyword', () => {
+		it('should output default values', () => {
+			return process(
+				stripIndent`
+					.block {
+						@include ratio(embed);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+					}
+					.block::before {
+						content: '';
+						display: block;
+						height: 0;
+						padding-top: 56.25%;
+					}
+				`
+			);
+		});
+
+		it('should handle ratio', () => {
+			return process(
+				stripIndent`
+					.block {
+						@include ratio(embed, 4/3);
+					}
+				`,
+				stripIndent`
+					.block {
+						overflow: hidden;
+						position: relative;
+					}
+					.block::before {
+						content: '';
+						display: block;
+						height: 0;
+						padding-top: 75%;
+					}
+				`
+			);
+		});
+	});
+
+	describe('without keyword', () => {
+		it('should output default values', () => {
+			return process(
+				`.block {
+					@include ratio();
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 56.25%;
+				}`
+			);
+		});
+
+		it('should handle ratio', () => {
+			return process(
+				`.block {
+					@include ratio(4/3);
+				}`,
+				`.block {
+					display: block;
+					height: 0;
+					padding-top: 75%;
+				}`
+			);
+		});
+	});
+});
+
+describe('circle', () => {
+	it('should handle diameter', () => {
+		return process(
+			`.block {
+				@include circle(.5rem);
+			}`,
+			`.block {
+				background-clip: border-box;
+				border-radius: 0.25rem;
+				height: 0.5rem;
+				width: 0.5rem;
+				display: block;
+			}`
+		);
+	});
+
+	it('should handle diameter and crop', () => {
+		return process(
+			`.block {
+				@include circle(.5rem, true);
+			}`,
+			`.block {
+				background-clip: border-box;
+				border-radius: 0.25rem;
+				height: 0.5rem;
+				width: 0.5rem;
+				overflow: hidden;
+				display: block;
+			}`
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				@include circle(.5rem, $display: inline-block);
+			}`,
+			`.block {
+				background-clip: border-box;
+				border-radius: 0.25rem;
+				height: 0.5rem;
+				width: 0.5rem;
+				display: inline-block;
+			}`
+		);
+	});
+});
+
+describe('triangle', () => {
+	it('should handle up keyword', () => {
+		return process(
+			`.block {
+				triangle(up);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-left: 5px solid transparent;
+				border-right: 5px solid transparent;
+				border-bottom: 5px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle left keyword with color and size values', () => {
+		return process(
+			`.block {
+				triangle(left, blue, 2px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 2px solid transparent;
+				border-bottom: 2px solid transparent;
+				border-right: 2px solid blue;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+
+	it('should handle key value pairs', () => {
+		return process(
+			`.block {
+				triangle(right, size: 3px, width: 4px);
+			}`,
+			`.block {
+				content: '';
+				height: 0;
+				width: 0;
+				border-top: 4px solid transparent;
+				border-bottom: 4px solid transparent;
+				border-left: 3px solid #737373;
+			}`,
+			{ mixins: mixins }
+		);
+	});
+});
 //
 // // Note: Generated rules will not add semi-colon to last declaration.
 // // This is supported by the CSS spec.
