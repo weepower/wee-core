@@ -1,8 +1,8 @@
 
 
-/*------------------------------------*\
-	# Alignment
-\*------------------------------------*/
+//------------------------------------*\
+//  # Alignment
+//------------------------------------*/
 
 // Clearfix
 //
@@ -33,23 +33,23 @@
 }
 
 
-/*------------------------------------*\
-	# Display
-\*------------------------------------*/
+//------------------------------------*\
+//  # Display
+//------------------------------------*/
 
 // Display block
 //
 // @param $width
 // @param $height
 //
-@mixin block($width: false, $height: $false) {
+@mixin block($width: false, $height: false) {
 	display: block;
 
-	@if ($width) {
+	@if ($width != false) {
 		width: $width;
 	}
 
-	@if ($height) {
+	@if ($height != false) {
 		height: $height;
 	}
 }
@@ -74,9 +74,9 @@
 };
 
 
-/*------------------------------------*\
-	# Content
-\*------------------------------------*/
+//------------------------------------*\
+//  # Content
+//------------------------------------*/
 
 // Prefix
 //
@@ -136,16 +136,16 @@
 }
 
 
-/*------------------------------------*\
-	# Blocks
-\*------------------------------------*/
+//------------------------------------*\
+//  # Blocks
+//------------------------------------*/
 
 // A block level element, centered with margin
 //
 // @param $maxWidth - max width of container
 // @param $margin - left and right margin
 //
-@mixin centeredBlock($maxWidth: $false, $margin: $false) {
+@mixin centeredBlock($maxWidth: false, $margin: false) {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
@@ -160,9 +160,9 @@
 }
 
 
-/*------------------------------------*\
-	# Sizing
-\*------------------------------------*/
+//------------------------------------*\
+//  # Sizing
+//------------------------------------*/
 
 @mixin circle($diameter, $crop: false, $display: false) {
 	@include rounded($diameter / 2);
@@ -205,9 +205,9 @@
 }
 
 
-/*------------------------------------*\
-	# Shapes
-\*------------------------------------*/
+//------------------------------------*\
+//  # Shapes
+//------------------------------------*/
 
 @mixin triangle($keyword, $color: $darkGray, $size: 5px, $width: $size) {
 	content: '';
@@ -237,13 +237,13 @@
 	}
 }
 
-/*------------------------------------*\
-	# Font Loading
-\*------------------------------------*/
+//------------------------------------*\
+//  # Font Loading
+//------------------------------------*/
 
 @mixin loadFont($name, $file: $name, $weight: normal, $style: normal) {
 	@font-face {
-		font-family: '#{$name}';
+		font-family: #{$name};
 		font-style: $style;
 		font-weight: $weight;
 
@@ -259,9 +259,9 @@
 }
 
 
-/*------------------------------------*\
-	# Grid
-\*------------------------------------*/
+//------------------------------------*\
+//  # Grid
+//------------------------------------*/
 
 @mixin row($margin: $gridMargin) {
 	@include clearfix();
@@ -348,9 +348,9 @@
 }
 
 
-/*------------------------------------*\
-	# Inline Grid
-\*------------------------------------*/
+//------------------------------------*\
+//  # Inline Grid
+//------------------------------------*/
 
 @mixin inlineRow($margin: $gridMargin, $spaceless: $gridSpaceless) {
 	@if ($spaceless != true) {
@@ -388,9 +388,9 @@
 }
 
 
-/*------------------------------------*\
-	# Text Styling
-\*------------------------------------*/
+//------------------------------------*\
+//  # Text Styling
+//------------------------------------*/
 
 @mixin ellipsis($maxWidth: false) {
 	overflow-x: hidden;
@@ -403,9 +403,9 @@
 }
 
 
-/*------------------------------------*\
-	# Other
-\*------------------------------------*/
+//------------------------------------*\
+//  # Other
+//------------------------------------*/
 
 @mixin hideText() {
 	overflow: hidden;
@@ -470,9 +470,9 @@
 	}
 }
 
-/*------------------------------------*\
-	# Positioning
-\*------------------------------------*/
+//------------------------------------*\
+//  # Positioning
+//------------------------------------*/
 
 @mixin position($type, $top: 0, $right: 0, $bottom: 0, $left: 0) {
 	position: $type;
@@ -508,47 +508,54 @@
 }
 
 
-/*------------------------------------*\
-	# Font Selection
-\*------------------------------------*/
+//------------------------------------*\
+//  # Font Selection
+//------------------------------------*/
 
 @mixin font(
-	$family: false,
+	$family: $baseFont,
 	$size: false,
 	$weight: false,
 	$lineHeight: false,
-	$style: false
+	$style: false,
+	$spacing: false
 ) {
-	font-family: $family;
+	@if ($family != false) {
+		font-family: #{$family};
+	}
 
-	@if ($size) {
+	@if ($size != false) {
 		font-size: $size;
 	}
 
-	@if ($weight) {
+	@if ($weight != false) {
 		font-weight: $weight;
 	}
 
-	@if ($lineHeight) {
+	@if ($lineHeight != false) {
 		line-height: $lineHeight;
 	}
 
-	@if ($style) {
+	@if ($style != false) {
 		font-style: $style;
+	}
+
+	@if ($spacing != false) {
+		letter-spacing: $spacing;
 	}
 }
 
-/*------------------------------------*\
-	# Heading
-\*------------------------------------*/
+//------------------------------------*\
+//  # Heading
+//------------------------------------*/
 
 @mixin heading($fontSize: false) {
 	@include font($headingFont, $fontSize, $headingFontWeight, $headingLineHeight);
 }
 
-/*------------------------------------*\
-	# Rounded Corners
-\*------------------------------------*/
+//------------------------------------*\
+//  # Rounded Corners
+//------------------------------------*/
 
 @mixin rounded($keyword, $value: $defaultRadius) {
 	$keywords: top, right, bottom, left;
@@ -590,27 +597,27 @@
 	}
 }
 
-/*------------------------------------*\
-	# Margin
-\*------------------------------------*/
+//------------------------------------*\
+//  # Margin
+//------------------------------------*/
 
 @mixin margin($keyword, $value) {
 	@include addSpace(margin, $keyword, $value);
 }
 
 
-/*------------------------------------*\
-	# Padding
-\*------------------------------------*/
+//------------------------------------*\
+//  # Padding
+//------------------------------------*/
 
 @mixin padding($keyword, $value) {
 	@include addSpace(padding, $keyword, $value);
 }
 
 
-/*------------------------------------*\
-	# Resizable
-\*------------------------------------*/
+//------------------------------------*\
+//  # Resizable
+//------------------------------------*/
 
 @mixin resizable($value: both) {
 	overflow: hidden;
@@ -618,9 +625,9 @@
 }
 
 
-/*------------------------------------*\
-	# Placeholder
-\*------------------------------------*/
+//------------------------------------*\
+//  # Placeholder
+//------------------------------------*/
 
 @mixin placeholder {
 	@include optional-at-root('::-webkit-input-placeholder') {
@@ -641,9 +648,9 @@
 }
 
 
-/*------------------------------------*\
-	# Utility
-\*------------------------------------*/
+//------------------------------------*\
+//  # Utility
+//------------------------------------*/
 
 @mixin optional-at-root($sel) {
 	@at-root #{if(not &, $sel, selector-append(&, $sel))} {

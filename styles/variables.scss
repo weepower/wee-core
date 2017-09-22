@@ -1,6 +1,6 @@
-/*------------------------------------*\
-	# Layout
-\*------------------------------------*/
+//------------------------------------*\
+//  # Layout
+//------------------------------------*/
 
 $minWidth: false;  // min container width, false to disable
 $maxWidth: 1280px; // max container width, false to disable
@@ -16,9 +16,9 @@ $gridSpaceless: false; // set to true to eliminate inline grid whitespace hack
 $blockMarginBottom: 4rem; // default spacing for lists, form elements, and other blocks
 
 
-/*------------------------------------*\
-	# Colors
-\*------------------------------------*/
+//------------------------------------*\
+//  # Colors
+//------------------------------------*/
 
 $primary: #349bb9;
 $secondary: #70c1b3;
@@ -29,9 +29,9 @@ $success: #008000;
 $warning: #f00;
 
 
-/*------------------------------------*\
-	# Grayscale
-\*------------------------------------*/
+//------------------------------------*\
+//  # Grayscale
+//------------------------------------*/
 
 $white: #fff;
 $lightestGray: darken(#fff, 4%);
@@ -44,9 +44,9 @@ $darkestGray: darken(#fff, 75%);
 $black: #000;
 
 
-/*------------------------------------*\
-	# Links
-\*------------------------------------*/
+//------------------------------------*\
+//  # Links
+//------------------------------------*/
 
 $linkColor: $primary;
 $linkColorHover: darken($linkColor, 10%);
@@ -56,9 +56,9 @@ $linkDecoration: none;       // none, underline
 $linkDecorationHover: false; // none, underline, false
 
 
-/*------------------------------------*\
-	# Base
-\*------------------------------------*/
+//------------------------------------*\
+//  # Base
+//------------------------------------*/
 
 // Root sizing
 
@@ -75,9 +75,9 @@ $baseLineHeight: 1em;
 $bodyBackground: $white; // false to disable
 
 
-/*------------------------------------*\
-	# Miscellaneous
-\*------------------------------------*/
+//------------------------------------*\
+//  # Miscellaneous
+//------------------------------------*/
 
 $smallFontSize: .8em;
 
@@ -98,9 +98,9 @@ $defaultTiming: ease-in-out;
 $abbrUnderline: dotted; // dotted, solid, none
 
 
-/*------------------------------------*\
-	# Paragraphs
-\*------------------------------------*/
+//------------------------------------*\
+//  # Paragraphs
+//------------------------------------*/
 
 $paragraphColor: $baseColor;
 $paragraphFontWeight: $baseFontWeight;
@@ -109,9 +109,9 @@ $paragraphLineHeight: 1.7em;
 $paragraphMarginBottom: 2rem;
 
 
-/*------------------------------------*\
-	# Headings
-\*------------------------------------*/
+//------------------------------------*\
+//  # Headings
+//------------------------------------*/
 
 $headingColor: $baseColor;
 $headingFont: Tahoma, Geneva, sans-serif;
@@ -128,9 +128,9 @@ $h5: 2rem;
 $h6: 1.6rem;
 
 
-/*------------------------------------*\
-	# Images
-\*------------------------------------*/
+//------------------------------------*\
+//  # Images
+//------------------------------------*/
 
 $imagePath: '../images/';         // absolute or relative path
 $spriteFilename: 'sprite.png'; // relative to image path above
@@ -164,9 +164,9 @@ $imageLeftClass: img-left;
 $imageRightClass: img-right;
 
 
-/*------------------------------------*\
-	# Fonts
-\*------------------------------------*/
+//------------------------------------*\
+//  # Fonts
+//------------------------------------*/
 
 $fontPath: '../fonts/'; // absolute or relative path
 
@@ -175,9 +175,9 @@ $iconFontFamily: false;
 $woff2Enabled: true; // false to disable
 
 
-/*------------------------------------*\
-	# Lists
-\*------------------------------------*/
+//------------------------------------*\
+//  # Lists
+//------------------------------------*/
 
 $listColor: $paragraphColor;
 $listLineHeight: $paragraphLineHeight;
@@ -213,9 +213,9 @@ $ddFontSize: $baseFontSize;
 $ddMarginBottom: 1rem;
 
 
-/*------------------------------------*\
-	# Quotes
-\*------------------------------------*/
+//------------------------------------*\
+//  # Quotes
+//------------------------------------*/
 
 $quoteColor: $darkestGray;
 $quoteFont: Georgia, Times, serif;
@@ -241,9 +241,9 @@ $citeMarginTop: 1.4rem;
 $citeIndicator: '\2014\00a0';
 
 
-/*------------------------------------*\
-	# Horizontal Rules
-\*------------------------------------*/
+//------------------------------------*\
+//  # Horizontal Rules
+//------------------------------------*/
 
 $ruleColor: $lightGray;
 $ruleHeight: 1px;
@@ -251,9 +251,9 @@ $ruleStyle: solid;
 $ruleMargin: $blockMarginBottom;
 
 
-/*------------------------------------*\
-	# Addresses
-\*------------------------------------*/
+//------------------------------------*\
+//  # Addresses
+//------------------------------------*/
 
 $addressColor: $darkestGray;
 $addressFont: $baseFont;
@@ -263,9 +263,9 @@ $addressFontStyle: normal;
 $addressLineHeight: $paragraphLineHeight;
 
 
-/*------------------------------------*\
-	# Code
-\*------------------------------------*/
+//------------------------------------*\
+//  # Code
+//------------------------------------*/
 
 $codeColor: $darkestGray;
 $codeFont: monospace;
@@ -297,9 +297,9 @@ $codeBlockPaddingHorizontal: 2rem;
 $codeBlockPaddingVertical: 1.4rem;
 
 
-/*------------------------------------*\
-	# Forms
-\*------------------------------------*/
+//------------------------------------*\
+//  # Forms
+//------------------------------------*/
 
 // Inputs
 
@@ -391,9 +391,9 @@ $labelMarginBottom: .4rem;
 $labelMarginRight: 1rem;
 
 
-/*------------------------------------*\
-	# Buttons
-\*------------------------------------*/
+//------------------------------------*\
+//  # Buttons
+//------------------------------------*/
 
 $buttonStyled: true;
 
@@ -448,9 +448,9 @@ $disabledButtonBorderColor: false;
 $disabledButtonCursor: not-allowed;
 
 
-/*------------------------------------*\
-	# Tables
-\*------------------------------------*/
+//------------------------------------*\
+//  # Tables
+//------------------------------------*/
 
 $tableStyled: true;    // apply base styling by default
 $tableBordered: false; // apply outer border by default
@@ -485,8 +485,8 @@ $tableStripedBackground: $lightestGray;
 $tableStripedPosition: odd; // even, odd
 
 
-/*------------------------------------*\
-	# Print
-\*------------------------------------*/
+//------------------------------------*\
+//  # Print
+//------------------------------------*/
 
 $printPageMargin: 2cm .5cm;
