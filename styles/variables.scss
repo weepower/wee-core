@@ -113,7 +113,7 @@ $paragraphMarginBottom: 2rem;
 //  # Headings
 //------------------------------------*/
 
-$headingColor: $baseColor;
+$headingColor: inherit;
 $headingFont: Tahoma, Geneva, sans-serif;
 $headingFontWeight: $boldFontWeight;
 $headingLineHeight: 1.4em;
@@ -170,7 +170,7 @@ $imageRightClass: img-right;
 
 $fontPath: '../fonts/'; // absolute or relative path
 
-$iconFontFamily: false;
+$iconFontFamily: icons;
 
 $woff2Enabled: true; // false to disable
 
