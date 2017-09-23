@@ -213,11 +213,11 @@ a {
 	}
 }
 hr {
-	@include margin(vertical, $ruleMargin);
-
-	border-top: $ruleHeight $ruleStyle $ruleColor;
 	border: 0;
+	border-top: $ruleHeight $ruleStyle $ruleColor;
 	display: block;
+	margin-top: $ruleMargin;
+	margin-bottom: $ruleMargin;
 	height: 1px;
 }
 address {
