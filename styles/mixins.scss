@@ -580,7 +580,7 @@
 	$weight: normal,
 	$lineHeight: 0,
 	$sharpen: true,
-	$font: $iconFontFamily
+	$font: $iconFont
 ) {
 	@include font($font, $size, $weight, $lineHeight, normal);
 
