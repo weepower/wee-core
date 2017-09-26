@@ -28,7 +28,7 @@ module.exports = {
 		const templatesPath = `${paths.commands}/helpers/component`;
 		const filePath = `${componentPath}/${fileName}`;
 		const fileExt = {
-			style: 'pcss',
+			style: 'scss',
 			script: options.vue ? 'vue' : 'js'
 		};
 		const rootComponentScript = eval('`' + fs.readFileSync(`${templatesPath}/root-component-template.js`) + '`');
