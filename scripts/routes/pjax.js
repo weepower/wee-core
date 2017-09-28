@@ -28,9 +28,11 @@ let defaults = {
 	},
 	replace: null
 };
-let overrides = {
-	partials: false
+const overrideDefaults = {
+	partials: false,
+	requestCount: 0
 };
+let overrides = $copy(overrideDefaults);
 export let settings = $copy(defaults);
 let response = null;
 let paused = false;
@@ -197,6 +199,7 @@ const pjax = {
 		}
 
 		let request = settings.request;
+		settings.lastRequestUrl = to.fullPath;
 
 		// Navigate to external URL or if history isn't supported
 		let a = _doc.createElement('a');
@@ -266,6 +269,8 @@ const pjax = {
 		if (options.partials) {
 			overrides.partials = options.partials;
 		}
+
+		overrides.requestCount += 1;
 	},
 
 	/**
@@ -333,10 +338,14 @@ const pjax = {
 	 * Resume pjax to normal operating status
 	 */
 	resume() {
-		paused = false;
-		overrides = {
-			partials: false
-		};
+		if (overrides.requestCount > 0) {
+			overrides.requestCount -= 1;
+		}
+
+		if (overrides.requestCount === 0) {
+			paused = false;
+			overrides = $copy(overrideDefaults);
+		}
 	}
 };
 
