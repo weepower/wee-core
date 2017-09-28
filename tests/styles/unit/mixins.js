@@ -1844,7 +1844,7 @@ describe('selection', () => {
 			`,
 			stripIndent`
 				.block::selection {
-					background: #349bb9;
+					background: #5789ff;
 					color: #fff;
 					text-shadow: none;
 				}
