@@ -1,6 +1,5 @@
 .container {
 	@if ($padContainer == true) {
-		// TODO: possible mixin
 		padding-left: $bumperPadding;
 		padding-right: $bumperPadding;
 	}
