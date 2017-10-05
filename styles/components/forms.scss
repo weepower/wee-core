@@ -83,6 +83,11 @@
 	}
 	&[disabled],
 	&.#{$inputDisabledModifier} {
+		@if ($inputBorderWidthDisabled == false) {
+			border: none;
+		} @else {
+			border-width: $inputBorderWidthDisabled;
+		}
 		background-color: $inputBackgroundDisabled;
 		color: $inputColorDisabled;
 		cursor: $inputDisabledCursor;
