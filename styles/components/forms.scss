@@ -103,6 +103,7 @@
 	&.-checkbox,
 	&.-radio {
 		padding: 0;
+		margin-bottom: $checkboxMarginBottom;
 		margin-right: $checkboxMarginRight;
 	}
 	&.-reset,
