@@ -81,7 +81,7 @@
 		padding: 0;
 	}
 	&[disabled],
-	&#{$inputDisabledModifier} {
+	&.#{$inputDisabledModifier} {
 		background-color: $inputBackgroundDisabled;
 		color: $inputColorDisabled;
 		cursor: $inputDisabledCursor;
