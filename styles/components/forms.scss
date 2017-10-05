@@ -17,7 +17,8 @@
 	display: block;
 	font-weight: $labelFontWeight;
 	line-height: $labelLineHeight;
-	margin-bottom: $blockMarginBottom;
+	margin-bottom: $labelMarginBottom;
+	margin-right: $labelMarginRight;
 }
 .input,
 .select,
