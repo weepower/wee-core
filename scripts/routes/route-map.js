@@ -22,9 +22,12 @@ setNotFound({
  * @param {boolean} exclude
  * @private
  */
-function _addRouteRecord(route, parent, exclude = false) {
+function _addRouteRecord(route, parent, exclude = false, ancestors = []) {
 	const { path, name, handler } = route;
-	const finalPath = _normalizePath(path, parent);
+	const finalPath = _normalizePath(path, parent, ancestors);
+
+	// Push path into ancestors array
+	ancestors.push(path);
 
 	const record = {
 		name,
@@ -48,7 +51,10 @@ function _addRouteRecord(route, parent, exclude = false) {
 		let length = route.children.length;
 
 		for (; i < length; i++) {
-			_addRouteRecord(route.children[i], route, exclude);
+			_addRouteRecord(route.children[i], route, exclude, ancestors);
+
+			// After record is added, pop last ancestor off for the next set of paths
+			ancestors.pop();
 		}
 	}
 
@@ -75,7 +81,7 @@ function _addRouteRecord(route, parent, exclude = false) {
  * @returns {*}
  * @private
  */
-function _normalizePath(path, parent) {
+function _normalizePath(path, parent, ancestors) {
 	if (path === '/') {
 		return path;
 	}
@@ -90,6 +96,10 @@ function _normalizePath(path, parent) {
 	// If no parent, and route doesn't start with /, then prepend /
 	if (! parent) {
 		return '/' + path;
+	}
+
+	if (ancestors) {
+		return _cleanPath(`${ancestors.join('/')}/${path}`);
 	}
 
 	return _cleanPath(`${parent.path}/${path}`);

@@ -372,28 +372,6 @@ describe('Router', () => {
 			}).run();
 		});
 
-		it('should match child route before parent', done => {
-			let parent = false;
-			let child = false;
-			setPath('/parent/something/child');
-
-			$router.map(basicRoutes.concat([
-				{
-					path: '/parent/:id',
-					init() {},
-					children: [
-						{
-							path: 'child',
-							init() {}
-						}
-					]
-				}
-			])).onReady(() => {
-				expect($router.currentRoute().matched.length).to.equal(2);
-				done();
-			}).run();
-		});
-
 		it('should pass multiple url variables in route objects to functions', () => {
 			setPath('/blog/tech/2017/10/5/blog-title');
 			$router().map([
@@ -627,31 +605,6 @@ describe('Router', () => {
 				}).then(done, done);
 			});
 
-			it('should evaluate parent before hooks before children route records', (done) => {
-				setPath('/parent/other/child');
-
-				$router.map(basicRoutes.concat([
-					{
-						path: '/parent/:id',
-						before(to, from, next) {
-							stateArray.push('parent');
-							next();
-						},
-						children: [
-							{
-								path: 'child',
-								before(to, from, next) {
-									stateArray.push('child');
-									next();
-								}
-							}
-						]
-					}
-				])).run().then(() => {
-					expect(stateArray).to.deep.equal(['parent', 'child']);
-				}).then(done, done);
-			});
-
 			it('should not resolve if "next" is not executed', () => {
 				setPath('/');
 
@@ -805,30 +758,6 @@ describe('Router', () => {
 					fromRoutes.forEach(from => {
 						expect(from.path).to.equal('/');
 					});
-					done();
-				}).run();
-			});
-
-			it('should evaluate parent after hooks before children', done => {
-				setPath('/parent/other/child');
-
-				$router.map(basicRoutes.concat([
-					{
-						path: '/parent/:id',
-						after(to, from) {
-							stateArray.push('parent');
-						},
-						children: [
-							{
-								path: 'child',
-								after(to, from) {
-									stateArray.push('child');
-								}
-							}
-						]
-					}
-				])).onReady(() => {
-					expect(stateArray).to.deep.equal(['parent', 'child']);
 					done();
 				}).run();
 			});

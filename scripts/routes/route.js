@@ -1,23 +1,6 @@
 import { $isString, $isObject } from 'core/types';
 import Transition from './transitions';
 
-/**
- * Find all ancestor routes
- *
- * @param {Object} record
- * @returns {Array}
- */
-function _createMatched(record) {
-	let result = [];
-
-	while (record) {
-		result.unshift(record);
-		record = record.parent;
-	}
-
-	return result;
-}
-
 export const START = createRoute({ path: '/' });
 
 /**
@@ -38,7 +21,8 @@ export function createRoute(location, record = {}) {
 		segments: location.segments,
 		params: location.params || {},
 		fullPath: location.fullPath,
-		matched: _createMatched(record),
+		// TODO: Revisit and remove the need for array here
+		matched: [record],
 		transition: record.transition ? new Transition(record.transition) : null
 	};
 
