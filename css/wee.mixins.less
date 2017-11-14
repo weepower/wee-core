@@ -205,7 +205,7 @@
 .background-gradient (@color: @gray; @start: rgba(0, 0, 0, .8); @end: rgba(0, 0, 0, .2); @angle: 180) when (iscolor(@color)) and (iscolor(@start)) {
 	@deg: unit(@angle, deg);
 	@revDeg: unit(mod((450 - @angle), 360), deg);
-	background-color: @start;
+	background-color: @color;
 	background: -webkit-linear-gradient(@revDeg, @start, @end);
 	background: linear-gradient(@deg, @start, @end);
 }
