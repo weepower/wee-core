@@ -1,6 +1,6 @@
 import $events from 'wee-events';
 import { _doc, _win } from 'core/variables';
-import { $copy, $extend, $isObject } from 'core/types';
+import { $copy, $extend, $isObject, $isString } from 'core/types';
 import { $exec } from 'core/core';
 import { $each, $parseHTML, $setRef } from 'core/dom';
 import { $serializeForm } from 'dom/index';
@@ -307,12 +307,16 @@ const pjax = {
 		html = $parseHTML('<i>' + html + '</i>').firstChild;
 
 		// Make partial replacements from response
-		$each(partials, sel => {
-			$each(sel, function(el) {
+		$each(partials, (sel) => {
+			$each(sel, (el) => {
 				const target = $(sel)[0];
 
 				// Retain any classes added dynamically to container
-				el.className = target.className;
+				// Check if className is a string so that it doesn't attempt
+				// to add classes to SVG tittles
+				if ($isString(el.className)) {
+					el.className = target.className;
+				}
 
 				if (target) {
 					const parent = target.parentNode;
