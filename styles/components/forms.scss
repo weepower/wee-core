@@ -11,13 +11,14 @@
 	display: block;
 	border: 0;
 	color: $legendColor;
-	margin-bottom: $blockMarginBottom;
+	margin-bottom: $legendMarginBottom;
 }
 .label {
 	display: block;
 	font-weight: $labelFontWeight;
 	line-height: $labelLineHeight;
-	margin-bottom: $blockMarginBottom;
+	margin-bottom: $labelMarginBottom;
+	margin-right: $labelMarginRight;
 }
 .input,
 .select,
@@ -81,7 +82,12 @@
 		padding: 0;
 	}
 	&[disabled],
-	&#{$inputDisabledModifier} {
+	&.#{$inputDisabledModifier} {
+		@if ($inputBorderWidthDisabled == false) {
+			border: none;
+		} @else {
+			border-width: $inputBorderWidthDisabled;
+		}
 		background-color: $inputBackgroundDisabled;
 		color: $inputColorDisabled;
 		cursor: $inputDisabledCursor;
@@ -97,6 +103,7 @@
 	&.-checkbox,
 	&.-radio {
 		padding: 0;
+		margin-bottom: $checkboxMarginBottom;
 		margin-right: $checkboxMarginRight;
 	}
 	&.-reset,
