@@ -2,6 +2,7 @@ import { $each, $setRef, $sel } from 'core/dom';
 import { $extend, $isObject, $isString, $toArray } from 'core/types';
 import { $exec } from 'core/core';
 import { _doc } from 'core/variables';
+import events from 'events/events';
 
 let custom = {};
 let bound = [];
@@ -81,7 +82,7 @@ function _bind(els, obj, options) {
 						if (evt != 'init' && ! _bound(el, ev, f, conf.targ).length) {
 
 							// Determine if the event is native or custom
-							if ('on' + evt in el) {
+							if ('on' + evt in el || events.includes(evt)) {
 								el.addEventListener(evt, cb, false);
 							} else if (custom[evt]) {
 								custom[evt][0](el, fn, conf);
