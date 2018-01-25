@@ -5,7 +5,7 @@
 	padding: 0;
 	box-sizing: border-box;
 }
-@if ($minWidth != 0 or $minWidth != false) {
+@if ($minWidth != 0 and $minWidth != false) {
 	html,
 	body {
 		min-width: $minWidth;
