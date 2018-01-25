@@ -74,7 +74,11 @@ figure {
 		@include rounded($defaultRadius);
 	}
 
-	border: 1px solid $figureBorderColor;
+	@if ($figureBorderColor != false) {
+		border: 1px solid $figureBorderColor;
+	} @else {
+		border: none;
+	}
 	padding: $figurePadding;
 	position: relative;
 	text-align: center;
