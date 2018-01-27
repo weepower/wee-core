@@ -7,7 +7,7 @@ import { parseLocation } from 'routes/location';
  * @returns {Object}
  */
 export function uri(value) {
-	return parseLocation(value);
+    return parseLocation(value);
 }
 
 /**
@@ -17,16 +17,16 @@ export function uri(value) {
  * @returns {Array|string}
  */
 export function segments(index) {
-	const segments = uri().segments;
+    const segments = uri().segments;
 
-	if (index >= 0 && segments[index]) {
-		return segments[index];
-	}
+    if (index >= 0 && segments[index]) {
+        return segments[index];
+    }
 
-	return segments;
+    return segments;
 }
 
 export default {
-	uri,
-	segments
+    uri,
+    segments,
 };

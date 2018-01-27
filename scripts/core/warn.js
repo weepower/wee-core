@@ -6,7 +6,7 @@
  * @param {string} message
  */
 export function warn(module, message) {
-	if (process.env.NODE_ENV !== 'production') {
-		typeof console.warn(`[wee-${module}] ${message}`);
-	}
+    if (process.env.NODE_ENV !== 'production') {
+        typeof console.warn(`[wee-${module}] ${message}`);
+    }
 }

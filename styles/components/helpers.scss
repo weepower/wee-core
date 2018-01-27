@@ -1,32 +1,32 @@
 .container {
-	@if ($padContainer == true) {
-		padding-left: $bumperPadding;
-		padding-right: $bumperPadding;
-	}
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	box-sizing: content-box;
-	@if ($maxWidth != false) {
-		max-width: $maxWidth;
-	}
+    @if ($padContainer == true) {
+        padding-left: $bumperPadding;
+        padding-right: $bumperPadding;
+    }
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: content-box;
+    @if ($maxWidth != false) {
+        max-width: $maxWidth;
+    }
 
-	@if ($minWidth != false) {
-		min-width: $minWidth;
-	}
+    @if ($minWidth != false) {
+        min-width: $minWidth;
+    }
 }
 .js-hide {
-	display: none !important;
+    display: none !important;
 }
 .#{$imageLeftClass} {
-	float: left;
-	margin-top: .32em;
-	margin-right: $imageMarginSide;
-	margin-bottom: $imageMarginBottom;
+    float: left;
+    margin-top: .32em;
+    margin-right: $imageMarginSide;
+    margin-bottom: $imageMarginBottom;
 }
 .#{$imageRightClass} {
-	float: right;
-	margin-top: .32em;
-	margin-bottom: $imageMarginBottom;
-	margin-left: $imageMarginSide;
+    float: right;
+    margin-top: .32em;
+    margin-bottom: $imageMarginBottom;
+    margin-left: $imageMarginSide;
 }

@@ -1,66 +1,66 @@
 .table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	empty-cells: show;
-	font-size: $tableFontSize;
-	margin-bottom: $blockMarginBottom;
-	min-width: 100%;
-	table-layout: fixed;
-	word-wrap: break-word;
-	td,
-	th {
-		line-height: $tableCellLineHeight;
-		padding: $tableCellPaddingVertical $tableCellPaddingHorizontal;
-		text-align: left;
-		vertical-align: top;
-	}
-	thead,
-	tfoot {
-		font-weight: $boldFontWeight;
-		th {
-			color: $darkestGray;
-			vertical-align: bottom;
-		}
-	}
-	caption {
-		background-color: $tableCaptionBackground;
-		font-style: $tableCaptionFontStyle;
-		padding: $tableCaptionPaddingVertical $tableCaptionPaddingHorizontal;
-	}
-	img {
-		vertical-align: top;
-	}
-	&.#{$tableBorderedClassModifier} {
-		border-bottom: 1px solid $tableCellBorderColor;
-		caption {
-			border: 1px solid $tableCellBorderColor;
-			border-bottom: 0;
-		}
-		td,
-		th {
-			border-right: 1px solid $tableCellBorderColor;
-			border-top: 1px solid $tableCellBorderColor;
-			&:first-child {
-				border-right: 1px solid $tableCellBorderColor;
-			}
-		}
-	}
-	&.#{$tableStripedClassModifier} {
-		tbody tr:nth-child(#{$tableStripedPosition}) {
-			td,
-			th {
-				background-color: $tableStripedBackground;
-			}
-		}
-	}
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+    font-size: $tableFontSize;
+    margin-bottom: $blockMarginBottom;
+    min-width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+    td,
+    th {
+        line-height: $tableCellLineHeight;
+        padding: $tableCellPaddingVertical $tableCellPaddingHorizontal;
+        text-align: left;
+        vertical-align: top;
+    }
+    thead,
+    tfoot {
+        font-weight: $boldFontWeight;
+        th {
+            color: $darkestGray;
+            vertical-align: bottom;
+        }
+    }
+    caption {
+        background-color: $tableCaptionBackground;
+        font-style: $tableCaptionFontStyle;
+        padding: $tableCaptionPaddingVertical $tableCaptionPaddingHorizontal;
+    }
+    img {
+        vertical-align: top;
+    }
+    &.#{$tableBorderedClassModifier} {
+        border-bottom: 1px solid $tableCellBorderColor;
+        caption {
+            border: 1px solid $tableCellBorderColor;
+            border-bottom: 0;
+        }
+        td,
+        th {
+            border-right: 1px solid $tableCellBorderColor;
+            border-top: 1px solid $tableCellBorderColor;
+            &:first-child {
+                border-right: 1px solid $tableCellBorderColor;
+            }
+        }
+    }
+    &.#{$tableStripedClassModifier} {
+        tbody tr:nth-child(#{$tableStripedPosition}) {
+            td,
+            th {
+                background-color: $tableStripedBackground;
+            }
+        }
+    }
 }
 .responsive-table {
-	margin-bottom: $blockMarginBottom;
-	overflow-x: auto;
-	overflow-y: hidden;
-	width: 100%;
-	table,
-	.table {
-		margin-bottom: 0;
-	}
+    margin-bottom: $blockMarginBottom;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    table,
+    .table {
+        margin-bottom: 0;
+    }
 }

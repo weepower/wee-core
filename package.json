@@ -17,7 +17,8 @@
     "test:styles": "mocha ./tests/styles/**/*.js",
     "test": "karma start ./tests/scripts/config/karma.dev.conf.js",
     "test:ci-ie": "karma start ./tests/scripts/config/karma.browserstack.ie.conf.js",
-    "test:ci": "karma start ./tests/scripts/config/karma.browserstack.conf.js"
+    "test:ci": "karma start ./tests/scripts/config/karma.browserstack.conf.js",
+    "lint:js": "node ./node_modules/.bin/eslint scripts/**"
   },
   "peerDependencies": {
     "es6-promise": "^4.1.1",
@@ -40,6 +41,9 @@
     "chai": "^4.1.1",
     "codecov": "^2.1.0",
     "common-tags": "^1.4.0",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "karma": "^1.5.0",
     "karma-browserstack-launcher": "^1.2.0",
     "karma-chai": "^0.1.0",

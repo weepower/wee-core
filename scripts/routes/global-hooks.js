@@ -8,7 +8,7 @@ let onError = [];
  * @param {function} fn
  */
 export function addBeforeEach(fn) {
-	beforeEach.push(fn);
+    beforeEach.push(fn);
 }
 
 /**
@@ -17,7 +17,7 @@ export function addBeforeEach(fn) {
  * @param {function} fn
  */
 export function addAfterEach(fn) {
-	afterEach.push(fn);
+    afterEach.push(fn);
 }
 
 /**
@@ -26,7 +26,7 @@ export function addAfterEach(fn) {
  * @param {function} fn
  */
 export function addOnError(fn) {
-	onError.push(fn);
+    onError.push(fn);
 }
 
 /**
@@ -35,10 +35,10 @@ export function addOnError(fn) {
  * @returns {Object}
  */
 export function getHooks() {
-	return {
-		beforeEach,
-		afterEach
-	};
+    return {
+        beforeEach,
+        afterEach,
+    };
 }
 
 /**
@@ -47,14 +47,14 @@ export function getHooks() {
  * @returns {Array}
  */
 export function getErrorHandlers() {
-	return onError;
+    return onError;
 }
 
 /**
  * Reset all hooks
  */
 export function resetHooks() {
-	beforeEach = [];
-	afterEach = [];
-	onError = [];
+    beforeEach = [];
+    afterEach = [];
+    onError = [];
 }

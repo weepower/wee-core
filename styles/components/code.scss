@@ -1,38 +1,38 @@
 code,
 kbd,
 samp {
-	@include font($codeFont, $codeFontSize);
+    @include font($codeFont, $codeFontSize);
 
-	background-color: $codeBackground;
-	border: 1px solid $codeBorderColor;
-	border-radius: $defaultRadius;
-	color: $codeColor;
-	line-height: $codeLineHeight;
-	padding: $codePaddingVertical $codePaddingHorizontal;
+    background-color: $codeBackground;
+    border: 1px solid $codeBorderColor;
+    border-radius: $defaultRadius;
+    color: $codeColor;
+    line-height: $codeLineHeight;
+    padding: $codePaddingVertical $codePaddingHorizontal;
 }
 pre {
-	background-color: $codeBlockBackground;
-	border: 1px solid $codeBlockBorderColor;
-	border-radius: $defaultRadius;
-	margin-bottom: $codeBlockMarginBottom;
-	tab-size: $codeBlockTabSize;
-	code {
-		@include font($codeBlockFont, $codeBlockFontSize);
+    background-color: $codeBlockBackground;
+    border: 1px solid $codeBlockBorderColor;
+    border-radius: $defaultRadius;
+    margin-bottom: $codeBlockMarginBottom;
+    tab-size: $codeBlockTabSize;
+    code {
+        @include font($codeBlockFont, $codeBlockFontSize);
 
-		@if ($codeBorderColor == false) {
-			border: none;
-		}
-		@if ($codeBlockWrap == true) {
-			white-space: pre-wrap;
-			word-wrap: break-word;
-		}
-		@if ($codeBlockWrap == false) {
-			overflow: auto;
-			white-space: pre;
-		}
+        @if ($codeBorderColor == false) {
+            border: none;
+        }
+        @if ($codeBlockWrap == true) {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        @if ($codeBlockWrap == false) {
+            overflow: auto;
+            white-space: pre;
+        }
 
-		background: transparent;
-		color: $codeBlockColor;
-		padding: $codeBlockPaddingVertical $codeBlockPaddingHorizontal;
-	}
+        background: transparent;
+        color: $codeBlockColor;
+        padding: $codeBlockPaddingVertical $codeBlockPaddingHorizontal;
+    }
 }

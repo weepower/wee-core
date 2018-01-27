@@ -1,119 +1,119 @@
 *,
 *:before,
 *:after {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 @if ($minWidth != 0 or $minWidth != false) {
-	html,
-	body {
-		min-width: $minWidth;
-	}
+    html,
+    body {
+        min-width: $minWidth;
+    }
 }
 html {
-	text-size-adjust: 100%;
-	font-family: "1";
-	font-size: $rootFontSize;
+    text-size-adjust: 100%;
+    font-family: "1";
+    font-size: $rootFontSize;
 }
 body {
-	@include font(
-		$family: $baseFont,
-		$weight: $normalFontWeight,
-		$lineHeight: $baseLineHeight,
-		$size: $baseFontSize
-	);
+    @include font(
+        $family: $baseFont,
+        $weight: $normalFontWeight,
+        $lineHeight: $baseLineHeight,
+        $size: $baseFontSize
+    );
 
-	background-color: $bodyBackground;
-	color: $baseColor;
-	position: relative;
+    background-color: $bodyBackground;
+    color: $baseColor;
+    position: relative;
 }
 main {
-	display: block;
+    display: block;
 }
 embed,
 img,
 object,
 video {
-	max-width: 100%;
+    max-width: 100%;
 }
 svg {
-	overflow: hidden;
+    overflow: hidden;
 }
 embed,
 object {
-	height: 100%;
+    height: 100%;
 }
 audio,
 canvas,
 video {
-	display: inline-block;
+    display: inline-block;
 }
 abbr[title] {
-	cursor: help;
-	// TODO: possible mixin
-	border-bottom: 1px $abbrUnderline $baseColor;
+    cursor: help;
+    // TODO: possible mixin
+    border-bottom: 1px $abbrUnderline $baseColor;
 }
 b,
 strong {
-	font-weight: $boldFontWeight;
+    font-weight: $boldFontWeight;
 }
 mark {
-	background-color: $markBackground;
-	color: $markColor;
+    background-color: $markBackground;
+    color: $markColor;
 }
 canvas {
-	-ms-touch-action: double-tap-zoom;
+    -ms-touch-action: double-tap-zoom;
 }
 iframe {
-	border: 0;
-	margin-bottom: $blockMarginBottom;
+    border: 0;
+    margin-bottom: $blockMarginBottom;
 }
 figure {
-	@if ($figureRounded) {
-		@include rounded($defaultRadius);
-	}
+    @if ($figureRounded) {
+        @include rounded($defaultRadius);
+    }
 
-	border: 1px solid $figureBorderColor;
-	padding: $figurePadding;
-	position: relative;
-	text-align: center;
-	margin-bottom: $blockMarginBottom;
-	img {
-		margin-bottom: $blockMarginBottom;
-	}
-	figcaption {
-		color: $figCaptionColor;
-		font-style: $figCaptionFontStyle;
-		line-height: $figCaptionLineHeight;
-	}
+    border: 1px solid $figureBorderColor;
+    padding: $figurePadding;
+    position: relative;
+    text-align: center;
+    margin-bottom: $blockMarginBottom;
+    img {
+        margin-bottom: $blockMarginBottom;
+    }
+    figcaption {
+        color: $figCaptionColor;
+        font-style: $figCaptionFontStyle;
+        line-height: $figCaptionLineHeight;
+    }
 }
 img {
-	display: inline-block;
+    display: inline-block;
 }
 sub,
 sup {
-	font-size: .7em;
-	line-height: 0;
-	margin-left: .2em;
-	position: relative;
-	vertical-align: baseline;
+    font-size: .7em;
+    line-height: 0;
+    margin-left: .2em;
+    position: relative;
+    vertical-align: baseline;
 }
 sub {
-	bottom: -.25em;
+    bottom: -.25em;
 }
 sup {
-	top: -1em;
+    top: -1em;
 }
 ::-moz-selection {
-	background: $selectionBackground;
-	color: $selectionColor;
-	text-shadow: none;
+    background: $selectionBackground;
+    color: $selectionColor;
+    text-shadow: none;
 }
 ::selection {
-	background: $selectionBackground;
-	color: $selectionColor;
-	text-shadow: none;
+    background: $selectionBackground;
+    color: $selectionColor;
+    text-shadow: none;
 }
 
 
@@ -121,7 +121,7 @@ sup {
 
 
 /*------------------------------------*\
-	# Typography
+    # Typography
 \*------------------------------------*/
 h1,
 h2,
@@ -129,102 +129,102 @@ h3,
 h4,
 h5,
 h6 {
-	@include heading()
+    @include heading()
 }
 
 h1 {
-	font-size: $h1;
+    font-size: $h1;
 }
 h2 {
-	font-size: $h2;
+    font-size: $h2;
 }
 h3 {
-	font-size: $h3;
+    font-size: $h3;
 }
 h4 {
-	font-size: $h4;
+    font-size: $h4;
 }
 h5 {
-	font-size: $h5;
+    font-size: $h5;
 }
 h6 {
-	font-size: $h6;
+    font-size: $h6;
 }
 p {
-	color: $paragraphColor;
-	font-weight: $paragraphFontWeight;
-	line-height: $paragraphLineHeight;
-	margin-bottom: $paragraphMarginBottom;
+    color: $paragraphColor;
+    font-weight: $paragraphFontWeight;
+    line-height: $paragraphLineHeight;
+    margin-bottom: $paragraphMarginBottom;
 }
 small {
-	font-size: $smallFontSize;
+    font-size: $smallFontSize;
 }
 dfn,
 em,
 i,
 var {
-	font-style: italic;
+    font-style: italic;
 }
 blockquote,
 q {
-	@include font($quoteFont, $quoteFontSize, $quoteFontWeight, $quoteLineHeight, $quoteFontStyle);
+    @include font($quoteFont, $quoteFontSize, $quoteFontWeight, $quoteLineHeight, $quoteFontStyle);
 
-	color: $quoteColor;
-	cite {
-		@include font($citeFont, $citeFontSize, $citeFontWeight, $citeLineHeight, $citeFontStyle);
+    color: $quoteColor;
+    cite {
+        @include font($citeFont, $citeFontSize, $citeFontWeight, $citeLineHeight, $citeFontStyle);
 
-		color: $citeColor;
-		margin-top: $citeMarginTop;
-		&:before {
-			content: $citeIndicator;
-		}
-	}
-	p {
-		color: $quoteColor;
-	}
+        color: $citeColor;
+        margin-top: $citeMarginTop;
+        &:before {
+            content: $citeIndicator;
+        }
+    }
+    p {
+        color: $quoteColor;
+    }
 }
 blockquote {
-	margin-bottom: $blockMarginBottom;
-	padding: $quotePaddingVertical $quotePaddingHorizontal;
-	cite {
-		display: block;
-	}
+    margin-bottom: $blockMarginBottom;
+    padding: $quotePaddingVertical $quotePaddingHorizontal;
+    cite {
+        display: block;
+    }
 }
 del,
 s,
 strike {
-	text-decoration: line-through;
+    text-decoration: line-through;
 }
 a {
-	color: $linkColor;
-	text-decoration: $linkDecoration;
-	&:focus {
-		outline: thin dotted;
-	}
-	&:hover {
-		color: $linkColorHover;
-		text-decoration: $linkDecorationHover;
-	}
-	&:active {
-		color: $linkColorActive;
-	}
-	img {
-		border: 0;
-	}
+    color: $linkColor;
+    text-decoration: $linkDecoration;
+    &:focus {
+        outline: thin dotted;
+    }
+    &:hover {
+        color: $linkColorHover;
+        text-decoration: $linkDecorationHover;
+    }
+    &:active {
+        color: $linkColorActive;
+    }
+    img {
+        border: 0;
+    }
 }
 hr {
-	border: 0;
-	border-top: $ruleHeight $ruleStyle $ruleColor;
-	display: block;
-	margin-top: $ruleMargin;
-	margin-bottom: $ruleMargin;
-	height: 1px;
+    border: 0;
+    border-top: $ruleHeight $ruleStyle $ruleColor;
+    display: block;
+    margin-top: $ruleMargin;
+    margin-bottom: $ruleMargin;
+    height: 1px;
 }
 address {
-	@include font($addressFont, $addressFontSize, $addressFontWeight, $addressLineHeight, $addressFontStyle);
+    @include font($addressFont, $addressFontSize, $addressFontWeight, $addressLineHeight, $addressFontStyle);
 
-	color: $addressColor;
-	margin-bottom: $blockMarginBottom;
+    color: $addressColor;
+    margin-bottom: $blockMarginBottom;
 }
 
 
@@ -232,62 +232,62 @@ address {
 
 
 /*------------------------------------*\
-	# Lists
+    # Lists
 \*------------------------------------*/
 
 dl,
 ol,
 ul {
-	color: $listColor;
-	list-style-position: $listBulletPosition;
-	line-height: $listLineHeight;
-	margin-bottom: $listMarginBottom;
-	li {
-		margin-bottom: $liMarginBottom;
-	}
+    color: $listColor;
+    list-style-position: $listBulletPosition;
+    line-height: $listLineHeight;
+    margin-bottom: $listMarginBottom;
+    li {
+        margin-bottom: $liMarginBottom;
+    }
 }
 ol,
 ul {
-	margin-left: $listMarginLeft;
-	ol,
-	ul {
-		margin-bottom: 0;
-		margin-left: $nestedListMarginLeft;
-	}
+    margin-left: $listMarginLeft;
+    ol,
+    ul {
+        margin-bottom: 0;
+        margin-left: $nestedListMarginLeft;
+    }
 }
 ul {
-	list-style-type: $listBulletStyle;
-	ul {
-		list-style-type: circle;
-		ul {
-			list-style-type: square;
-		}
-	}
+    list-style-type: $listBulletStyle;
+    ul {
+        list-style-type: circle;
+        ul {
+            list-style-type: square;
+        }
+    }
 }
 ol {
-	list-style-type: decimal;
+    list-style-type: decimal;
 }
 nav {
-	ol,
-	ul {
-		list-style: none;
-		margin: 0;
-		li {
-			margin-bottom: 0;
-		}
-	}
+    ol,
+    ul {
+        list-style: none;
+        margin: 0;
+        li {
+            margin-bottom: 0;
+        }
+    }
 }
 dl {
-	margin-bottom: $dlMarginBottom;
+    margin-bottom: $dlMarginBottom;
 }
 dt {
-	@include font($dtFont, $dtFontSize);
+    @include font($dtFont, $dtFontSize);
 
-	color: $dtColor;
-	margin-bottom: $dtMarginBottom;
+    color: $dtColor;
+    margin-bottom: $dtMarginBottom;
 }
 dd {
-	@include font($ddFont, $ddFontSize);
-	color: $ddColor;
-	margin-bottom: $ddMarginBottom;
+    @include font($ddFont, $ddFontSize);
+    color: $ddColor;
+    margin-bottom: $ddMarginBottom;
 }

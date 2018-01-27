@@ -8,16 +8,15 @@ import { $copy, $extend, $isObject, $toArray } from 'core/types';
 import { uri } from 'wee-location';
 
 const defaults = {
-	scrollBehavior(to, from, savedPosition) {
-		if (savedPosition) {
-			return savedPosition;
-		} else {
-			return { x: 0, y: 0 };
-		}
-	},
-	transition: {
-		timeout: 0
-	}
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition;
+        }
+        return { x: 0, y: 0 };
+    },
+    transition: {
+        timeout: 0,
+    },
 };
 let settings = $copy(defaults);
 let hasPjax = false;
@@ -31,13 +30,13 @@ export let history = new History(settings);
  * @returns {router}
  */
 function router(config = {}) {
-	$extend(settings, config);
+    $extend(settings, config);
 
-	// Update scrollBehavior property in case that was changed
-	history.scrollBehavior = settings.scrollBehavior;
-	history.transition = settings.transition;
+    // Update scrollBehavior property in case that was changed
+    history.scrollBehavior = settings.scrollBehavior;
+    history.transition = settings.transition;
 
-	return router;
+    return router;
 }
 
 router.settings = settings;
@@ -49,10 +48,10 @@ router.settings = settings;
  * @returns {router}
  */
 router.afterEach = function registerAfterEach(fn) {
-	addAfterEach(fn);
+    addAfterEach(fn);
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Register global before hook
@@ -61,9 +60,9 @@ router.afterEach = function registerAfterEach(fn) {
  * @returns {router}
  */
 router.beforeEach = function registerBeforeEach(fn) {
-	addBeforeEach(fn);
+    addBeforeEach(fn);
 
-	return this;
+    return this;
 };
 
 /**
@@ -72,8 +71,8 @@ router.beforeEach = function registerBeforeEach(fn) {
  * @returns {Object}
  */
 router.currentRoute = function currentRoute() {
-	return history.current;
-}
+    return history.current;
+};
 
 /**
  * Register routes
@@ -82,10 +81,10 @@ router.currentRoute = function currentRoute() {
  * @returns {router}
  */
 router.map = function routerMap(routes) {
-	mapRoutes(routes);
+    mapRoutes(routes);
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Set the catch all route that is matched if no other routes match
@@ -94,13 +93,13 @@ router.map = function routerMap(routes) {
  * @returns {router}
  */
 router.notFound = function notFound(route) {
-	route.path = '*';
-	route.name = 'notFound';
+    route.path = '*';
+    route.name = 'notFound';
 
-	setNotFound(route);
+    setNotFound(route);
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Register one or more error handlers
@@ -108,10 +107,10 @@ router.notFound = function notFound(route) {
  * @param {Function|Array} handlers
  */
 router.onError = function addRouterError(handlers) {
-	$toArray(handlers).forEach((fn) => addOnError(fn));
+    $toArray(handlers).forEach(fn => addOnError(fn));
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Configure and initialize pjax navigation
@@ -120,29 +119,29 @@ router.onError = function addRouterError(handlers) {
  * @returns {router}
  */
 router.pjax = function initPjax(config = {}) {
-	// Prevent initializing pjax multiple times
-	if (! hasPjax) {
-		hasPjax = pjax.init(config);
+    // Prevent initializing pjax multiple times
+    if (! hasPjax) {
+        hasPjax = pjax.init(config);
 
-		if (hasPjax) {
-			// Prep pjax after initialization of routes
-			this.onReady(() => {
-				pjax.onTrigger = function onPjaxTrigger(destination) {
-					history.push(destination)
-						.catch((error) => {
-							getErrorHandlers().forEach(fn => fn(error));
-							pjax.onError(error);
-						});
-				};
+        if (hasPjax) {
+            // Prep pjax after initialization of routes
+            this.onReady(() => {
+                pjax.onTrigger = function onPjaxTrigger(destination) {
+                    history.push(destination)
+                        .catch((error) => {
+                            getErrorHandlers().forEach(fn => fn(error));
+                            pjax.onError(error);
+                        });
+                };
 
-				history.begin = pjax.go;
-				history.replacePage = pjax.replace;
-			});
-		}
-	}
+                history.begin = pjax.go;
+                history.replacePage = pjax.replace;
+            });
+        }
+    }
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Register callbacks to be executed on ready
@@ -150,10 +149,10 @@ router.pjax = function initPjax(config = {}) {
  * @param {Function} success
  */
 router.onReady = function onReady(success) {
-	history.onReady(success);
+    history.onReady(success);
 
-	return this;
-}
+    return this;
+};
 
 /**
  * Navigate to URL and add item to history
@@ -162,15 +161,15 @@ router.onReady = function onReady(success) {
  * @param {boolean|Object} modifyPjax
  */
 router.push = function push(path, modifyPjax = false) {
-	if (modifyPjax === true) {
-		pjax.pause();
-	} else if ($isObject(modifyPjax)) {
-		pjax.override(modifyPjax);
-	}
+    if (modifyPjax === true) {
+        pjax.pause();
+    } else if ($isObject(modifyPjax)) {
+        pjax.override(modifyPjax);
+    }
 
-	return history.push(path)
-		.then(pjax.resume, pjax.resume);
-}
+    return history.push(path)
+        .then(pjax.resume, pjax.resume);
+};
 
 /**
  * Navigate to URL and replace item in history
@@ -179,28 +178,28 @@ router.push = function push(path, modifyPjax = false) {
  * @param {boolean|Ojbect} modifyPjax
  */
 router.replace = function replace(path, modifyPjax = false) {
-	if (modifyPjax === true) {
-		pjax.pause();
-	} else if ($isObject(modifyPjax)) {
-		pjax.override(modifyPjax);
-	}
+    if (modifyPjax === true) {
+        pjax.pause();
+    } else if ($isObject(modifyPjax)) {
+        pjax.override(modifyPjax);
+    }
 
-	return history.replace(path)
-		.then(pjax.resume, pjax.resume);
-}
+    return history.replace(path)
+        .then(pjax.resume, pjax.resume);
+};
 
 /**
  * Reset all routes - mainly for testing purposes
  */
 router.reset = function reset() {
-	resetRouteMap();
-	resetHooks();
-	hasPjax = false;
-	pjax.reset();
-	window.removeEventListener('popstate', history.popstate);
-	settings = $copy(defaults);
-	history = new History(settings);
-}
+    resetRouteMap();
+    resetHooks();
+    hasPjax = false;
+    pjax.reset();
+    window.removeEventListener('popstate', history.popstate);
+    settings = $copy(defaults);
+    history = new History(settings);
+};
 
 /**
  * Retrieve all routes or specific route by name/path
@@ -210,29 +209,28 @@ router.reset = function reset() {
  * @returns {Object|Array}
  */
 router.routes = function routes(key, keyType = 'path') {
-	let routeMaps = getRouteMap();
-	let map;
+    const routeMaps = getRouteMap();
+    let map;
 
-	if (key) {
-		if (routeMaps.pathMap.hasOwnProperty(key)) {
-			return routeMaps.pathMap[key];
-		} else if (routeMaps.nameMap.hasOwnProperty(key)) {
-			return routeMaps.nameMap[key];
-		} else {
-			return null;
-		}
-	}
+    if (key) {
+        if (routeMaps.pathMap.hasOwnProperty(key)) {
+            return routeMaps.pathMap[key];
+        } else if (routeMaps.nameMap.hasOwnProperty(key)) {
+            return routeMaps.nameMap[key];
+        }
+        return null;
+    }
 
-	if (keyType === 'path') {
-		map = routeMaps.pathMap;
-	} else if (keyType === 'name') {
-		map = routeMaps.nameMap;
-	} else if (keyType === 'list') {
-		map = routeMaps.pathList;
-	}
+    if (keyType === 'path') {
+        map = routeMaps.pathMap;
+    } else if (keyType === 'name') {
+        map = routeMaps.nameMap;
+    } else if (keyType === 'list') {
+        map = routeMaps.pathList;
+    }
 
-	return map;
-}
+    return map;
+};
 
 /**
  * Evaluate mapped routes against current or provided URL
@@ -240,13 +238,11 @@ router.routes = function routes(key, keyType = 'path') {
  * @returns {router}
  */
 router.run = function runRoutes() {
-	return $ready().then(() => {
-		return history.navigate(uri().fullPath)
-			.catch((error) => {
-				getErrorHandlers().forEach(fn => fn(error));
-			});
-	});
-}
+    return $ready().then(() => history.navigate(uri().fullPath)
+        .catch((error) => {
+            getErrorHandlers().forEach(fn => fn(error));
+        }));
+};
 
 export default router;
 export const RouteHandler = Handler;

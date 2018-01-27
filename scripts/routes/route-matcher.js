@@ -11,27 +11,27 @@ import { _castString } from '../core/types';
  * @param {Object} [params]
  * @returns {boolean}
  */
-export function matchRoute (regex, path, params = {}) {
-	const match = path.match(regex);
-	let i = 0;
-	let length;
+export function matchRoute(regex, path, params = {}) {
+    const match = path.match(regex);
+    let i = 0;
+    let length;
 
-	if (! match) {
-		return false;
-	}
+    if (! match) {
+        return false;
+    }
 
-	length = match.length;
+    length = match.length;
 
-	for (; i < length; i++) {
-		const key = regex.keys[i - 1];
-		const val = typeof match[i] === 'string' ? decodeURIComponent(match[i]) : match[i];
+    for (; i < length; i++) {
+        const key = regex.keys[i - 1];
+        const val = typeof match[i] === 'string' ? decodeURIComponent(match[i]) : match[i];
 
-		if (key) {
-			params[key.name] = _castString(val);
-		}
-	}
+        if (key) {
+            params[key.name] = _castString(val);
+        }
+    }
 
-	return true
+    return true;
 }
 
 /**
@@ -41,24 +41,24 @@ export function matchRoute (regex, path, params = {}) {
  * @returns {Object}
  */
 export function match(path) {
-	const { notFound, pathList, pathMap } = getRouteMap();
-	const location = parseLocation(path);
-	let i = 0;
-	let routeCount = pathList.length;
+    const { notFound, pathList, pathMap } = getRouteMap();
+    const location = parseLocation(path);
+    let i = 0;
+    const routeCount = pathList.length;
 
-	location.params = {};
+    location.params = {};
 
-	for (; i < routeCount; i++) {
-		const record = pathMap[pathList[i]];
+    for (; i < routeCount; i++) {
+        const record = pathMap[pathList[i]];
 
-		// Add params to location object as part of check
-		if (matchRoute(record.regex, location.path, location.params)) {
-			return createRoute(location, record);
-		}
-	}
+        // Add params to location object as part of check
+        if (matchRoute(record.regex, location.path, location.params)) {
+            return createRoute(location, record);
+        }
+    }
 
-	// No match
-	return createRoute(location, notFound);
+    // No match
+    return createRoute(location, notFound);
 }
 
 /**
@@ -69,5 +69,5 @@ export function match(path) {
  * @returns {boolean}
  */
 export function noMatch(route) {
-	return (route.meta && route.meta.noMatch);
+    return (route.meta && route.meta.noMatch);
 }

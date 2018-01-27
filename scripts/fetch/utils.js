@@ -10,15 +10,15 @@ import { $isFunction } from '../core/types';
  * @return {Object} The resulting value of object a
  */
 export function extend(a, b, thisArg) {
-	Object.keys(b).forEach(key => {
-		const val = b[key];
+    Object.keys(b).forEach((key) => {
+        const val = b[key];
 
-		if (thisArg && $isFunction(val)) {
-			a[key] = bind(val, thisArg);
-		} else {
-			a[key] = val;
-		}
-	});
+        if (thisArg && $isFunction(val)) {
+            a[key] = bind(val, thisArg);
+        } else {
+            a[key] = val;
+        }
+    });
 
-	return a;
+    return a;
 }

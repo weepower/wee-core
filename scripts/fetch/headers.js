@@ -12,24 +12,24 @@
  * @returns {Object} Headers parsed into an object
  */
 export function parseHeaders(headers) {
-	let parsed = {};
+    const parsed = {};
 
-	if (! headers) {
-		return parsed;
-	}
+    if (! headers) {
+        return parsed;
+    }
 
-	headers.split('\n').forEach(function parser(line) {
-		let i = line.indexOf(':');
-		let key = line.substr(0, i).trim().toLowerCase();
-		let val = line.substr(i + 1).trim();
+    headers.split('\n').forEach((line) => {
+        const i = line.indexOf(':');
+        const key = line.substr(0, i).trim().toLowerCase();
+        const val = line.substr(i + 1).trim();
 
-		if (key) {
-			parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-		}
-	});
+        if (key) {
+            parsed[key] = parsed[key] ? `${parsed[key]}, ${val}` : val;
+        }
+    });
 
-	return parsed;
-};
+    return parsed;
+}
 
 /**
  * Ensure proper formatting for header name
@@ -38,10 +38,10 @@ export function parseHeaders(headers) {
  * @param {string} normalizedName
  */
 export function normalizeHeader(headers, normalizedName) {
-	Object.keys(headers).forEach(name => {
-		if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-			headers[normalizedName] = headers[name];
-			delete headers[name];
-		}
-	})
+    Object.keys(headers).forEach((name) => {
+        if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+            headers[normalizedName] = headers[name];
+            delete headers[name];
+        }
+    });
 }

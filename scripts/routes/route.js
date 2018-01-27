@@ -11,22 +11,22 @@ export const START = createRoute({ path: '/' });
  * @returns {Object}
  */
 export function createRoute(location, record = {}) {
-	const route = {
-		name: record.name,
-		meta: record.meta || {},
-		path: location.path,
-		hash: location.hash,
-		query: location.query,
-		search: location.search,
-		segments: location.segments,
-		params: location.params || {},
-		fullPath: location.fullPath,
-		// TODO: Revisit and remove the need for array here
-		matched: [record],
-		transition: record.transition ? new Transition(record.transition) : null
-	};
+    const route = {
+        name: record.name,
+        meta: record.meta || {},
+        path: location.path,
+        hash: location.hash,
+        query: location.query,
+        search: location.search,
+        segments: location.segments,
+        params: location.params || {},
+        fullPath: location.fullPath,
+        // TODO: Revisit and remove the need for array here
+        matched: [record],
+        transition: record.transition ? new Transition(record.transition) : null,
+    };
 
-	return Object.freeze(route);
+    return Object.freeze(route);
 }
 
 /**
@@ -36,7 +36,7 @@ export function createRoute(location, record = {}) {
  * @returns {*}
  */
 export function isRedirect(value) {
-	return $isString(value) || ($isObject(value) && ($isString(value.path) || $isString(value.name)));
+    return $isString(value) || ($isObject(value) && ($isString(value.path) || $isString(value.name)));
 }
 
 /**
@@ -47,9 +47,9 @@ export function isRedirect(value) {
  * @returns {boolean}
  */
 export function isSameRoute(a, b) {
-	if (b === START) {
-		return a === b;
-	}
+    if (b === START) {
+        return a === b;
+    }
 
-	return a.fullPath === b.fullPath;
+    return a.fullPath === b.fullPath;
 }

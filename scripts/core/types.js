@@ -9,10 +9,8 @@ export const _slice = [].slice;
  * @returns {boolean}
  */
 function _arrEquals(a, b) {
-	return a.length == b.length &&
-		a.every(function(el, i) {
-			return _equals(el, b[i]);
-		});
+    return a.length == b.length &&
+        a.every((el, i) => _equals(el, b[i]));
 }
 
 /**
@@ -22,18 +20,18 @@ function _arrEquals(a, b) {
  * @param {*} val
  */
 export function _castString(val) {
-	if (typeof val === 'string') {
-		try {
-			val = val === 'true' ? true :
-				val === 'false' ? false :
-					val === 'null' ? null :
-						parseInt(val).toString() === val ? parseInt(val) :
-							/^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
-								val;
-		} catch (e) {}
-	}
+    if (typeof val === 'string') {
+        try {
+            val = val === 'true' ? true :
+                val === 'false' ? false :
+                    val === 'null' ? null :
+                        parseInt(val).toString() === val ? parseInt(val) :
+                            /^(?:\{[\w\W]*}|\[[\w\W]*])$/.test(val) ? JSON.parse(val) :
+                                val;
+        } catch (e) {}
+    }
 
-	return val;
+    return val;
 }
 
 /**
@@ -44,15 +42,15 @@ export function _castString(val) {
  * @returns {*}
  */
 function _copy(val) {
-	let type = $type(val);
+    const type = $type(val);
 
-	if (type == 'object') {
-		val = _extend({}, val, true);
-	} else if (type == 'array') {
-		val = val.slice(0);
-	}
+    if (type == 'object') {
+        val = _extend({}, val, true);
+    } else if (type == 'array') {
+        val = val.slice(0);
+    }
 
-	return val;
+    return val;
 }
 
 /**
@@ -64,29 +62,29 @@ function _copy(val) {
  * @returns {boolean}
  */
 function _equals(a, b) {
-	if (a === b) {
-		return true;
-	}
+    if (a === b) {
+        return true;
+    }
 
-	let aType = $type(a);
+    const aType = $type(a);
 
-	if (aType != $type(b)) {
-		return false;
-	}
+    if (aType != $type(b)) {
+        return false;
+    }
 
-	if (aType == 'array') {
-		return _arrEquals(a, b);
-	}
+    if (aType == 'array') {
+        return _arrEquals(a, b);
+    }
 
-	if (aType == 'object') {
-		return _objEquals(a, b);
-	}
+    if (aType == 'object') {
+        return _objEquals(a, b);
+    }
 
-	if (aType == 'date') {
-		return +a == +b;
-	}
+    if (aType == 'date') {
+        return +a == +b;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -100,38 +98,38 @@ function _equals(a, b) {
  * @returns {Object}
  */
 export function _extend(target, object, deep, _set = []) {
-	if (! object) {
-		return target;
-	}
+    if (! object) {
+        return target;
+    }
 
-	for (let key in object) {
-		let src = object[key],
-			type = $type(src);
+    for (const key in object) {
+        let src = object[key],
+            type = $type(src);
 
-		if (deep && type == 'object') {
-			let len = _set.length,
-				i = 0,
-				val;
+        if (deep && type == 'object') {
+            let len = _set.length,
+                i = 0,
+                val;
 
-			for (; i < len; i++) {
-				if (_set[i] === src) {
-					val = src;
-					break;
-				}
-			}
+            for (; i < len; i++) {
+                if (_set[i] === src) {
+                    val = src;
+                    break;
+                }
+            }
 
-			if (val) {
-				target[key] = val;
-			} else {
-				_set.push(src);
-				target[key] = _extend(target[key] || {}, src, deep, _set);
-			}
-		} else if (src !== undefined) {
-			target[key] = type == 'array' ? src.slice(0) : src;
-		}
-	}
+            if (val) {
+                target[key] = val;
+            } else {
+                _set.push(src);
+                target[key] = _extend(target[key] || {}, src, deep, _set);
+            }
+        } else if (src !== undefined) {
+            target[key] = type == 'array' ? src.slice(0) : src;
+        }
+    }
 
-	return target;
+    return target;
 }
 
 /**
@@ -143,12 +141,10 @@ export function _extend(target, object, deep, _set = []) {
  * @returns {boolean}
  */
 function _objEquals(a, b) {
-	let aKeys = Object.keys(a);
+    const aKeys = Object.keys(a);
 
-	return _arrEquals(aKeys.sort(), Object.keys(b).sort()) &&
-		aKeys.every(function(i) {
-			return _equals(a[i], b[i]);
-		});
+    return _arrEquals(aKeys.sort(), Object.keys(b).sort()) &&
+        aKeys.every(i => _equals(a[i], b[i]));
 }
 
 /**
@@ -159,7 +155,7 @@ function _objEquals(a, b) {
  * @returns {*}
  */
 export function $copy(val) {
-	return _copy(val);
+    return _copy(val);
 }
 
 /**
@@ -170,7 +166,7 @@ export function $copy(val) {
  * @returns {boolean}
  */
 export function $equals(a, b) {
-	return _equals(a, b);
+    return _equals(a, b);
 }
 
 /**
@@ -182,16 +178,16 @@ export function $equals(a, b) {
  * @returns {Object}
  */
 export function $extend(deep) {
-	let bool = typeof deep == 'boolean',
-		args = _slice.call(arguments).slice(bool ? 1 : 0),
-		target = args[0] || {};
-	deep = bool ? deep : false;
+    let bool = typeof deep === 'boolean',
+        args = _slice.call(arguments).slice(bool ? 1 : 0),
+        target = args[0] || {};
+    deep = bool ? deep : false;
 
-	args.slice(1).forEach(function(source) {
-		target = _extend(target, source, deep);
-	});
+    args.slice(1).forEach((source) => {
+        target = _extend(target, source, deep);
+    });
 
-	return target;
+    return target;
 }
 
 /**
@@ -201,7 +197,7 @@ export function $extend(deep) {
  * @returns {boolean}
  */
 export function $isArray(obj) {
-	return Array.isArray(obj);
+    return Array.isArray(obj);
 }
 
 /**
@@ -211,7 +207,7 @@ export function $isArray(obj) {
  * @returns {boolean} True if value is an ArrayBuffer, otherwise false
  */
 export function $isArrayBuffer(val) {
-	return $type(val) === 'arraybuffer';
+    return $type(val) === 'arraybuffer';
 }
 
 /**
@@ -221,14 +217,14 @@ export function $isArrayBuffer(val) {
  * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
  */
 export function $isArrayBufferView(val) {
-	let result;
+    let result;
 
-	// IE10 support and up
-	if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
-		result = ArrayBuffer.isView(val);
-	}
+    // IE10 support and up
+    if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
+        result = ArrayBuffer.isView(val);
+    }
 
-	return result;
+    return result;
 }
 
 /**
@@ -238,7 +234,7 @@ export function $isArrayBufferView(val) {
  * @returns {boolean} True if value is a Blob, otherwise false
  */
 export function $isBlob(val) {
-	return $type(val) === 'blob';
+    return $type(val) === 'blob';
 }
 
 /**
@@ -248,7 +244,7 @@ export function $isBlob(val) {
  * @returns {boolean} True if value is a Date, otherwise false
  */
 export function $isDate(val) {
-	return $type(val) === 'date';
+    return $type(val) === 'date';
 }
 
 /**
@@ -258,7 +254,7 @@ export function $isDate(val) {
  * @returns {boolean} True if value is a File, otherwise false
  */
 export function $isFile(val) {
-	return $type(val) === 'file';
+    return $type(val) === 'file';
 }
 
 /**
@@ -268,7 +264,7 @@ export function $isFile(val) {
  * @returns {boolean} True if value is an FormData, otherwise false
  */
 export function $isFormData(val) {
-	return (typeof FormData !== 'undefined') && (val instanceof FormData);
+    return (typeof FormData !== 'undefined') && (val instanceof FormData);
 }
 
 /**
@@ -278,7 +274,7 @@ export function $isFormData(val) {
  * @returns {boolean}
  */
 export function $isFunction(obj) {
-	return $type(obj) === 'function';
+    return $type(obj) === 'function';
 }
 
 /**
@@ -289,18 +285,18 @@ export function $isFunction(obj) {
  * @returns {boolean}
  */
 export function $isNumber(obj, strict = true) {
-	if (! strict) {
-		if (! obj.match(/^\d*\.?\d*$/g)) {
-			return false;
-		}
+    if (! strict) {
+        if (! obj.match(/^\d*\.?\d*$/g)) {
+            return false;
+        }
 
-		let value = parseFloat(obj);
+        const value = parseFloat(obj);
 
-		// If value = NaN, will not be equal
-		return value === value;
-	}
+        // If value = NaN, will not be equal
+        return value === value;
+    }
 
-	return $type(obj) === 'number';
+    return $type(obj) === 'number';
 }
 
 /**
@@ -310,7 +306,7 @@ export function $isNumber(obj, strict = true) {
  * @returns {boolean}
  */
 export function $isObject(obj) {
-	return $type(obj) === 'object';
+    return $type(obj) === 'object';
 }
 
 /**
@@ -320,7 +316,7 @@ export function $isObject(obj) {
  * @returns {boolean}
  */
 export function $isString(obj) {
-	return typeof obj === 'string';
+    return typeof obj === 'string';
 }
 
 /**
@@ -330,22 +326,22 @@ export function $isString(obj) {
  * @returns {string} value
  */
 export function $serialize(obj) {
-	let arr = [];
+    const arr = [];
 
-	Object.keys(obj || {}).forEach(key => {
-		let val = obj[key];
-		key = encodeURIComponent(key);
+    Object.keys(obj || {}).forEach((key) => {
+        const val = obj[key];
+        key = encodeURIComponent(key);
 
-		if (typeof val != 'object') {
-			arr.push(key + '=' + encodeURIComponent(val));
-		} else if (Array.isArray(val)) {
-			val.forEach(function(el) {
-				arr.push(key + '[]=' + encodeURIComponent(el));
-			});
-		}
-	});
+        if (typeof val !== 'object') {
+            arr.push(`${key}=${encodeURIComponent(val)}`);
+        } else if (Array.isArray(val)) {
+            val.forEach((el) => {
+                arr.push(`${key}[]=${encodeURIComponent(el)}`);
+            });
+        }
+    });
 
-	return arr.length ? arr.join('&').replace(/%20/g, '+') : '';
+    return arr.length ? arr.join('&').replace(/%20/g, '+') : '';
 }
 
 /**
@@ -355,7 +351,7 @@ export function $serialize(obj) {
  * @returns {Array} value
  */
 export function $toArray(val) {
-	return val !== undefined ? (Array.isArray(val) ? val : [val]) : [];
+    return val !== undefined ? (Array.isArray(val) ? val : [val]) : [];
 }
 
 /**
@@ -365,10 +361,10 @@ export function $toArray(val) {
  * @returns string
  */
 export function $type(obj) {
-	return obj === undefined ? 'undefined' :
-		Object.prototype.toString.call(obj)
-			.replace(/^\[object (.+)]$/, '$1')
-			.toLowerCase();
+    return obj === undefined ? 'undefined' :
+        Object.prototype.toString.call(obj)
+            .replace(/^\[object (.+)]$/, '$1')
+            .toLowerCase();
 }
 
 /**
@@ -378,23 +374,23 @@ export function $type(obj) {
  * @returns {Object} value
  */
 export function $unserialize(str) {
-	let obj = {};
+    const obj = {};
 
-	decodeURIComponent(str)
-		.replace(/^\?/, '')
-		.split('&').forEach(function(el) {
-		let split = el.split('='),
-			key = split[0].replace('[]', ''),
-			val = (split[1] || '').replace(/\+/g, ' ') || '',
-			isArrayProp = /\[\]/.test(split[0]);
+    decodeURIComponent(str)
+        .replace(/^\?/, '')
+        .split('&').forEach((el) => {
+            let split = el.split('='),
+                key = split[0].replace('[]', ''),
+                val = (split[1] || '').replace(/\+/g, ' ') || '',
+                isArrayProp = /\[\]/.test(split[0]);
 
-		if (obj.hasOwnProperty(key)) {
-			obj[key] = $toArray(obj[key]);
-			obj[key].push(_castString(val));
-		} else {
-			obj[key] = isArrayProp ? [_castString(val)] : _castString(val);
-		}
-	});
+            if (obj.hasOwnProperty(key)) {
+                obj[key] = $toArray(obj[key]);
+                obj[key].push(_castString(val));
+            } else {
+                obj[key] = isArrayProp ? [_castString(val)] : _castString(val);
+            }
+        });
 
-	return obj;
+    return obj;
 }

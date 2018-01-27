@@ -1,0 +1,30 @@
+{
+	"extends": "airbnb-base",
+	"plugins": [
+		"import"
+	],
+	"settings": {
+		"import/resolver": {
+			"webpack": {
+				"config": "./build/webpack.base.config.js"
+			}
+		}
+	},
+	"rules": {
+		"import/no-extraneous-dependencies": 0,
+		"import/no-unresolved": 0,
+		"import/extensions": 0,
+		"eqeqeq": 0,
+		"no-param-reassign": 0,
+		"no-unused-expressions": 0,
+		"no-plusplus": 0,
+		"no-prototype-builtins": 0,
+		"no-underscore-dangle": 0,
+		"indent": ["error", 4],
+		"eol-last": 0,
+		"import/prefer-default-export": 0,
+		"space-unary-ops": 0,
+		"newline-per-chained-call": 0,
+		"radix": 0
+	}
+}

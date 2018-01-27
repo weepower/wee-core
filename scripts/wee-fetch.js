@@ -1,7 +1,7 @@
 import fetchFactory from 'fetch/factory';
 import bind from 'fetch/bind';
-import { extend } from 'fetch/utils';
 import defaults from 'fetch/defaults';
+import { extend } from 'fetch/utils';
 import { $extend } from 'core/types';
 
 /**
@@ -11,13 +11,13 @@ import { $extend } from 'core/types';
  * @returns {wrap}
  */
 function createFetchInstance(defaultConfig) {
-	const context = fetchFactory(defaultConfig);
-	const instance = bind(context.request, context);
+    const context = fetchFactory(defaultConfig);
+    const instance = bind(context.request, context);
 
-	// Copy properties from context
-	extend(instance, context, context);
+    // Copy properties from context
+    extend(instance, context, context);
 
-	return instance;
+    return instance;
 }
 
 // Instantiate main fetch instance
@@ -29,7 +29,7 @@ const $fetch = createFetchInstance(defaults);
  * @returns {wrap}
  */
 $fetch.create = function create(instanceDefaults) {
-	return createFetchInstance($extend({}, defaults, instanceDefaults));
-}
+    return createFetchInstance($extend({}, defaults, instanceDefaults));
+};
 
 export default $fetch;

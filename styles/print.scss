@@ -1,16 +1,16 @@
 *,
 *:before,
 *:after {
-	background: transparent;
-	box-shadow: none;
-	color: #000;
-	text-shadow: none;
+    background: transparent;
+    box-shadow: none;
+    color: #000;
+    text-shadow: none;
 }
 html {
-	font-size: 70%;
+    font-size: 70%;
 }
 body {
-	padding: $printPageMargin;
+    padding: $printPageMargin;
 }
 header[role='banner'],
 footer[role='contentinfo'],
@@ -20,29 +20,29 @@ iframe,
 nav,
 object,
 .not-printed {
-	display: none;
+    display: none;
 }
 main a:link {
-	color: #06c;
+    color: #06c;
 }
 main a:link:after {
-	content: " [" attr(href) "] ";
+    content: " [" attr(href) "] ";
 }
 blockquote,
 img,
 p,
 pre,
 tr {
-	page-break-inside: avoid;
+    page-break-inside: avoid;
 }
 h2,
 h3 {
-	page-break-after: avoid;
+    page-break-after: avoid;
 }
 p {
-	orphans: 3;
-	widows: 3;
+    orphans: 3;
+    widows: 3;
 }
 pre {
-	white-space: pre-wrap;
+    white-space: pre-wrap;
 }

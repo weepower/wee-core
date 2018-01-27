@@ -13,9 +13,9 @@ let env;
  * @returns {*}
  */
 function _val(val, options) {
-	return $isFunction(val) ?
-		$exec(val, options) :
-		val;
+    return $isFunction(val) ?
+        $exec(val, options) :
+        val;
 }
 
 /**
@@ -27,26 +27,26 @@ function _val(val, options) {
  * @returns {string} environment
  */
 export function $env(rules, fallback = 'local') {
-	if (rules) {
-		let host = location.hostname;
+    if (rules) {
+        const host = location.hostname;
 
-		for (let rule in rules) {
-			let val = rules[rule];
+        for (const rule in rules) {
+            const val = rules[rule];
 
-			if (val == host || _val(val, {
-					args: host
-				}) === true) {
-				env = rule;
-				break;
-			}
-		}
+            if (val == host || _val(val, {
+                args: host,
+            }) === true) {
+                env = rule;
+                break;
+            }
+        }
 
-		if (! env) {
-			env = fallback;
-		}
-	}
+        if (! env) {
+            env = fallback;
+        }
+    }
 
-	return env || fallback;
+    return env || fallback;
 }
 
 /**
@@ -55,14 +55,14 @@ export function $env(rules, fallback = 'local') {
  * @returns {boolean} secure
  */
 export function $envSecure() {
-	return location.protocol == 'https:';
+    return location.protocol == 'https:';
 }
 
 /**
  * Reset env variable - used for testing
  */
 export function $envReset() {
-	env = undefined;
+    env = undefined;
 }
 
 /**
@@ -75,23 +75,23 @@ export function $envReset() {
  * @returns {*} [response]
  */
 export function $exec(fn, options = {}) {
-	let fns = $toArray(fn),
-		len = fns.length,
-		i = 0,
-		response;
+    let fns = $toArray(fn),
+        len = fns.length,
+        i = 0,
+        response;
 
-	for (; i < len; i++) {
-		let conf = _extend({
-				args: []
-			}, options);
+    for (; i < len; i++) {
+        const conf = _extend({
+            args: [],
+        }, options);
 
-		response = fns[i].apply(
-			conf.scope,
-			$toArray(conf.args)
-		);
+        response = fns[i].apply(
+            conf.scope,
+            $toArray(conf.args),
+        );
 
-		if (len === 1) {
-			return response;
-		}
-	}
+        if (len === 1) {
+            return response;
+        }
+    }
 }

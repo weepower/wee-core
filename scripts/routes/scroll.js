@@ -5,10 +5,10 @@ import { _doc } from 'core/variables';
 import { $sel } from 'core/dom';
 import { $scrollLeft, $scrollTop } from 'dom/index';
 
-let positionStore = {};
+const positionStore = {};
 
 export function _getPositionStore() {
-	return positionStore;
+    return positionStore;
 }
 
 /**
@@ -19,17 +19,17 @@ export function _getPositionStore() {
  * @param {boolean} isPop
  */
 export function handleScroll(to, from, behavior, isPop = false) {
-	const shouldScroll = behavior(to, from, isPop ? getScrollPosition() : null);
-	let position = shouldScroll;
+    const shouldScroll = behavior(to, from, isPop ? getScrollPosition() : null);
+    let position = shouldScroll;
 
-	if ($isObject(shouldScroll) && shouldScroll.el) {
-		position = getElementPosition(shouldScroll.el);
-	}
+    if ($isObject(shouldScroll) && shouldScroll.el) {
+        position = getElementPosition(shouldScroll.el);
+    }
 
-	if (position) {
-		$scrollLeft(_win, position.x);
-		$scrollTop(_win, position.y);
-	}
+    if (position) {
+        $scrollLeft(_win, position.x);
+        $scrollTop(_win, position.y);
+    }
 }
 
 /**
@@ -39,28 +39,28 @@ export function handleScroll(to, from, behavior, isPop = false) {
  * @returns {*}
  */
 export function getElementPosition(sel) {
-	let el;
+    let el;
 
-	// Use typeof instead of $isObject - $isObject will evaluate false for DOM node
-	if (typeof sel === 'object') {
-		el = sel.sel ? sel[0] : sel;
-	} else {
-		el = _doc.querySelector(sel);
-	}
+    // Use typeof instead of $isObject - $isObject will evaluate false for DOM node
+    if (typeof sel === 'object') {
+        el = sel.sel ? sel[0] : sel;
+    } else {
+        el = _doc.querySelector(sel);
+    }
 
-	if (! el) {
-		return false;
-	}
+    if (! el) {
+        return false;
+    }
 
-	const docEl = _doc.documentElement;
-	const docRect = docEl.getBoundingClientRect();
-	const elRect = el.getBoundingClientRect();
+    const docEl = _doc.documentElement;
+    const docRect = docEl.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
 
-	return {
-		el,
-		x: elRect.left - docRect.left,
-		y: elRect.top - docRect.top
-	};
+    return {
+        el,
+        x: elRect.left - docRect.left,
+        y: elRect.top - docRect.top,
+    };
 }
 
 /**
@@ -69,23 +69,23 @@ export function getElementPosition(sel) {
  * @returns {*}
  */
 export function getScrollPosition() {
-	const key = getStateKey();
+    const key = getStateKey();
 
-	if (key) {
-		return positionStore[key];
-	}
+    if (key) {
+        return positionStore[key];
+    }
 }
 
 /**
  * Save current scroll position
  */
 export function saveScrollPosition() {
-	const key = getStateKey();
+    const key = getStateKey();
 
-	if (key) {
-		positionStore[key] = {
-			x: _win.pageXOffset,
-			y: _win.pageYOffset
-		};
-	}
+    if (key) {
+        positionStore[key] = {
+            x: _win.pageXOffset,
+            y: _win.pageYOffset,
+        };
+    }
 }

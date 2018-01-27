@@ -6,7 +6,7 @@
  * @returns {wrap}
  */
 export default function bind(fn, thisArg) {
-	return function wrap(...args) {
-		return fn.apply(thisArg, args);
-	}
+    return function wrap(...args) {
+        return fn.apply(thisArg, args);
+    };
 }

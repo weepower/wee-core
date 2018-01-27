@@ -6,11 +6,11 @@
 // Clearfix
 //
 @mixin clearfix() {
-	&::after {
-		clear: both;
-		content: '';
-		display: block;
-	}
+    &::after {
+        clear: both;
+        content: '';
+        display: block;
+    }
 }
 
 
@@ -20,15 +20,15 @@
 // @param $height - element height
 //
 @mixin inlineBlock($width: false, $height: false) {
-	display: inline-block;
+    display: inline-block;
 
-	@if ($width != false) {
-		width: $width;
-	}
+    @if ($width != false) {
+        width: $width;
+    }
 
-	@if ($height != false) {
-		height: $height;
-	}
+    @if ($height != false) {
+        height: $height;
+    }
 }
 
 
@@ -42,15 +42,15 @@
 // @param $height
 //
 @mixin block($width: false, $height: false) {
-	display: block;
+    display: block;
 
-	@if ($width != false) {
-		width: $width;
-	}
+    @if ($width != false) {
+        width: $width;
+    }
 
-	@if ($height != false) {
-		height: $height;
-	}
+    @if ($height != false) {
+        height: $height;
+    }
 }
 
 // Display block and set bottom margin
@@ -60,16 +60,16 @@
 // @param $height - element height
 //
 @mixin spacedBlock($margin: $blockMarginBottom, $width: false, $height: false) {
-	display: block;
-	margin-bottom: $margin;
+    display: block;
+    margin-bottom: $margin;
 
-	@if ($width != false) {
-		width: $width;
-	}
+    @if ($width != false) {
+        width: $width;
+    }
 
-	@if ($height != false) {
-		height: $height;
-	}
+    @if ($height != false) {
+        height: $height;
+    }
 };
 
 
@@ -85,19 +85,19 @@
 // @param $color - hex value or color var
 //
 @mixin prefix($value: '-', $margin: .5em, $font: false, $color: false) {
-	&::before {
-		content: $value;
-		margin-right: $margin;
+    &::before {
+        content: $value;
+        margin-right: $margin;
 
-		@if ($font != false) {
-			@include font($font);
-		}
+        @if ($font != false) {
+            @include font($font);
+        }
 
-		@if ($color != false) {
-			color: $color;
-		}
+        @if ($color != false) {
+            color: $color;
+        }
 
-	}
+    }
 }
 
 
@@ -109,19 +109,19 @@
 // @param $color - hex value or color var
 //
 @mixin suffix($value: '-', $margin: .5em, $font: false, $color: false) {
-	&::after {
-		content: $value;
-		margin-left: $margin;
+    &::after {
+        content: $value;
+        margin-left: $margin;
 
-		@if ($font != false) {
-			@include font($font);
-		}
+        @if ($font != false) {
+            @include font($font);
+        }
 
-		@if ($color != false) {
-			color: $color;
-		}
+        @if ($color != false) {
+            color: $color;
+        }
 
-	}
+    }
 }
 
 // Bookends
@@ -132,8 +132,8 @@
 // @param $color - hex value or color
 //
 @mixin bookends($value: '-', $margin: .5em, $font: false, $color: false) {
-	@include prefix($value, $margin, $font, $color);
-	@include suffix($value, $margin, $font, $color);
+    @include prefix($value, $margin, $font, $color);
+    @include suffix($value, $margin, $font, $color);
 }
 
 
@@ -147,17 +147,17 @@
 // @param $margin - left and right margin
 //
 @mixin centeredBlock($maxWidth: false, $margin: false) {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 
-	@if ($maxWidth != false) {
-		max-width: $maxWidth;
-	}
+    @if ($maxWidth != false) {
+        max-width: $maxWidth;
+    }
 
-	@if ($margin != false) {
-		margin-bottom: $margin;
-	}
+    @if ($margin != false) {
+        margin-bottom: $margin;
+    }
 }
 
 
@@ -171,25 +171,25 @@
 // @param $ratio - proportion between two unitless values
 //
 @mixin ratio($keyword: false, $ratio: 16 / 9) {
-	@if ($keyword != false and $keyword == embed) {
-		overflow: hidden;
-		position: relative;
-		&::before {
-			content: '';
-			display: block;
-			height: 0;
-			padding-top: ((1 / $ratio) * 100%);
-		}
-	} @else {
-		// Shift arguments
-		@if ($keyword != false) {
-			$ratio: $keyword;
-		}
+    @if ($keyword != false and $keyword == embed) {
+        overflow: hidden;
+        position: relative;
+        &::before {
+            content: '';
+            display: block;
+            height: 0;
+            padding-top: ((1 / $ratio) * 100%);
+        }
+    } @else {
+        // Shift arguments
+        @if ($keyword != false) {
+            $ratio: $keyword;
+        }
 
-		display: block;
-		height: 0;
-		padding-top: ((1 / $ratio) * 100%);
-	}
+        display: block;
+        height: 0;
+        padding-top: ((1 / $ratio) * 100%);
+    }
 }
 
 // Set width and/or height
@@ -198,13 +198,13 @@
 // @param $height - element height
 //
 @mixin size($width, $height: false) {
-	width: $width;
+    width: $width;
 
-	@if ($height != false) {
-		height: $height
-	} @else {
-		height: $width;
-	}
+    @if ($height != false) {
+        height: $height
+    } @else {
+        height: $width;
+    }
 }
 
 // Output max-width and/or max-height
@@ -213,13 +213,13 @@
 // @param $height - container max height
 //
 @mixin maxSize($width, $height: false) {
-	max-width: $width;
+    max-width: $width;
 
-	@if ($height != false) {
-		max-height: $height
-	} @else {
-		max-height: $width;
-	}
+    @if ($height != false) {
+        max-height: $height
+    } @else {
+        max-height: $width;
+    }
 }
 
 // Output min-width and/or min-height
@@ -228,13 +228,13 @@
 // @param $height - container min height
 //
 @mixin minSize($width, $height: false) {
-	min-width: $width;
+    min-width: $width;
 
-	@if ($height != false) {
-		min-height: $height
-	} @else {
-		min-height: $width;
-	}
+    @if ($height != false) {
+        min-height: $height
+    } @else {
+        min-height: $width;
+    }
 }
 
 
@@ -249,22 +249,22 @@
 // @param $display - element display property
 //
 @mixin circle($diameter, $crop: false, $display: block) {
-	@include rounded($diameter / 2);
+    @include rounded($diameter / 2);
 
-	@if (unit($diameter) == '') {
-		$diameter: $diameter + rem;
-	}
+    @if (unit($diameter) == '') {
+        $diameter: $diameter + rem;
+    }
 
-	height: $diameter;
-	width: $diameter;
+    height: $diameter;
+    width: $diameter;
 
-	@if ($crop != false) {
-		overflow: hidden;
-	}
+    @if ($crop != false) {
+        overflow: hidden;
+    }
 
-	@if ($display != false) {
-		display: $display;
-	}
+    @if ($display != false) {
+        display: $display;
+    }
 }
 
 // Creates a triangle
@@ -275,31 +275,31 @@
 // @param width - triangle width
 //
 @mixin triangle($keyword, $color: $darkGray, $size: 5px, $width: $size) {
-	content: '';
-	height: 0;
-	width: 0;
+    content: '';
+    height: 0;
+    width: 0;
 
-	@if ($keyword == up or $keyword == down) {
-		border-left: $width solid transparent;
-		border-right: $width solid transparent;
+    @if ($keyword == up or $keyword == down) {
+        border-left: $width solid transparent;
+        border-right: $width solid transparent;
 
-		@if ($keyword == up) {
-			border-bottom: $size solid $color;
-		} @else {
-			border-top: $size solid $color;
-		}
-	}
+        @if ($keyword == up) {
+            border-bottom: $size solid $color;
+        } @else {
+            border-top: $size solid $color;
+        }
+    }
 
-	@if ($keyword == left or $keyword == right) {
-		border-bottom: $width solid transparent;
-		border-top: $width solid transparent;
+    @if ($keyword == left or $keyword == right) {
+        border-bottom: $width solid transparent;
+        border-top: $width solid transparent;
 
-		@if ($keyword == left) {
-			border-right: $size solid $color;
-		} @else {
-			border-left: $size solid $color;
-		}
-	}
+        @if ($keyword == left) {
+            border-right: $size solid $color;
+        } @else {
+            border-left: $size solid $color;
+        }
+    }
 }
 
 //------------------------------------*\
@@ -314,20 +314,20 @@
 // @param $style
 //
 @mixin loadFont($name, $file: $name, $weight: normal, $style: normal) {
-	@font-face {
-		font-family: #{$name};
-		font-weight: $weight;
-		font-style: $style;
+    @font-face {
+        font-family: #{$name};
+        font-weight: $weight;
+        font-style: $style;
 
-		@if ($woff2Enabled) {
-			src: url('#{$fontPath}#{$file}.woff2') format('woff2'),
-				 url('#{$fontPath}#{$file}.woff') format('woff'),
-				 url('#{$fontPath}#{$file}.ttf') format('truetype');
-		} @else {
-			src: url('#{$fontPath}#{$file}.woff') format('woff'),
-				 url('#{$fontPath}#{$file}.ttf') format('truetype');
-		}
-	}
+        @if ($woff2Enabled) {
+            src: url('#{$fontPath}#{$file}.woff2') format('woff2'),
+                 url('#{$fontPath}#{$file}.woff') format('woff'),
+                 url('#{$fontPath}#{$file}.ttf') format('truetype');
+        } @else {
+            src: url('#{$fontPath}#{$file}.woff') format('woff'),
+                 url('#{$fontPath}#{$file}.ttf') format('truetype');
+        }
+    }
 }
 
 
@@ -340,10 +340,10 @@
 // @param margin - margin left
 //
 @mixin row($margin: $gridMargin) {
-	@include clearfix();
+    @include clearfix();
 
-	margin-left: ($margin * -1);
-	max-width: (100% + $margin);
+    margin-left: ($margin * -1);
+    max-width: (100% + $margin);
 }
 
 // Grid row modify
@@ -351,15 +351,15 @@
 // @param margin - margin left
 //
 @mixin rowModify($margin: $gridMargin) {
-	margin-left: ($margin * -1);
-	max-width: (100% + $margin);
+    margin-left: ($margin * -1);
+    max-width: (100% + $margin);
 }
 
 // Grid row reset
 //
 @mixin rowReset() {
-	margin-left: 0;
-	max-width: none;
+    margin-left: 0;
+    max-width: none;
 }
 
 // Grid column
@@ -370,33 +370,33 @@
 // @param $margin - if "spaced", sets margin left
 //
 @mixin column($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin) {
-	float: left;
+    float: left;
 
-	@if ($keyword != false) {
-		@if ($keyword == spaced) {
-			margin-left: $margin;
-			width: ((100% / $columns) * $share) - $margin;
-		} @else {
-			$args: $keyword, $share, $columns, $margin;
+    @if ($keyword != false) {
+        @if ($keyword == spaced) {
+            margin-left: $margin;
+            width: ((100% / $columns) * $share) - $margin;
+        } @else {
+            $args: $keyword, $share, $columns, $margin;
 
-			@if (type-of($keyword) == 'number') {
-				@if (unit($keyword) == '%') {
-					width: $keyword;
-				} @else {
-					$newColumns: $columns;
-					$newShare: $keyword;
+            @if (type-of($keyword) == 'number') {
+                @if (unit($keyword) == '%') {
+                    width: $keyword;
+                } @else {
+                    $newColumns: $columns;
+                    $newShare: $keyword;
 
-					@if ($keyword and $share != false) {
-						$newColumns: $share;
-					}
+                    @if ($keyword and $share != false) {
+                        $newColumns: $share;
+                    }
 
-					width: (100% / $newColumns * $newShare);
-				}
-			}
-		}
-	} @else {
-		width: 100%;
-	}
+                    width: (100% / $newColumns * $newShare);
+                }
+            }
+        }
+    } @else {
+        width: 100%;
+    }
 }
 
 // Modify grid column
@@ -407,18 +407,18 @@
 // @param $margin - if "spaced", sets margin left
 //
 @mixin columnModify($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin) {
-	@if ($keyword != false) {
-		@if ($keyword == spaced) {
-			margin-left: $margin;
-			width: ((100% / $columns) * $share) - $margin;
-		} @else {
-			// If keyword is not "spaced", shift values
-			$columns: $share;
-			$share: $keyword;
+    @if ($keyword != false) {
+        @if ($keyword == spaced) {
+            margin-left: $margin;
+            width: ((100% / $columns) * $share) - $margin;
+        } @else {
+            // If keyword is not "spaced", shift values
+            $columns: $share;
+            $share: $keyword;
 
-			width: ((100% / $columns) * $share);
-		}
-	}
+            width: ((100% / $columns) * $share);
+        }
+    }
 }
 
 // Reset grid column
@@ -426,12 +426,12 @@
 // @param $resetMargin - Reset left margin
 //
 @mixin columnReset($resetMargin: false) {
-	float: none;
-	width: auto;
+    float: none;
+    width: auto;
 
-	@if ($resetMargin != false) {
-		margin-left: 0;
-	}
+    @if ($resetMargin != false) {
+        margin-left: 0;
+    }
 }
 
 // Pull grid column
@@ -440,8 +440,8 @@
 // @param $columns - number of columns
 //
 @mixin columnPull($share, $columns: $gridColumns) {
-	position: relative;
-	right: ((100% / $columns) * $share);
+    position: relative;
+    right: ((100% / $columns) * $share);
 }
 
 // Push grid column
@@ -450,8 +450,8 @@
 // @param $columns - number of columns
 //
 @mixin columnPush($share, $columns: $gridColumns) {
-	left: ((100% / $columns) * $share);
-	position: relative;
+    left: ((100% / $columns) * $share);
+    position: relative;
 }
 
 // Column Offset
@@ -462,15 +462,15 @@
 // @param $margin - if "spaced", sets margin left
 //
 @mixin columnOffset($keyword: false, $share: false, $columns: $gridColumns, $margin: ($gridMargin / 2)) {
-	@if ($keyword == spaced) {
-		margin-left: (((100% / $columns) * $share) + ($margin * 2));
-	} @else {
-		@if (type-of($keyword) == number) {
-			margin-left: (100% * ($keyword / $share));
-		} @else {
-			margin-left: ((100% / $columns) * $share);
-		}
-	}
+    @if ($keyword == spaced) {
+        margin-left: (((100% / $columns) * $share) + ($margin * 2));
+    } @else {
+        @if (type-of($keyword) == number) {
+            margin-left: (100% * ($keyword / $share));
+        } @else {
+            margin-left: ((100% / $columns) * $share);
+        }
+    }
 }
 
 
@@ -484,12 +484,12 @@
 // @param $spaceless - Add whitespace hack
 //
 @mixin inlineRow($margin: $gridMargin, $spaceless: $gridSpaceless) {
-	margin-left: ($margin * -1);
-	max-width: (100% + $margin);
+    margin-left: ($margin * -1);
+    max-width: (100% + $margin);
 
-	@if ($spaceless != true) {
-		letter-spacing: -.32em;
-	}
+    @if ($spaceless != true) {
+        letter-spacing: -.32em;
+    }
 }
 
 // Inline grid column
@@ -501,35 +501,35 @@
 // @param spaceless
 //
 @mixin inlineColumn($keyword: false, $share: false, $columns: $gridColumns, $margin: $gridMargin, $spaceless: $gridSpaceless) {
-	display: inline-block;
-	vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
 
-	@if ($keyword == spaced) {
-		margin-left: $margin;
-		width: ((100% / $columns) * $share) - $margin;
+    @if ($keyword == spaced) {
+        margin-left: $margin;
+        width: ((100% / $columns) * $share) - $margin;
 
-		@if (not $spaceless) {
-			letter-spacing: normal;
-		}
-	} @else if ($keyword != false and type-of($keyword) == number) {
-		$args: $keyword, $share, $columns, $margin, $spaceless;
+        @if (not $spaceless) {
+            letter-spacing: normal;
+        }
+    } @else if ($keyword != false and type-of($keyword) == number) {
+        $args: $keyword, $share, $columns, $margin, $spaceless;
 
-		@if (type-of(nth($args, 3)) == bool) {
-			$spaceless: nth($args, 3);
-		}
+        @if (type-of(nth($args, 3)) == bool) {
+            $spaceless: nth($args, 3);
+        }
 
-		@if (nth($args, 2) != false) {
-			$columns: nth($args, 2);
-		}
+        @if (nth($args, 2) != false) {
+            $columns: nth($args, 2);
+        }
 
-		$share: nth($args, 1);
+        $share: nth($args, 1);
 
-		width: (100% / $columns) * $share;
+        width: (100% / $columns) * $share;
 
-		@if (not $spaceless) {
-			margin-right: -.32em;
-		}
-	}
+        @if (not $spaceless) {
+            margin-right: -.32em;
+        }
+    }
 }
 
 
@@ -542,13 +542,13 @@
 // @param $maxWidth - max width of container
 //
 @mixin ellipsis($maxWidth: false) {
-	overflow-x: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-	@if ($maxWidth != false) {
-		max-width: $maxWidth;
-	}
+    @if ($maxWidth != false) {
+        max-width: $maxWidth;
+    }
 }
 
 
@@ -559,9 +559,9 @@
 // Hide text
 //
 @mixin hideText() {
-	overflow: hidden;
-	text-indent: 110%;
-	white-space: nowrap;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
 }
 
 // Output font icon
@@ -574,27 +574,27 @@
 // @param $font - font family name
 //
 @mixin icon(
-	$icon,
-	$size: inherit,
-	$rotate: false,
-	$weight: normal,
-	$lineHeight: 0,
-	$sharpen: true,
-	$font: $iconFont
+    $icon,
+    $size: inherit,
+    $rotate: false,
+    $weight: normal,
+    $lineHeight: 0,
+    $sharpen: true,
+    $font: $iconFont
 ) {
-	@include font($font, $size, $weight, $lineHeight, normal);
+    @include font($font, $size, $weight, $lineHeight, normal);
 
-	content: "#{$icon}";
-	display: inline-block;
+    content: "#{$icon}";
+    display: inline-block;
 
-	@if ($rotate != false) {
-		transform: rotate($rotate);
-	}
+    @if ($rotate != false) {
+        transform: rotate($rotate);
+    }
 
-	@if ($sharpen != false) {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-	}
+    @if ($sharpen != false) {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 }
 
 // Modify font icon
@@ -606,32 +606,32 @@
 // @param $sharpen - true or false
 //
 @mixin iconModify($icon: false, $size: false, $rotate: false, $weight: false, $sharpen: false) {
-	@if ($icon != false) {
-		content: "#{$icon}";
-	}
+    @if ($icon != false) {
+        content: "#{$icon}";
+    }
 
-	@if ($size != false) {
-		font-size: $size;
-	}
+    @if ($size != false) {
+        font-size: $size;
+    }
 
-	@if ($rotate != false) {
-		transform: rotate($rotate)
-	}
+    @if ($rotate != false) {
+        transform: rotate($rotate)
+    }
 
-	@if ($weight != false) {
-		font-weight: $weight;
-	}
+    @if ($weight != false) {
+        font-weight: $weight;
+    }
 
-	@if ($sharpen != false) {
-		@include textSharpen();
-	}
+    @if ($sharpen != false) {
+        @include textSharpen();
+    }
 }
 
 // Text Sharpen
 //
 @mixin textSharpen() {
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 // Selection
@@ -641,22 +641,22 @@
 //
 // TODO: Double check autoprefixer on this one
 @mixin selection($color: $selectionColor, $background: $selectionBackground) {
-	&::selection {
-		background: $background;
-		color: $color;
-		text-shadow: none;
-	}
+    &::selection {
+        background: $background;
+        color: $color;
+        text-shadow: none;
+    }
 }
 
 // Hide clear/cancel button in search inputs
 //
 @mixin noClear() {
-	&::-ms-clear {
-		display: none;
-	}
-	&::-webkit-search-cancel-button {
-		-webkit-appearance: none;
-	}
+    &::-ms-clear {
+        display: none;
+    }
+    &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+    }
 }
 
 //------------------------------------*\
@@ -673,13 +673,13 @@
 // @private
 //
 @mixin position($type, $top: 0, $right: 0, $bottom: 0, $left: 0) {
-	position: $type;
+    position: $type;
 
-	@each $data in top $top, right $right, bottom $bottom, left $left {
-		@if (nth($data, 2) != false) {
-			#{nth($data, 1)}: nth($data, 2);
-		}
-	}
+    @each $data in top $top, right $right, bottom $bottom, left $left {
+        @if (nth($data, 2) != false) {
+            #{nth($data, 1)}: nth($data, 2);
+        }
+    }
 }
 
 // Absolute positioning
@@ -690,12 +690,12 @@
 // @param $left - left position of el
 //
 @mixin absolute(
-	$top: false,
-	$right: false,
-	$bottom: false,
-	$left: false
+    $top: false,
+    $right: false,
+    $bottom: false,
+    $left: false
 ) {
-	@include position(absolute, $top, $right, $bottom, $left);
+    @include position(absolute, $top, $right, $bottom, $left);
 }
 
 // Relative positioning
@@ -706,12 +706,12 @@
 // @param $left - left position of el
 //
 @mixin relative(
-	$top: false,
-	$right: false,
-	$bottom: false,
-	$left: false
+    $top: false,
+    $right: false,
+    $bottom: false,
+    $left: false
 ) {
-	@include position(relative, $top, $right, $bottom, $left);
+    @include position(relative, $top, $right, $bottom, $left);
 }
 
 // Fixed positioning
@@ -722,12 +722,12 @@
 // @param $left - left position of el
 //
 @mixin fixed(
-	$top: false,
-	$right: false,
-	$bottom: false,
-	$left: false
+    $top: false,
+    $right: false,
+    $bottom: false,
+    $left: false
 ) {
-	@include position(fixed, $top, $right, $bottom, $left);
+    @include position(fixed, $top, $right, $bottom, $left);
 }
 
 
@@ -745,36 +745,36 @@
 // @param $spacing - amount of space between letters
 //
 @mixin font(
-	$family: $baseFont,
-	$size: false,
-	$weight: false,
-	$lineHeight: false,
-	$style: false,
-	$spacing: false
+    $family: $baseFont,
+    $size: false,
+    $weight: false,
+    $lineHeight: false,
+    $style: false,
+    $spacing: false
 ) {
-	@if ($family != false) {
-		font-family: #{$family};
-	}
+    @if ($family != false) {
+        font-family: #{$family};
+    }
 
-	@if ($size != false) {
-		font-size: $size;
-	}
+    @if ($size != false) {
+        font-size: $size;
+    }
 
-	@if ($weight != false) {
-		font-weight: $weight;
-	}
+    @if ($weight != false) {
+        font-weight: $weight;
+    }
 
-	@if ($lineHeight != false) {
-		line-height: $lineHeight;
-	}
+    @if ($lineHeight != false) {
+        line-height: $lineHeight;
+    }
 
-	@if ($style != false) {
-		font-style: $style;
-	}
+    @if ($style != false) {
+        font-style: $style;
+    }
 
-	@if ($spacing != false) {
-		letter-spacing: $spacing;
-	}
+    @if ($spacing != false) {
+        letter-spacing: $spacing;
+    }
 }
 
 //------------------------------------*\
@@ -784,13 +784,13 @@
 // Default styling for headings
 //
 @mixin heading($fontSize: false) {
-	@include font($headingFont, $fontSize, $headingFontWeight, $headingLineHeight);
+    @include font($headingFont, $fontSize, $headingFontWeight, $headingLineHeight);
 
-	color: $headingColor;
-	margin-bottom: $headingMarginBottom;
-	small {
-		font-weight: normal;
-	}
+    color: $headingColor;
+    margin-bottom: $headingMarginBottom;
+    small {
+        font-weight: normal;
+    }
 }
 
 //------------------------------------*\
@@ -803,35 +803,35 @@
 // @param $radius - value defines how rounded el's corners are
 //
 @mixin rounded($keyword: '', $value: $defaultRadius) {
-	$corners: false;
+    $corners: false;
 
-	@if ($keyword != false) {
-		background-clip: border-box;
+    @if ($keyword != false) {
+        background-clip: border-box;
 
-		@if ($keyword == left or $keyword == right) {
-			$corners: border-top-#{$keyword}-radius,
-				border-bottom-#{$keyword}-radius;
-		} @else if ($keyword == top or $keyword == bottom) {
-			$corners: border-#{$keyword}-left-radius,
-				border-#{$keyword}-right-radius;
-		}
+        @if ($keyword == left or $keyword == right) {
+            $corners: border-top-#{$keyword}-radius,
+                border-bottom-#{$keyword}-radius;
+        } @else if ($keyword == top or $keyword == bottom) {
+            $corners: border-#{$keyword}-left-radius,
+                border-#{$keyword}-right-radius;
+        }
 
-		@if ($corners != false) {
-			@each $corner in $corners {
-				#{$corner}: $value;
-			}
-		} @else {
-			@if (type-of($keyword) == number) {
-				$value: $keyword;
-			}
+        @if ($corners != false) {
+            @each $corner in $corners {
+                #{$corner}: $value;
+            }
+        } @else {
+            @if (type-of($keyword) == number) {
+                $value: $keyword;
+            }
 
-			@if (unit($value) == '') {
-				$value: $value + rem;
-			}
+            @if (unit($value) == '') {
+                $value: $value + rem;
+            }
 
-			border-radius: $value;
-		}
-	}
+            border-radius: $value;
+        }
+    }
 }
 
 
@@ -844,8 +844,8 @@
 // @param $value - el is resizable if so, which direction
 //
 @mixin resizable($value: both) {
-	overflow: hidden;
-	resize: $value;
+    overflow: hidden;
+    resize: $value;
 }
 
 
@@ -856,25 +856,25 @@
 // Styles form placeholder text
 //
 @mixin placeholder($color: $inputPlaceholderColor) {
-	@include optional-at-root('::-webkit-input-placeholder') {
-		color: $color;
-		@content;
-	}
+    @include optional-at-root('::-webkit-input-placeholder') {
+        color: $color;
+        @content;
+    }
 
-	@include optional-at-root(':-moz-placeholder') {
-		color: $color;
-		@content;
-	}
+    @include optional-at-root(':-moz-placeholder') {
+        color: $color;
+        @content;
+    }
 
-	@include optional-at-root('::-moz-placeholder') {
-		color: $color;
-		@content;
-	}
+    @include optional-at-root('::-moz-placeholder') {
+        color: $color;
+        @content;
+    }
 
-	@include optional-at-root(':-ms-input-placeholder') {
-		color: $color;
-		@content;
-	}
+    @include optional-at-root(':-ms-input-placeholder') {
+        color: $color;
+        @content;
+    }
 }
 
 
@@ -883,18 +883,18 @@
 //------------------------------------*/
 
 @mixin flex($grow: 0, $shrink: 0, $basis: auto) {
-	flex-grow: $grow;
-	flex-shrink: $shrink;
-	flex-basis: $basis;
+    flex-grow: $grow;
+    flex-shrink: $shrink;
+    flex-basis: $basis;
 }
 
 @mixin flexContainer($direction: row, $wrap: nowrap, $justify: flex-start, $align: stretch, $alignContent: stretch) {
-	display: flex;
-	flex-direction: $direction;
-	flex-wrap: $wrap;
-	justify-content: $justify;
-	align-items: $align;
-	align-content: $alignContent;
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    justify-content: $justify;
+    align-items: $align;
+    align-content: $alignContent;
 }
 
 
@@ -903,7 +903,7 @@
 //------------------------------------*/
 
 @mixin optional-at-root($sel) {
-	@at-root #{if(not &, $sel, selector-append(&, $sel))} {
-		@content;
-	}
+    @at-root #{if(not &, $sel, selector-append(&, $sel))} {
+        @content;
+    }
 }

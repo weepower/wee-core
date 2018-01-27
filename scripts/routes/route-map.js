@@ -7,11 +7,11 @@ let notFound;
 
 // Set default notFound route
 setNotFound({
-	path: '*',
-	name: 'notFound',
-	meta: {
-		noMatch: true
-	}
+    path: '*',
+    name: 'notFound',
+    meta: {
+        noMatch: true,
+    },
 });
 
 /**
@@ -23,54 +23,54 @@ setNotFound({
  * @private
  */
 function _addRouteRecord(route, parent, exclude = false, ancestors = []) {
-	const { path, name, handler } = route;
-	const finalPath = _normalizePath(path, parent, ancestors);
+    const { path, name, handler } = route;
+    const finalPath = _normalizePath(path, parent, ancestors);
 
-	// Push path into ancestors array
-	ancestors.push(path);
+    // Push path into ancestors array
+    ancestors.push(path);
 
-	const record = {
-		name,
-		parent,
-		handler,
-		path: finalPath,
-		regex: PathToRegexp(finalPath),
-		// redirect, TODO: Look into redirect functionality further
-		before: route.before,
-		init: route.init,
-		update: route.update,
-		after: route.after,
-		unload: route.unload,
-		pop: route.pop,
-		meta: route.meta || {}
-	};
+    const record = {
+        name,
+        parent,
+        handler,
+        path: finalPath,
+        regex: PathToRegexp(finalPath),
+        // redirect, TODO: Look into redirect functionality further
+        before: route.before,
+        init: route.init,
+        update: route.update,
+        after: route.after,
+        unload: route.unload,
+        pop: route.pop,
+        meta: route.meta || {},
+    };
 
-	// Children should be mapped before parent in case of wildcard in parent
-	if (route.children && route.children.length) {
-		let i = 0;
-		let length = route.children.length;
+    // Children should be mapped before parent in case of wildcard in parent
+    if (route.children && route.children.length) {
+        let i = 0;
+        const length = route.children.length;
 
-		for (; i < length; i++) {
-			_addRouteRecord(route.children[i], route, exclude, ancestors);
+        for (; i < length; i++) {
+            _addRouteRecord(route.children[i], route, exclude, ancestors);
 
-			// After record is added, pop last ancestor off for the next set of paths
-			ancestors.pop();
-		}
-	}
+            // After record is added, pop last ancestor off for the next set of paths
+            ancestors.pop();
+        }
+    }
 
-	// Exclude from main mapping/return created route record object
-	if (exclude) {
-		return record;
-	}
+    // Exclude from main mapping/return created route record object
+    if (exclude) {
+        return record;
+    }
 
-	if (! pathMap[record.path]) {
-		pathList.push(record.path);
-		pathMap[record.path] = record;
-	}
+    if (! pathMap[record.path]) {
+        pathList.push(record.path);
+        pathMap[record.path] = record;
+    }
 
-	if (name && ! nameMap[name]) {
-		nameMap[name] = record;
-	}
+    if (name && ! nameMap[name]) {
+        nameMap[name] = record;
+    }
 }
 
 /**
@@ -82,27 +82,27 @@ function _addRouteRecord(route, parent, exclude = false, ancestors = []) {
  * @private
  */
 function _normalizePath(path, parent, ancestors) {
-	if (path === '/') {
-		return path;
-	}
+    if (path === '/') {
+        return path;
+    }
 
-	path = path.replace(/\/$/, '');
+    path = path.replace(/\/$/, '');
 
-	// If path begins with / then assume it is independent route
-	if (path[0] === '/') {
-		return path;
-	}
+    // If path begins with / then assume it is independent route
+    if (path[0] === '/') {
+        return path;
+    }
 
-	// If no parent, and route doesn't start with /, then prepend /
-	if (! parent) {
-		return '/' + path;
-	}
+    // If no parent, and route doesn't start with /, then prepend /
+    if (! parent) {
+        return `/${path}`;
+    }
 
-	if (ancestors) {
-		return _cleanPath(`${ancestors.join('/')}/${path}`);
-	}
+    if (ancestors) {
+        return _cleanPath(`${ancestors.join('/')}/${path}`);
+    }
 
-	return _cleanPath(`${parent.path}/${path}`);
+    return _cleanPath(`${parent.path}/${path}`);
 }
 
 /**
@@ -111,7 +111,7 @@ function _normalizePath(path, parent, ancestors) {
  * @param {string} path
  */
 function _cleanPath(path) {
-	return path.replace(/\/\//g, '/');
+    return path.replace(/\/\//g, '/');
 }
 
 /**
@@ -120,12 +120,12 @@ function _cleanPath(path) {
  * @returns {Object}
  */
 export function getRouteMap() {
-	return {
-		pathList,
-		pathMap,
-		nameMap,
-		notFound
-	};
+    return {
+        pathList,
+        pathMap,
+        nameMap,
+        notFound,
+    };
 }
 
 /**
@@ -135,20 +135,20 @@ export function getRouteMap() {
  * @returns {Object}
  */
 export function mapRoutes(routes) {
-	const count = routes.length;
+    const count = routes.length;
 
-	for (let i = 0; i < count; i++) {
-		_addRouteRecord(routes[i]);
-	}
+    for (let i = 0; i < count; i++) {
+        _addRouteRecord(routes[i]);
+    }
 }
 
 /**
  * Reset all map objects
  */
 export function resetRouteMap() {
-	pathList = [];
-	pathMap = {};
-	nameMap = {};
+    pathList = [];
+    pathMap = {};
+    nameMap = {};
 }
 
 /**
@@ -157,5 +157,5 @@ export function resetRouteMap() {
  * @param {Object} route
  */
 export function setNotFound(route) {
-	notFound = _addRouteRecord(route, null, true);
+    notFound = _addRouteRecord(route, null, true);
 }

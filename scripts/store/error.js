@@ -1,7 +1,7 @@
 export default class StoreError extends Error {
-	constructor(message) {
-		super(message);
+    constructor(message) {
+        super(message);
 
-		this.errorType = 'StoreError';
-	}
+        this.errorType = 'StoreError';
+    }
 }

@@ -8,7 +8,7 @@ const TIME = _win.performance && _win.performance.now ? _win.performance : Date;
  * @returns {string}
  */
 export function genTimeKey() {
-	return TIME.now().toFixed(3);
+    return TIME.now().toFixed(3);
 }
 
 /**
@@ -17,11 +17,11 @@ export function genTimeKey() {
  * @returns {string}
  */
 export function genKey() {
-	function s4() {
-		return Math.floor((1 + Math.random()) * 0x10000)
-			.toString(16)
-			.substring(1);
-	}
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
 
-	return `${s4()}-${s4()}-${s4()}-${s4()}`;
+    return `${s4()}-${s4()}-${s4()}-${s4()}`;
 }

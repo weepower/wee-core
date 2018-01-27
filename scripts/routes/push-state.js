@@ -5,8 +5,8 @@ import { saveScrollPosition } from './scroll';
 let _key = genTimeKey();
 
 export function supportsPushState() {
-	return _win.history && _win.history.pushState;
-};
+    return _win.history && _win.history.pushState;
+}
 
 /**
  * Get state key
@@ -14,7 +14,7 @@ export function supportsPushState() {
  * @returns {string}
  */
 export function getStateKey() {
-	return _key;
+    return _key;
 }
 
 /**
@@ -23,7 +23,7 @@ export function getStateKey() {
  * @param {string} key
  */
 export function setStateKey(key) {
-	_key = key;
+    _key = key;
 }
 
 /**
@@ -33,26 +33,26 @@ export function setStateKey(key) {
  * @param {boolean} replace=false
  */
 export function pushState(url, replace = false) {
-	// Save scroll position for current URL before navigating elsewhere
-	saveScrollPosition();
+    // Save scroll position for current URL before navigating elsewhere
+    saveScrollPosition();
 
-	try {
-		if (replace) {
-			_win.history.replaceState({ key: _key }, '', url);
-		} else {
-			_key = genTimeKey();
-			_win.history.pushState({ key: _key }, '', url);
-		}
-	} catch(e) {
-		// Fallback if something goes wrong
-		let win = _win;
+    try {
+        if (replace) {
+            _win.history.replaceState({ key: _key }, '', url);
+        } else {
+            _key = genTimeKey();
+            _win.history.pushState({ key: _key }, '', url);
+        }
+    } catch (e) {
+        // Fallback if something goes wrong
+        let win = _win;
 
-		if (this && this.location) {
-			win = this;
-		}
+        if (this && this.location) {
+            win = this;
+        }
 
-		win.location[replace ? 'replace' : 'assign'](url);
-	}
+        win.location[replace ? 'replace' : 'assign'](url);
+    }
 }
 
 /**
@@ -61,5 +61,5 @@ export function pushState(url, replace = false) {
  * @param {string} url
  */
 export function replaceState(url) {
-	pushState(url, true);
+    pushState(url, true);
 }

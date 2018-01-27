@@ -11,9 +11,9 @@ import { $each, $map, $parseHTML, $sel, $setRef, $unique, _selArray } from '../c
  * @returns {string}
  */
 function _getClass(el) {
-	return el instanceof SVGElement ?
-		el.getAttribute('class') :
-		el.className;
+    return el instanceof SVGElement ?
+        el.getAttribute('class') :
+        el.className;
 }
 
 /**
@@ -24,9 +24,9 @@ function _getClass(el) {
  * @param {string} className
  */
 function _setClass(el, className) {
-	el instanceof SVGElement ?
-		el.setAttribute('class', className) :
-		el.className = className;
+    el instanceof SVGElement ?
+        el.setAttribute('class', className) :
+        el.className = className;
 }
 
 /**
@@ -36,11 +36,9 @@ function _setClass(el, className) {
  * @param {string} name
  * @returns {string}
  */
-function _toCamel (name) {
-	return name.toLowerCase()
-		.replace(/-(.)/g, (match, val) => {
-			return val.toUpperCase();
-		});
+function _toCamel(name) {
+    return name.toLowerCase()
+        .replace(/-(.)/g, (match, val) => val.toUpperCase());
 }
 
 /**
@@ -51,9 +49,7 @@ function _toCamel (name) {
  * @returns {string}
  */
 function _toDashed(name) {
-	return name.replace(/[A-Z]/g, match => {
-		return '-' + match[0].toLowerCase();
-	});
+    return name.replace(/[A-Z]/g, match => `-${match[0].toLowerCase()}`);
 }
 
 /**
@@ -63,16 +59,16 @@ function _toDashed(name) {
  * @param {HTMLElement} select
  * @returns {Array} selected
  */
- function _getSelected(select) {
-	let arr = [];
+function _getSelected(select) {
+    const arr = [];
 
-	_slice.call(select.options).map(el => {
-		if (el.selected) {
-			arr.push(el.value);
-		}
-	});
+    _slice.call(select.options).map((el) => {
+        if (el.selected) {
+            arr.push(el.value);
+        }
+    });
 
-	return arr;
+    return arr;
 }
 
 /**
@@ -86,20 +82,20 @@ function _toDashed(name) {
  * @returns {HTMLElement}
  */
 function _getSibling(target, dir, filter, options) {
-	let match;
+    let match;
 
-	$each(target, el => {
-		let index = $index(el) + dir;
+    $each(target, (el) => {
+        const index = $index(el) + dir;
 
-		$children($parent(el)).forEach((el, i) => {
-			if (i === index &&
-				(! filter || filter && $is(el, filter, options))) {
-				match = el;
-			}
-		});
-	});
+        $children($parent(el)).forEach((el, i) => {
+            if (i === index &&
+                (! filter || filter && $is(el, filter, options))) {
+                match = el;
+            }
+        });
+    });
 
-	return match;
+    return match;
 }
 
 /**
@@ -109,28 +105,26 @@ function _getSibling(target, dir, filter, options) {
  * @param {(function|string)} value
  */
 export function $addClass(target, value) {
-	let func = $isFunction(value);
+    const func = $isFunction(value);
 
-	$each(target, (el, i) => {
-		let cn = _getClass(el),
-			name = func ?
-				$exec(value, {
-					args: [i, cn],
-					scope: el
-				}) :
-				value;
+    $each(target, (el, i) => {
+        let cn = _getClass(el),
+            name = func ?
+                $exec(value, {
+                    args: [i, cn],
+                    scope: el,
+                }) :
+                value;
 
-		if (name) {
-			let names = cn.split(' '),
-				upd = name.split(' ').filter(val => {
-					return names.indexOf(val) < 0;
-				});
+        if (name) {
+            let names = cn.split(' '),
+                upd = name.split(' ').filter(val => names.indexOf(val) < 0);
 
-			upd.unshift(cn);
+            upd.unshift(cn);
 
-			_setClass(el, upd.join(' '));
-		}
-	});
+            _setClass(el, upd.join(' '));
+        }
+    });
 }
 
 /**
@@ -141,40 +135,40 @@ export function $addClass(target, value) {
  * @param {boolean} [remove=false]
  */
 export function $after(target, source, remove) {
-	const func = $isFunction(source);
+    const func = $isFunction(source);
 
-	$each(target, (el, i) => {
-		let aft = func ?
-			$exec(source, {
-				args: [i, el.innerHTML],
-				scope: el
-			}) :
-			source;
+    $each(target, (el, i) => {
+        let aft = func ?
+            $exec(source, {
+                args: [i, el.innerHTML],
+                scope: el,
+            }) :
+            source;
 
-		if ($isString(aft)) {
-			aft = $parseHTML(aft);
-		}
+        if ($isString(aft)) {
+            aft = $parseHTML(aft);
+        }
 
-		if (aft) {
-			let par = el.parentNode;
+        if (aft) {
+            const par = el.parentNode;
 
-			$each(aft, cel => {
-				if (i > 0) {
-					cel = $clone(cel)[0];
-				}
+            $each(aft, (cel) => {
+                if (i > 0) {
+                    cel = $clone(cel)[0];
+                }
 
-				par.insertBefore(cel, el.nextSibling);
+                par.insertBefore(cel, el.nextSibling);
 
-				$setRef(par);
-			}, {
-				reverse: true
-			});
-		}
+                $setRef(par);
+            }, {
+                reverse: true,
+            });
+        }
 
-		if (remove) {
-			$remove(el);
-		}
-	});
+        if (remove) {
+            $remove(el);
+        }
+    });
 }
 
 /**
@@ -184,28 +178,28 @@ export function $after(target, source, remove) {
  * @param {($|function|HTMLElement|string)} source
  */
 export function $append(target, source) {
-	let func = $isFunction(source);
+    const func = $isFunction(source);
 
-	$each(target, (el, i) => {
-		let app = func ?
-			$exec(source, {
-				args: [i, el.innerHTML],
-				scope: el
-			}) :
-			source;
+    $each(target, (el, i) => {
+        let app = func ?
+            $exec(source, {
+                args: [i, el.innerHTML],
+                scope: el,
+            }) :
+            source;
 
-		if ($isString(app)) {
-			app = $parseHTML(app);
-		}
+        if ($isString(app)) {
+            app = $parseHTML(app);
+        }
 
-		if (app) {
-			$each(app, cel => {
-				el.appendChild(cel);
-			});
+        if (app) {
+            $each(app, (cel) => {
+                el.appendChild(cel);
+            });
 
-			$setRef(el);
-		}
-	});
+            $setRef(el);
+        }
+    });
 }
 
 /**
@@ -218,27 +212,26 @@ export function $append(target, source) {
  * @returns {(string|undefined)}
  */
 export function $attr(target, a, b) {
-	let obj = $isObject(a);
+    const obj = $isObject(a);
 
-	if (b !== U || obj) {
-		let func = ! obj && $isFunction(b);
+    if (b !== U || obj) {
+        const func = ! obj && $isFunction(b);
 
-		$each(target, function(el, i) {
-			obj ?
-				Object.keys(a).forEach(function(key) {
-					el.setAttribute(key, a[key]);
-				}) :
-				el.setAttribute(a, func ?
-					$exec(b, {
-						args: [i, el],
-						scope: el
-					}) :
-					b
-				);
-		});
-	} else {
-		return $sel(target)[0].getAttribute(a);
-	}
+        $each(target, (el, i) => {
+            obj ?
+                Object.keys(a).forEach((key) => {
+                    el.setAttribute(key, a[key]);
+                }) :
+                el.setAttribute(a, func ?
+                    $exec(b, {
+                        args: [i, el],
+                        scope: el,
+                    }) :
+                    b);
+        });
+    } else {
+        return $sel(target)[0].getAttribute(a);
+    }
 }
 
 /**
@@ -249,40 +242,40 @@ export function $attr(target, a, b) {
  * @param {boolean} [remove=false]
  */
 export function $before(target, source, remove) {
-	let func = $isFunction(source);
+    const func = $isFunction(source);
 
-	$each(target, function(el, i) {
-		let bef = func ?
-			$exec(source, {
-				args: [i, el.innerHTML],
-				scope: el
-			}) :
-			source;
+    $each(target, (el, i) => {
+        let bef = func ?
+            $exec(source, {
+                args: [i, el.innerHTML],
+                scope: el,
+            }) :
+            source;
 
-		if ($isString(bef)) {
-			bef = $parseHTML(bef);
-		}
+        if ($isString(bef)) {
+            bef = $parseHTML(bef);
+        }
 
-		if (bef) {
-			let par = el.parentNode;
+        if (bef) {
+            const par = el.parentNode;
 
-			$each(bef, function(cel) {
-				if (i > 0) {
-					cel = $clone(cel)[0];
-				}
+            $each(bef, (cel) => {
+                if (i > 0) {
+                    cel = $clone(cel)[0];
+                }
 
-				par.insertBefore(cel, el);
+                par.insertBefore(cel, el);
 
-				$setRef(par);
-			}, {
-				reverse: true
-			});
-		}
+                $setRef(par);
+            }, {
+                reverse: true,
+            });
+        }
 
-		if (remove) {
-			$remove(el);
-		}
-	});
+        if (remove) {
+            $remove(el);
+        }
+    });
 }
 
 /**
@@ -293,19 +286,17 @@ export function $before(target, source, remove) {
  * @returns {Array}
  */
 export function $children(parent, filter) {
-	let arr = [];
+    let arr = [];
 
-	$each(parent, function(el) {
-		let children = _slice.call(el.children);
+    $each(parent, (el) => {
+        const children = _slice.call(el.children);
 
-		arr = arr.concat(
-			filter ?
-				$filter(children, filter) :
-				children
-		);
-	});
+        arr = arr.concat(filter ?
+            $filter(children, filter) :
+            children);
+    });
 
-	return $unique(arr);
+    return $unique(arr);
 }
 
 /**
@@ -315,9 +306,7 @@ export function $children(parent, filter) {
  * @returns {Array}
  */
 export function $clone(target) {
-	return $map(target, el => {
-		return el.cloneNode(true);
-	});
+    return $map(target, el => el.cloneNode(true));
 }
 
 /**
@@ -329,25 +318,25 @@ export function $clone(target) {
  * @returns {HTMLElement|boolean}
  */
 export function $closest(target, filter, context) {
-	return $unique($map(target, function(el) {
-		if ($is(el, filter)) {
-			return el;
-		}
+    return $unique($map(target, (el) => {
+        if ($is(el, filter)) {
+            return el;
+        }
 
-		while (el !== null) {
-			el = el.parentNode;
+        while (el !== null) {
+            el = el.parentNode;
 
-			if (el === _html || el === document) {
-				return false;
-			}
+            if (el === _html || el === document) {
+                return false;
+            }
 
-			if ($is(el, filter)) {
-				return el;
-			}
-		}
-	}, {
-		context: context
-	}));
+            if ($is(el, filter)) {
+                return el;
+            }
+        }
+    }, {
+        context,
+    }));
 }
 
 /**
@@ -358,16 +347,16 @@ export function $closest(target, filter, context) {
  * @returns {boolean}
  */
 export function $contains(parent, descendant) {
-	let b = false;
+    let b = false;
 
-	$each(parent, function(el) {
-		if ($sel(descendant, el).length) {
-			b = true;
-			return false;
-		}
-	});
+    $each(parent, (el) => {
+        if ($sel(descendant, el).length) {
+            b = true;
+            return false;
+        }
+    });
 
-	return b;
+    return b;
 }
 
 /**
@@ -377,13 +366,13 @@ export function $contains(parent, descendant) {
  * @returns {Array}
  */
 export function $contents(parent) {
-	let arr = [];
+    let arr = [];
 
-	$each(parent, el => {
-		arr = arr.concat(_slice.call(el.childNodes));
-	});
+    $each(parent, (el) => {
+        arr = arr.concat(_slice.call(el.childNodes));
+    });
 
-	return $unique(arr);
+    return $unique(arr);
 }
 
 /**
@@ -396,28 +385,28 @@ export function $contents(parent) {
  * @returns {(string|undefined)}
  */
 export function $css(target, a, b) {
-	let obj = $isObject(a);
+    const obj = $isObject(a);
 
-	if (b !== U || obj) {
-		let func = ! obj && $isFunction(b);
+    if (b !== U || obj) {
+        const func = ! obj && $isFunction(b);
 
-		$each(target, (el, i) => {
-			obj ?
-				Object.keys(a).forEach(key => {
-					el.style[key] = a[key];
-				}) :
-				el.style[a] = func ?
-					$exec(b, {
-						args: [i, el.style[a]],
-						scope: el
-					}) :
-					b;
-		});
-	} else {
-		let el = $sel(target)[0];
+        $each(target, (el, i) => {
+            obj ?
+                Object.keys(a).forEach((key) => {
+                    el.style[key] = a[key];
+                }) :
+                el.style[a] = func ?
+                    $exec(b, {
+                        args: [i, el.style[a]],
+                        scope: el,
+                    }) :
+                    b;
+        });
+    } else {
+        const el = $sel(target)[0];
 
-		return getComputedStyle(el, null)[a];
-	}
+        return getComputedStyle(el, null)[a];
+    }
 }
 
 /**
@@ -430,33 +419,33 @@ export function $css(target, a, b) {
  * @returns {(object|string|undefined)}
  */
 export function $data(target, a, b) {
-	if (a === U) {
-		let el = $sel(target)[0],
-			arr = {};
+    if (a === U) {
+        let el = $sel(target)[0],
+            arr = {};
 
-		_slice.call(el.attributes).forEach(attr => {
-			if (attr.name.substr(0, 5) == 'data-') {
-				arr[_toCamel(attr.name.substr(5))] =
-					_castString(attr.value);
-			}
-		});
+        _slice.call(el.attributes).forEach((attr) => {
+            if (attr.name.substr(0, 5) == 'data-') {
+                arr[_toCamel(attr.name.substr(5))] =
+                    _castString(attr.value);
+            }
+        });
 
-		return arr;
-	}
+        return arr;
+    }
 
-	if ($isObject(a)) {
-		let obj = {};
+    if ($isObject(a)) {
+        const obj = {};
 
-		Object.keys(a).forEach(key => {
-			obj['data-' + _toDashed(key)] = a[key];
-		});
+        Object.keys(a).forEach((key) => {
+            obj[`data-${_toDashed(key)}`] = a[key];
+        });
 
-		a = obj;
-	} else {
-		a = 'data-' + _toDashed(a);
-	}
+        a = obj;
+    } else {
+        a = `data-${_toDashed(a)}`;
+    }
 
-	return _castString($attr(target, a, b));
+    return _castString($attr(target, a, b));
 }
 
 /**
@@ -465,13 +454,13 @@ export function $data(target, a, b) {
  * @param {($|HTMLElement|string)} target
  */
 export function $empty(target) {
-	$each(target, el => {
-		while (el.firstChild) {
-			el.removeChild(el.firstChild);
-		}
+    $each(target, (el) => {
+        while (el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
 
-		$setRef(el);
-	});
+        $setRef(el);
+    });
 }
 
 /**
@@ -483,9 +472,9 @@ export function $empty(target) {
  * @returns {HTMLElement}
  */
 export function $eq(target, index, context) {
-	let el = $sel(target, context);
+    const el = $sel(target, context);
 
-	return el[index < 0 ? el.length + index : index];
+    return el[index < 0 ? el.length + index : index];
 }
 
 /**
@@ -497,18 +486,18 @@ export function $eq(target, index, context) {
  * @returns {Array} elements
  */
 export function $filter(target, filter, options) {
-	let func = $isFunction(filter);
+    const func = $isFunction(filter);
 
-	return $map(target, (el, i) => {
-		let match = func ?
-			$exec(filter, {
-				args: [i, el],
-				scope: el
-			}) :
-			$is(el, filter, options);
+    return $map(target, (el, i) => {
+        const match = func ?
+            $exec(filter, {
+                args: [i, el],
+                scope: el,
+            }) :
+            $is(el, filter, options);
 
-		return match ? el : false;
-	});
+        return match ? el : false;
+    });
 }
 
 /**
@@ -519,13 +508,13 @@ export function $filter(target, filter, options) {
  * @returns {Array} elements
  */
 export function $find(parent, filter) {
-	let arr = [];
+    let arr = [];
 
-	$each(parent, function(el) {
-		arr = arr.concat($sel(filter, el));
-	});
+    $each(parent, (el) => {
+        arr = arr.concat($sel(filter, el));
+    });
 
-	return $unique(arr);
+    return $unique(arr);
 }
 
 /**
@@ -536,7 +525,7 @@ export function $find(parent, filter) {
  * @returns {HTMLElement}
  */
 export function $first(target, context) {
-	return $sel(target, context)[0];
+    return $sel(target, context)[0];
 }
 
 /**
@@ -547,10 +536,8 @@ export function $first(target, context) {
  * @returns {boolean}
  */
 export function $hasClass(target, className) {
-	return $sel(target).some(el => {
-		return new RegExp('(^| )' + className + '($| )', 'gim')
-			.test(_getClass(el));
-	});
+    return $sel(target).some(el => new RegExp(`(^| )${className}($| )`, 'gim')
+        .test(_getClass(el)));
 }
 
 /**
@@ -559,7 +546,7 @@ export function $hasClass(target, className) {
  * @param {($|HTMLElement|string)} target
  */
 export function $hide(target) {
-	$addClass(target, 'js-hide');
+    $addClass(target, 'js-hide');
 }
 
 /**
@@ -570,32 +557,30 @@ export function $hide(target) {
  * @returns {(string|undefined)}
  */
 export function $html(target, value) {
-	if (value === U) {
-		return $sel(target)[0].innerHTML;
-	}
+    if (value === U) {
+        return $sel(target)[0].innerHTML;
+    }
 
-	let func = $isFunction(value);
+    const func = $isFunction(value);
 
-	$each(target, (el, i) => {
-		let html = func ?
-			$exec(value, {
-				args: [el, i, el.innerHTML],
-				scope: el
-			}) :
-			value;
+    $each(target, (el, i) => {
+        const html = func ?
+            $exec(value, {
+                args: [el, i, el.innerHTML],
+                scope: el,
+            }) :
+            value;
 
-		if (html !== false && html !== U) {
-			if (el.nodeName == 'SELECT' && ! _win.atob) {
-				el.outerHTML = el.outerHTML.replace(
-					el.innerHTML + '</s', html + '</s'
-				);
-			} else {
-				el.innerHTML = html;
-			}
+        if (html !== false && html !== U) {
+            if (el.nodeName == 'SELECT' && ! _win.atob) {
+                el.outerHTML = el.outerHTML.replace(`${el.innerHTML}</s`, `${html}</s`);
+            } else {
+                el.innerHTML = html;
+            }
 
-			$setRef(el);
-		}
-	});
+            $setRef(el);
+        }
+    });
 }
 
 /**
@@ -606,21 +591,21 @@ export function $html(target, value) {
  * @returns {number}
  */
 export function $index(target) {
-	let el = $sel(target)[0],
-		i = 0,
-		children;
+    let el = $sel(target)[0],
+        i = 0,
+        children;
 
-	if (! el) {
-		return -1;
-	}
+    if (! el) {
+        return -1;
+    }
 
-	children = _slice.call(el.parentNode.children);
+    children = _slice.call(el.parentNode.children);
 
-	for (; i < children.length; i++) {
-		if (children[i] === el) {
-			return i;
-		}
-	}
+    for (; i < children.length; i++) {
+        if (children[i] === el) {
+            return i;
+        }
+    }
 }
 
 /**
@@ -631,19 +616,19 @@ export function $index(target) {
  * @param {($|HTMLElement|string)} target
  */
 export function $insertAfter(source, target) {
-	$each(target, (el, i) => {
-		let par = el.parentNode;
+    $each(target, (el, i) => {
+        const par = el.parentNode;
 
-		$each(source, cel => {
-			if (i > 0) {
-				cel = $clone(cel)[0];
-			}
+        $each(source, (cel) => {
+            if (i > 0) {
+                cel = $clone(cel)[0];
+            }
 
-			par.insertBefore(cel, el.nextSibling);
+            par.insertBefore(cel, el.nextSibling);
 
-			$setRef(par);
-		});
-	});
+            $setRef(par);
+        });
+    });
 }
 
 /**
@@ -654,11 +639,11 @@ export function $insertAfter(source, target) {
  * @param {($|HTMLElement|string)} target
  */
 export function $insertBefore(source, target) {
-	$each(target, el => {
-		$each(source, cel => {
-			el.parentNode.insertBefore(cel, el);
-		});
-	});
+    $each(target, (el) => {
+        $each(source, (cel) => {
+            el.parentNode.insertBefore(cel, el);
+        });
+    });
 }
 
 /**
@@ -669,45 +654,45 @@ export function $insertBefore(source, target) {
  * @returns {number}
  */
 export function $height(target, value) {
-	let func = value && $isFunction(value),
-		height;
+    let func = value && $isFunction(value),
+        height;
 
-	if (value === U || value === true || func) {
-		let el = $sel(target)[0];
+    if (value === U || value === true || func) {
+        const el = $sel(target)[0];
 
-		if (el === _win) {
-			height = el.innerHeight;
-		} else if (el === _doc) {
-			height = el.documentElement.scrollHeight;
-		} else {
-			height = el.offsetHeight;
+        if (el === _win) {
+            height = el.innerHeight;
+        } else if (el === _doc) {
+            height = el.documentElement.scrollHeight;
+        } else {
+            height = el.offsetHeight;
 
-			if (value === true) {
-				let style = getComputedStyle(el);
-				height += parseFloat(style.marginTop) +
-					parseFloat(style.marginBottom);
-			}
-		}
+            if (value === true) {
+                const style = getComputedStyle(el);
+                height += parseFloat(style.marginTop) +
+                    parseFloat(style.marginBottom);
+            }
+        }
 
-		if (! func) {
-			return height;
-		}
-	}
+        if (! func) {
+            return height;
+        }
+    }
 
-	$each(target, function(el, i) {
-		value = func ?
-			$exec(value, {
-				args: [i, height],
-				scope: el
-			}) :
-			value;
+    $each(target, (el, i) => {
+        value = func ?
+            $exec(value, {
+                args: [i, height],
+                scope: el,
+            }) :
+            value;
 
-		if ($isNumber(value)) {
-			value += 'px';
-		}
+        if ($isNumber(value)) {
+            value += 'px';
+        }
 
-		$css(el, 'height', value);
-	});
+        $css(el, 'height', value);
+    });
 }
 
 /**
@@ -720,40 +705,40 @@ export function $height(target, value) {
  * @returns {boolean}
  */
 export function $is(target, filter, options) {
-	return $map(target, (el, i) => {
-			if ($isString(filter) &&
-				(filter.slice(0, 4) == 'ref:' || filter.slice(0, 1) == ':')) {
-				return $sel(filter).indexOf(el) > -1;
-			}
+    return $map(target, (el, i) => {
+        if ($isString(filter) &&
+                (filter.slice(0, 4) == 'ref:' || filter.slice(0, 1) == ':')) {
+            return $sel(filter).indexOf(el) > -1;
+        }
 
-			if ($isObject(filter)) {
-				for (let key in filter) {
-					if (filter[key] === el) {
-						return true;
-					}
-				}
+        if ($isObject(filter)) {
+            for (const key in filter) {
+                if (filter[key] === el) {
+                    return true;
+                }
+            }
 
-				return false;
-			}
+            return false;
+        }
 
-			if (Array.isArray(filter)) {
-				return filter.indexOf(el) > -1;
-			}
+        if (Array.isArray(filter)) {
+            return filter.indexOf(el) > -1;
+        }
 
-			if ($isFunction(filter)) {
-				return $exec(filter, $extend({
-					args: [i, el],
-					scope: el
-				}, options));
-			}
+        if ($isFunction(filter)) {
+            return $exec(filter, $extend({
+                args: [i, el],
+                scope: el,
+            }, options));
+        }
 
-			return (
-				el.matches ||
-				el.msMatchesSelector ||
-				el.webkitMatchesSelector ||
-				el.mozMatchesSelector
-			).call(el, filter);
-		}).length > 0;
+        return (
+            el.matches ||
+                el.msMatchesSelector ||
+                el.webkitMatchesSelector ||
+                el.mozMatchesSelector
+        ).call(el, filter);
+    }).length > 0;
 }
 
 /**
@@ -764,7 +749,7 @@ export function $is(target, filter, options) {
  * @returns {HTMLElement}
  */
 export function $last(target, context) {
-	return $eq(target, -1, context);
+    return $eq(target, -1, context);
 }
 
 /**
@@ -776,9 +761,7 @@ export function $last(target, context) {
  * @returns {Array} elements
  */
 export function $next(target, filter, options) {
-	return $unique($map(target, el => {
-		return _getSibling(el, 1, filter, options)
-	}));
+    return $unique($map(target, el => _getSibling(el, 1, filter, options)));
 }
 
 /**
@@ -790,16 +773,14 @@ export function $next(target, filter, options) {
  * @returns {Array} elements
  */
 export function $not(target, filter, options) {
-	let func = $isFunction(filter);
+    const func = $isFunction(filter);
 
-	return $map(target, (el, i) => {
-		return (func ?
-			$exec(filter, {
-				args: [i, el],
-				scope: el
-			}) :
-			$is(el, filter, options)) ? false : el;
-	});
+    return $map(target, (el, i) => ((func ?
+        $exec(filter, {
+            args: [i, el],
+            scope: el,
+        }) :
+        $is(el, filter, options)) ? false : el));
 }
 
 /**
@@ -810,36 +791,36 @@ export function $not(target, filter, options) {
  * @returns {{top: number, left: number}}
  */
 export function $offset(target, value) {
-	let rect = $sel(target)[0].getBoundingClientRect(),
-		offset = {
-			top: rect.top + _win.pageYOffset,
-			left: rect.left + _win.pageXOffset
-		};
+    let rect = $sel(target)[0].getBoundingClientRect(),
+        offset = {
+            top: rect.top + _win.pageYOffset,
+            left: rect.left + _win.pageXOffset,
+        };
 
-	if (value) {
-		let func = $isFunction(value);
+    if (value) {
+        const func = $isFunction(value);
 
-		$each(target, (el, i) => {
-			let set = func ?
-				$exec(value, {
-					args: [i, offset],
-					scope: el
-				}) :
-				value;
+        $each(target, (el, i) => {
+            const set = func ?
+                $exec(value, {
+                    args: [i, offset],
+                    scope: el,
+                }) :
+                value;
 
-			if ($isNumber(set.top)) {
-				set.top = set.top + 'px';
-			}
+            if ($isNumber(set.top)) {
+                set.top = `${set.top}px`;
+            }
 
-			if ($isNumber(set.left)) {
-				set.left = set.left + 'px';
-			}
+            if ($isNumber(set.left)) {
+                set.left = `${set.left}px`;
+            }
 
-			$css(el, set);
-		});
-	} else {
-		return offset;
-	}
+            $css(el, set);
+        });
+    } else {
+        return offset;
+    }
 }
 
 /**
@@ -850,10 +831,10 @@ export function $offset(target, value) {
  * @returns {Array} elements
  */
 export function $parent(child, filter) {
-	return $unique($map(child, el => {
-		let parent = el.parentNode;
-		return ! filter || $is(parent, filter) ? parent : false;
-	}));
+    return $unique($map(child, (el) => {
+        const parent = el.parentNode;
+        return ! filter || $is(parent, filter) ? parent : false;
+    }));
 }
 
 /**
@@ -864,12 +845,12 @@ export function $parent(child, filter) {
  * @returns {{top: number, left: number}}
  */
 export function $position(target) {
-	let el = $sel(target)[0];
+    const el = $sel(target)[0];
 
-	return {
-		top: el.offsetTop,
-		left: el.offsetLeft
-	};
+    return {
+        top: el.offsetTop,
+        left: el.offsetLeft,
+    };
 }
 
 /**
@@ -879,28 +860,28 @@ export function $position(target) {
  * @param {($|function|HTMLElement|string)} source
  */
 export function $prepend(target, source) {
-	let func = $isFunction(source);
+    const func = $isFunction(source);
 
-	$each(target, (el, i) => {
-		let pre = func ?
-			$exec(source, {
-				args: [i, el.innerHTML],
-				scope: el
-			}) :
-			source;
+    $each(target, (el, i) => {
+        let pre = func ?
+            $exec(source, {
+                args: [i, el.innerHTML],
+                scope: el,
+            }) :
+            source;
 
-		if ($isString(pre)) {
-			pre = $parseHTML(pre);
-		}
+        if ($isString(pre)) {
+            pre = $parseHTML(pre);
+        }
 
-		if (pre) {
-			$each(pre, cel => {
-				el.insertBefore(cel, el.firstChild);
-			});
+        if (pre) {
+            $each(pre, (cel) => {
+                el.insertBefore(cel, el.firstChild);
+            });
 
-			$setRef(el);
-		}
-	});
+            $setRef(el);
+        }
+    });
 }
 
 /**
@@ -912,9 +893,7 @@ export function $prepend(target, source) {
  * @returns {Array} elements
  */
 export function $prev(target, filter, options) {
-	return $unique($map(target, el => {
-		return _getSibling(el, -1, filter, options);
-	}));
+    return $unique($map(target, el => _getSibling(el, -1, filter, options)));
 }
 
 /**
@@ -927,28 +906,28 @@ export function $prev(target, filter, options) {
  * @returns {*}
  */
 export function $prop(target, a, b) {
-	let obj = $isObject(a);
+    const obj = $isObject(a);
 
-	if (b !== U || obj) {
-		let func = ! obj && $isFunction(b);
+    if (b !== U || obj) {
+        const func = ! obj && $isFunction(b);
 
-		$each(target, (el, i) => {
-			obj ?
-				Object.keys(a).forEach(key => {
-					el[key] = a[key];
-				}) :
-				el[a] = func ?
-					$exec(b, {
-						args: [i, el],
-						scope: el
-					}) :
-					b;
-		});
-	} else {
-		let el = $sel(target)[0];
+        $each(target, (el, i) => {
+            obj ?
+                Object.keys(a).forEach((key) => {
+                    el[key] = a[key];
+                }) :
+                el[a] = func ?
+                    $exec(b, {
+                        args: [i, el],
+                        scope: el,
+                    }) :
+                    b;
+        });
+    } else {
+        const el = $sel(target)[0];
 
-		return el[a];
-	}
+        return el[a];
+    }
 }
 
 /**
@@ -959,23 +938,23 @@ export function $prop(target, a, b) {
  * @returns {Array} elements
  */
 export function $parents(child, filter) {
-	let arr = [];
+    const arr = [];
 
-	$each(child, el => {
-		while (el !== null) {
-			el = el.parentNode;
+    $each(child, (el) => {
+        while (el !== null) {
+            el = el.parentNode;
 
-			if (! filter || (filter && $is(el, filter))) {
-				arr.push(el);
-			}
+            if (! filter || (filter && $is(el, filter))) {
+                arr.push(el);
+            }
 
-			if (el === _html) {
-				return false;
-			}
-		}
-	});
+            if (el === _html) {
+                return false;
+            }
+        }
+    });
 
-	return $unique(arr);
+    return $unique(arr);
 }
 
 /**
@@ -985,21 +964,21 @@ export function $parents(child, filter) {
  * @param {($|HTMLElement|string)} [context=document]
  */
 export function $remove(target, context) {
-	let arr = [];
+    const arr = [];
 
-	$each(target, el => {
-		let par = el.parentNode;
+    $each(target, (el) => {
+        const par = el.parentNode;
 
-		arr.push(el);
+        arr.push(el);
 
-		par.removeChild(el);
+        par.removeChild(el);
 
-		$setRef(par);
-	}, {
-		context: context
-	});
+        $setRef(par);
+    }, {
+        context,
+    });
 
-	return arr;
+    return arr;
 }
 
 /**
@@ -1009,11 +988,11 @@ export function $remove(target, context) {
  * @param {string} name
  */
 export function $removeAttr(target, name) {
-	$each(target, el => {
-		name.split(/\s+/).forEach(value => {
-			el.removeAttribute(value);
-		});
-	});
+    $each(target, (el) => {
+        name.split(/\s+/).forEach((value) => {
+            el.removeAttribute(value);
+        });
+    });
 }
 
 /**
@@ -1023,25 +1002,23 @@ export function $removeAttr(target, name) {
  * @param {(function|string)} value
  */
 export function $removeClass(target, value) {
-	let func = $isFunction(value);
+    const func = $isFunction(value);
 
-	$each(target, (el, i) => {
-		let cn = _getClass(el),
-			name = func ?
-				$exec(value, {
-					args: [i, cn],
-					scope: el
-				}) :
-				value;
+    $each(target, (el, i) => {
+        let cn = _getClass(el),
+            name = func ?
+                $exec(value, {
+                    args: [i, cn],
+                    scope: el,
+                }) :
+                value;
 
-		if (name) {
-			let names = name.split(' ');
+        if (name) {
+            const names = name.split(' ');
 
-			_setClass(el, cn.split(' ').filter(val => {
-				return names.indexOf(val) < 0;
-			}).join(' '));
-		}
-	});
+            _setClass(el, cn.split(' ').filter(val => names.indexOf(val) < 0).join(' '));
+        }
+    });
 }
 
 /**
@@ -1051,7 +1028,7 @@ export function $removeClass(target, value) {
  * @param {($|HTMLElement|string)} source
  */
 export function $replaceWith(target, source) {
-	$after(target, source, true);
+    $after(target, source, true);
 }
 
 /**
@@ -1074,7 +1051,7 @@ export function $scrollLeft(target, value) {
             el.scrollLeft;
     }
 
-    $each(target, function(el) {
+    $each(target, (el) => {
         if (el.nodeType === 9) {
             el = el.defaultView;
         }
@@ -1107,7 +1084,7 @@ export function $scrollTop(target, value) {
             el.scrollTop;
     }
 
-    $each(target, el => {
+    $each(target, (el) => {
         if (el.nodeType === 9) {
             el = el.defaultView;
         }
@@ -1128,47 +1105,47 @@ export function $scrollTop(target, value) {
  * @returns {string}
  */
 export function $serializeForm(target, json) {
-	let el = $sel(target)[0],
-		obj = {},
-		i = 0;
+    let el = $sel(target)[0],
+        obj = {},
+        i = 0;
 
-	if (el.nodeName != 'FORM') {
-		return '';
-	}
+    if (el.nodeName != 'FORM') {
+        return '';
+    }
 
-	for (; i < el.elements.length; i++) {
-		let child = el.elements[i],
-			name = child.name,
-			type = child.type;
+    for (; i < el.elements.length; i++) {
+        let child = el.elements[i],
+            name = child.name,
+            type = child.type;
 
-		if (name && type != 'file' && type != 'reset') {
-			let arr = name.slice(-2) == '[]';
+        if (name && type != 'file' && type != 'reset') {
+            const arr = name.slice(-2) == '[]';
 
-			if (arr) {
-				name = name.slice(0, -2);
-			}
+            if (arr) {
+                name = name.slice(0, -2);
+            }
 
-			if (type == 'select-multiple') {
-				obj[name] = _getSelected(child);
-			} else if (
-				type == 'hidden' && (child.value === 'true' || child.value === 'false')
-			) {
-				obj[name] = child.value === 'true';
-			} else if (
-				type != 'submit' && type != 'button' &&
-				((type != 'checkbox' && type != 'radio') ||
-				child.checked)) {
-				if (arr || (type == 'checkbox' && obj[name])) {
-					obj[name] = $toArray(obj[name]);
-					obj[name].push(child.value);
-				} else {
-					obj[name] = child.value;
-				}
-			}
-		}
-	}
+            if (type == 'select-multiple') {
+                obj[name] = _getSelected(child);
+            } else if (
+                type == 'hidden' && (child.value === 'true' || child.value === 'false')
+            ) {
+                obj[name] = child.value === 'true';
+            } else if (
+                type != 'submit' && type != 'button' &&
+                ((type != 'checkbox' && type != 'radio') ||
+                child.checked)) {
+                if (arr || (type == 'checkbox' && obj[name])) {
+                    obj[name] = $toArray(obj[name]);
+                    obj[name].push(child.value);
+                } else {
+                    obj[name] = child.value;
+                }
+            }
+        }
+    }
 
-	return json ? obj : $serialize(obj);
+    return json ? obj : $serialize(obj);
 }
 
 /**
@@ -1177,7 +1154,7 @@ export function $serializeForm(target, json) {
  * @param {($|HTMLElement|string)} target
  */
 export function $show(target) {
-	$removeClass(target, 'js-hide');
+    $removeClass(target, 'js-hide');
 }
 
 /**
@@ -1188,20 +1165,18 @@ export function $show(target) {
  * @returns {Array} elements
  */
 export function $siblings(target, filter) {
-	let arr = [];
+    let arr = [];
 
-	$each(target, el => {
-		let siblings = _slice.call(el.parentNode.children)
-			.filter(a => a !== el);
+    $each(target, (el) => {
+        const siblings = _slice.call(el.parentNode.children)
+            .filter(a => a !== el);
 
-		arr = arr.concat(
-			filter ?
-				$filter(siblings, filter) :
-				siblings
-		);
-	});
+        arr = arr.concat(filter ?
+            $filter(siblings, filter) :
+            siblings);
+    });
 
-	return $unique(arr);
+    return $unique(arr);
 }
 
 /**
@@ -1213,11 +1188,11 @@ export function $siblings(target, filter) {
  * @returns {Array} elements
  */
 export function $slice(target, start, end) {
-	if (! target._$) {
-		target = _selArray(target);
-	}
+    if (! target._$) {
+        target = _selArray(target);
+    }
 
-	return _slice.call(target, start, end);
+    return _slice.call(target, start, end);
 }
 
 /**
@@ -1228,22 +1203,20 @@ export function $slice(target, start, end) {
  * @returns {string}
  */
 export function $text(target, value) {
-	if (value === U) {
-		return $map(target, el => {
-			return el.textContent.trim();
-		}).join('');
-	}
+    if (value === U) {
+        return $map(target, el => el.textContent.trim()).join('');
+    }
 
-	let func = $isFunction(value);
+    const func = $isFunction(value);
 
-	$each(target, (el, i) => {
-		el.textContent = func ?
-			$exec(value, {
-				args: [i, el.textContent.trim()],
-				scope: el
-			}) :
-			value;
-	});
+    $each(target, (el, i) => {
+        el.textContent = func ?
+            $exec(value, {
+                args: [i, el.textContent.trim()],
+                scope: el,
+            }) :
+            value;
+    });
 }
 
 /**
@@ -1252,11 +1225,11 @@ export function $text(target, value) {
  * @param {($|HTMLElement|string)} target
  */
 export function $toggle(target) {
-	$each(target, el => {
-		! $hasClass(el, 'js-hide') ?
-			$hide(el) :
-			$show(el);
-	});
+    $each(target, (el) => {
+        ! $hasClass(el, 'js-hide') ?
+            $hide(el) :
+            $show(el);
+    });
 }
 
 /**
@@ -1267,25 +1240,25 @@ export function $toggle(target) {
  * @param {boolean} [state]
  */
 export function $toggleClass(target, className, state) {
-	let func = $isFunction(className);
+    const func = $isFunction(className);
 
-	$each(target, (el, i) => {
-		if (func) {
-			className = $exec(className, {
-				args: [i, _getClass(el), state],
-				scope: el
-			});
-		}
+    $each(target, (el, i) => {
+        if (func) {
+            className = $exec(className, {
+                args: [i, _getClass(el), state],
+                scope: el,
+            });
+        }
 
-		if (className) {
-			className.split(/\s+/).forEach(value => {
-				state === false ||
-				(state === U && $hasClass(el, value)) ?
-					$removeClass(el, value) :
-					$addClass(el, value);
-			});
-		}
-	});
+        if (className) {
+            className.split(/\s+/).forEach((value) => {
+                state === false ||
+                (state === U && $hasClass(el, value)) ?
+                    $removeClass(el, value) :
+                    $addClass(el, value);
+            });
+        }
+    });
 }
 
 /**
@@ -1296,36 +1269,36 @@ export function $toggleClass(target, className, state) {
  * @returns {(Array|string)}
  */
 export function $val(target, value) {
-	if (value === U) {
-		let el = $sel(target)[0];
+    if (value === U) {
+        const el = $sel(target)[0];
 
-		if (el.type == 'select-multiple') {
-			return _getSelected(el);
-		}
+        if (el.type == 'select-multiple') {
+            return _getSelected(el);
+        }
 
-		return el.value;
-	}
+        return el.value;
+    }
 
-	let func = $isFunction(value);
+    const func = $isFunction(value);
 
-	$each(target, (el, i) => {
-		if (el.type == 'select-multiple') {
-			value = $toArray(value);
+    $each(target, (el, i) => {
+        if (el.type == 'select-multiple') {
+            value = $toArray(value);
 
-			_slice.call(el.options).forEach(a => {
-				if (value.indexOf(a.value) > -1) {
-					a.selected = true;
-				}
-			});
-		} else {
-			el.value = func ?
-				$exec(value, {
-					args: [i, el.value],
-					scope: el
-				}) :
-				value;
-		}
-	});
+            _slice.call(el.options).forEach((a) => {
+                if (value.indexOf(a.value) > -1) {
+                    a.selected = true;
+                }
+            });
+        } else {
+            el.value = func ?
+                $exec(value, {
+                    args: [i, el.value],
+                    scope: el,
+                }) :
+                value;
+        }
+    });
 }
 
 /**
@@ -1336,45 +1309,45 @@ export function $val(target, value) {
  * @returns {number}
  */
 export function $width(target, value) {
-	let func = value && $isFunction(value),
-		width;
+    let func = value && $isFunction(value),
+        width;
 
-	if (value === U || value === true || func) {
-		let el = $sel(target)[0];
+    if (value === U || value === true || func) {
+        const el = $sel(target)[0];
 
-		if (el === _win) {
-			width = el.innerWidth;
-		} else if (el === _doc) {
-			width = el.documentElement.scrollWidth;
-		} else {
-			width = el.offsetWidth;
+        if (el === _win) {
+            width = el.innerWidth;
+        } else if (el === _doc) {
+            width = el.documentElement.scrollWidth;
+        } else {
+            width = el.offsetWidth;
 
-			if (value === true) {
-				let style = getComputedStyle(el);
-				width += parseFloat(style.marginLeft) +
-					parseFloat(style.marginRight);
-			}
-		}
+            if (value === true) {
+                const style = getComputedStyle(el);
+                width += parseFloat(style.marginLeft) +
+                    parseFloat(style.marginRight);
+            }
+        }
 
-		if (! func) {
-			return width;
-		}
-	}
+        if (! func) {
+            return width;
+        }
+    }
 
-	$each(target, (el, i) => {
-		value = func ?
-			$exec(value, {
-				args: [i, width],
-				scope: el
-			}) :
-			value;
+    $each(target, (el, i) => {
+        value = func ?
+            $exec(value, {
+                args: [i, width],
+                scope: el,
+            }) :
+            value;
 
-		if (typeof value == 'number') {
-			value += 'px';
-		}
+        if (typeof value === 'number') {
+            value += 'px';
+        }
 
-		$css(el, 'width', value);
-	});
+        $css(el, 'width', value);
+    });
 }
 
 /**
@@ -1384,31 +1357,29 @@ export function $width(target, value) {
  * @param {(function|string)} html
  */
 export function $wrap(target, html) {
-	let func = $isFunction(html);
+    const func = $isFunction(html);
 
-	$each(target, (el, i) => {
-		let wrap = $sel(
-			func ?
-				$exec(html, {
-					args: i,
-					scope: el
-				}) :
-				html
-		);
+    $each(target, (el, i) => {
+        const wrap = $sel(func ?
+            $exec(html, {
+                args: i,
+                scope: el,
+            }) :
+            html);
 
-		if (wrap) {
-			let par = el.parentNode;
+        if (wrap) {
+            const par = el.parentNode;
 
-			$each(wrap, cel => {
-				cel = cel.cloneNode(true);
+            $each(wrap, (cel) => {
+                cel = cel.cloneNode(true);
 
-				par.insertBefore(cel, el);
-				cel.appendChild(el);
+                par.insertBefore(cel, el);
+                cel.appendChild(el);
 
-				$setRef(par);
-			});
-		}
-	});
+                $setRef(par);
+            });
+        }
+    });
 }
 
 /**
@@ -1418,32 +1389,32 @@ export function $wrap(target, html) {
  * @param {(function|string)} html
  */
 export function $wrapInner(target, html) {
-	let func = $isFunction(html);
+    const func = $isFunction(html);
 
-	$each(target, (el, i) => {
-		let markup = func ?
-				$exec(html, {
-					args: i,
-					scope: el
-				}) :
-				html,
-			wrap = markup ? $sel(markup)[0] : null;
+    $each(target, (el, i) => {
+        let markup = func ?
+                $exec(html, {
+                    args: i,
+                    scope: el,
+                }) :
+                html,
+            wrap = markup ? $sel(markup)[0] : null;
 
-		if (wrap) {
-			let children = $children(el);
+        if (wrap) {
+            let children = $children(el);
 
-			if (! children.length) {
-				children = $html(el);
+            if (! children.length) {
+                children = $html(el);
 
-				$empty(el);
-				$html(wrap, children);
-			} else {
-				$each(children, cel => {
-					wrap.appendChild(cel);
-				});
-			}
+                $empty(el);
+                $html(wrap, children);
+            } else {
+                $each(children, (cel) => {
+                    wrap.appendChild(cel);
+                });
+            }
 
-			$append(el, wrap);
-		}
-	});
+            $append(el, wrap);
+        }
+    });
 }
