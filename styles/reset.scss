@@ -5,7 +5,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-@if ($minWidth != 0 or $minWidth != false) {
+@if ($minWidth != 0 and $minWidth != false) {
     html,
     body {
         min-width: $minWidth;
@@ -74,7 +74,12 @@ figure {
         @include rounded($defaultRadius);
     }
 
-    border: 1px solid $figureBorderColor;
+    @if ($figureBorderColor != false) {
+    	border: 1px solid $figureBorderColor;
+    } @else {
+    	border: none;
+    }
+
     padding: $figurePadding;
     position: relative;
     text-align: center;
