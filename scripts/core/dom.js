@@ -49,95 +49,91 @@ export function _selArray(selector, options) {
  * @returns {Array} elements
  */
 export function $sel(selector, context) {
-	let el = null,
-		ref = [];
+    let el = null,
+        ref = [];
 
-	if (typeof selector !== 'string') {
-		el = selector;
-	} else {
-		if (selector === 'window') {
-			return [_win];
-		}
+    if (typeof selector !== 'string') {
+        el = selector;
+    } else {
+        if (selector === 'window') {
+            return [_win];
+        }
 
-		if (selector === 'document') {
-			return [_doc];
-		}
+        if (selector === 'document') {
+            return [_doc];
+        }
 
-		// Return nothing if context doesn't exist
-		context = context !== U ? $sel(context)[0] : _doc;
+        // Return nothing if context doesn't exist
+        context = context !== U ? $sel(context)[0] : _doc;
 
-		if (! context) {
-			return ref;
-		}
+        if (!context) {
+            return ref;
+        }
 
-		// Check for pre-cached elements
-		if (selector.indexOf(':') === 0 || selector.indexOf('ref:') > -1) {
-			let split = selector.split(',').filter(function(sel) {
-				sel = sel.trim();
+        // Check for pre-cached elements
+        if (selector.indexOf(':') > -1) {
+            let split = selector.split(',').filter((sel) => {
+                sel = sel.trim().split(':');
 
-				if (sel.slice(0, 1) === ':') {
-					sel = sel.slice(1);
-				} else if (sel.slice(0, 4) === 'ref:') {
-					sel = sel.slice(4);
-				} else {
-					return true;
-				}
+                if (refs[sel[0]] !== U) {
+                    sel = refs[sel[0]][sel[1]];
+                } else {
+                    return true;
+                }
 
-				sel = refs[sel];
+                // Apply context filter if not document
+                if (sel) {
+                    ref = ref.concat(
+                        context === _doc ?
+                            sel :
+                            sel.filter((el) => {
+                                return _contains(context, el);
+                            })
+                    );
+                }
 
-				// Apply context filter if not document
-				if (sel) {
-					ref = ref.concat(
-						context === _doc ?
-							sel :
-							sel.filter(function(el) {
-								return _contains(context, el);
-							})
-					);
-				}
+                return false;
+            });
 
-				return false;
-			});
+            if (split.length) {
+                selector = split.join(',');
+            } else {
+                return ref;
+            }
+        }
 
-			if (split.length) {
-				selector = split.join(',');
-			} else {
-				return ref;
-			}
-		}
+        // Use third-party selector engine if defined
+        if (_win.WeeSelector !== U) {
+            el = _win.WeeSelector(selector, context);
+        } else if (/^[#.]?[\w-]+$/.test(selector)) {
+            let pre = selector[0];
 
-		// Use third-party selector engine if defined
-		if (_win.WeeSelector !== U) {
-			el = _win.WeeSelector(selector, context);
-		} else if (/^[#.]?[\w-]+$/.test(selector)) {
-			let pre = selector[0];
+            if (pre == '#') {
+                el = _doc.getElementById(selector.substr(1));
+            } else if (pre == '.') {
+                el = context.getElementsByClassName(selector.substr(1));
+            } else {
+                el = context.getElementsByTagName(selector);
+            }
+        } else {
+            try {
+                el = context.querySelectorAll(selector);
+            } catch (e) {
+                el = $parseHTML(selector).childNodes;
+            }
+        }
+    }
 
-			if (pre == '#') {
-				el = _doc.getElementById(selector.substr(1));
-			} else if (pre == '.') {
-				el = context.getElementsByClassName(selector.substr(1));
-			} else {
-				el = context.getElementsByTagName(selector);
-			}
-		} else {
-			try {
-				el = context.querySelectorAll(selector);
-			} catch (e) {
-				el = $parseHTML(selector).childNodes;
-			}
-		}
-	}
+    if (!el) {
+        el = ref;
+    } else if (el.nodeType !== U || el === _win) {
+        el = [el];
+    } else {
+        el = _slice.call(el);
+    }
 
-	if (! el) {
-		el = ref;
-	} else if (el.nodeType !== U || el === _win) {
-		el = [el];
-	} else {
-		el = _slice.call(el);
-	}
-
-	// Join references if available
-	return ref.length ? el.concat(ref) : el;
+    // Join references if available
+    return ref.length ? el.concat(ref) : el;
 }
 
 /**
@@ -152,29 +148,29 @@ export function $sel(selector, context) {
  * @param {Object} [options.scope]
  */
 export function $each(target, fn, options) {
-	if (target) {
-		let conf = _extend({
-				args: []
-			}, options),
-			els = _selArray(target, conf),
-			i = 0;
+    if (target) {
+        let conf = _extend({
+            args: []
+        }, options),
+            els = _selArray(target, conf),
+            i = 0;
 
-		if (conf.reverse && ! els._$) {
-			els = els.reverse();
-		}
+        if (conf.reverse && !els._$) {
+            els = els.reverse();
+        }
 
-		for (; i < els.length; i++) {
-			let el = els[i],
-				val = $exec(fn, {
-					args: [el, i].concat(conf.args),
-					scope: conf.scope || el
-				});
+        for (; i < els.length; i++) {
+            let el = els[i],
+                val = $exec(fn, {
+                    args: [el, i].concat(conf.args),
+                    scope: conf.scope || el
+                });
 
-			if (val === false) {
-				return;
-			}
-		}
-	}
+            if (val === false) {
+                return;
+            }
+        }
+    }
 }
 
 /**
@@ -188,29 +184,29 @@ export function $each(target, fn, options) {
  * @returns {Array}
  */
 export function $map(target, fn, options) {
-	if (! Array.isArray(target)) {
-		target = _selArray(target, options);
-	}
+    if (!Array.isArray(target)) {
+        target = _selArray(target, options);
+    }
 
-	let conf = _extend({
-			args: []
-		}, options),
-		res = [],
-		i = 0;
+    let conf = _extend({
+        args: []
+    }, options),
+        res = [],
+        i = 0;
 
-	for (; i < target.length; i++) {
-		let el = target[i],
-			val = $exec(fn, {
-				args: [el, i].concat(conf.args),
-				scope: conf.scope || el
-			});
+    for (; i < target.length; i++) {
+        let el = target[i],
+            val = $exec(fn, {
+                args: [el, i].concat(conf.args),
+                scope: conf.scope || el
+            });
 
-		if (val !== false) {
-			res.push(val);
-		}
-	}
+        if (val !== false) {
+            res.push(val);
+        }
+    }
 
-	return res;
+    return res;
 }
 
 /**
@@ -222,10 +218,10 @@ export function $map(target, fn, options) {
 export function $parseHTML(html) {
 	html = html.trim();
 
-	if (! range) {
-		range = _doc.createRange();
-		range.selectNode(_body);
-	}
+	if (!range) {
+        range = _doc.createRange();
+        range.selectNode(_body);
+    }
 
 	return range.createContextualFragment(html);
 }
@@ -265,28 +261,30 @@ export function $ready() {
  * @param {(HTMLElement|string)} [context=document]
  */
 export function $setRef(context) {
-	context = context ? $sel(context)[0] : _doc;
+    context = context ? $sel(context)[0] : _doc;
 
-	// Clear existing refs if reset
-	Object.keys(refs).forEach(function(val) {
-		refs[val] = refs[val].filter(function(el) {
-			return ! (
-				! _contains(_doc, el) ||
-				(_contains(context, el) && context !== el)
-			);
-		});
-	});
+    // Clear existing refs if reset
+    Object.keys(refs).forEach((ref) => {
+        Object.keys(refs[ref]).forEach((val) => {
+            refs[ref][val] = refs[ref][val].filter((el) => {
+                return !(
+                    !_contains(_doc, el) ||
+                    (_contains(context, el) && context !== el)
+                );
+            });
+        });
+    });
 
-	// Set refs from DOM
-	$each('[data-ref]', function(el) {
-		el.getAttribute('data-ref').split(/\s+/)
-			.forEach(function(val) {
-				refs[val] = refs[val] || [];
-				refs[val].push(el);
-			});
-	}, {
-		context: context
-	});
+    // Set refs from DOM
+    $each('*', (el) => {
+        Object.keys(el.dataset).forEach(key => {
+            refs[key] = refs[key] || {};
+            refs[key][el.dataset[key]] = refs[key][el.dataset[key]] || [];
+            refs[key][el.dataset[key]].push(el);
+        });
+    }, {
+        context: context,
+    });
 }
 
 /**
@@ -296,7 +294,7 @@ export function $setRef(context) {
  * @returns {Array} unique values
  */
 export function $unique(array) {
-	return array.reverse().filter((el, i, arr) => {
-		return arr.indexOf(el, i + 1) < 0;
-	}).reverse();
+    return array.reverse().filter((el, i, arr) => {
+        return arr.indexOf(el, i + 1) < 0;
+    }).reverse();
 }
