@@ -4,7 +4,7 @@ import { $exec } from './core';
 import { _extend, _slice, $toArray } from './types';
 
 let range;
-const refs = {};
+let refs = {};
 
 /**
  * Check if a node contains another node
@@ -15,8 +15,8 @@ const refs = {};
  * @returns {boolean} match
  */
 function _contains(source, target) {
-    return (source === _doc ? _html : source)
-        .contains(target);
+	return (source === _doc ? _html : source)
+		.contains(target);
 }
 
 /**
@@ -28,17 +28,17 @@ function _contains(source, target) {
  * @returns {($|Array)} nodes
  */
 export function _selArray(selector, options) {
-    if (selector && selector._$) {
-        return selector;
-    }
+	if (selector && selector._$) {
+		return selector;
+	}
 
-    options = options || {};
+	options = options || {};
 
-    const el = typeof selector === 'string' ?
-        $sel(selector, options.context) :
-        selector;
+	let el = typeof selector == 'string' ?
+		$sel(selector, options.context) :
+		selector;
 
-    return $toArray(el);
+	return $toArray(el);
 }
 
 /**
@@ -66,30 +66,30 @@ export function $sel(selector, context) {
         // Return nothing if context doesn't exist
         context = context !== U ? $sel(context)[0] : _doc;
 
-        if (! context) {
+        if (!context) {
             return ref;
         }
 
         // Check for pre-cached elements
-        if (selector.indexOf(':') === 0 || selector.indexOf('ref:') > -1) {
-            const split = selector.split(',').filter((sel) => {
-                sel = sel.trim();
+        if (selector.indexOf(':') > -1) {
+            let split = selector.split(',').filter((sel) => {
+                sel = sel.trim().split(':');
 
-                if (sel.slice(0, 1) === ':') {
-                    sel = sel.slice(1);
-                } else if (sel.slice(0, 4) === 'ref:') {
-                    sel = sel.slice(4);
+                if (refs[sel[0]] !== U) {
+                    sel = refs[sel[0]][sel[1]];
                 } else {
                     return true;
                 }
 
-                sel = refs[sel];
-
                 // Apply context filter if not document
                 if (sel) {
-                    ref = ref.concat(context === _doc ?
-                        sel :
-                        sel.filter(el => _contains(context, el)));
+                    ref = ref.concat(
+                        context === _doc ?
+                            sel :
+                            sel.filter((el) => {
+                                return _contains(context, el);
+                            })
+                    );
                 }
 
                 return false;
@@ -106,7 +106,7 @@ export function $sel(selector, context) {
         if (_win.WeeSelector !== U) {
             el = _win.WeeSelector(selector, context);
         } else if (/^[#.]?[\w-]+$/.test(selector)) {
-            const pre = selector[0];
+            let pre = selector[0];
 
             if (pre == '#') {
                 el = _doc.getElementById(selector.substr(1));
@@ -124,7 +124,7 @@ export function $sel(selector, context) {
         }
     }
 
-    if (! el) {
+    if (!el) {
         el = ref;
     } else if (el.nodeType !== U || el === _win) {
         el = [el];
@@ -150,12 +150,12 @@ export function $sel(selector, context) {
 export function $each(target, fn, options) {
     if (target) {
         let conf = _extend({
-                args: [],
-            }, options),
+            args: []
+        }, options),
             els = _selArray(target, conf),
             i = 0;
 
-        if (conf.reverse && ! els._$) {
+        if (conf.reverse && !els._$) {
             els = els.reverse();
         }
 
@@ -163,7 +163,7 @@ export function $each(target, fn, options) {
             let el = els[i],
                 val = $exec(fn, {
                     args: [el, i].concat(conf.args),
-                    scope: conf.scope || el,
+                    scope: conf.scope || el
                 });
 
             if (val === false) {
@@ -184,13 +184,13 @@ export function $each(target, fn, options) {
  * @returns {Array}
  */
 export function $map(target, fn, options) {
-    if (! Array.isArray(target)) {
+    if (!Array.isArray(target)) {
         target = _selArray(target, options);
     }
 
     let conf = _extend({
-            args: [],
-        }, options),
+        args: []
+    }, options),
         res = [],
         i = 0;
 
@@ -198,7 +198,7 @@ export function $map(target, fn, options) {
         let el = target[i],
             val = $exec(fn, {
                 args: [el, i].concat(conf.args),
-                scope: conf.scope || el,
+                scope: conf.scope || el
             });
 
         if (val !== false) {
@@ -216,14 +216,14 @@ export function $map(target, fn, options) {
  * @returns {HTMLElement} element
  */
 export function $parseHTML(html) {
-    html = html.trim();
+	html = html.trim();
 
-    if (! range) {
+	if (!range) {
         range = _doc.createRange();
         range.selectNode(_body);
     }
 
-    return range.createContextualFragment(html);
+	return range.createContextualFragment(html);
 }
 
 /**
@@ -237,22 +237,22 @@ export function $parseHTML(html) {
 * @param {(Array|function|string)} fn
 */
 export function $ready() {
-    return new Promise((resolve) => {
-        let doc = _doc;
+	return new Promise((resolve) => {
+		let doc = _doc;
 
-        // This is for testing only
-        if (this && this.readyState) {
-            doc = this;
-        }
+		// This is for testing only
+		if (this && this.readyState) {
+			doc = this;
+		}
 
-        if (doc.readyState === 'complete') {
-            resolve();
-        } else {
-            doc.addEventListener('DOMContentLoaded', () => {
-                resolve();
-            });
-        }
-    });
+		if (doc.readyState === 'complete') {
+			resolve();
+		} else {
+			doc.addEventListener('DOMContentLoaded', () => {
+				resolve();
+			});
+		}
+	});
 }
 
 /**
@@ -264,22 +264,26 @@ export function $setRef(context) {
     context = context ? $sel(context)[0] : _doc;
 
     // Clear existing refs if reset
-    Object.keys(refs).forEach((val) => {
-        refs[val] = refs[val].filter(el => ! (
-            ! _contains(_doc, el) ||
-                (_contains(context, el) && context !== el)
-        ));
+    Object.keys(refs).forEach((ref) => {
+        Object.keys(refs[ref]).forEach((val) => {
+            refs[ref][val] = refs[ref][val].filter((el) => {
+                return !(
+                    !_contains(_doc, el) ||
+                    (_contains(context, el) && context !== el)
+                );
+            });
+        });
     });
 
     // Set refs from DOM
-    $each('[data-ref]', (el) => {
-        el.getAttribute('data-ref').split(/\s+/)
-            .forEach((val) => {
-                refs[val] = refs[val] || [];
-                refs[val].push(el);
-            });
+    $each('*', (el) => {
+        Object.keys(el.dataset).forEach(key => {
+            refs[key] = refs[key] || {};
+            refs[key][el.dataset[key]] = refs[key][el.dataset[key]] || [];
+            refs[key][el.dataset[key]].push(el);
+        });
     }, {
-        context,
+        context: context,
     });
 }
 
@@ -290,5 +294,7 @@ export function $setRef(context) {
  * @returns {Array} unique values
  */
 export function $unique(array) {
-    return array.reverse().filter((el, i, arr) => arr.indexOf(el, i + 1) < 0).reverse();
+    return array.reverse().filter((el, i, arr) => {
+        return arr.indexOf(el, i + 1) < 0;
+    }).reverse();
 }

@@ -82,12 +82,6 @@ describe('Core: DOM', () => {
 			window.WeeSelector = U;
 		});
 
-		it('should be able to select with ref shorthand syntax', () => {
-			$setRef();
-			expect($sel(':testRef').length).to.equal(1);
-			expect($sel(':testRef')[0].innerText).to.equal('test');
-		});
-
 		it('should identify shorthand ref syntax based on specific position of colon', () => {
 			$setRef();
 			expect($sel('10:10')[0].textContent).to.equal('10:10');

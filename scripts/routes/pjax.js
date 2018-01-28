@@ -11,26 +11,26 @@ import { warn } from 'core/warn';
 import { parseLocation } from './location';
 import { $setVar } from 'wee-store';
 
-const defaults = {
-    action: 'replace',
-    bind: {
-        click: 'a',
-    },
-    context: 'document',
-    fetch: $fetch.create(),
-    partials: ['title', 'main'],
-    request: {
-        method: 'get',
-        responseType: 'text',
-        headers: {
-            'X-PJAX': 'true',
-        },
-    },
-    replace: null,
+let defaults = {
+	action: 'replace',
+	bind: {
+		click: 'a'
+	},
+	context: 'document',
+	fetch: $fetch.create(),
+	partials: ['title', 'main'],
+	request: {
+		method: 'get',
+		responseType: 'text',
+		headers: {
+			'X-PJAX': 'true'
+		}
+	},
+	replace: null
 };
 const overrideDefaults = {
-    partials: false,
-    requestCount: 0,
+	partials: false,
+	requestCount: 0
 };
 let overrides = $copy(overrideDefaults);
 export let settings = $copy(defaults);
@@ -46,28 +46,28 @@ let paused = false;
  * @private
  */
 function _isValid(el, currentPath) {
-    // Link has no destination URL
-    if (! el.href) { return false; }
+	// Link has no destination URL
+	if (! el.href) { return false; }
 
-    // Link opens a new browser window
-    if (el.target === '_blank') { return false; }
+	// Link opens a new browser window
+	if (el.target === '_blank') { return false; }
 
-    // Link is not absolute URL
-    if (! /https?:/.test(el.href)) { return false; }
+	// Link is not absolute URL
+	if (! /https?:/.test(el.href)) { return false; }
 
-    // Link is a download
-    if (el.hasAttribute('download')) { return false; }
+	// Link is a download
+	if (el.hasAttribute('download')) { return false; }
 
-    // Link is supposed to be ignored
-    if (el.hasAttribute('data-static')) { return false; }
+	// Link is supposed to be ignored
+	if (el.hasAttribute('data-static')) { return false; }
 
-    // Link is external URL
-    if (el.host && el.host !== location.host) { return false; }
+	// Link is external URL
+	if (el.host && el.host !== location.host) { return false; }
 
-    // Link is current page, but with a hash added
-    if (el.hash && el.pathname === currentPath) { return false; }
+	// Link is current page, but with a hash added
+	if (el.hash && el.pathname === currentPath) { return false; }
 
-    return true;
+	return true;
 }
 
 /**
@@ -78,8 +78,8 @@ function _isValid(el, currentPath) {
  * @returns {string}
  */
 function _path(loc) {
-    loc = loc || location;
-    return loc.pathname + loc.search + loc.hash;
+	loc = loc || location;
+	return loc.pathname + loc.search + loc.hash;
 }
 
 /**
@@ -89,11 +89,11 @@ function _path(loc) {
  * @param sel
  */
 function _reset(sel) {
-    response = null;
-    $setRef(sel);
-    $setVar(sel);
+	response = null;
+	$setRef(sel);
+	$setVar(sel);
 
-    pjax.bind(sel);
+	pjax.bind(sel);
 }
 
 const pjax = {
@@ -129,7 +129,7 @@ const pjax = {
 
                     // Retrieve data-url off of element
                     // Used if element is not <a> tag
-                    const loc = el.getAttribute('data-url');
+                    const loc = el.dataset.url;
                     let destination = el;
 
                     // Create <a> tag for validation of URL

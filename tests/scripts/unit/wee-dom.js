@@ -175,7 +175,7 @@ describe('DOM', () => {
 			});
 
 			expect($el[0].id).to.equal('multiAttr');
-			expect($el[0].getAttribute('data-index')).to.equal('1');
+			expect($el[0].dataset.index).to.equal('1');
 		});
 	});
 
@@ -375,7 +375,7 @@ describe('DOM', () => {
 
 			$('.child').each(el => {
 				count++;
-				expect(el.getAttribute('data-type')).to.equal('child');
+				expect(el.dataset.type).to.equal('child');
 			});
 
 			expect(count).to.equal(3);
@@ -392,8 +392,8 @@ describe('DOM', () => {
 			});
 
 			$('.parent').each(el => {
-				expect(el.getAttribute('data-type')).to.equal('parent');
-				expect(el.getAttribute('data-id')).to.equal('1');
+				expect(el.dataset.type).to.equal('parent');
+				expect(el.dataset.id).to.equal('1');
 			});
 		});
 
@@ -666,7 +666,7 @@ describe('DOM', () => {
 
 		it('should accept function as criteria', () => {
 			expect($('.child').is((i, el) => {
-				return el.getAttribute('data-ref') === 'last';
+				return el.dataset.ref === 'last';
 			})).to.be.true;
 		});
 	});
@@ -900,7 +900,7 @@ describe('DOM', () => {
 		it('should remove specified attribute from selection', () => {
 			$('.test').removeAttr('data-ref');
 
-			expect($('.test')[0].getAttribute('data-ref')).to.equal(null);
+			expect($('.test')[0].dataset.ref).to.equal(undefined);
 		});
 	});
 
