@@ -1,132 +1,134 @@
 .form {
-	margin-bottom: $blockMarginBottom;
+    margin-bottom: $blockMarginBottom;
 }
 .fieldset {
-	border: 0;
-	margin-bottom: $blockMarginBottom;
+    border: 0;
+    margin-bottom: $blockMarginBottom;
 }
 .legend {
-	@include font($legendFont, $legendFontSize, $baseLineHeight);
-
-	display: block;
-	border: 0;
-	color: $legendColor;
-	margin-bottom: $legendMarginBottom;
+    @include font($legendFont, $legendFontSize, $baseLineHeight);
+    border: 0;
+    color: $legendColor;
+    display: block;
+    margin-bottom: $legendMarginBottom;
 }
 .label {
-	display: block;
-	font-weight: $labelFontWeight;
-	line-height: $labelLineHeight;
-	margin-bottom: $labelMarginBottom;
-	margin-right: $labelMarginRight;
+    display: block;
+    font-weight: $labelFontWeight;
+    line-height: $labelLineHeight;
+    margin-bottom: $labelMarginBottom;
+    margin-right: $labelMarginRight;
 }
 .input,
 .select,
 .textarea {
-	@include font($inputFont, $inputFontSize, $inputFontWeight);
-	@include rounded($defaultRadius);
+    @include font($inputFont, $inputFontSize, $inputFontWeight);
 
-	background-color: $inputBackground;
-	background-clip: border-box;
-	border: $inputBorderWidth solid $inputBorderColor;
-	color: $inputColor;
-	margin: 0 0 $inputMarginBottom 0;
-	min-height: $inputMinHeight;
-	min-width: $inputMinWidth;
-	outline: 0;
-	padding: $inputPaddingVertical $inputPaddingHorizontal;
-	width: 100%;
-	&:hover {
-		border-color: $inputBorderColorHover;
-	}
-	&:focus {
-		border-color: $inputBorderColorFocus;
-		&:required {
-			&:invalid {
-				background-color: $inputBackgroundInvalid;
-				border-color: $inputBorderColorInvalid;
-				color: $inputColorInvalid;
-			}
-		}
-	}
-	&:invalid {
-		background-color: $inputBackgroundInvalid;
-		border: $inputBorderWidth solid $inputBorderColorInvalid;
-		color: $inputColorInvalid;
-		&:hover {
-			border-color: $inputBorderColorInvalidHover;
-		}
-		&:focus {
-			border-color: $inputBorderColorInvalidFocus;
-		}
-	}
-	&:required {
-		background-color: $inputBackgroundRequired;
-		border: $inputBorderWidthRequired solid $inputBorderColorRequired;
-		color: $inputColorRequired;
-		&:hover {
-			border-color: $inputBorderColorRequiredHover;
-		}
-		&:focus {
-			border-color: $inputBorderColorRequiredFocus
-		}
-	}
+    @if ($inputRounded) {
+        @include rounded($inputRounded);
+    }
+
+    background-clip: border-box;
+    background-color: $inputBackground;
+    border: $inputBorderWidth solid $inputBorderColor;
+    color: $inputColor;
+    margin: 0 0 $inputMarginBottom 0;
+    min-height: $inputMinHeight;
+    min-width: $inputMinWidth;
+    outline: 0;
+    padding: $inputPaddingVertical $inputPaddingHorizontal;
+    width: 100%;
+    &:hover {
+        border-color: $inputBorderColorHover;
+    }
+    &:focus {
+        border-color: $inputBorderColorFocus;
+        &:required {
+            &:invalid {
+                background-color: $inputBackgroundInvalid;
+                border-color: $inputBorderColorInvalid;
+                color: $inputColorInvalid;
+            }
+        }
+    }
+    &:invalid {
+        background-color: $inputBackgroundInvalid;
+        border: $inputBorderWidth solid $inputBorderColorInvalid;
+        color: $inputColorInvalid;
+        &:hover {
+            border-color: $inputBorderColorInvalidHover;
+        }
+        &:focus {
+            border-color: $inputBorderColorInvalidFocus;
+        }
+    }
+    &:required {
+        background-color: $inputBackgroundRequired;
+        border: $inputBorderWidthRequired solid $inputBorderColorRequired;
+        color: $inputColorRequired;
+        &:hover {
+            border-color: $inputBorderColorRequiredHover;
+        }
+        &:focus {
+            border-color: $inputBorderColorRequiredFocus
+        }
+    }
 }
 .input {
-	@include placeholder {
-		color: $inputPlaceholderColor
-	};
+    @include placeholder {
+        color: $inputPlaceholderColor
+    };
 
-	&::-moz-focus-inner {
-		border: 0;
-		padding: 0;
-	}
-	&[disabled],
-	&.#{$inputDisabledModifier} {
-		@if ($inputBorderWidthDisabled == false) {
-			border: none;
-		} @else {
-			border-width: $inputBorderWidthDisabled;
-		}
-		background-color: $inputBackgroundDisabled;
-		color: $inputColorDisabled;
-		cursor: $inputDisabledCursor;
-	}
-	&.-search {
-		-webkit-appearance: textfield;
-		&::-webkit-search-decoration,
-		&::-webkit-search-cancel-button {
-			display: none;
-			-webkit-appearance: none;
-		}
-	}
-	&.-checkbox,
-	&.-radio {
-		padding: 0;
-		margin-bottom: $checkboxMarginBottom;
-		margin-right: $checkboxMarginRight;
-	}
-	&.-reset,
-	&.-submit {
-		-webkit-appearance: button;
-		cursor: pointer;
-	}
+    &::-moz-focus-inner {
+        border: 0;
+        padding: 0;
+    }
+    &[disabled],
+    &.#{$inputDisabledModifier} {
+        @if ($inputBorderWidthDisabled == false) {
+            border: none;
+        } @else {
+            border-width: $inputBorderWidthDisabled;
+        }
+        background-color: $inputBackgroundDisabled;
+        color: $inputColorDisabled;
+        cursor: $inputDisabledCursor;
+    }
+    &.-search {
+        -webkit-appearance: textfield;
+        &::-webkit-search-decoration,
+        &::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+            display: none;
+        }
+    }
+    &.-checkbox,
+    &.-radio {
+        margin-bottom: $checkboxMarginBottom;
+        margin-right: $checkboxMarginRight;
+        padding: 0;
+    }
+    &.-reset,
+    &.-submit {
+        -webkit-appearance: button;
+        cursor: pointer;
+    }
 }
 .select {
-	cursor: pointer;
-	padding-right: $inputPaddingVertical;
-	&[multiple] {
-		min-height: $multiSelectMinHeight;
-		vertical-align: top;
-		&:after {
-			content: ' ';
-		}
-	}
+    cursor: pointer;
+    padding-right: $inputPaddingVertical;
+    &[multiple] {
+        min-height: $multiSelectMinHeight;
+        vertical-align: top;
+        &:after {
+            content: ' ';
+        }
+    }
 }
 .textarea {
-	@include resizable($textareaResize);
-	line-height: $textareaLineHeight;
-	min-height: $textareaMinHeight;
-	padding: $textareaPaddingVertical $textareaPaddingHorizontal;
-	vertical-align: top;
+    @include resizable($textareaResize);
+    line-height: $textareaLineHeight;
+    min-height: $textareaMinHeight;
+    padding: $textareaPaddingVertical $textareaPaddingHorizontal;
+    vertical-align: top;
 }
