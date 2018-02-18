@@ -17,8 +17,6 @@ install:
   - npm install
 
 script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:scripts; fi'
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci-ie; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash <(curl -s https://codecov.io/bash) -F unit_ie; fi'
   - npm run test:styles
