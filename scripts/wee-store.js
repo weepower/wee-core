@@ -444,8 +444,8 @@ export class Store {
 const store = new Store('default');
 
 function _setVar(instance, el) {
-	const key = el.dataset.set;
-	const val = _castString(el.dataset.value);
+	const key = el.getAttribute('data-set');
+	const val = _castString(el.getAttribute('data-value'));
 	const store = instance.getStore();
 
 	key.slice(-2) == '[]' ?
@@ -460,7 +460,7 @@ function _setVar(instance, el) {
  */
 export function $setVar(context) {
 	$each('[data-set]', (el) => {
-		const name = el.dataset.store;
+		const name = el.getAttribute('data-store');
 		const instance = name && instances[name] ? instances[name] : store;
 
 		_setVar(instance, el);
