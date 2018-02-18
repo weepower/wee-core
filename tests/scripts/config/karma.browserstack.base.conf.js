@@ -7,8 +7,8 @@ module.exports = Object.assign(base, {
 	captureTimeout: 30000,
 	concurrency: 1,
 	browserStack: {
-		username: process.env.BROWSERSTACK_USERNAME,
-		accessKey: process.env.BROWSERSTACK_ACCESS_KEY
+		username: process.env.BROWSER_STACK_USERNAME,
+		accessKey: process.env.BROWSER_STACK_ACCESS_KEY
 	},
 	autoWatch: false,
 	singleRun: true,
