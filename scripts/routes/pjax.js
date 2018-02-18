@@ -129,7 +129,7 @@ const pjax = {
 
                     // Retrieve data-url off of element
                     // Used if element is not <a> tag
-                    const loc = el.dataset.url;
+                    const loc = el.getAttribute('data-url');
                     let destination = el;
 
                     // Create <a> tag for validation of URL
