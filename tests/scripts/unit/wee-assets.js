@@ -22,7 +22,9 @@ describe('Assets', () => {
 		});
 	});
 
-	describe('load', () => {
+	describe('load', function() {
+		this.timeout(30000);
+
 		it('should load a single image file', done => {
 			$assets.load({
 				cache: false,
@@ -119,7 +121,9 @@ describe('Assets', () => {
 		});
 	});
 
-	describe('remove', () => {
+	describe('remove', function() {
+		this.timeout(30000);
+
 		it('should remove file from DOM', (done) => {
 			const files = ['/files/sample.css', '/files/sample.js'];
 
@@ -146,7 +150,9 @@ describe('Assets', () => {
 		});
 	});
 
-	describe('ready', () => {
+	describe('ready', function() {
+		this.timeout(30000);
+
 		it('should execute when group has been loaded', done => {
 			$assets.ready('test', {
 				success() {

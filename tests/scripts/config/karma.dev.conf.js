@@ -16,4 +16,4 @@ module.exports = function(config) {
 		// console.error to print to terminal
 		logLevel: config.LOG_ERROR,
 	}));
-};
+}
