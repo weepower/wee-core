@@ -82,7 +82,7 @@ function _bind(els, obj, options) {
 						if (evt != 'init' && ! _bound(el, ev, f, conf.targ).length) {
 
 							// Determine if the event is native or custom
-							if ('on' + evt in el || events.includes(evt)) {
+							if ('on' + evt in el || events.indexOf(evt) > -1) {
 								el.addEventListener(evt, cb, false);
 							} else if (custom[evt]) {
 								custom[evt][0](el, fn, conf);
