@@ -8,6 +8,7 @@ module.exports = function (config) {
 			version: '11.0',
 			platform: 'Windows 7'
 		},
+		// TODO: Figure out why this test hangs
 		// 'SL_Edge_Win10': {
 		// 	base: 'SauceLabs',
 		// 	browserName: 'MicrosoftEdge',
