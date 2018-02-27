@@ -14,7 +14,7 @@ Automated testing generously provided by [BrowserStack](https://www.browserstack
 
 ## Versioning
 
-Wee adheres to [Semantic Versioning](http://semver.org) in the form of MAJOR.MINOR.PATCH.  
+Wee adheres to [Semantic Versioning](http://semver.org) in the form of MAJOR.MINOR.PATCH.
 Regardless of version we recommend thoroughly reviewing the [release notes](https://github.com/weepower/wee/releases) before updating.
 
 ## Community
@@ -24,3 +24,9 @@ Keep track of development and news by following [@weecss](https://twitter.com/we
 ## License
 
 Copyright 2016 [Caddis Interactive, LLC](https://www.caddis.co). Licensed under the [Apache License, Version 2.0](https://github.com/weepower/wee-core/blob/master/LICENSE).
+
+### Big Thanks
+
+Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs][homepage]
+
+[homepage]: https://saucelabs.com
