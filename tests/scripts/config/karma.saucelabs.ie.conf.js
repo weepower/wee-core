@@ -23,6 +23,7 @@ module.exports = function (config) {
 		sauceLabs: {
 			testName: 'Unit Tests - IE',
 			recordScreenshots: true,
+			startConnect: false,
 		},
 		frameworks: ['mocha', 'chai'],
 		reporters: ['saucelabs', 'mocha'],
