@@ -15,8 +15,8 @@ let refs = {};
  * @returns {boolean} match
  */
 function _contains(source, target) {
-	return (source === _doc ? _html : source)
-		.contains(target);
+    return (source === _doc ? _html : source)
+        .contains(target);
 }
 
 /**
@@ -28,17 +28,17 @@ function _contains(source, target) {
  * @returns {($|Array)} nodes
  */
 export function _selArray(selector, options) {
-	if (selector && selector._$) {
-		return selector;
-	}
+    if (selector && selector._$) {
+        return selector;
+    }
 
-	options = options || {};
+    options = options || {};
 
-	let el = typeof selector == 'string' ?
-		$sel(selector, options.context) :
-		selector;
+    let el = typeof selector == 'string' ?
+        $sel(selector, options.context) :
+        selector;
 
-	return $toArray(el);
+    return $toArray(el);
 }
 
 /**
@@ -71,22 +71,26 @@ export function $sel(selector, context) {
         }
 
         // Check for pre-cached elements
-        if (selector.indexOf(':') > -1) {
-            let split = selector.split(',').filter((sel) => {
-                sel = sel.trim().split(':');
+        if (selector.indexOf(':') === 0 || selector.indexOf('ref:') > -1) {
+            let split = selector.split(',').filter(function (sel) {
+                sel = sel.trim();
 
-                if (refs[sel[0]] !== U) {
-                    sel = refs[sel[0]][sel[1]];
+                if (sel.slice(0, 1) === ':') {
+                    sel = sel.slice(1);
+                } else if (sel.slice(0, 4) === 'ref:') {
+                    sel = sel.slice(4);
                 } else {
                     return true;
                 }
+
+                sel = refs[sel];
 
                 // Apply context filter if not document
                 if (sel) {
                     ref = ref.concat(
                         context === _doc ?
                             sel :
-                            sel.filter((el) => {
+                            sel.filter(function (el) {
                                 return _contains(context, el);
                             })
                     );
@@ -216,14 +220,14 @@ export function $map(target, fn, options) {
  * @returns {HTMLElement} element
  */
 export function $parseHTML(html) {
-	html = html.trim();
+    html = html.trim();
 
-	if (!range) {
+    if (!range) {
         range = _doc.createRange();
         range.selectNode(_body);
     }
 
-	return range.createContextualFragment(html);
+    return range.createContextualFragment(html);
 }
 
 /**
@@ -237,22 +241,22 @@ export function $parseHTML(html) {
 * @param {(Array|function|string)} fn
 */
 export function $ready() {
-	return new Promise((resolve) => {
-		let doc = _doc;
+    return new Promise((resolve) => {
+        let doc = _doc;
 
-		// This is for testing only
-		if (this && this.readyState) {
-			doc = this;
-		}
+        // This is for testing only
+        if (this && this.readyState) {
+            doc = this;
+        }
 
-		if (doc.readyState === 'complete') {
-			resolve();
-		} else {
-			doc.addEventListener('DOMContentLoaded', () => {
-				resolve();
-			});
-		}
-	});
+        if (doc.readyState === 'complete') {
+            resolve();
+        } else {
+            doc.addEventListener('DOMContentLoaded', () => {
+                resolve();
+            });
+        }
+    });
 }
 
 /**
@@ -264,27 +268,25 @@ export function $setRef(context) {
     context = context ? $sel(context)[0] : _doc;
 
     // Clear existing refs if reset
-    Object.keys(refs).forEach((ref) => {
-        Object.keys(refs[ref]).forEach((val) => {
-            refs[ref][val] = refs[ref][val].filter((el) => {
-                return !(
-                    !_contains(_doc, el) ||
-                    (_contains(context, el) && context !== el)
-                );
-            });
+    Object.keys(refs).forEach(function (val) {
+        refs[val] = refs[val].filter(function (el) {
+            return !(
+                !_contains(_doc, el) ||
+                (_contains(context, el) && context !== el)
+            );
         });
     });
 
     // Set refs from DOM
-    $each('*', (el) => {
-        Object.keys(el.dataset).forEach(key => {
-            refs[key] = refs[key] || {};
-            refs[key][el.dataset[key]] = refs[key][el.dataset[key]] || [];
-            refs[key][el.dataset[key]].push(el);
-        });
+    $each('[data-ref]', function (el) {
+        el.getAttribute('data-ref').split(/\s+/)
+            .forEach(function (val) {
+                refs[val] = refs[val] || [];
+                refs[val].push(el);
+            });
     }, {
-        context: context,
-    });
+            context: context
+        });
 }
 
 /**

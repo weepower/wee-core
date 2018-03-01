@@ -41,7 +41,6 @@ module.exports = function (config) {
 		sauceLabs: {
 			testName: 'Unit Tests',
 			recordScreenshots: true,
-			startConnect: false,
 		},
 		frameworks: ['mocha', 'chai'],
 		reporters: ['saucelabs', 'mocha'],
