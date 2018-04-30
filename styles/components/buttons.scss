@@ -31,7 +31,11 @@
     }
 
     background-color: $buttonBackground;
-    border-radius: $buttonRounded;
+
+    @if ($buttonRounded) {
+        border-radius: $buttonRounded;
+    }
+
     color: $buttonColor;
     &:hover {
         background-color: $buttonBackgroundHover;
