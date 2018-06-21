@@ -4,7 +4,11 @@ samp {
     @include font($codeFont, $codeFontSize);
 
     background-color: $codeBackground;
-    border: 1px solid $codeBorderColor;
+    @if ($codeBordercolor) {
+        border: 1px solid $codeBorderColor;
+    } else {
+        border: none;
+    }
     border-radius: $defaultRadius;
     color: $codeColor;
     line-height: $codeLineHeight;
@@ -29,6 +33,9 @@ pre {
         @if ($codeBlockWrap == false) {
             overflow: auto;
             white-space: pre;
+        }
+        @if ($codeRounded) {
+            border-radius: $codeRounded;
         }
 
         background: transparent;

@@ -24,7 +24,9 @@ body {
         $size: $baseFontSize
     );
 
-    background-color: $bodyBackground;
+    @if ($bodyBackground != false) {
+        background-color: $bodyBackground;
+    }
     color: $baseColor;
     position: relative;
 }
@@ -208,7 +210,9 @@ a {
     }
     &:hover {
         color: $linkColorHover;
-        text-decoration: $linkDecorationHover;
+        @if ($linkDecorationHover != false) {
+            text-decoration: $linkDecorationHover;
+        }
     }
     &:active {
         color: $linkColorActive;
@@ -247,13 +251,17 @@ ul {
     list-style-position: $listBulletPosition;
     line-height: $listLineHeight;
     margin-bottom: $listMarginBottom;
-    li {
-        margin-bottom: $liMarginBottom;
+    @if ($liMarginBottom != false) {
+        li {
+            margin-bottom: $liMarginBottom;
+        }
     }
 }
 ol,
 ul {
-    margin-left: $listMarginLeft;
+    @if ($listMarginLeft != false) {
+        margin-left: $listMarginLeft;
+    }
     ol,
     ul {
         margin-bottom: 0;

@@ -1,5 +1,5 @@
 .container {
-    @if ($padContainer == true) {
+    @if ($padContainer == true && $bumperPadding != false) {
         padding-left: $bumperPadding;
         padding-right: $bumperPadding;
     }

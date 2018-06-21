@@ -1,15 +1,15 @@
 .selector {
-	color: black;
+    color: black;
 }
 
 @tablet {
-	.selector {
-		color: blue;
-	}
+    .selector {
+        color: blue;
+    }
 }
 
 @desktop {
-	.selector {
-		color: white;
-	}
+    .selector {
+        color: white;
+    }
 }

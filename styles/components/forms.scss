@@ -30,11 +30,17 @@
 
     background-clip: border-box;
     background-color: $inputBackground;
-    border: $inputBorderWidth solid $inputBorderColor;
+    @if ($inputBorderColor) {
+        border: $inputBorderWidth solid $inputBorderColor;
+    }
     color: $inputColor;
     margin: 0 0 $inputMarginBottom 0;
-    min-height: $inputMinHeight;
-    min-width: $inputMinWidth;
+    @if ($inputMinHeight) {
+        min-height: $inputMinHeight;
+    }
+    @if ($inputMinWidth) {
+        min-width: $inputMinWidth;
+    }
     outline: 0;
     padding: $inputPaddingVertical $inputPaddingHorizontal;
     width: 100%;
@@ -53,7 +59,9 @@
     }
     &:invalid {
         background-color: $inputBackgroundInvalid;
-        border: $inputBorderWidth solid $inputBorderColorInvalid;
+        @if ($inputBorderWidthInvalid) {
+            border: $inputBorderWidthInvalid solid $inputBorderColorInvalid;
+        }
         color: $inputColorInvalid;
         &:hover {
             border-color: $inputBorderColorInvalidHover;
@@ -64,7 +72,9 @@
     }
     &:required {
         background-color: $inputBackgroundRequired;
-        border: $inputBorderWidthRequired solid $inputBorderColorRequired;
+        @if ($inputBorderWidthRequired) {
+            border: $inputBorderWidthRequired solid $inputBorderColorRequired;
+        }
         color: $inputColorRequired;
         &:hover {
             border-color: $inputBorderColorRequiredHover;

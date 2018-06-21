@@ -9,11 +9,11 @@ let ${variableName};
 
 // Register and mount component
 export default new RouteHandler({
-	init() {
-		// TODO: Set mounting selector
-		${variableName} = new ${constructorName}().$mount('.js-${fileName}');
-	},
-	unload() {
-		${variableName}.$destroy();
-	}
+    init() {
+        // TODO: Set mounting selector
+        ${variableName} = new ${constructorName}().$mount('.js-${fileName}');
+    },
+    unload() {
+        ${variableName}.$destroy();
+    },
 });
