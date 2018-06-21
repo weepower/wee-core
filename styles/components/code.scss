@@ -4,7 +4,7 @@ samp {
     @include font($codeFont, $codeFontSize);
 
     background-color: $codeBackground;
-    @if ($codeBordercolor) {
+    @if ($codeBorderColor) {
         border: 1px solid $codeBorderColor;
     } else {
         border: none;
