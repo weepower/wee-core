@@ -404,7 +404,7 @@ $buttonFontWeight: normal !default;
 $buttonPaddingHorizontal: 3rem !default;
 $buttonPaddingVertical: 1.3rem !default;
 
-$buttonMarginBottom: false !default;
+$buttonMarginBottom: $paragraphMarginBottom !default;
 
 $buttonRounded: $defaultRadius !default; // false to disable
 
