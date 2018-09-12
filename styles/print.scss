@@ -6,12 +6,15 @@
     color: #000;
     text-shadow: none;
 }
+
 html {
     font-size: 70%;
 }
+
 body {
     padding: $printPageMargin;
 }
+
 header[role='banner'],
 footer[role='contentinfo'],
 aside,
@@ -22,12 +25,18 @@ object,
 .not-printed {
     display: none;
 }
-main a:link {
-    color: #06c;
+main {
+    a {
+        &:link {
+            color: #06c;
+
+            &::after {
+                content: " [" attr(href) "] ";
+            }
+        }
+    }
 }
-main a:link:after {
-    content: " [" attr(href) "] ";
-}
+
 blockquote,
 img,
 p,
@@ -35,14 +44,17 @@ pre,
 tr {
     page-break-inside: avoid;
 }
+
 h2,
 h3 {
     page-break-after: avoid;
 }
+
 p {
     orphans: 3;
     widows: 3;
 }
+
 pre {
     white-space: pre-wrap;
 }

@@ -1,21 +1,24 @@
 *,
 *:before,
 *:after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
+
 @if ($minWidth != 0 and $minWidth != false) {
     html,
     body {
         min-width: $minWidth;
     }
 }
+
 html {
-    text-size-adjust: 100%;
     font-family: "1";
     font-size: $rootFontSize;
+    text-size-adjust: 100%;
 }
+
 body {
     @include font(
         $family: $baseFont,
@@ -27,50 +30,61 @@ body {
     @if ($bodyBackground != false) {
         background-color: $bodyBackground;
     }
+
     color: $baseColor;
     position: relative;
 }
+
 main {
     display: block;
 }
+
 embed,
 img,
 object,
 video {
     max-width: 100%;
 }
+
 svg {
     overflow: hidden;
 }
+
 embed,
 object {
     height: 100%;
 }
+
 audio,
 canvas,
 video {
     display: inline-block;
 }
+
 abbr[title] {
-    cursor: help;
-    // TODO: possible mixin
     border-bottom: 1px $abbrUnderline $baseColor;
+    cursor: help;
 }
+
 b,
 strong {
     font-weight: $boldFontWeight;
 }
+
 mark {
     background-color: $markBackground;
     color: $markColor;
 }
+
 canvas {
     -ms-touch-action: double-tap-zoom;
 }
+
 iframe {
     border: 0;
     margin-bottom: $blockMarginBottom;
 }
+
 figure {
     @if ($figureRounded) {
         @include rounded($defaultRadius);
@@ -82,22 +96,26 @@ figure {
     	border: none;
     }
 
+    margin-bottom: $blockMarginBottom;
     padding: $figurePadding;
     position: relative;
     text-align: center;
-    margin-bottom: $blockMarginBottom;
+
     img {
         margin-bottom: $blockMarginBottom;
     }
+
     figcaption {
         color: $figCaptionColor;
         font-style: $figCaptionFontStyle;
         line-height: $figCaptionLineHeight;
     }
 }
+
 img {
     display: inline-block;
 }
+
 sub,
 sup {
     font-size: .7em;
@@ -106,9 +124,11 @@ sup {
     position: relative;
     vertical-align: baseline;
 }
+
 sub {
     bottom: -.25em;
 }
+
 sup {
     top: -1em;
 }
@@ -130,6 +150,16 @@ sup {
 /*------------------------------------*\
     # Typography
 \*------------------------------------*/
+
+$headings: (
+  h1: $h1,
+  h2: $h2,
+  h3: $h3,
+  h4: $h4,
+  h5: $h5,
+  h6: $h6
+);
+
 h1,
 h2,
 h3,
@@ -139,96 +169,100 @@ h6 {
     @include heading()
 }
 
-h1 {
-    font-size: $h1;
+@each $level, $value in $headings {
+    .#{$level} {
+        font-size: $value;
+    }
 }
-h2 {
-    font-size: $h2;
-}
-h3 {
-    font-size: $h3;
-}
-h4 {
-    font-size: $h4;
-}
-h5 {
-    font-size: $h5;
-}
-h6 {
-    font-size: $h6;
-}
+
 p {
     color: $paragraphColor;
     font-weight: $paragraphFontWeight;
     line-height: $paragraphLineHeight;
     margin-bottom: $paragraphMarginBottom;
 }
+
 small {
     font-size: $smallFontSize;
 }
+
 dfn,
 em,
 i,
 var {
     font-style: italic;
 }
+
 blockquote,
 q {
     @include font($quoteFont, $quoteFontSize, $quoteFontWeight, $quoteLineHeight, $quoteFontStyle);
 
     color: $quoteColor;
+
     cite {
         @include font($citeFont, $citeFontSize, $citeFontWeight, $citeLineHeight, $citeFontStyle);
 
         color: $citeColor;
         margin-top: $citeMarginTop;
+
         &:before {
             content: $citeIndicator;
         }
     }
+
     p {
         color: $quoteColor;
     }
 }
+
 blockquote {
     margin-bottom: $blockMarginBottom;
     padding: $quotePaddingVertical $quotePaddingHorizontal;
+
     cite {
         display: block;
     }
 }
+
 del,
 s,
 strike {
     text-decoration: line-through;
 }
+
 a {
     color: $linkColor;
     text-decoration: $linkDecoration;
+
     &:focus {
         outline: thin dotted;
     }
+
     &:hover {
         color: $linkColorHover;
         @if ($linkDecorationHover != false) {
             text-decoration: $linkDecorationHover;
         }
     }
+
     &:active {
         color: $linkColorActive;
     }
+
     img {
         border: 0;
     }
 }
+
 hr {
     border: 0;
     border-top: $ruleHeight $ruleStyle $ruleColor;
     display: block;
-    margin-top: $ruleMargin;
-    margin-bottom: $ruleMargin;
     height: 1px;
+    margin-bottom: $ruleMargin;
+    margin-top: $ruleMargin;
 }
+
 address {
     @include font($addressFont, $addressFontSize, $addressFontWeight, $addressLineHeight, $addressFontStyle);
 
@@ -248,57 +282,69 @@ dl,
 ol,
 ul {
     color: $listColor;
-    list-style-position: $listBulletPosition;
     line-height: $listLineHeight;
+    list-style-position: $listBulletPosition;
     margin-bottom: $listMarginBottom;
+
     @if ($liMarginBottom != false) {
         li {
             margin-bottom: $liMarginBottom;
         }
     }
 }
+
 ol,
 ul {
     @if ($listMarginLeft != false) {
         margin-left: $listMarginLeft;
     }
+
     ol,
     ul {
         margin-bottom: 0;
         margin-left: $nestedListMarginLeft;
     }
 }
+
 ul {
     list-style-type: $listBulletStyle;
+
     ul {
         list-style-type: circle;
+
         ul {
             list-style-type: square;
         }
     }
 }
+
 ol {
     list-style-type: decimal;
 }
+
 nav {
     ol,
     ul {
         list-style: none;
         margin: 0;
+
         li {
             margin-bottom: 0;
         }
     }
 }
+
 dl {
     margin-bottom: $dlMarginBottom;
 }
+
 dt {
     @include font($dtFont, $dtFontSize);
 
     color: $dtColor;
     margin-bottom: $dtMarginBottom;
 }
+
 dd {
     @include font($ddFont, $ddFontSize);
     color: $ddColor;

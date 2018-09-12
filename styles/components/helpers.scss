@@ -1,12 +1,14 @@
 .container {
-    @if ($padContainer == true && $bumperPadding != false) {
+    @if ($padContainer == true and $bumperPadding != false) {
         padding-left: $bumperPadding;
         padding-right: $bumperPadding;
     }
+
     display: block;
     margin-left: auto;
     margin-right: auto;
     box-sizing: content-box;
+
     @if ($maxWidth != false) {
         max-width: $maxWidth;
     }
@@ -15,15 +17,18 @@
         min-width: $minWidth;
     }
 }
+
 .js-hide {
     display: none !important;
 }
+
 .#{$imageLeftClass} {
     float: left;
     margin-top: .32em;
     margin-right: $imageMarginSide;
     margin-bottom: $imageMarginBottom;
 }
+
 .#{$imageRightClass} {
     float: right;
     margin-top: .32em;

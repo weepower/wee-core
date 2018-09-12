@@ -1,17 +1,21 @@
 .form {
     margin-bottom: $blockMarginBottom;
 }
+
 .fieldset {
     border: 0;
     margin-bottom: $blockMarginBottom;
 }
+
 .legend {
     @include font($legendFont, $legendFontSize, $baseLineHeight);
+
     border: 0;
     color: $legendColor;
     display: block;
     margin-bottom: $legendMarginBottom;
 }
+
 .label {
     display: block;
     font-weight: $labelFontWeight;
@@ -19,6 +23,7 @@
     margin-bottom: $labelMarginBottom;
     margin-right: $labelMarginRight;
 }
+
 .input,
 .select,
 .textarea {
@@ -30,25 +35,31 @@
 
     background-clip: border-box;
     background-color: $inputBackground;
-    @if ($inputBorderColor) {
-        border: $inputBorderWidth solid $inputBorderColor;
-    }
     color: $inputColor;
     margin: 0 0 $inputMarginBottom 0;
-    @if ($inputMinHeight) {
-        min-height: $inputMinHeight;
-    }
-    @if ($inputMinWidth) {
-        min-width: $inputMinWidth;
-    }
     outline: 0;
     padding: $inputPaddingVertical $inputPaddingHorizontal;
     width: 100%;
+
+    @if ($inputBorderColor) {
+        border: $inputBorderWidth solid $inputBorderColor;
+    }
+
+    @if ($inputMinHeight) {
+        min-height: $inputMinHeight;
+    }
+
+    @if ($inputMinWidth) {
+        min-width: $inputMinWidth;
+    }
+
     &:hover {
         border-color: $inputBorderColorHover;
     }
+
     &:focus {
         border-color: $inputBorderColorFocus;
+
         &:required {
             &:invalid {
                 background-color: $inputBackgroundInvalid;
@@ -57,33 +68,42 @@
             }
         }
     }
+
     &:invalid {
         background-color: $inputBackgroundInvalid;
+        color: $inputColorInvalid;
+
         @if ($inputBorderWidthInvalid) {
             border: $inputBorderWidthInvalid solid $inputBorderColorInvalid;
         }
-        color: $inputColorInvalid;
+
         &:hover {
             border-color: $inputBorderColorInvalidHover;
         }
+
         &:focus {
             border-color: $inputBorderColorInvalidFocus;
         }
     }
+
     &:required {
         background-color: $inputBackgroundRequired;
+        color: $inputColorRequired;
+
         @if ($inputBorderWidthRequired) {
             border: $inputBorderWidthRequired solid $inputBorderColorRequired;
         }
-        color: $inputColorRequired;
+
         &:hover {
             border-color: $inputBorderColorRequiredHover;
         }
+
         &:focus {
             border-color: $inputBorderColorRequiredFocus
         }
     }
 }
+
 .input {
     @include placeholder {
         color: $inputPlaceholderColor
@@ -93,6 +113,7 @@
         border: 0;
         padding: 0;
     }
+
     &[disabled],
     &.#{$inputDisabledModifier} {
         @if ($inputBorderWidthDisabled == false) {
@@ -100,43 +121,52 @@
         } @else {
             border-width: $inputBorderWidthDisabled;
         }
+
         background-color: $inputBackgroundDisabled;
         color: $inputColorDisabled;
         cursor: $inputDisabledCursor;
     }
     &.-search {
         -webkit-appearance: textfield;
+
         &::-webkit-search-decoration,
         &::-webkit-search-cancel-button {
             -webkit-appearance: none;
             display: none;
         }
     }
+
     &.-checkbox,
     &.-radio {
         margin-bottom: $checkboxMarginBottom;
         margin-right: $checkboxMarginRight;
         padding: 0;
     }
+
     &.-reset,
     &.-submit {
         -webkit-appearance: button;
         cursor: pointer;
     }
 }
+
 .select {
     cursor: pointer;
     padding-right: $inputPaddingVertical;
+
     &[multiple] {
         min-height: $multiSelectMinHeight;
         vertical-align: top;
+
         &:after {
             content: ' ';
         }
     }
 }
+
 .textarea {
     @include resizable($textareaResize);
+
     line-height: $textareaLineHeight;
     min-height: $textareaMinHeight;
     padding: $textareaPaddingVertical $textareaPaddingHorizontal;

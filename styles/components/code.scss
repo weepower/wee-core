@@ -4,36 +4,43 @@ samp {
     @include font($codeFont, $codeFontSize);
 
     background-color: $codeBackground;
+
     @if ($codeBorderColor) {
         border: 1px solid $codeBorderColor;
-    } else {
+    } @else {
         border: none;
     }
+
     border-radius: $defaultRadius;
     color: $codeColor;
     line-height: $codeLineHeight;
     padding: $codePaddingVertical $codePaddingHorizontal;
 }
+
 pre {
     background-color: $codeBlockBackground;
     border: 1px solid $codeBlockBorderColor;
     border-radius: $defaultRadius;
     margin-bottom: $codeBlockMarginBottom;
     tab-size: $codeBlockTabSize;
+
     code {
         @include font($codeBlockFont, $codeBlockFontSize);
 
         @if ($codeBorderColor == false) {
             border: none;
         }
+
         @if ($codeBlockWrap == true) {
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+
         @if ($codeBlockWrap == false) {
             overflow: auto;
             white-space: pre;
         }
+
         @if ($codeRounded) {
             border-radius: $codeRounded;
         }

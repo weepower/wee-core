@@ -3,9 +3,9 @@
     @include font($buttonFont, $buttonFontSize, $buttonFontWeight);
 
     @if ($buttonTransitionEnabled) {
-        // TODO: Possible mixin here
         transition: $buttonTransitionProperty $buttonTransitionDuration $defaultTiming;
     }
+
     border: 0;
     cursor: pointer;
     display: inline-block;
@@ -15,16 +15,19 @@
     padding: $buttonPaddingVertical $buttonPaddingHorizontal;
     text-align: center;
     text-shadow: none;
+
     &:active {
         @if ($buttonTransitionEnabled) {
             transition: $buttonActiveTransitionProperty $buttonActiveTransitionDuration $defaultTiming;
         }
     }
+
     &::-moz-focus-inner {
         border: 0;
         padding: 0;
     }
 }
+
 .button {
     @if ($buttonBorderColor) {
         border: 1px solid $buttonBorderColor;
@@ -37,31 +40,39 @@
     }
 
     color: $buttonColor;
+
     &:hover {
         background-color: $buttonBackgroundHover;
         color: $buttonColor;
     }
+
     &:active {
         background-color: $buttonBackgroundActive;
         color: $buttonColor;
     }
 }
+
 .#{$coloredButtonClassModifier} {
     background-color: $coloredButtonBackground;
     border: 1px $coloredButtonBorderColor solid;
+
     @if ($buttonRounded) {
         border-radius: $defaultRadius;
     }
+
     color: $coloredButtonColor;
+
     &:hover {
         background-color: $coloredButtonBackgroundHover;
         color: $coloredButtonColor;
     }
+
     &:active {
         background-color: $coloredButtonBackgroundActive;
         color: $coloredButtonColor;
     }
 }
+
 .button,
 .#{$coloredButtonClassModifier} {
     &[disabled],
@@ -70,6 +81,7 @@
         background-color: $disabledButtonBackground;
         color: $disabledButtonColor;
         cursor: $disabledButtonCursor;
+
         &:active,
         &:hover {
             background-color: $disabledButtonBackground;
