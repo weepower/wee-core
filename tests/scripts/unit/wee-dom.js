@@ -939,7 +939,17 @@ describe('DOM', () => {
 
 			expect($('.test')[0].className).to.equal('test');
 		});
-	});
+    });
+
+    describe('$removeStyle', () => {
+        before(createSingleDiv);
+        after(resetDOM);
+        it('should remove specified style property from selection', () => {
+            $('.test').removeStyle('height');
+
+            expect($('.test')[0].style.height).to.equal("");
+        });
+    });
 
 	describe('$replaceWith', () => {
 		before(createMultiDiv);

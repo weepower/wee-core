@@ -10,7 +10,8 @@
     cursor: pointer;
     display: inline-block;
     line-height: 1em;
-    margin: 0 0 $buttonMarginBottom 0;
+    margin: 0;
+    margin-bottom: $buttonMarginBottom;
     outline: 0;
     padding: $buttonPaddingVertical $buttonPaddingHorizontal;
     text-align: center;
@@ -35,11 +36,11 @@
 
     background-color: $buttonBackground;
 
+    color: $buttonColor;
+
     @if ($buttonRounded) {
         border-radius: $buttonRounded;
     }
-
-    color: $buttonColor;
 
     &:hover {
         background-color: $buttonBackgroundHover;
@@ -56,11 +57,11 @@
     background-color: $coloredButtonBackground;
     border: 1px $coloredButtonBorderColor solid;
 
+    color: $coloredButtonColor;
+
     @if ($buttonRounded) {
         border-radius: $defaultRadius;
     }
-
-    color: $coloredButtonColor;
 
     &:hover {
         background-color: $coloredButtonBackgroundHover;
@@ -77,8 +78,8 @@
 .#{$coloredButtonClassModifier} {
     &[disabled],
     &.#{$disabledButtonClassModifier} {
-        border: 1px solid $disabledButtonBorderColor;
         background-color: $disabledButtonBackground;
+        border: 1px solid $disabledButtonBorderColor;
         color: $disabledButtonColor;
         cursor: $disabledButtonCursor;
 

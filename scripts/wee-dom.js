@@ -463,6 +463,18 @@ $chain({
     },
 
     /**
+     * Remove specified style property of each matching selection
+     *
+     * @param {string} name
+     * @returns {$}
+     */
+    removeStyle(name) {
+        W.$removeStyle(this, name);
+
+        return this;
+    },
+
+    /**
      * Replace each matching selection with selection or markup
      *
      * @param {($|HTMLElement|string)} source

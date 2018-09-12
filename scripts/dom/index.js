@@ -1022,6 +1022,20 @@ export function $removeClass(target, value) {
 }
 
 /**
+ * Remove specified style property of each matching selection
+ *
+ * @param {($|HTMLElement|string)} target
+ * @param {string} name
+ */
+export function $removeStyle(target, name) {
+    $each(target, el => {
+        name.split(/\s+/).forEach(value => {
+            el.style.removeProperty(value);
+        });
+    });
+}
+
+/**
  * Replace each matching selection with selection or markup
  *
  * @param {($|HTMLElement|string)} target
