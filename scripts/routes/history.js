@@ -78,7 +78,7 @@ export default class History {
      * 	@param {Array} handlers.deactivated
      * @returns {Object}
      */
-    buildQueues(records, handlers) {
+    async buildQueues(records, handlers) {
         const { beforeEach, afterEach } = getHooks();
         const beforeQueue = beforeEach
             .concat(this.extract(records.updated, 'before'))
@@ -153,7 +153,7 @@ export default class History {
      * @param {string|Object} [path]
      */
     navigate(path) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const route = match(path);
             const transition = route.transition || new Transition(this.transition || {});
             const asyncTasks = [];
@@ -182,9 +182,9 @@ export default class History {
             }
 
             const records = this.resolveRecords(route.matched, this.current.matched);
-            const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
+            const handlers = await this.resolveHandlers(records.updated, records.activated, records.deactivated);
+            const queues = await this.buildQueues(records, handlers);
 
-            const queues = this.buildQueues(records, handlers);
             const iterator = (hook, next) => {
                 hook(route, this.current, (to) => {
                     if (to === false) {
@@ -295,7 +295,7 @@ export default class History {
      * @param {Array} deactivate
      * @returns {Object}
      */
-    resolveHandlers(updatedRecords, activatedRecords, deactivatedRecords) {
+    async resolveHandlers(updatedRecords, activatedRecords, deactivatedRecords) {
         const handlers = {
             update: [],
             activate: [],
@@ -329,7 +329,17 @@ export default class History {
             const handler = updatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                handler.forEach(h => addHandler(h));
+                for (let i = 0; i < handler.length; i++) {
+                    const h = await handler[i]();
+
+                    addHandler(h);
+                }
+            } else if ($isFunction(handler) && ! handler instanceof RouteHandler) {
+                const h = await handler();
+
+                if (! map.update[h.id]) {
+                    addHandler(h);
+                }
             } else if (handler instanceof RouteHandler) {
                 addHandler(handler);
             }
@@ -341,15 +351,23 @@ export default class History {
             const handler = activatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                handler.forEach((h) => {
+                let j;
+
+                for (j = 0; j < handler.length; j++) {
+                    const h = await handler[j]();
+
                     if (! map.update[h.id]) {
                         addHandler(h, 'activate');
                     }
-                });
-            } else if (handler instanceof RouteHandler) {
-                if (! map.update[handler.id]) {
-                    addHandler(handler, 'activate');
                 }
+            } else if ($isFunction(handler) && ! handler instanceof RouteHandler) {
+                const h = await handler();
+
+                if (! map.update[h.id]) {
+                    addHandler(h, 'activate');
+                }
+            } else if (handler instanceof RouteHandler) {
+                addHandler(handler, 'activate');
             }
         }
 
@@ -359,11 +377,12 @@ export default class History {
             const handler = deactivatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                const handlerCount = handler.length;
                 let j = 0;
 
-                for (; j < handlerCount; j++) {
-                    resolveDeactivated(handler[j]);
+                for (; j < handler.length; j++) {
+                    const h = await handler[j]();
+
+                    resolveDeactivated(h);
                 }
             } else if (handler instanceof RouteHandler) {
                 resolveDeactivated(handler);
