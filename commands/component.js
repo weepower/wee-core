@@ -20,13 +20,8 @@ module.exports = {
 
 		// Normalize directory name
 		const fileName = fileFormat(options.name);
-		const constructorName = fileName.split('-').map((word, i) => {
-			return word.substr(0, 1).toUpperCase() + word.substr(1);
-		}).join('');
-		const variableName = constructorName.substr(0, 1).toLowerCase() + constructorName.substr(1);
 		const componentPath = `${paths.project.components}/${fileName}`;
 		const templatesPath = `${paths.commands}/helpers/component`;
-		const filePath = `${componentPath}/${fileName}`;
 		const fileExt = {
 			style: 'scss',
 			script: options.vue ? 'vue' : 'js'

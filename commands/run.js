@@ -1,4 +1,3 @@
-const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const fs = require('fs-extra');
 const utils = require('../utils');
@@ -16,7 +15,7 @@ module.exports = {
             projectUpdated = false;
 
         if (options.local) {
-            if (!project.server.proxy) {
+            if (! project.server.proxy) {
                 utils.logError('Set proxy domain in wee.json');
                 process.exit();
             }
@@ -25,7 +24,7 @@ module.exports = {
             projectUpdated = true;
         }
 
-        if (options.static && !project.server.static) {
+        if (options.static && ! project.server.static) {
             project.server.static = true;
             projectUpdated = true;
         }
