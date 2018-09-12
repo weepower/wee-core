@@ -1,52 +1,51 @@
 /* global global, process */
 
-const fs = require('fs-extra'),
-	glob = require('glob'),
-	path = require('path'),
-	utils = require('./utils'),
+const fs = require('fs-extra');
+const glob = require('glob');
+const path = require('path');
 
-	/**
-	 * Parse arguments from command array
-	 *
-	 * @param {Array} keywords
-	 * @returns {object}
-	 */
-	getArgs = function(keywords) {
-		var args = {};
+/**
+ * Parse arguments from command array
+ *
+ * @param {Array} keywords
+ * @returns {object}
+ */
+getArgs = function(keywords) {
+    var args = {};
 
-		keywords.forEach(function(arg) {
-			if (arg.slice(0, 2) == '--') {
-				var segs = arg.slice(2).split('=');
-				args[segs[0]] = segs.length > 1 ? segs[1] : '';
-			}
-		});
+    keywords.forEach(function(arg) {
+        if (arg.slice(0, 2) == '--') {
+            var segs = arg.slice(2).split('=');
+            args[segs[0]] = segs.length > 1 ? segs[1] : '';
+        }
+    });
 
-		return args;
-	},
+    return args;
+},
 
-	/**
-	 * Register all available commands
-	 *
-	 * @param {string} rootPath
-	 * @param {Array} paths
-	 * @returns {object}
-	 */
-	registerCommands = function(rootPath, paths) {
-		var commands = {};
+/**
+ * Register all available commands
+ *
+ * @param {string} rootPath
+ * @param {Array} paths
+ * @returns {object}
+ */
+registerCommands = function(rootPath, paths) {
+    var commands = {};
 
-		paths.forEach(function(commandPath) {
-			var files = glob.sync(commandPath + '*.js');
+    paths.forEach(function(commandPath) {
+        var files = glob.sync(commandPath + '*.js');
 
-			files.forEach(function(file) {
-				var name = path.basename(file, '.js');
-				file = path.join(rootPath, file);
+        files.forEach(function(file) {
+            var name = path.basename(file, '.js');
+            file = path.join(rootPath, file);
 
-				commands[name] = require(file);
-			});
-		});
+            commands[name] = require(file);
+        });
+    });
 
-		return commands;
-	};
+    return commands;
+};
 
 global.chalk = require('chalk');
 
