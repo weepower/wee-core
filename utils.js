@@ -1,7 +1,5 @@
 const chalk = require('chalk');
-const fs = require('fs-extra');
 const notifier = require('node-notifier');
-const path = require('path');
 const process = require('process');
 const basePath = __filename.split('/').slice(0, -1).join('/');
 const projectPath = process.env.PWD;
@@ -20,9 +18,8 @@ module.exports = {
 	 * @return {string}
 	 */
 	fileFormat(string) {
-		return string.split(/(?=[A-Z])/g).map((word) => {
-			return word.toLowerCase();
-		}).join('-');
+        return string.split(/(?=[A-Z])/g).map((word) => word.toLowerCase())
+            .join('-');
 	},
 
 	/**
@@ -99,13 +96,22 @@ module.exports = {
 		}
 	},
 
+    /**
+     * Trim the right side of string
+     * @param {String} str
+     */
 	trimRight(str) {
 		return str.replace(/\s+$/, '');
 	},
 
+    /**
+     * Remove stars from line
+     * @param {String} line
+     */
 	stripStars(line) {
-	let re = /^(?:\s*[\*]{1,2}\s)/;
-		return this.trimRight(line.replace(re, ''));
+	    let re = /^(?:\s*[\*]{1,2}\s)/;
+
+        return this.trimRight(line.replace(re, ''));
 	}
 };
 
