@@ -329,8 +329,12 @@ export default class History {
             const handler = updatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                for (let i = 0; i < handler.length; i++) {
-                    const h = await handler[i]();
+                let j;
+
+                for (j = 0; j < handler.length; i++) {
+                    const h = $isFunction(handler[j]) ?
+                        await handler[j]() :
+                        handler[j];
 
                     addHandler(h);
                 }
@@ -354,7 +358,9 @@ export default class History {
                 let j;
 
                 for (j = 0; j < handler.length; j++) {
-                    const h = await handler[j]();
+                    const h = $isFunction(handler[j]) ?
+                        await handler[j]() :
+                        handler[j];
 
                     if (! map.update[h.id]) {
                         addHandler(h, 'activate');
@@ -380,7 +386,9 @@ export default class History {
                 let j = 0;
 
                 for (; j < handler.length; j++) {
-                    const h = await handler[j]();
+                    const h = $isFunction(handler[j]) ?
+                        await handler[j]() :
+                        handler[j];
 
                     resolveDeactivated(h);
                 }
