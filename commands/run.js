@@ -1,5 +1,4 @@
 const spawn = require('child_process').spawn;
-const fs = require('fs-extra');
 const utils = require('../utils');
 
 module.exports = {
@@ -11,27 +10,13 @@ module.exports = {
         ['-s, --static', 'serve static files']
     ],
     action(config, options) {
-        let project = config.project,
-            projectUpdated = false;
+        let project = config.project;
 
         if (options.local) {
             if (! project.server.proxy) {
-                utils.logError('Set proxy domain in wee.json');
+                utils.logError('Set proxy domain in wee.config.js');
                 process.exit();
             }
-
-            project.server.static = false;
-            projectUpdated = true;
-        }
-
-        if (options.static && ! project.server.static) {
-            project.server.static = true;
-            projectUpdated = true;
-        }
-
-        // Update wee.json
-        if (projectUpdated) {
-            fs.writeJsonSync(config.rootPath + '/wee.json', project, { spaces: '\t' });
         }
 
         // Execute npm run

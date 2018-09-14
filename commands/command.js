@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const path = require('path');
 const { paths, logError, logSuccess } = require('../utils');
 
 module.exports = {

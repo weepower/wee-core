@@ -1,10 +1,10 @@
 const fs = require('fs-extra');
 const process = require('process');
-const configFile = `${process.env.PWD}/wee.json`;
+const configFile = `${process.env.PWD}/wee.config.js`;
 let weeConfig;
 
 if (fs.existsSync(configFile)) {
-	weeConfig = JSON.parse(fs.readFileSync(`${process.env.PWD}/wee.json`, 'utf8'));
+	weeConfig = require(configFile);
 } else {
 	weeConfig = {
 		paths: {}
