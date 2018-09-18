@@ -25,7 +25,12 @@ module.exports = {
 		const fileExt = {
 			style: 'scss',
 			script: options.vue ? 'vue' : 'js'
-		};
+        };
+        const constructorName = fileName.split('-').map((word, i) => {
+			return word.substr(0, 1).toUpperCase() + word.substr(1);
+		}).join('');
+        const variableName = constructorName.substr(0, 1).toLowerCase() + constructorName.substr(1);
+        const filePath = `${componentPath}/${fileName}`;
 		const rootComponentScript = eval('`' + fs.readFileSync(`${templatesPath}/root-component-template.js`) + '`');
 
 		// Create component directory

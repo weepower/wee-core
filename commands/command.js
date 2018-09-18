@@ -26,6 +26,7 @@ module.exports = {
 			process.exit();
 		}
 
+        const weeCore = path.relative(path.resolve(commandPath), paths.root);
 		const commandTemplate = eval('`' + fs.readFileSync(`${paths.commands}/helpers/command-template.js`) + '`');
 
 		fs.writeFileSync(`${commandPath}/${fileName}.js`, commandTemplate);
