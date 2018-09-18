@@ -58,7 +58,7 @@ module.exports = function(rootPath, program) {
 				keywords.slice(1)
 		),
 		configPath = path.join(rootPath, args.config || 'wee.config.js'),
-		project = JSON.parse(fs.readFileSync(configPath, 'utf8')),
+		project = require(configPath),
 		commands = registerCommands(rootPath, [
 			'node_modules/wee-core/commands/',
 			path.join(project.paths.source, 'commands/')
