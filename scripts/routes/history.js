@@ -78,7 +78,7 @@ export default class History {
      * 	@param {Array} handlers.deactivated
      * @returns {Object}
      */
-    async buildQueues(records, handlers) {
+    buildQueues(records, handlers) {
         const { beforeEach, afterEach } = getHooks();
         const beforeQueue = beforeEach
             .concat(this.extract(records.updated, 'before'))
@@ -153,7 +153,7 @@ export default class History {
      * @param {string|Object} [path]
      */
     navigate(path) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const route = match(path);
             const transition = route.transition || new Transition(this.transition || {});
             const asyncTasks = [];
@@ -181,69 +181,69 @@ export default class History {
                 return;
             }
 
-            const records = this.resolveRecords(route.matched, this.current.matched);
-            const handlers = await this.resolveHandlers(records.updated, records.activated, records.deactivated);
-            const queues = await this.buildQueues(records, handlers);
+            this.resolveRecords(route.matched, this.current.matched).then((records) => {
+                const handlers = this.resolveHandlers(records.updated, records.activated, records.deactivated);
+                const queues = this.buildQueues(records, handlers);
+                const iterator = (hook, next) => {
+                    hook(route, this.current, (to) => {
+                        if (to === false) {
+                            to = new QueueError('Queue stopped prematurely');
+                        }
 
-            const iterator = (hook, next) => {
-                hook(route, this.current, (to) => {
-                    if (to === false) {
-                        to = new QueueError('Queue stopped prematurely');
+                        next(to);
+                    });
+                };
+
+                // Register global before hook, if necessary - PJAX
+                queues.beforeQueue.unshift(this.begin);
+
+                // Execute before hooks
+                asyncTasks.push(runQueue(queues.beforeQueue, iterator));
+
+                Promise.all(asyncTasks).then(() => {
+                    // Do not process unload hooks on initialization
+                    // No assets exist to be unloaded, and could cause errors
+                    if (this.ready) {
+                        // Unload hooks
+                        queues.unloadQueue.forEach((unload) => {
+                            if ($isString(unload)) {
+                                // Remove all namespaced entities
+                                destroyStore(unload);
+                                unbindEvents(unload);
+                                resetScreen(unload);
+                            } else if ($isFunction(unload)) {
+                                unload(route, this.current);
+                            }
+                        });
                     }
 
-                    next(to);
+                    // Global DOM replacement, if needed
+                    this.replacePage();
+
+                    // Init/update hooks
+                    queues.queue.forEach(fn => fn(route, this.current));
+
+                    // Update route
+                    this.previous = this.current;
+                    this.current = route;
+
+                    // After hooks
+                    queues.afterQueue.forEach(fn => fn(this.current, this.previous));
+
+                    transition.enter(this.current, this.previous);
+
+                    // Execute ready callbacks
+                    if (! this.ready) {
+                        this.setReady();
+                    }
+
+                    resolve(route);
+                }).catch((error) => {
+                    // Ensure we are where we started
+                    this.ensureState(transitionPromise);
+                    warn('routes', error.message);
+                    reject(error);
                 });
-            };
-
-            // Register global before hook, if necessary - PJAX
-            queues.beforeQueue.unshift(this.begin);
-
-            // Execute before hooks
-            asyncTasks.push(runQueue(queues.beforeQueue, iterator));
-
-            Promise.all(asyncTasks).then(() => {
-                // Do not process unload hooks on initialization
-                // No assets exist to be unloaded, and could cause errors
-                if (this.ready) {
-                    // Unload hooks
-                    queues.unloadQueue.forEach((unload) => {
-                        if ($isString(unload)) {
-                            // Remove all namespaced entities
-                            destroyStore(unload);
-                            unbindEvents(unload);
-                            resetScreen(unload);
-                        } else if ($isFunction(unload)) {
-                            unload(route, this.current);
-                        }
-                    });
-                }
-
-                // Global DOM replacement, if needed
-                this.replacePage();
-
-                // Init/update hooks
-                queues.queue.forEach(fn => fn(route, this.current));
-
-                // Update route
-                this.previous = this.current;
-                this.current = route;
-
-                // After hooks
-                queues.afterQueue.forEach(fn => fn(this.current, this.previous));
-
-                transition.enter(this.current, this.previous);
-
-                // Execute ready callbacks
-                if (! this.ready) {
-                    this.setReady();
-                }
-
-                resolve(route);
-            }).catch((error) => {
-                // Ensure we are where we started
-                this.ensureState(transitionPromise);
-                warn('routes', error.message);
-                reject(error);
             });
         });
     }
@@ -295,7 +295,7 @@ export default class History {
      * @param {Array} deactivate
      * @returns {Object}
      */
-    async resolveHandlers(updatedRecords, activatedRecords, deactivatedRecords) {
+    resolveHandlers(updatedRecords, activatedRecords, deactivatedRecords) {
         const handlers = {
             update: [],
             activate: [],
@@ -329,21 +329,7 @@ export default class History {
             const handler = updatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                let j;
-
-                for (j = 0; j < handler.length; i++) {
-                    const h = $isFunction(handler[j]) ?
-                        await handler[j]() :
-                        handler[j];
-
-                    addHandler(h);
-                }
-            } else if ($isFunction(handler) && ! handler instanceof RouteHandler) {
-                const h = await handler();
-
-                if (! map.update[h.id]) {
-                    addHandler(h);
-                }
+                handler.forEach(h => addHandler(h));
             } else if (handler instanceof RouteHandler) {
                 addHandler(handler);
             }
@@ -355,25 +341,15 @@ export default class History {
             const handler = activatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
-                let j;
-
-                for (j = 0; j < handler.length; j++) {
-                    const h = $isFunction(handler[j]) ?
-                        await handler[j]() :
-                        handler[j];
-
+                handler.forEach((h) => {
                     if (! map.update[h.id]) {
                         addHandler(h, 'activate');
                     }
-                }
-            } else if ($isFunction(handler) && ! handler instanceof RouteHandler) {
-                const h = await handler();
-
-                if (! map.update[h.id]) {
-                    addHandler(h, 'activate');
-                }
+                });
             } else if (handler instanceof RouteHandler) {
-                addHandler(handler, 'activate');
+                if (! map.update[handler.id]) {
+                    addHandler(handler, 'activate');
+                }
             }
         }
 
@@ -383,14 +359,11 @@ export default class History {
             const handler = deactivatedRecords[i].handler;
 
             if (Array.isArray(handler)) {
+                const handlerCount = handler.length;
                 let j = 0;
 
-                for (; j < handler.length; j++) {
-                    const h = $isFunction(handler[j]) ?
-                        await handler[j]() :
-                        handler[j];
-
-                    resolveDeactivated(h);
+                for (; j < handlerCount; j++) {
+                    resolveDeactivated(handler[j]);
                 }
             } else if (handler instanceof RouteHandler) {
                 resolveDeactivated(handler);
@@ -414,9 +387,33 @@ export default class History {
      * @param {Object} from
      * @returns {Object}
      */
-    resolveRecords(to, from) {
+    async resolveRecords(to, from) {
         const max = Math.max(from.length, to.length);
         let i = 0;
+
+        for (let i = 0; i < to.length; i++) {
+            const handlers = to[i].handler;
+
+            if (handlers && handlers.length) {
+                for (let j = 0; j < handlers.length; j++) {
+                    if ($isFunction(handlers[j])) {
+                        handlers[j] = await handlers[j]();
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < from.length; i++) {
+            const handlers = from[i].handler;
+
+            if (handlers && handlers.length) {
+                for (let j = 0; j < handlers.length; j++) {
+                    if ($isFunction(handlers[j])) {
+                        handlers[j] = await handlers[j]();
+                    }
+                }
+            }
+        }
 
         // Determine at what record the two sets of route records diverge
         for (; i < max; i++) {

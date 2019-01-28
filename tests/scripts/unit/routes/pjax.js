@@ -16,7 +16,7 @@ const responses = {
 	contactConfirmation: '<title>Contact confirmation</title><main>This is the contact confirmation page</main>'
 };
 
-describe('Router: pjax', () => {
+describe('Router: pjax', function() {
 	let stateArray = [];
 	let server;
 	let homeSpy;
