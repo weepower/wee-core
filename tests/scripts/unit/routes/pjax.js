@@ -16,6 +16,7 @@ const responses = {
 };
 
 describe('Router: pjax', function() {
+    let stateArray = [];
     let server;
     let homeSpy;
     let aboutSpy;
@@ -54,19 +55,19 @@ describe('Router: pjax', function() {
         $router.map([
             {
                 path: '/',
-                before: homeSpy
+                before: homeSpy,
             },
             {
                 path: '/about',
-                before: aboutSpy
+                before: aboutSpy,
             },
             {
                 path: '/faq',
-                before: faqSpy
+                before: faqSpy,
             },
             {
                 path: '/contact',
-                before: contactSpy
+                before: contactSpy,
             }
         ]);
     });

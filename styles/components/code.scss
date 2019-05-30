@@ -3,14 +3,13 @@ kbd,
 samp {
     @include font($codeFont, $codeFontSize);
 
-    background-color: $codeBackground;
-
     @if ($codeBorderColor) {
         border: 1px solid $codeBorderColor;
     } @else {
         border: none;
     }
 
+    background-color: $codeBackground;
     border-radius: $defaultRadius;
     color: $codeColor;
     line-height: $codeLineHeight;

@@ -33,14 +33,6 @@
         @include rounded($inputRounded);
     }
 
-    background-clip: border-box;
-    background-color: $inputBackground;
-    color: $inputColor;
-    margin: 0 0 $inputMarginBottom 0;
-    outline: 0;
-    padding: $inputPaddingVertical $inputPaddingHorizontal;
-    width: 100%;
-
     @if ($inputBorderColor) {
         border: $inputBorderWidth solid $inputBorderColor;
     }
@@ -52,6 +44,14 @@
     @if ($inputMinWidth) {
         min-width: $inputMinWidth;
     }
+
+    background-clip: border-box;
+    background-color: $inputBackground;
+    color: $inputColor;
+    margin: 0 0 $inputMarginBottom 0;
+    outline: 0;
+    padding: $inputPaddingVertical $inputPaddingHorizontal;
+    width: 100%;
 
     &:hover {
         border-color: $inputBorderColorHover;

@@ -1,15 +1,16 @@
 import sinon from 'sinon';
 import $router from 'wee-routes';
 import { history } from 'wee-routes';
-import setPath from '../../helpers/routes';
+import { _win } from 'core/variables';
 import { parseLocation } from 'routes/location';
+import setPath from '../../helpers/routes';
 
 describe('Router: history', () => {
     after($router.reset);
 
     beforeEach(() => {
         $router.reset();
-        window.history.replaceState(0, '', '/');
+        _win.history.replaceState(0, '', '/');
     });
 
     it('should execute onReady after $router has already been initialized', done => {

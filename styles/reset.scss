@@ -14,18 +14,13 @@
 }
 
 html {
-    font-family: "1";
+    font-family: '1';
     font-size: $rootFontSize;
     text-size-adjust: 100%;
 }
 
 body {
-    @include font(
-        $family: $baseFont,
-        $weight: $normalFontWeight,
-        $lineHeight: $baseLineHeight,
-        $size: $baseFontSize
-    );
+    @include font($family: $baseFont, $weight: $normalFontWeight, $lineHeight: $baseLineHeight, $size: $baseFontSize);
 
     @if ($bodyBackground != false) {
         background-color: $bodyBackground;
@@ -86,14 +81,14 @@ iframe {
 }
 
 figure {
-    @if ($figureRounded) {
+    @if ($figureRounded != false) {
         @include rounded($defaultRadius);
     }
 
     @if ($figureBorderColor != false) {
-    	border: 1px solid $figureBorderColor;
+        border: 1px solid $figureBorderColor;
     } @else {
-    	border: none;
+        border: none;
     }
 
     margin-bottom: $blockMarginBottom;
@@ -118,20 +113,21 @@ img {
 
 sub,
 sup {
-    font-size: .7em;
+    font-size: 0.7em;
     line-height: 0;
-    margin-left: .2em;
+    margin-left: 0.2em;
     position: relative;
     vertical-align: baseline;
 }
 
 sub {
-    bottom: -.25em;
+    bottom: -0.25em;
 }
 
 sup {
     top: -1em;
 }
+
 ::-moz-selection {
     background: $selectionBackground;
     color: $selectionColor;
@@ -143,21 +139,17 @@ sup {
     text-shadow: none;
 }
 
-
-
-
-
 /*------------------------------------*\
     # Typography
 \*------------------------------------*/
 
 $headings: (
-  h1: $h1,
-  h2: $h2,
-  h3: $h3,
-  h4: $h4,
-  h5: $h5,
-  h6: $h6
+    h1: $h1,
+    h2: $h2,
+    h3: $h3,
+    h4: $h4,
+    h5: $h5,
+    h6: $h6
 );
 
 h1,
@@ -166,7 +158,7 @@ h3,
 h4,
 h5,
 h6 {
-    @include heading()
+    @include heading();
 }
 
 @each $level, $value in $headings {
@@ -195,12 +187,24 @@ var {
 
 blockquote,
 q {
-    @include font($quoteFont, $quoteFontSize, $quoteFontWeight, $quoteLineHeight, $quoteFontStyle);
+    @include font(
+        $quoteFont,
+        $quoteFontSize,
+        $quoteFontWeight,
+        $quoteLineHeight,
+        $quoteFontStyle
+    );
 
     color: $quoteColor;
 
     cite {
-        @include font($citeFont, $citeFontSize, $citeFontWeight, $citeLineHeight, $citeFontStyle);
+        @include font(
+            $citeFont,
+            $citeFontSize,
+            $citeFontWeight,
+            $citeLineHeight,
+            $citeFontStyle
+        );
 
         color: $citeColor;
         margin-top: $citeMarginTop;
@@ -240,6 +244,7 @@ a {
 
     &:hover {
         color: $linkColorHover;
+
         @if ($linkDecorationHover != false) {
             text-decoration: $linkDecorationHover;
         }
@@ -269,10 +274,6 @@ address {
     color: $addressColor;
     margin-bottom: $blockMarginBottom;
 }
-
-
-
-
 
 /*------------------------------------*\
     # Lists
@@ -347,6 +348,7 @@ dt {
 
 dd {
     @include font($ddFont, $ddFontSize);
+
     color: $ddColor;
     margin-bottom: $ddMarginBottom;
 }

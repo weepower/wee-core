@@ -34,13 +34,12 @@
         border: 1px solid $buttonBorderColor;
     }
 
-    background-color: $buttonBackground;
-
-    color: $buttonColor;
-
     @if ($buttonRounded) {
         border-radius: $buttonRounded;
     }
+
+    background-color: $buttonBackground;
+    color: $buttonColor;
 
     &:hover {
         background-color: $buttonBackgroundHover;
@@ -56,7 +55,6 @@
 .#{$coloredButtonClassModifier} {
     background-color: $coloredButtonBackground;
     border: 1px $coloredButtonBorderColor solid;
-
     color: $coloredButtonColor;
 
     @if ($buttonRounded) {
