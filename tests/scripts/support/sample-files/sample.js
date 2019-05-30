@@ -1,3 +1,3 @@
 (function() {
-	window.test = true;
+    window.test = true;
 })();

@@ -3,9 +3,9 @@ import { $parseHTML } from 'core/dom';
 const parser = new DOMParser();
 
 const json = `{
-	"id": 1,
-	"firstName": "Don",
-	"lastName": "Draper"
+    "id": 1,
+    "firstName": "Don",
+    "lastName": "Draper"
 }`;
 
 let jsonResults = JSON.parse(json);
@@ -20,7 +20,7 @@ const xml = `<?xml version="1.0"?>
       <genre>Computer</genre>
       <price>44.95</price>
       <publish_date>2000-10-01</publish_date>
-      <description>An in-depth look at creating applications 
+      <description>An in-depth look at creating applications
       with XML.</description>
    </book>
 </catalog>`
@@ -28,9 +28,9 @@ const xml = `<?xml version="1.0"?>
 let xmlResults = parser.parseFromString(xml, 'text/xml');
 
 export default {
-	json,
-	jsonResults,
-	html,
-	xml,
-	xmlResults
+    json,
+    jsonResults,
+    html,
+    xml,
+    xmlResults
 };

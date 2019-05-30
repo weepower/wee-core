@@ -4,11 +4,11 @@ const configFile = `${process.env.PWD}/wee.config.js`;
 let weeConfig;
 
 if (fs.existsSync(configFile)) {
-	weeConfig = require(configFile);
+    weeConfig = require(configFile);
 } else {
-	weeConfig = {
-		paths: {}
-	}
+    weeConfig = {
+        paths: {}
+    }
 }
 
 module.exports = weeConfig;

@@ -50,43 +50,43 @@ registerCommands = function(rootPath, paths) {
 global.chalk = require('chalk');
 
 module.exports = function(rootPath, program) {
-	var keywords = process.argv.slice(2),
-		keyCount = keywords.length,
-		args = getArgs(
-			keyCount === 1 ?
-				keywords.slice(0) :
-				keywords.slice(1)
-		),
-		configPath = path.join(rootPath, args.config || 'wee.config.js'),
-		project = require(configPath),
-		commands = registerCommands(rootPath, [
-			'node_modules/wee-core/commands/',
-			path.join(project.paths.source, 'commands/')
-		]);
+    var keywords = process.argv.slice(2),
+        keyCount = keywords.length,
+        args = getArgs(
+            keyCount === 1 ?
+                keywords.slice(0) :
+                keywords.slice(1)
+        ),
+        configPath = path.join(rootPath, args.config || 'wee.config.js'),
+        project = require(configPath),
+        commands = registerCommands(rootPath, [
+            'node_modules/wee-core/commands/',
+            path.join(project.paths.source, 'commands/')
+        ]);
 
-	// Register commands
-	Object.keys(commands).forEach(name => {
-		let command = commands[name];
+    // Register commands
+    Object.keys(commands).forEach(name => {
+        let command = commands[name];
 
-		// TODO: Remove once all default commands are updated
-		if (! command.name) {
-			return;
-		}
+        // TODO: Remove once all default commands are updated
+        if (! command.name) {
+            return;
+        }
 
-		let result = program.command(command.name)
-			.usage(command.usage || command.name)
-			.description(command.description || '');
+        let result = program.command(command.name)
+            .usage(command.usage || command.name)
+            .description(command.description || '');
 
-		if (command.arguments) {
-			result.arguments(command.arguments);
-		}
+        if (command.arguments) {
+            result.arguments(command.arguments);
+        }
 
-		if (command.options && command.options.length) {
-			command.options.forEach(option => {
-				result.option(option[0], option[1], option[2] || {});
-			});
-		}
+        if (command.options && command.options.length) {
+            command.options.forEach(option => {
+                result.option(option[0], option[1], option[2] || {});
+            });
+        }
 
-		result.action(command.action.bind(null, {rootPath: rootPath, project: project}));
-	});
+        result.action(command.action.bind(null, {rootPath: rootPath, project: project}));
+    });
 };

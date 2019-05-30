@@ -12,46 +12,46 @@ const preprocessors = [];
  * @param {string} file
  */
 function addFile(file) {
-	files.push(file);
+    files.push(file);
 
-	// Files need to be pre-processed with webpack since we are writing ES2015 in tests
-	preprocessors[file] = ['webpack'];
+    // Files need to be pre-processed with webpack since we are writing ES2015 in tests
+    preprocessors[file] = ['webpack'];
 }
 
 glob.sync(paths.tests.scripts + '/unit/**/*.js').forEach(file => addFile(file));
 
 // Inject test file for assets module
 files.push({
-	pattern: paths.tests.scripts + '/helpers/files/*',
-	watched: false,
-	served: true,
-	included: false
+    pattern: paths.tests.scripts + '/helpers/files/*',
+    watched: false,
+    served: true,
+    included: false
 });
 
 module.exports = {
-	basePath: '../..',
+    basePath: '../..',
 
-	proxies: {
-		'/files/': '/base/scripts/helpers/files/'
-	},
+    proxies: {
+        '/files/': '/base/scripts/helpers/files/'
+    },
 
-	frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'chai'],
 
-	webpack: require('./webpack.config.js'),
+    webpack: require('./webpack.config.js'),
 
-	// Concurrency level
-	// how many browser should be started simultaneous
-	concurrency: Infinity,
+    // Concurrency level
+    // how many browser should be started simultaneous
+    concurrency: Infinity,
 
-	captureTimeout: 120000,
+    captureTimeout: 120000,
 
-	browserNoActivityTimeout: 120000,
+    browserNoActivityTimeout: 120000,
 
-	webpackMiddleware: {
-		noInfo: true
-	},
+    webpackMiddleware: {
+        noInfo: true
+    },
 
-	files,
-	preprocessors,
-	reporters,
+    files,
+    preprocessors,
+    reporters,
 };
