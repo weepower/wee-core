@@ -1,4 +1,4 @@
-import { _win } from 'core/variables';
+import { _win } from '../core/variables';
 import { genTimeKey } from './key';
 import { saveScrollPosition } from './scroll';
 

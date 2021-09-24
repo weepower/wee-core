@@ -1,8 +1,8 @@
-import { $each, $setRef, $sel } from 'core/dom';
-import { $extend, $isObject, $isString, $toArray } from 'core/types';
-import { $exec } from 'core/core';
-import { _doc } from 'core/variables';
-import events from 'events/events';
+import { $each, $setRef, $sel } from './core/dom';
+import { $extend, $isObject, $isString, $toArray } from './core/types';
+import { $exec } from './core/core';
+import { _doc } from './core/variables';
+import events from './events/events';
 
 let custom = {};
 let bound = [];

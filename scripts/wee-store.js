@@ -1,9 +1,9 @@
-import { $exec } from 'core/core';
-import { _castString, $copy, $extend, $isObject, $isFunction, $toArray, $type } from 'core/types';
-import { $each } from 'core/dom';
-import { U } from 'core/variables';
-import { warn } from 'core/warn';
-import StoreError from 'store/error';
+import { $exec } from './core/core';
+import { _castString, $copy, $extend, $isObject, $isFunction, $toArray, $type } from './core/types';
+import { $each } from './core/dom';
+import { U } from './core/variables';
+import { warn } from './core/warn';
+import StoreError from './store/error';
 
 let instances = {};
 

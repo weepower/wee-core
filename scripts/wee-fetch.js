@@ -1,8 +1,8 @@
-import fetchFactory from 'fetch/factory';
-import bind from 'fetch/bind';
-import defaults from 'fetch/defaults';
-import { extend } from 'fetch/utils';
-import { $extend } from 'core/types';
+import fetchFactory from './fetch/factory';
+import bind from './fetch/bind';
+import defaults from './fetch/defaults';
+import { extend } from './fetch/utils';
+import { $extend } from './core/types';
 
 /**
  * Create a new instance of fetch

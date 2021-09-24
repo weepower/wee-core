@@ -1,15 +1,14 @@
-import $events from 'wee-events';
-import { _doc, _win } from 'core/variables';
-import { $copy, $extend, $isObject, $isString } from 'core/types';
-import { $exec } from 'core/core';
-import { $each, $parseHTML, $setRef } from 'core/dom';
-import { $serializeForm } from 'dom/index';
+import $events from '../wee-events';
+import { _doc, _win } from '../core/variables';
+import { $copy, $extend, $isString } from '../core/types';
+import { $exec } from '../core/core';
+import { $each, $parseHTML, $setRef } from '../core/dom';
 import { supportsPushState } from './push-state';
-import $fetch from 'wee-fetch';
-import $ from 'wee-dom';
-import { warn } from 'core/warn';
+import $fetch from '../wee-fetch';
+import $ from '../wee-dom';
+import { warn } from '../core/warn';
 import { parseLocation } from './location';
-import { $setVar } from 'wee-store';
+import { $setVar } from '../wee-store';
 
 let defaults = {
 	action: 'replace',

@@ -1,9 +1,8 @@
-import { _win } from 'core/variables';
+import { _win } from '../core/variables';
 import { getStateKey } from './push-state';
-import { $isObject } from 'core/types';
-import { _doc } from 'core/variables';
-import { $sel } from 'core/dom';
-import { $scrollLeft, $scrollTop } from 'dom/index';
+import { $isObject } from '../core/types';
+import { _doc } from '../core/variables';
+import { $scrollLeft, $scrollTop } from '../dom/index';
 
 const positionStore = {};
 

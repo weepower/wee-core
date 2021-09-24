@@ -1,4 +1,4 @@
-import { $isString, $isObject } from 'core/types';
+import { $isString, $isObject } from '../core/types';
 import Transition from './transitions';
 
 export const START = createRoute({ path: '/' });

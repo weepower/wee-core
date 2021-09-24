@@ -1,7 +1,7 @@
 import { $exec } from './core/core';
 import { _doc, U } from './core/variables';
 import { $toArray, $extend } from './core/types';
-import { $each } from 'core/dom';
+import { $each } from './core/dom';
 
 const groups = {};
 const loaded = {};

@@ -1,5 +1,5 @@
 import { $copy, $isArrayBuffer, $isArrayBufferView, $isBlob, $isFile, $isFormData, $isObject, $isString } from '../core/types';
-import { normalizeHeader } from 'fetch/headers';
+import { normalizeHeader } from './headers.js';
 
 const DEFAULT_CONTENT_TYPE = {
     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',

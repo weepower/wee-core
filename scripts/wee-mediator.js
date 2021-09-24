@@ -1,4 +1,4 @@
-import Topic from 'mediator/topic';
+import Topic from './mediator/topic';
 
 export class Mediator {
     constructor() {

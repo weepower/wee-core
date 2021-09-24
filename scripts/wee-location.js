@@ -1,4 +1,4 @@
-import { parseLocation } from 'routes/location';
+import { parseLocation } from './routes/location';
 
 /**
  * Retrieve information about current location or provided URL

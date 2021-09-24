@@ -1,5 +1,5 @@
-import { $isObject, $serialize, $unserialize } from 'core/types';
-import { _doc, _win } from 'core/variables';
+import { $isObject, $serialize, $unserialize } from '../core/types';
+import { _doc, _win } from '../core/variables';
 
 const REMOVE_SLASHES_REGEXP = /^\/|\/$/g;
 

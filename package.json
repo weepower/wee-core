@@ -20,7 +20,7 @@
     "test:ci": "karma start ./tests/scripts/config/karma.saucelabs.conf.js"
   },
   "peerDependencies": {
-    "es6-promise": "^4.2.4",
+    "es6-promise": "^4.2.8",
     "path-to-regexp": "1.7.0"
   },
   "dependencies": {

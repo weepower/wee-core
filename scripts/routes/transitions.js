@@ -1,8 +1,8 @@
-import { $each } from 'core/dom';
-import { _doc } from 'core/variables';
-import { _slice } from 'core/types';
-import { $addClass, $removeClass } from 'dom/index';
-import { warn } from 'core/warn';
+import { $each } from '../core/dom';
+import { _doc } from '../core/variables';
+import { _slice } from '../core/types';
+import { $addClass, $removeClass } from '../dom/index';
+import { warn } from '../core/warn';
 
 /**
  * Detect what transition property to listen for

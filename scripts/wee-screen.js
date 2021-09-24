@@ -1,6 +1,6 @@
-import { $exec } from 'core/core';
-import { $toArray } from 'core/types';
-import { _win, _html } from 'core/variables';
+import { $exec } from './core/core';
+import { $toArray } from './core/types';
+import { _win, _html } from './core/variables';
 
 let events = [];
 let id = 0;

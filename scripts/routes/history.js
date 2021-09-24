@@ -1,23 +1,23 @@
 // TODO: May need to move promise polyfill to an entry point file if building dist version of Wee
 import 'es6-promise/auto';
+import Transition from './transitions';
+import $router from '../wee-routes';
+import { _win } from '../core/variables';
+import { warn } from '../core/warn';
+import { destroyStore } from '../wee-store';
+import { unbindEvents } from '../wee-events';
+import { resetScreen } from '../wee-screen';
 import { match, noMatch } from './route-matcher';
 import { isSameRoute, START } from './route';
 import RouteHandler from './route-handler';
 import runQueue from './async-queue';
 import { getErrorHandlers, getHooks } from './global-hooks';
 import { $isFunction, $isString } from '../core/types';
-import { warn } from 'core/warn';
-import { _win } from 'core/variables';
 import { pushState, replaceState } from './push-state';
 import { QueueError, SameRouteError } from './error';
 import { parseLocation } from './location';
-import $router from 'wee-routes';
 import { handleScroll, saveScrollPosition } from './scroll';
 import { setStateKey } from './push-state';
-import Transition from './transitions';
-import { destroyStore } from 'wee-store';
-import { unbindEvents } from 'wee-events';
-import { resetScreen } from 'wee-screen';
 
 export default class History {
     constructor(settings) {

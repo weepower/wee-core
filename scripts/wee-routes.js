@@ -1,11 +1,11 @@
-import Handler from 'routes/route-handler';
-import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from 'routes/route-map';
+import Handler from './routes/route-handler';
+import { getRouteMap, mapRoutes, resetRouteMap, setNotFound } from './routes/route-map';
 import History from './routes/history';
 import { addAfterEach, addBeforeEach, addOnError, getErrorHandlers, resetHooks } from './routes/global-hooks';
 import pjax from './routes/pjax';
-import { $ready } from 'core/dom';
-import { $copy, $extend, $isObject, $toArray } from 'core/types';
-import { uri } from 'wee-location';
+import { $ready } from './core/dom';
+import { $copy, $extend, $isObject, $toArray } from './core/types';
+import { uri } from './wee-location';
 
 const defaults = {
     scrollBehavior(to, from, savedPosition) {
