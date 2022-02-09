@@ -50,7 +50,7 @@
     "karma-sauce-launcher": "^1.2.0",
     "karma-webpack": "^2.0.13",
     "mocha": "^3.5.3",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "postcss": "^6.0.23",
     "sinon": "^3.3.0",
     "webpack": "^3.12.0"
